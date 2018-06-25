@@ -32,6 +32,8 @@ public:
 
   void testLinear2dWriteThenRead();
   void testLinear3dWriteThenRead();
+
+  void testWriteThenReadUGridFile();
 }; // XmUGridReaderTests
 
 #endif

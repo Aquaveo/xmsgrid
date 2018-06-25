@@ -37,5 +37,6 @@ BSHP<xms::XmUGrid> TEST_XmUGrid1Left90Tri();
 BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGrid3dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGridHexagonalPolyhedron();
+std::string TestFilesPath();
 
 #endif

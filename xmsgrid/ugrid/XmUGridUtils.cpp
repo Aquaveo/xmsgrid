@@ -494,5 +494,31 @@ void XmUGridUtilsTests::testLinear3dWriteThenRead()
   TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testLinear3dWriteThenRead
+//------------------------------------------------------------------------------
+/// \brief Test reading from file.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testWriteThenReadUGridFile()
+{
+  BSHP<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
+
+  // write
+  std::string outFileName(TestFilesPath() + "3d_grid_linear.xmugrid");
+  std::ofstream output(outFileName);
+  iWriteUGridToAsciiFile(ugridBase, output);
+  output.close();
+
+  // read
+  std::ifstream input(outFileName);
+  BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
+  input.close();
+  if (!ugridOut)
+  {
+    TS_FAIL("Unable to read ugrid.");
+    return;
+  }
+
+  TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
+  TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
+} // XmUGridUtilsTests::testWriteThenReadUGridFile
 
 #endif

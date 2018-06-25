@@ -873,6 +873,14 @@ BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
 
   return ugrid;
 } // TEST_XmUGridHexagonalPolyhedron
+//------------------------------------------------------------------------------
+/// \brief Path to test files.
+/// \return Returns path to test files.
+//------------------------------------------------------------------------------
+std::string TestFilesPath()
+{
+  return "../" + std::string(XMSNG_TEST_PATH);
+} // TestFilesPath
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGridTests

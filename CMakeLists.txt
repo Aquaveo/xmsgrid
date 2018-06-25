@@ -58,6 +58,7 @@ set(xmsgrid_py
 
 # Tests
 if (BUILD_TESTING)
+ add_definitions(-DXMSNG_TEST_PATH="test_files/")
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources
