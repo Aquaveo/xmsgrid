@@ -116,15 +116,17 @@ public:
   virtual int GetCellDimension(int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
+  virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
 
-  //virtual void GetCellPointStream(int a_cellIdx, VecInt& a_cellPoints);
-  //virtual void GetCellFaceStream(int a_cellIdx, VecInt& a_faceStream);
-  //virtual void GetCellPointStream(int a_cellIdx, VecInt& a_cellPoints, VecInt& a_faceStream);
-  virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
 
   virtual const VecPt3d& GetPoints() const = 0;
   virtual void SetPoints(const VecPt3d& a_points) = 0;
 
+  virtual VecInt GetPointCells(const int a_pointIdx) const = 0;
+  virtual VecInt GetPointCells2(const int a_pointIdx) const = 0;
+
+
+  virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
 

@@ -111,7 +111,9 @@ void iWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
 BSHP<XmUGrid> iReadUGridFromAsciiFile(std::istream& a_inStream)
 {
   if (a_inStream.eof())
+  {
     return nullptr;
+  }
 
   std::string line;
   std::getline(a_inStream, line);
@@ -508,7 +510,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
   output.close();
 
   // read
-  std::ifstream input(outFileName);
+  std::ifstream input(TestFilesPath() + "3d_grid_linear.xmugrid");
   BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
   input.close();
   if (!ugridOut)

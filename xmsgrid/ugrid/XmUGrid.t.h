@@ -31,6 +31,8 @@ public:
   void testGetCellType();
   void testGetCellDimension();
   void testGetNumberOfCellEdges();
+  void testGetNumberOfCellFaces();
+  void testGetPointCells();
 }; // XmUGridTests
 
 BSHP<xms::XmUGrid> TEST_XmUGrid1Left90Tri();
