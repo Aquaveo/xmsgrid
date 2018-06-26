@@ -24,7 +24,7 @@ class XmUGrid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-class XmUGridTests : public CxxTest::TestSuite
+class XmUGridUnitTests : public CxxTest::TestSuite
 {
 public:
   void testUGridStreams();
@@ -33,7 +33,8 @@ public:
   void testGetNumberOfCellEdges();
   void testGetNumberOfCellFaces();
   void testGetPointCells();
-}; // XmUGridTests
+  void testLargeUGridLinkSpeed();
+}; // XmUGridUnitTests
 
 BSHP<xms::XmUGrid> TEST_XmUGrid1Left90Tri();
 BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();

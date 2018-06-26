@@ -15,6 +15,7 @@
 #include <set>
 
 // 4. External library headers
+#include <boost/container/flat_set.hpp>
 
 // 5. Shared code headers
 #include <xmscore/misc/XmLog.h>
@@ -78,10 +79,13 @@ private:
   VecInt m_pointIdxToPointsToCells; ///< Indexes for each point in array of points cells
   VecInt m_pointsToCells; ///< Array of points cells (goes from pointIdx to list of cells)
   VecInt2d m_pointToCells2dVec; ///< Array of cells connected to a point
+public:
   static int m_pointLinkReserveSize; ///< Amount to reserve in 1D portion of 2D link array
 };
 
 int XmUGridImpl::m_pointLinkReserveSize = 20;
+
+bool fg_simplifiedLinks = false;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -483,8 +487,10 @@ bool XmUGridImpl::SetCellStream(const VecInt& a_cellStream)
 void XmUGridImpl::UpdateLinks()
 {
   UpdateCellLinks();
-  UpdatePointLinks();
-  UpdatePointLinks2();
+  if (!fg_simplifiedLinks)
+    UpdatePointLinks();
+  else
+    UpdatePointLinks2();
 } // XmUGridImpl::UpdateLinks
 //------------------------------------------------------------------------------
 /// \brief Update internal link from cells to cell stream index.
@@ -542,7 +548,7 @@ void XmUGridImpl::UpdatePointLinks()
   m_pointsToCells.clear();
 
   // get number of cells for each point
-  VecInt cellPoints;
+  boost::container::flat_set<int> cellPoints;
   int numStreamItems = (int)m_cellStream.size();
   int cellIdx = 0;
   int currIdx = 0;
@@ -568,14 +574,15 @@ void XmUGridImpl::UpdatePointLinks()
         for (int ptIdx = 0; ptIdx < numFacePoints; ++ptIdx)
         {
           int pt = m_cellStream[currIdx++];
-          cellPoints.push_back(pt);
+          cellPoints.insert(pt);
         }
       }
 
-      std::stable_sort(cellPoints.begin(), cellPoints.end());
-      auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
+      //std::stable_sort(cellPoints.begin(), cellPoints.end());
+      //auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
 
-      for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      //for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
       {
         m_pointIdxToPointsToCells[*pt] += 1;
       }
@@ -629,14 +636,15 @@ void XmUGridImpl::UpdatePointLinks()
         for (int ptIdx = 0; ptIdx < numFacePoints; ++ptIdx)
         {
           int pt = m_cellStream[currIdx++];
-          cellPoints.push_back(pt);
+          cellPoints.insert(pt);
         }
       }
 
-      std::stable_sort(cellPoints.begin(), cellPoints.end());
-      auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
+      //std::stable_sort(cellPoints.begin(), cellPoints.end());
+      //auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
 
-      for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      //for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
       {
         int countIdx = m_pointIdxToPointsToCells[*pt];
         int& count = m_pointsToCells[countIdx]; // point's cell count
@@ -669,11 +677,19 @@ void XmUGridImpl::UpdatePointLinks()
 void XmUGridImpl::UpdatePointLinks2()
 {
   m_pointToCells2dVec.clear();
+  m_pointToCells2dVec.reserve(m_points.size());
   VecInt fourCells;
-  fourCells.reserve(m_pointLinkReserveSize);
-  m_pointToCells2dVec.resize(m_points.size(), fourCells);
+  for (size_t i = 0; i < m_points.size(); ++i)
+  {
+    m_pointToCells2dVec.push_back(fourCells);
+    m_pointToCells2dVec.back().reserve(m_pointLinkReserveSize);
+  }
+  //VecInt fourCells;
+  //if (XmUGridImpl::m_pointLinkReserveSize > 0)
+  //  fourCells.reserve(m_pointLinkReserveSize);
+  //m_pointToCells2dVec.resize(m_points.size(), fourCells);
 
-  VecInt cellPoints;
+  boost::container::flat_set<int> cellPoints;
   int numStreamItems = (int)m_cellStream.size();
   int cellIdx = 0;
   int currIdx = 0;
@@ -699,13 +715,14 @@ void XmUGridImpl::UpdatePointLinks2()
         for (int ptIdx = 0; ptIdx < numFacePoints; ++ptIdx)
         {
           int pt = m_cellStream[currIdx++];
-          cellPoints.push_back(pt);
+          cellPoints.insert(pt);
         }
       }
-      std::stable_sort(cellPoints.begin(), cellPoints.end());
-      auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
+      //std::stable_sort(cellPoints.begin(), cellPoints.end());
+      //auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
 
-      for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      //for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
       {
         m_pointToCells2dVec[*pt].push_back(cellIdx);
       }
@@ -883,12 +900,11 @@ int XmUGridImpl::GetNumberOfPolyhedronEdges(const int a_cellIdx) const
   GetSingleCellStream(a_cellIdx, &cellStream, streamLength);
   if (cellStream && streamLength > 0 && cellStream[0] == XMU_POLYHEDRON)
   {
-    std::set<std::pair<int, int>> edges;
+    boost::container::flat_set<std::pair<int, int>> edges;
     int currItem = 2;
     while (currItem < streamLength)
     {
       int numPoints = cellStream[currItem++];
-      int firstPointIdx = currItem;
       for (int pointIdx = 0; pointIdx < numPoints; ++pointIdx)
       {
         int pt1Idx = pointIdx;
@@ -1236,13 +1252,13 @@ std::string TestFilesPath()
 } // TestFilesPath
 
 ////////////////////////////////////////////////////////////////////////////////
-/// \class XmUGridTests
+/// \class XmUGridUnitTests
 /// \brief Tests XmUGrids.
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Test XmUGrid point and cell streams.
 //------------------------------------------------------------------------------
-void XmUGridTests::testUGridStreams()
+void XmUGridUnitTests::testUGridStreams()
 {
   // test empty UGrid
   BSHP<XmUGrid> emptyUGrid = XmUGrid::New();
@@ -1290,11 +1306,11 @@ void XmUGridTests::testUGridStreams()
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
   cellStream = { 9, 3, 0, 3, 4, 1 };
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
-} // XmUGridTests::testUGridStreams
+} // XmUGridUnitTests::testUGridStreams
 //------------------------------------------------------------------------------
 /// \brief Test getting number of points, cells, and cell type.
 //------------------------------------------------------------------------------
-void XmUGridTests::testGetCellType()
+void XmUGridUnitTests::testGetCellType()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   if (!ugrid2d)
@@ -1329,11 +1345,11 @@ void XmUGridTests::testGetCellType()
   TS_ASSERT_EQUALS(XMU_POLYHEDRON, ugrid3d->GetCellType(3));
   TS_ASSERT_EQUALS(XMU_WEDGE, ugrid3d->GetCellType(4));
   TS_ASSERT_EQUALS(XMU_PYRAMID, ugrid3d->GetCellType(5));
-} // XmUGridTests::testGetCellType
+} // XmUGridUnitTests::testGetCellType
 //------------------------------------------------------------------------------
 /// \brief Test getting dimension of single cells and all cells
 //------------------------------------------------------------------------------
-void XmUGridTests::testGetCellDimension()
+void XmUGridUnitTests::testGetCellDimension()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   if (!ugrid2d)
@@ -1374,11 +1390,11 @@ void XmUGridTests::testGetCellDimension()
   threeDResults[3] = 6;
   TS_ASSERT_EQUALS(twoDResults, ugrid2d->GetDimensionCount());
   TS_ASSERT_EQUALS(threeDResults, ugrid3d->GetDimensionCount());
-} // XmUGridTests::testGetCellDimension
+} // XmUGridUnitTests::testGetCellDimension
 //------------------------------------------------------------------------------
 /// \brief Test getting edges of single cells
 //------------------------------------------------------------------------------
-void XmUGridTests::testGetNumberOfCellEdges()
+void XmUGridUnitTests::testGetNumberOfCellEdges()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   if (!ugrid2d)
@@ -1412,11 +1428,11 @@ void XmUGridTests::testGetNumberOfCellEdges()
   TS_ASSERT_EQUALS(9, ugrid3d->GetNumberOfCellEdges(4));
   TS_ASSERT_EQUALS(8, ugrid3d->GetNumberOfCellEdges(5));
 
-} // XmUGridTests::testGetNumberOfCellEdges
+} // XmUGridUnitTests::testGetNumberOfCellEdges
 //------------------------------------------------------------------------------
 /// \brief Test getting edges of single cells
 //------------------------------------------------------------------------------
-void XmUGridTests::testGetNumberOfCellFaces()
+void XmUGridUnitTests::testGetNumberOfCellFaces()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   if (!ugrid2d)
@@ -1449,11 +1465,11 @@ void XmUGridTests::testGetNumberOfCellFaces()
   TS_ASSERT_EQUALS(6, ugrid3d->GetNumberOfCellFaces(3));
   TS_ASSERT_EQUALS(5, ugrid3d->GetNumberOfCellFaces(4));
   TS_ASSERT_EQUALS(5, ugrid3d->GetNumberOfCellFaces(5));
-} // XmUGridTests::testGetNumberOfCellFaces
+} // XmUGridUnitTests::testGetNumberOfCellFaces
 //------------------------------------------------------------------------------
 /// \brief Test getting edges of single cells
 //------------------------------------------------------------------------------
-void XmUGridTests::testGetPointCells()
+void XmUGridUnitTests::testGetPointCells()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   if (!ugrid2d)
@@ -1536,6 +1552,162 @@ void XmUGridTests::testGetPointCells()
     TS_ASSERT_EQUALS(cellsFor3DPoints[i], ugrid3d->GetPointCells2(i));
   }
 
-} // XmUGridTests::testGetPointCells
+} // XmUGridUnitTests::testGetPointCells
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+
+#include <chrono>
+
+class Timer
+{
+public:
+    Timer() : beg_(clock_::now()) {}
+    void reset() { beg_ = clock_::now(); }
+    double elapsed() const { 
+        return std::chrono::duration_cast<second_>
+            (clock_::now() - beg_).count(); }
+
+private:
+    typedef std::chrono::high_resolution_clock clock_;
+    typedef std::chrono::duration<double, std::ratio<1> > second_;
+    std::chrono::time_point<clock_> beg_;
+};
+
+void XmUGridUnitTests::testLargeUGridLinkSpeed()
+{
+  int rows = 500;
+  int cols = 500;
+  int lays = 4;
+  VecPt3d points;
+  points.reserve(rows*cols);
+  for (int k = 0; k < lays; ++k)
+  {
+    for (int i = 0; i < rows; ++i)
+    {
+      for (int j = 0; j < cols; ++j)
+      {
+        points.push_back(Pt3d(j, rows-i, lays-k));
+      }
+    }
+  }
+
+  //VecInt cells;
+  //cells.reserve((rows-1)*(cols-1)*6);
+  //for (int i = 0; i < rows-1; ++i)
+  //{
+  //  for (int j = 0; j < cols-1; ++j)
+  //  {
+  //    cells.push_back(XMU_QUAD);
+  //    cells.push_back(4);
+  //    cells.push_back(j+cols*i);
+  //    cells.push_back(j+cols*(i+1));
+  //    cells.push_back(j+1+cols*(i+1));
+  //    cells.push_back(j+1+cols*i);
+  //  }
+  //}
+  //VecInt cells;
+  //cells.reserve((rows-1)*(cols-1)*(lays-1)*10);
+  //int numInLayer = rows*cols;
+  //for (int k = 0; k < lays-1; ++k)
+  //{
+  //  int layOffset = numInLayer*k;
+  //  for (int i = 0; i < rows-1; ++i)
+  //  {
+  //    for (int j = 0; j < cols-1; ++j)
+  //    {
+  //      cells.push_back(XMU_HEXAHEDRON);
+  //      cells.push_back(8);
+  //      cells.push_back(j + cols*i + layOffset);
+  //      cells.push_back(j + cols*(i+1) + layOffset);
+  //      cells.push_back(j + 1 + cols*(i+1) + layOffset);
+  //      cells.push_back(j + 1 + cols*i + layOffset);
+  //      cells.push_back(j + cols*i + layOffset + numInLayer);
+  //      cells.push_back(j + cols*(i+1) + layOffset + numInLayer);
+  //      cells.push_back(j + 1 + cols*(i+1) + layOffset + numInLayer);
+  //      cells.push_back(j + 1 + cols*i + layOffset + numInLayer);
+  //    }
+  //  }
+  //}
+  VecInt cells;
+  cells.reserve((rows-1)*(cols-1)*(lays-1)*10);
+  int numInLayer = rows*cols;
+  for (int k = 0; k < lays-1; ++k)
+  {
+    int layOffset = numInLayer*k;
+    for (int i = 0; i < rows-1; ++i)
+    {
+      for (int j = 0; j < cols-1; ++j)
+      {
+        int pt0 = j + cols*i + layOffset;
+        int pt1 = j + cols*(i+1) + layOffset;
+        int pt2 = j + 1 + cols*(i+1) + layOffset;
+        int pt3 = j + 1 + cols*i + layOffset;
+        int pt4 = j + cols*i + layOffset + numInLayer;
+        int pt5 = j + cols*(i+1) + layOffset + numInLayer;
+        int pt6 = j + 1 + cols*(i+1) + layOffset + numInLayer;
+        int pt7 = j + 1 + cols*i + layOffset + numInLayer;
+
+        cells.push_back(XMU_POLYHEDRON);
+        cells.push_back(6);
+        // top
+        cells.push_back(4);
+        cells.push_back(pt0);
+        cells.push_back(pt1);
+        cells.push_back(pt2);
+        cells.push_back(pt3);
+        // front
+        cells.push_back(4);
+        cells.push_back(pt0);
+        cells.push_back(pt1);
+        cells.push_back(pt5);
+        cells.push_back(pt7);
+        // right
+        cells.push_back(4);
+        cells.push_back(pt1);
+        cells.push_back(pt3);
+        cells.push_back(pt7);
+        cells.push_back(pt5);
+        // back
+        cells.push_back(4);
+        cells.push_back(pt3);
+        cells.push_back(pt2);
+        cells.push_back(pt6);
+        cells.push_back(pt7);
+        // left
+        cells.push_back(4);
+        cells.push_back(pt2);
+        cells.push_back(pt0);
+        cells.push_back(pt4);
+        cells.push_back(pt6);
+        // bottom
+        cells.push_back(4);
+        cells.push_back(pt4);
+        cells.push_back(pt5);
+        cells.push_back(pt6);
+        cells.push_back(pt7);
+      }
+    }
+  }
+
+  {
+    fg_simplifiedLinks = false;
+    Timer timer2;
+    BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+    double seconds2 = timer2.elapsed();
+    TS_ASSERT_EQUALS(0.0, seconds2);
+  }
+
+  fg_simplifiedLinks = true;
+  for (int i = 28; i < 32; ++i)
+  {
+    fg_simplifiedLinks = true;
+    XmUGridImpl::m_pointLinkReserveSize = i;
+    Timer timer1;
+    BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+    double seconds1 = timer1.elapsed();
+    TS_ASSERT_EQUALS(0.0, seconds1);
+  }
+} // XmUGridUnitTests::testLargeUGridLinkSpeed
 
 #endif
