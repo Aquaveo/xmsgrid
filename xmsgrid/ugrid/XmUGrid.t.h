@@ -28,10 +28,13 @@ class XmUGridUnitTests : public CxxTest::TestSuite
 {
 public:
   void testUGridStreams();
+  void testGetSetPoint();
+  void testGetSingleCellStream();
   void testGetCellType();
   void testGetCellDimension();
   void testGetNumberOfCellEdges();
   void testGetNumberOfCellFaces();
+  void testGetPointCellsSimple();
   void testGetPointCells();
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests

@@ -115,8 +115,11 @@ public:
   virtual int GetNumberOfPoints() const = 0;
   virtual int GetNumberOfCells() const = 0;
 
-  virtual XmUGridCellType GetCellType(int a_cellIdx) const = 0;
-  virtual int GetCellDimension(int a_cellIdx) const = 0;
+  virtual Pt3d GetPoint(const int a_pointIdx) const = 0;
+  virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) = 0;
+
+  virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
+  virtual int GetCellDimension(const int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;

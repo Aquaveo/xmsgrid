@@ -47,8 +47,11 @@ public:
   virtual int GetNumberOfPoints() const override;
   virtual int GetNumberOfCells() const override;
 
-  virtual XmUGridCellType GetCellType(int a_cellIdx) const override;
-  virtual int GetCellDimension(int a_cellIdx) const override;
+  virtual Pt3d GetPoint(const int a_pointIdx) const override;
+  virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) override;
+
+  virtual XmUGridCellType GetCellType(const int a_cellIdx) const override;
+  virtual int GetCellDimension(const int a_cellIdx) const override;
   virtual std::vector<int> GetDimensionCount() const override;
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const override;
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
@@ -113,11 +116,36 @@ int XmUGridImpl::GetNumberOfCells() const
     return (int)m_cellIdxToStreamIdx.size() - 1;
 } // XmUGridImpl::GetNumberOfCells
 //------------------------------------------------------------------------------
+/// \brief Get the point
+/// \param[in] a_pointIdx: the index of the point
+/// \return the point or an initialize point if the index is invalid
+//------------------------------------------------------------------------------
+Pt3d XmUGridImpl::GetPoint(const int a_pointIdx) const
+{
+  if (a_pointIdx >= 0 && a_pointIdx < m_points.size())
+    return m_points[a_pointIdx];
+  return Pt3d();
+} // XmUGridImpl::GetPoint
+//------------------------------------------------------------------------------
+/// \brief Set the point
+/// \param[in] a_pointIdx: the index of the point
+/// \return whether the point was successfully set
+//------------------------------------------------------------------------------
+bool XmUGridImpl::SetPoint(const int a_pointIdx, const Pt3d& a_point)
+{
+  if (a_pointIdx >= 0 && a_pointIdx < m_points.size())
+  {
+    m_points[a_pointIdx] = a_point;
+    return true;
+  }
+  return false;
+} // XmUGridImpl::GetPoint
+//------------------------------------------------------------------------------
 /// \brief Get the number of cells.
 /// \param[in] a_cellIdx: the index of the cell
 /// \return the number of cells or -1 if invalid index
 //------------------------------------------------------------------------------
-XmUGridCellType XmUGridImpl::GetCellType(int a_cellIdx) const
+XmUGridCellType XmUGridImpl::GetCellType(const int a_cellIdx) const
 {
   if (m_cellIdxToStreamIdx.size() < 2 || a_cellIdx > m_cellIdxToStreamIdx.size() - 2)
   {
@@ -134,7 +162,7 @@ XmUGridCellType XmUGridImpl::GetCellType(int a_cellIdx) const
 /// \param[in] a_cellIdx: the index of the cell
 /// \return the dimension of the cells or -1 if invalid index or invalid dimension
 //------------------------------------------------------------------------------
-int XmUGridImpl::GetCellDimension(int a_cellIdx) const
+int XmUGridImpl::GetCellDimension(const int a_cellIdx) const
 {
   return DimensionFromCellType(GetCellType(a_cellIdx));
 } // XmUGridImpl::GetCellDimension
@@ -183,7 +211,11 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
 
   // 1D
   case XMU_LINE:
+    return 1;
+    break;
   case XMU_POLY_LINE:
+    return GetNumberOfItemsForCell(a_cellIdx)-1;
+    break;
 
   case XMU_QUADRATIC_EDGE:
   case XMU_PARAMETRIC_CURVE:
@@ -1382,6 +1414,93 @@ void XmUGridUnitTests::testUGridStreams()
   cellStream = { 9, 3, 0, 3, 4, 1 };
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
 } // XmUGridUnitTests::testUGridStreams
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief Test Getting a point
+/// \code
+  ///
+  ///     0----1----2
+  ///     |    |    |
+  ///     3----4----5
+  ///     |    |    |
+  ///     6----7----8
+  ///
+  /// \endcode
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetSetPoint()
+{
+  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0}, {10, 0, 0},
+            {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
+
+  // Cell type (9), number of points (4), point numbers, counterclockwise
+  VecInt cellStream = {
+    9, 4, 0, 3, 4, 1,
+    9, 4, 1, 4, 5, 2,
+    9, 4, 3, 6, 7, 4,
+    9, 4, 4, 7, 8, 5};
+
+  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellStream);
+
+  TS_ASSERT_EQUALS(Pt3d(), ugrid->GetPoint(-1));
+  for (int i=0; i < (int)points.size(); i++)
+  {
+    TS_ASSERT_EQUALS(points[i], ugrid->GetPoint(i));
+  }
+  TS_ASSERT_EQUALS(Pt3d(), ugrid->GetPoint((int)points.size()));
+  
+  TS_ASSERT(!ugrid->SetPoint(-1, Pt3d()));
+  TS_ASSERT(!ugrid->SetPoint((int)points.size(), Pt3d()));
+
+  TS_ASSERT(ugrid->SetPoint(0, Pt3d(-10, 10, 0)));
+  TS_ASSERT_EQUALS(Pt3d(-10, 10, 0), ugrid->GetPoint(0));
+
+} // XmUGridUnitTests::testGetSetPoint
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief Test Getting a cell stream.
+/// \code
+  ///
+  ///     0-----1-----2
+  ///     |  0  |  1  |
+  ///     3-----4-----5
+  ///     |  2  |  3  |
+  ///     6-----7-----8
+  ///
+  /// \endcode
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetSingleCellStream()
+{
+  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0}, {10, 0, 0},
+            {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
+
+  VecInt cell0 = {9, 4, 0, 3, 4, 1},
+    cell1 = {9, 4, 1, 4, 5, 2},
+    cell2 = {9, 4, 3, 6, 7, 4},
+    cell3 = {9, 4, 4, 7, 8, 5};
+  // Cell type (9), number of points (4), point numbers, counterclockwise
+  VecInt cellStream;
+  cellStream.insert(cellStream.end(), cell0.begin(), cell0.end());
+  cellStream.insert(cellStream.end(), cell1.begin(), cell1.end());
+  cellStream.insert(cellStream.end(), cell2.begin(), cell2.end());
+  cellStream.insert(cellStream.end(), cell3.begin(), cell3.end());
+
+  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellStream);
+  VecInt cellResult;
+
+  TS_ASSERT_EQUALS(false, ugrid->GetSingleCellStream(-1, cellResult));
+  
+  TS_ASSERT_EQUALS(true, ugrid->GetSingleCellStream(0, cellResult));
+  TS_ASSERT_EQUALS(cell0, cellResult);
+  TS_ASSERT_EQUALS(true, ugrid->GetSingleCellStream(1, cellResult));
+  TS_ASSERT_EQUALS(cell1, cellResult);
+  TS_ASSERT_EQUALS(true, ugrid->GetSingleCellStream(2, cellResult));
+  TS_ASSERT_EQUALS(cell2, cellResult);
+  TS_ASSERT_EQUALS(true, ugrid->GetSingleCellStream(3, cellResult));
+  TS_ASSERT_EQUALS(cell3, cellResult);
+
+  TS_ASSERT_EQUALS(false, ugrid->GetSingleCellStream((int)points.size(), cellResult));
+
+} // XmUGridUnitTests::testGetSingleCellStream
 //------------------------------------------------------------------------------
 /// \brief Test getting number of points, cells, and cell type.
 //------------------------------------------------------------------------------
@@ -1422,7 +1541,7 @@ void XmUGridUnitTests::testGetCellType()
   TS_ASSERT_EQUALS(XMU_PYRAMID, ugrid3d->GetCellType(5));
 } // XmUGridUnitTests::testGetCellType
 //------------------------------------------------------------------------------
-/// \brief Test getting dimension of single cells and all cells
+/// \brief Test getting dimension of single cells and all cells.
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCellDimension()
 {
@@ -1467,7 +1586,7 @@ void XmUGridUnitTests::testGetCellDimension()
   TS_ASSERT_EQUALS(threeDResults, ugrid3d->GetDimensionCount());
 } // XmUGridUnitTests::testGetCellDimension
 //------------------------------------------------------------------------------
-/// \brief Test getting edges of single cells
+/// \brief Test getting edges of single cells.
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetNumberOfCellEdges()
 {
@@ -1484,8 +1603,8 @@ void XmUGridUnitTests::testGetNumberOfCellEdges()
   TS_ASSERT_EQUALS(4, ugrid2d->GetNumberOfCellEdges(1));
   TS_ASSERT_EQUALS(3, ugrid2d->GetNumberOfCellEdges(2));
   TS_ASSERT_EQUALS(5, ugrid2d->GetNumberOfCellEdges(3));
-  TS_ASSERT_EQUALS(0, ugrid2d->GetNumberOfCellEdges(4));
-  TS_ASSERT_EQUALS(0, ugrid2d->GetNumberOfCellEdges(5));
+  TS_ASSERT_EQUALS(2, ugrid2d->GetNumberOfCellEdges(4));
+  TS_ASSERT_EQUALS(1, ugrid2d->GetNumberOfCellEdges(5));
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   if (!ugrid3d)
@@ -1505,7 +1624,7 @@ void XmUGridUnitTests::testGetNumberOfCellEdges()
 
 } // XmUGridUnitTests::testGetNumberOfCellEdges
 //------------------------------------------------------------------------------
-/// \brief Test getting edges of single cells
+/// \brief Test getting edges of single cells.
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetNumberOfCellFaces()
 {
@@ -1542,7 +1661,38 @@ void XmUGridUnitTests::testGetNumberOfCellFaces()
   TS_ASSERT_EQUALS(5, ugrid3d->GetNumberOfCellFaces(5));
 } // XmUGridUnitTests::testGetNumberOfCellFaces
 //------------------------------------------------------------------------------
-/// \brief Test getting edges of single cells
+/// \brief Test getting the cells attached to points.
+/// \code
+///
+///     0----1----2
+///     |    |    |
+///     3----4----5
+///
+/// \endcode
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetPointCellsSimple()
+{
+  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  
+                    {0, 0, 0},  {10, 0, 0},  {20, 0, 0}};
+
+  VecInt cellStream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2};
+
+  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellStream);
+
+  VecInt cellZero = {0};
+  VecInt cellZeroAndOne = {0,1};
+  VecInt cellOne = {1};
+  TS_ASSERT_EQUALS(cellZero, ugrid->GetPointCells(0));
+  TS_ASSERT_EQUALS(cellZeroAndOne, ugrid->GetPointCells(1));
+  TS_ASSERT_EQUALS(cellOne, ugrid->GetPointCells(2));
+  TS_ASSERT_EQUALS(cellZero, ugrid->GetPointCells(3));
+  TS_ASSERT_EQUALS(cellZeroAndOne, ugrid->GetPointCells(4));
+  TS_ASSERT_EQUALS(cellOne, ugrid->GetPointCells(5));
+
+} // XmUGridUnitTests::testGetNumberOfCellFaces
+
+//------------------------------------------------------------------------------
+/// \brief Test getting edges of single cells.
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetPointCells()
 {
@@ -1649,7 +1799,7 @@ private:
 
 
 //------------------------------------------------------------------------------
-/// \brief Tests creating a large UGrid and checks the time spent
+/// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testLargeUGridLinkSpeed()
 {
