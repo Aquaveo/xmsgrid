@@ -1121,7 +1121,7 @@ BSHP<XmUGrid> TEST_XmUGrid3dLinear()
 } // TEST_XmUGrid3dLinear
 //------------------------------------------------------------------------------
 /// \brief Builds a 1 cell hexagon with cell type polyhedron.
-/// \return Returns a builder for the UGrid.
+/// \return Returns the UGrid.
 //------------------------------------------------------------------------------
 BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
 {
@@ -1150,6 +1150,172 @@ BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
 
   return ugrid;
 } // TEST_XmUGridHexagonalPolyhedron
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \param[in] a_rows: number of rows in UGrid
+/// \param[in] a_cols: number of columns in UGrid
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols)
+{
+  VecPt3d points;
+  points.reserve(a_rows*a_cols);
+  for (int i = 0; i < a_rows; ++i)
+  {
+    for (int j = 0; j < a_cols; ++j)
+    {
+      points.push_back(Pt3d(j, a_rows-i));
+    }
+  }
+
+  VecInt cells;
+  cells.reserve((a_rows-1)*(a_cols-1)*6);
+  for (int i = 0; i < a_rows-1; ++i)
+  {
+    for (int j = 0; j < a_cols-1; ++j)
+    {
+      cells.push_back(XMU_QUAD);
+      cells.push_back(4);
+      cells.push_back(j+a_cols*i);
+      cells.push_back(j+a_cols*(i+1));
+      cells.push_back(j+1+a_cols*(i+1));
+      cells.push_back(j+1+a_cols*i);
+    }
+  }
+  
+  return XmUGrid::New(points, cells);
+}  // TEST_XmUBuildQuadUGrid
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \param[in] a_rows: number of rows in UGrid
+/// \param[in] a_cols: number of columns in UGrid
+/// \param[in] a_lays: number of layers in UGrid
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols, const int a_lays)
+{
+  VecPt3d points;
+  points.reserve(a_rows*a_cols);
+  for (int k = 0; k < a_lays; ++k)
+  {
+    for (int i = 0; i < a_rows; ++i)
+    {
+      for (int j = 0; j < a_cols; ++j)
+      {
+        points.push_back(Pt3d(j, a_rows-i, a_lays-k));
+      }
+    }
+  }
+
+  VecInt cells;
+  cells.reserve((a_rows-1)*(a_cols-1)*(a_lays-1)*10);
+  int numInLayer = a_rows*a_cols;
+  for (int k = 0; k < a_lays-1; ++k)
+  {
+    int layOffset = numInLayer*k;
+    for (int i = 0; i < a_rows-1; ++i)
+    {
+      for (int j = 0; j < a_cols-1; ++j)
+      {
+        cells.push_back(XMU_HEXAHEDRON);
+        cells.push_back(8);
+        cells.push_back(j + a_cols*i + layOffset);
+        cells.push_back(j + a_cols*(i+1) + layOffset);
+        cells.push_back(j + 1 + a_cols*(i+1) + layOffset);
+        cells.push_back(j + 1 + a_cols*i + layOffset);
+        cells.push_back(j + a_cols*i + layOffset + numInLayer);
+        cells.push_back(j + a_cols*(i+1) + layOffset + numInLayer);
+        cells.push_back(j + 1 + a_cols*(i+1) + layOffset + numInLayer);
+        cells.push_back(j + 1 + a_cols*i + layOffset + numInLayer);
+      }
+    }
+  }
+  return XmUGrid::New(points, cells);
+} // TEST_XmUBuildHexadronUgrid
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \param[in] a_rows: number of rows in UGrid
+/// \param[in] a_cols: number of columns in UGrid
+/// \param[in] a_lays: number of layers in UGrid
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays)
+{
+  VecPt3d points;
+  points.reserve(a_rows*a_cols);
+  for (int k = 0; k < a_lays; ++k)
+  {
+    for (int i = 0; i < a_rows; ++i)
+    {
+      for (int j = 0; j < a_cols; ++j)
+      {
+        points.push_back(Pt3d(j, a_rows-i, a_lays-k));
+      }
+    }
+  }
+
+  VecInt cells;
+  cells.reserve((a_rows-1)*(a_cols-1)*(a_lays-1)*10);
+  int numInLayer = a_rows*a_cols;
+  for (int k = 0; k < a_lays-1; ++k)
+  {
+    int layOffset = numInLayer*k;
+    for (int i = 0; i < a_rows-1; ++i)
+    {
+      for (int j = 0; j < a_cols-1; ++j)
+      {
+        int pt0 = j + a_cols*i + layOffset;
+        int pt1 = j + a_cols*(i+1) + layOffset;
+        int pt2 = j + 1 + a_cols*(i+1) + layOffset;
+        int pt3 = j + 1 + a_cols*i + layOffset;
+        int pt4 = j + a_cols*i + layOffset + numInLayer;
+        int pt5 = j + a_cols*(i+1) + layOffset + numInLayer;
+        int pt6 = j + 1 + a_cols*(i+1) + layOffset + numInLayer;
+        int pt7 = j + 1 + a_cols*i + layOffset + numInLayer;
+
+        cells.push_back(XMU_POLYHEDRON);
+        cells.push_back(6);
+        // top
+        cells.push_back(4);
+        cells.push_back(pt0);
+        cells.push_back(pt1);
+        cells.push_back(pt2);
+        cells.push_back(pt3);
+        // front
+        cells.push_back(4);
+        cells.push_back(pt0);
+        cells.push_back(pt1);
+        cells.push_back(pt5);
+        cells.push_back(pt7);
+        // right
+        cells.push_back(4);
+        cells.push_back(pt1);
+        cells.push_back(pt3);
+        cells.push_back(pt7);
+        cells.push_back(pt5);
+        // back
+        cells.push_back(4);
+        cells.push_back(pt3);
+        cells.push_back(pt2);
+        cells.push_back(pt6);
+        cells.push_back(pt7);
+        // left
+        cells.push_back(4);
+        cells.push_back(pt2);
+        cells.push_back(pt0);
+        cells.push_back(pt4);
+        cells.push_back(pt6);
+        // bottom
+        cells.push_back(4);
+        cells.push_back(pt4);
+        cells.push_back(pt5);
+        cells.push_back(pt6);
+        cells.push_back(pt7);
+      }
+    }
+  }
+  return XmUGrid::New(points, cells);
+}  // TEST_XmUBuildPolyhedronUgrid
 //------------------------------------------------------------------------------
 /// \brief Path to test files.
 /// \return Returns path to test files.
@@ -1461,7 +1627,7 @@ void XmUGridUnitTests::testGetPointCells()
 
 } // XmUGridUnitTests::testGetPointCells
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Timer Code
 //------------------------------------------------------------------------------
 
 #include <chrono>
@@ -1481,129 +1647,27 @@ private:
     std::chrono::time_point<clock_> beg_;
 };
 
+
+//------------------------------------------------------------------------------
+/// \brief Tests creating a large UGrid and checks the time spent
+//------------------------------------------------------------------------------
 void XmUGridUnitTests::testLargeUGridLinkSpeed()
 {
-//#def SPEEDTEST 5
+//#define SPEEDTEST 5
 #ifdef SPEEDTEST
   int rows = 500;
   int cols = 500;
   int lays = 4;
-  VecPt3d points;
-  points.reserve(rows*cols);
-  for (int k = 0; k < lays; ++k)
-  {
-    for (int i = 0; i < rows; ++i)
-    {
-      for (int j = 0; j < cols; ++j)
-      {
-        points.push_back(Pt3d(j, rows-i, lays-k));
-      }
-    }
-  }
 
-  //VecInt cells;
-  //cells.reserve((rows-1)*(cols-1)*6);
-  //for (int i = 0; i < rows-1; ++i)
-  //{
-  //  for (int j = 0; j < cols-1; ++j)
-  //  {
-  //    cells.push_back(XMU_QUAD);
-  //    cells.push_back(4);
-  //    cells.push_back(j+cols*i);
-  //    cells.push_back(j+cols*(i+1));
-  //    cells.push_back(j+1+cols*(i+1));
-  //    cells.push_back(j+1+cols*i);
-  //  }
-  //}
-  //VecInt cells;
-  //cells.reserve((rows-1)*(cols-1)*(lays-1)*10);
-  //int numInLayer = rows*cols;
-  //for (int k = 0; k < lays-1; ++k)
-  //{
-  //  int layOffset = numInLayer*k;
-  //  for (int i = 0; i < rows-1; ++i)
-  //  {
-  //    for (int j = 0; j < cols-1; ++j)
-  //    {
-  //      cells.push_back(XMU_HEXAHEDRON);
-  //      cells.push_back(8);
-  //      cells.push_back(j + cols*i + layOffset);
-  //      cells.push_back(j + cols*(i+1) + layOffset);
-  //      cells.push_back(j + 1 + cols*(i+1) + layOffset);
-  //      cells.push_back(j + 1 + cols*i + layOffset);
-  //      cells.push_back(j + cols*i + layOffset + numInLayer);
-  //      cells.push_back(j + cols*(i+1) + layOffset + numInLayer);
-  //      cells.push_back(j + 1 + cols*(i+1) + layOffset + numInLayer);
-  //      cells.push_back(j + 1 + cols*i + layOffset + numInLayer);
-  //    }
-  //  }
-  //}
-  VecInt cells;
-  cells.reserve((rows-1)*(cols-1)*(lays-1)*10);
-  int numInLayer = rows*cols;
-  for (int k = 0; k < lays-1; ++k)
-  {
-    int layOffset = numInLayer*k;
-    for (int i = 0; i < rows-1; ++i)
-    {
-      for (int j = 0; j < cols-1; ++j)
-      {
-        int pt0 = j + cols*i + layOffset;
-        int pt1 = j + cols*(i+1) + layOffset;
-        int pt2 = j + 1 + cols*(i+1) + layOffset;
-        int pt3 = j + 1 + cols*i + layOffset;
-        int pt4 = j + cols*i + layOffset + numInLayer;
-        int pt5 = j + cols*(i+1) + layOffset + numInLayer;
-        int pt6 = j + 1 + cols*(i+1) + layOffset + numInLayer;
-        int pt7 = j + 1 + cols*i + layOffset + numInLayer;
-
-        cells.push_back(XMU_POLYHEDRON);
-        cells.push_back(6);
-        // top
-        cells.push_back(4);
-        cells.push_back(pt0);
-        cells.push_back(pt1);
-        cells.push_back(pt2);
-        cells.push_back(pt3);
-        // front
-        cells.push_back(4);
-        cells.push_back(pt0);
-        cells.push_back(pt1);
-        cells.push_back(pt5);
-        cells.push_back(pt7);
-        // right
-        cells.push_back(4);
-        cells.push_back(pt1);
-        cells.push_back(pt3);
-        cells.push_back(pt7);
-        cells.push_back(pt5);
-        // back
-        cells.push_back(4);
-        cells.push_back(pt3);
-        cells.push_back(pt2);
-        cells.push_back(pt6);
-        cells.push_back(pt7);
-        // left
-        cells.push_back(4);
-        cells.push_back(pt2);
-        cells.push_back(pt0);
-        cells.push_back(pt4);
-        cells.push_back(pt6);
-        // bottom
-        cells.push_back(4);
-        cells.push_back(pt4);
-        cells.push_back(pt5);
-        cells.push_back(pt6);
-        cells.push_back(pt7);
-      }
-    }
-  }
+  BSHP<xms::XmUGrid> grid = TEST_XmUBuildQuadUGrid(rows, cols);
+  //BSHP<xms::XmUGrid> grid = TEST_XmUBuildHexadronUgrid(rows, cols, lays);
+  //BSHP<xms::XmUGrid> grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
 
   {
     Timer timer2;
-    BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+    BSHP<XmUGrid> ugrid = XmUGrid::New(grid->GetPoints(), grid->GetCellStream());
     double seconds2 = timer2.elapsed();
-    //TS_ASSERT_EQUALS(0.0, seconds2);
+    TS_ASSERT_EQUALS(0.0, seconds2);
   }
 #endif
 } // XmUGridUnitTests::testLargeUGridLinkSpeed
