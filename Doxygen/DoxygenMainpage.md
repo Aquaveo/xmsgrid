@@ -8,7 +8,7 @@ xmsgrid {#xmsgrid}
 Introduction {#XmsugridIntroduction}
 ------------
 
-xmsgrid is a spatial interpolation library used in xms libraries and products.
+xmsgrid is a grid geometry library used in xms libraries and products.
 
 <table align="center" border="0">
   <tr>
@@ -23,9 +23,7 @@ The code is distributed under the xmsng Software License, Version 1.0. (See acco
 
 Features {#XmsgridFeatures}
 --------
-The library supports both 2D (x,y) and 3D (x,y,z) interpolation. Supported 2d interpolation methods include: linear, natural neighbor, clough tocher, and inverse distance weighted (IDW). IDW also supports 3D interpolation. IDW and natural neighbor support modeling data trends using gradient plane and quadratic nodal functions. See the following tutorial for example code.
-
-* [Interpolation tutorial](Interpolation_Tutorial.md)
+The library supports unstructured grids with 0D, 1D, 2D and 3D elements.
 
 Testing {#XmsgridTesting}
 -------

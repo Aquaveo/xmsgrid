@@ -109,6 +109,9 @@ public:
   static BSHP<XmUGrid> New();
   virtual ~XmUGrid();
 
+  static bool ValidCellStream(const VecInt& a_cellStream);
+
+  /// \cond
   virtual int GetNumberOfPoints() const = 0;
   virtual int GetNumberOfCells() const = 0;
 
@@ -129,8 +132,6 @@ public:
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
-
-  static bool ValidCellStream(const VecInt& a_cellStream);
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)

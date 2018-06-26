@@ -17,6 +17,7 @@
 // 6. Non-shared Headers
 
 ////////////////////////////////////////////////////////////////////////////////
+/// Tests for XmUGrid utility functions.
 class XmUGridUtilsTests : public CxxTest::TestSuite
 {
 public:

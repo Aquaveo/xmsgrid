@@ -37,6 +37,7 @@ namespace xms
 //----- Class / Function definitions -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
+/// Implementation for XmUGrid
 class XmUGridImpl : public XmUGrid
 {
 public:
@@ -72,12 +73,12 @@ private:
   int GetNumberOfPolyhedronEdges(const int a_cellIdx) const;
 
   VecPt3d m_points; ///< UGrid points
-  VecInt m_cellStream; ///< UGrid cell stream. For description see SetCellStream
+  VecInt m_cellStream; ///< UGrid cell stream. @see SetCellStream, GetCellStream
   VecInt m_cellIdxToStreamIdx; ///< Indexes for each cell in the cell stream
   VecInt m_pointIdxToPointsToCells; ///< Indexes for each point in array of points cells
   VecInt m_pointsToCells; ///< Array of points cells (goes from pointIdx to list of cells)
   VecInt2d m_pointToCells2dVec; ///< Array of cells connected to a point
-  static int m_pointLinkReserveSize;
+  static int m_pointLinkReserveSize; ///< Amount to reserve in 1D portion of 2D link array
 };
 
 int XmUGridImpl::m_pointLinkReserveSize = 20;
@@ -85,7 +86,8 @@ int XmUGridImpl::m_pointLinkReserveSize = 20;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
-/// \brief Merges two UGrids.
+/// \brief Implementation for XmUGrid which provides geometry for an
+///        unstructured grid.
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief
@@ -114,6 +116,7 @@ int XmUGridImpl::GetNumberOfCells() const
 } // XmUGridImpl::GetNumberOfCells
 //------------------------------------------------------------------------------
 /// \brief Get the number of cells.
+/// \param[in] a_cellIdx: the index of the cell
 /// \return the number of cells or -1 if invalid index
 //------------------------------------------------------------------------------
 XmUGridCellType XmUGridImpl::GetCellType(int a_cellIdx) const
@@ -271,7 +274,7 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
   return -1;  
 } // XmUGridImpl::GetNumberOfCellEdges
 //------------------------------------------------------------------------------
-/// \brief Get the number of faces with specified cell
+/// \brief Get the number of cell faces for given cell.
 /// \param[in] a_cellIdx: the index of the cell
 /// \return the count of cell faces
 //------------------------------------------------------------------------------
@@ -422,8 +425,8 @@ VecInt XmUGridImpl::GetPointCells2(const int a_pointIdx) const
 //------------------------------------------------------------------------------
 /// \brief Get cell stream vector for a single cell.
 /// \param[in] a_cellIdx: the index of the cell
-/// \param[in] a_cellStream: The cellstream of the cell, see SetCellStream for 
-///    more detail on cell stream definitions.
+/// \param[in] a_cellStream: The cellstream of the cell
+/// @see SetCellStream for more detail on cell stream definitions.
 /// \return whether it was successfull or not
 //------------------------------------------------------------------------------
 bool XmUGridImpl::GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const
@@ -439,7 +442,7 @@ bool XmUGridImpl::GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream)
   return true;
 } // XmUGridImpl::GetSingleCellStream
 //------------------------------------------------------------------------------
-/// \brief Get cell stream vector.
+/// \brief Get cell stream vector for the entire UGrid.
 /// \return constant reference to the cell stream vector
 //------------------------------------------------------------------------------
 const VecInt& XmUGridImpl::GetCellStream() const
@@ -447,7 +450,7 @@ const VecInt& XmUGridImpl::GetCellStream() const
   return m_cellStream;
 } // XmUGridImpl::GetCellStream
 //------------------------------------------------------------------------------
-/// \brief Set the ugrid cells using a cell stream.
+/// \brief Set the ugrid cells for the entire UGrid using a cell stream.
 /// \param[in] a_cellStream: cells defined as follows:
 ///              Hexahedrons, polygons, quads, triangles etc:
 ///                Cell type (ElemTypeEnum), number of points, point numbers.
@@ -457,6 +460,7 @@ const VecInt& XmUGridImpl::GetCellStream() const
 ///                Cell type, number of faces, [num points in face,
 ///                point numbers (1-based, CCW when looking in)] repeated
 ///                for each face.
+/// \return if successfully set
 //------------------------------------------------------------------------------
 bool XmUGridImpl::SetCellStream(const VecInt& a_cellStream)
 {
@@ -822,7 +826,7 @@ int XmUGridImpl::DimensionFromCellType(const XmUGridCellType a_cellType)
 //------------------------------------------------------------------------------
 /// \brief Get number of items given cell. For polyhedron number of items is
 ///        number of faces. For other cell types it is number of points.
-/// \param[in] a_cellIdx: the cell
+/// \param[in] a_cellIdx: the index of the cell
 /// \return the number of faces for polyhedron or number of points.
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetNumberOfItemsForCell(const int a_cellIdx) const
@@ -846,8 +850,8 @@ int XmUGridImpl::GetNumberOfItemsForCell(const int a_cellIdx) const
 }  // XmUGridImpl::GetNumberOfPointsForCell
 //------------------------------------------------------------------------------
 /// \brief Internal function to get start of cell stream for an individual cell.
-///        Returns nullptr and zero length for invalid cellIdx.
-/// \param[in] a_cellIdx: the cell
+///        Returns nullptr and zero length for invalid cell index.
+/// \param[in] a_cellIdx: the index of the cell
 /// \param[out] a_start: pointer to the start of the stream for the cell
 /// \param[out] a_length: the length of the stream for the cell
 //------------------------------------------------------------------------------
@@ -869,7 +873,7 @@ void XmUGridImpl::GetSingleCellStream(const int a_cellIdx, const int** a_start, 
 } // XmUGridImpl::GetSingleCellStream
 //------------------------------------------------------------------------------
 /// \brief Get the number of edges for a polyhedron cell.
-/// \param[in] a_cellIdx: the cell
+/// \param[in] a_cellIdx: the index of the cell
 /// \return the number of edges
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetNumberOfPolyhedronEdges(const int a_cellIdx) const
@@ -908,7 +912,7 @@ int XmUGridImpl::GetNumberOfPolyhedronEdges(const int a_cellIdx) const
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
-/// \brief Merges two UGrids.
+/// \brief Geometry for an unstructured grid.
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Create a new XmUGrid.
