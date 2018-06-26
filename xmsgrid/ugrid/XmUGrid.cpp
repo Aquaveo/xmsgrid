@@ -57,7 +57,6 @@ public:
   virtual void SetPoints(const VecPt3d& a_points) override;
 
   virtual VecInt GetPointCells(const int a_pointIdx) const override;
-  virtual VecInt GetPointCells2(const int a_pointIdx) const override;
 
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const override;
   virtual const VecInt& GetCellStream() const override;
@@ -67,7 +66,6 @@ private:
   void UpdateLinks();
   void UpdateCellLinks();
   void UpdatePointLinks();
-  void UpdatePointLinks2();
   static int DimensionFromCellType(const XmUGridCellType a_cellType);
   int GetNumberOfItemsForCell(const int a_cellIdx) const;
   void GetSingleCellStream(const int a_cellIdx, const int** a_start, int &a_length) const;
@@ -78,14 +76,10 @@ private:
   VecInt m_cellIdxToStreamIdx; ///< Indexes for each cell in the cell stream
   VecInt m_pointIdxToPointsToCells; ///< Indexes for each point in array of points cells
   VecInt m_pointsToCells; ///< Array of points cells (goes from pointIdx to list of cells)
-  VecInt2d m_pointToCells2dVec; ///< Array of cells connected to a point
 public:
   static int m_pointLinkReserveSize; ///< Amount to reserve in 1D portion of 2D link array
 };
 
-int XmUGridImpl::m_pointLinkReserveSize = 20;
-
-bool fg_simplifiedLinks = false;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -414,19 +408,6 @@ VecInt XmUGridImpl::GetPointCells(const int a_pointIdx) const
   return cellsOfPoint;
 } // XmUGridImpl::GetPointCells
 //------------------------------------------------------------------------------
-/// \brief Get the cells that are associated with the specified point
-/// \param[in] a_pointIdx: the index of the point
-/// \return a vector of the cell indexes associated with this point
-//------------------------------------------------------------------------------
-VecInt XmUGridImpl::GetPointCells2(const int a_pointIdx) const
-{
-  if (a_pointIdx >= 0 && a_pointIdx < m_pointToCells2dVec.size())
-  {
-    return m_pointToCells2dVec[a_pointIdx];
-  }
-  return VecInt();
-} // XmUGridImpl::GetPointCells2
-//------------------------------------------------------------------------------
 /// \brief Get cell stream vector for a single cell.
 /// \param[in] a_cellIdx: the index of the cell
 /// \param[in] a_cellStream: The cellstream of the cell
@@ -487,10 +468,7 @@ bool XmUGridImpl::SetCellStream(const VecInt& a_cellStream)
 void XmUGridImpl::UpdateLinks()
 {
   UpdateCellLinks();
-  if (!fg_simplifiedLinks)
-    UpdatePointLinks();
-  else
-    UpdatePointLinks2();
+  UpdatePointLinks();
 } // XmUGridImpl::UpdateLinks
 //------------------------------------------------------------------------------
 /// \brief Update internal link from cells to cell stream index.
@@ -671,76 +649,7 @@ void XmUGridImpl::UpdatePointLinks()
     ++cellIdx;
   }
 } // XmUGridImpl::UpdatePointLinks
-//------------------------------------------------------------------------------
-/// \brief Update internal links from points to associated cells.
-//------------------------------------------------------------------------------
-void XmUGridImpl::UpdatePointLinks2()
-{
-  m_pointToCells2dVec.clear();
-  m_pointToCells2dVec.reserve(m_points.size());
-  VecInt fourCells;
-  for (size_t i = 0; i < m_points.size(); ++i)
-  {
-    m_pointToCells2dVec.push_back(fourCells);
-    m_pointToCells2dVec.back().reserve(m_pointLinkReserveSize);
-  }
-  //VecInt fourCells;
-  //if (XmUGridImpl::m_pointLinkReserveSize > 0)
-  //  fourCells.reserve(m_pointLinkReserveSize);
-  //m_pointToCells2dVec.resize(m_points.size(), fourCells);
 
-  boost::container::flat_set<int> cellPoints;
-  int numStreamItems = (int)m_cellStream.size();
-  int cellIdx = 0;
-  int currIdx = 0;
-  while (currIdx < numStreamItems)
-  {
-    // get cell type
-    int cellType = m_cellStream[currIdx++];
-    if (currIdx >= numStreamItems)
-      return;
-
-    // get the number of items (points or faces depending on cell type)
-    int numCellItems = m_cellStream[currIdx++];
-    if (currIdx >= numStreamItems)
-      return;
-
-    if (cellType == XMU_POLYHEDRON)
-    {
-      cellPoints.clear();
-      int numFaces = numCellItems;
-      for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
-      {
-        int numFacePoints = m_cellStream[currIdx++];
-        for (int ptIdx = 0; ptIdx < numFacePoints; ++ptIdx)
-        {
-          int pt = m_cellStream[currIdx++];
-          cellPoints.insert(pt);
-        }
-      }
-      //std::stable_sort(cellPoints.begin(), cellPoints.end());
-      //auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
-
-      //for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
-      for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
-      {
-        m_pointToCells2dVec[*pt].push_back(cellIdx);
-      }
-    }
-    else
-    {
-      // iterate on points
-      int numPoints = numCellItems;
-      for (int ptIdx = 0; ptIdx < numPoints; ++ptIdx)
-      {
-        int pt = m_cellStream[currIdx++];
-        m_pointToCells2dVec[pt].push_back(cellIdx);
-      }
-    }
-
-    ++cellIdx;
-  }
-} // XmUGridImpl::UpdatePointLinks2
 //------------------------------------------------------------------------------
 /// \brief Get the dimension given the cell type (0d, 1d, 2d, or 3d).
 /// \param[in] a_cellType: the cell type
@@ -1498,7 +1407,6 @@ void XmUGridUnitTests::testGetPointCells()
   for (int i(0); i<cellsFor2DPoints.size(); i++)
   {
     TS_ASSERT_EQUALS(cellsFor2DPoints[i], ugrid2d->GetPointCells(i));
-    TS_ASSERT_EQUALS(cellsFor2DPoints[i], ugrid2d->GetPointCells2(i));
   }
   
 
@@ -1549,7 +1457,6 @@ void XmUGridUnitTests::testGetPointCells()
       TS_FAIL(i);
     }
     TS_ASSERT_EQUALS(cellsFor3DPoints[i], ugrid3d->GetPointCells(i));
-    TS_ASSERT_EQUALS(cellsFor3DPoints[i], ugrid3d->GetPointCells2(i));
   }
 
 } // XmUGridUnitTests::testGetPointCells
@@ -1576,6 +1483,8 @@ private:
 
 void XmUGridUnitTests::testLargeUGridLinkSpeed()
 {
+//#def SPEEDTEST 5
+#ifdef SPEEDTEST
   int rows = 500;
   int cols = 500;
   int lays = 4;
@@ -1691,23 +1600,12 @@ void XmUGridUnitTests::testLargeUGridLinkSpeed()
   }
 
   {
-    fg_simplifiedLinks = false;
     Timer timer2;
     BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
     double seconds2 = timer2.elapsed();
-    TS_ASSERT_EQUALS(0.0, seconds2);
+    //TS_ASSERT_EQUALS(0.0, seconds2);
   }
-
-  fg_simplifiedLinks = true;
-  for (int i = 28; i < 32; ++i)
-  {
-    fg_simplifiedLinks = true;
-    XmUGridImpl::m_pointLinkReserveSize = i;
-    Timer timer1;
-    BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
-    double seconds1 = timer1.elapsed();
-    TS_ASSERT_EQUALS(0.0, seconds1);
-  }
+#endif
 } // XmUGridUnitTests::testLargeUGridLinkSpeed
 
 #endif

@@ -126,7 +126,6 @@ public:
   virtual void SetPoints(const VecPt3d& a_points) = 0;
 
   virtual VecInt GetPointCells(const int a_pointIdx) const = 0;
-  virtual VecInt GetPointCells2(const int a_pointIdx) const = 0;
 
 
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
