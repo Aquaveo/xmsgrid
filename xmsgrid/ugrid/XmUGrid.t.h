@@ -46,11 +46,21 @@ BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGrid3dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGridHexagonalPolyhedron();
 BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols);
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols, const xms::Pt3d &a_origin);
+BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows,
+                                          const int a_cols,
+                                          const xms::Pt3d& a_origin);
 BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols, const int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &a_origin);
+BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows,
+                                              const int a_cols,
+                                              const int a_lays,
+                                              const xms::Pt3d& a_origin);
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
+                                                const int a_cols,
+                                                const int a_lays);
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
+                                                const int a_cols,
+                                                const int a_lays,
+                                                const xms::Pt3d& a_origin);
 std::string TestFilesPath();
 
 #endif

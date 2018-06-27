@@ -124,13 +124,12 @@ public:
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
 
-  virtual void GetExtents(Pt3d &a_min, Pt3d &a_max) const = 0;
+  virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
 
   virtual const VecPt3d& GetPoints() const = 0;
   virtual void SetPoints(const VecPt3d& a_points) = 0;
 
   virtual VecInt GetPointCells(const int a_pointIdx) const = 0;
-
 
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
   virtual const VecInt& GetCellStream() const = 0;

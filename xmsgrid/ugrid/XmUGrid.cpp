@@ -57,7 +57,7 @@ public:
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const override;
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
 
-  virtual void GetExtents(Pt3d &a_min, Pt3d &a_max) const override;
+  virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const override;
 
   virtual const VecPt3d& GetPoints() const override;
   virtual void SetPoints(const VecPt3d& a_points) override;
@@ -74,19 +74,17 @@ private:
   void UpdatePointLinks();
   static int DimensionFromCellType(const XmUGridCellType a_cellType);
   int GetNumberOfItemsForCell(const int a_cellIdx) const;
-  void GetSingleCellStream(const int a_cellIdx, const int** a_start, int &a_length) const;
+  void GetSingleCellStream(const int a_cellIdx, const int** a_start, int& a_length) const;
   int GetNumberOfPolyhedronEdges(const int a_cellIdx) const;
 
-  VecPt3d m_points; ///< UGrid points
-  VecInt m_cellStream; ///< UGrid cell stream. @see SetCellStream, GetCellStream
-  VecInt m_cellIdxToStreamIdx; ///< Indexes for each cell in the cell stream
+  VecPt3d m_points;                 ///< UGrid points
+  VecInt m_cellStream;              ///< UGrid cell stream. @see SetCellStream, GetCellStream
+  VecInt m_cellIdxToStreamIdx;      ///< Indexes for each cell in the cell stream
   VecInt m_pointIdxToPointsToCells; ///< Indexes for each point in array of points cells
-  VecInt m_pointsToCells; ///< Array of points cells (goes from pointIdx to list of cells)
+  VecInt m_pointsToCells;           ///< Array of points cells (goes from pointIdx to list of cells)
 public:
   static int m_pointLinkReserveSize; ///< Amount to reserve in 1D portion of 2D link array
 };
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
@@ -178,7 +176,7 @@ std::vector<int> XmUGridImpl::GetDimensionCount() const
 {
   std::vector<int> m_dimensionCounts(4, 0);
   int itemp(0);
-  for (int i(0); i<m_cellIdxToStreamIdx.size()-1; i++)
+  for (int i(0); i < m_cellIdxToStreamIdx.size() - 1; i++)
   {
     itemp = GetCellDimension(i);
     if (itemp >= 0)
@@ -195,7 +193,6 @@ std::vector<int> XmUGridImpl::GetDimensionCount() const
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
 {
-  
   int cellType(GetCellType(a_cellIdx));
   switch (cellType)
   {
@@ -217,13 +214,13 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
     return 1;
     break;
   case XMU_POLY_LINE:
-    return GetNumberOfItemsForCell(a_cellIdx)-1;
+    return GetNumberOfItemsForCell(a_cellIdx) - 1;
     break;
 
   case XMU_QUADRATIC_EDGE:
   case XMU_PARAMETRIC_CURVE:
   case XMU_HIGHER_ORDER_EDGE:
-  case XMU_CUBIC_LINE:  // Cubic, isoparametric cell
+  case XMU_CUBIC_LINE: // Cubic, isoparametric cell
     return 0;
     break;
 
@@ -233,7 +230,7 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
   case XMU_BIQUADRATIC_TRIANGLE:
   case XMU_HIGHER_ORDER_TRIANGLE:
     return 3;
-  break;
+    break;
 
   case XMU_PIXEL:
   case XMU_QUAD:
@@ -242,29 +239,29 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
   case XMU_QUADRATIC_LINEAR_QUAD:
   case XMU_HIGHER_ORDER_QUAD:
     return 4;
-  break;
+    break;
 
   case XMU_POLYGON:
   case XMU_HIGHER_ORDER_POLYGON:
-    return GetNumberOfItemsForCell(a_cellIdx)-1;
+    return GetNumberOfItemsForCell(a_cellIdx) - 1;
     break;
   case XMU_QUADRATIC_POLYGON:
     return -1; // Not yet supported
-  break;
+    break;
 
   case XMU_PARAMETRIC_SURFACE:
   case XMU_PARAMETRIC_TRI_SURFACE:
   case XMU_PARAMETRIC_QUAD_SURFACE:
     return -1; // Not yet supported
-  break;
- 
+    break;
+
   // 3D dimensions
   case XMU_TETRA:
   case XMU_QUADRATIC_TETRA:
   case XMU_HIGHER_ORDER_TETRAHEDRON:
     return 6;
     break;
-    
+
   case XMU_WEDGE:
   case XMU_QUADRATIC_WEDGE:
   case XMU_QUADRATIC_LINEAR_WEDGE:
@@ -304,7 +301,7 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
     return -1; // Not yet supported
     break;
   }
-  return -1;  
+  return -1;
 } // XmUGridImpl::GetNumberOfCellEdges
 //------------------------------------------------------------------------------
 /// \brief Get the number of cell faces for given cell.
@@ -313,7 +310,6 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
 {
-  
   int cellType(GetCellType(a_cellIdx));
   switch (cellType)
   {
@@ -337,7 +333,7 @@ int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
   case XMU_QUADRATIC_EDGE:
   case XMU_PARAMETRIC_CURVE:
   case XMU_HIGHER_ORDER_EDGE:
-  case XMU_CUBIC_LINE:  // Cubic, isoparametric cell
+  case XMU_CUBIC_LINE: // Cubic, isoparametric cell
     return 0;
     break;
 
@@ -360,15 +356,15 @@ int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
   case XMU_PARAMETRIC_TRI_SURFACE:
   case XMU_PARAMETRIC_QUAD_SURFACE:
     return 0;
-  break;
- 
+    break;
+
   // 3D dimensions
   case XMU_TETRA:
   case XMU_QUADRATIC_TETRA:
   case XMU_HIGHER_ORDER_TETRAHEDRON:
     return 4;
     break;
-    
+
   case XMU_WEDGE:
   case XMU_QUADRATIC_WEDGE:
   case XMU_QUADRATIC_LINEAR_WEDGE:
@@ -408,17 +404,18 @@ int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
     return -1; // Not yet supported
     break;
   }
-  return -1;  
+  return -1;
 } // XmUGridImpl::GetNumberOfCellFaces
 //------------------------------------------------------------------------------
-/// \brief Get vector of UGrid points.
-/// \return constant reference to vector of points
+/// \brief Get extents of all points in UGrid
+/// \param[out] a_min: minimum extent of all points
+/// \param[out] a_max: maximum extent of all points
 //------------------------------------------------------------------------------
-void XmUGridImpl::GetExtents(Pt3d &a_min, Pt3d &a_max) const
+void XmUGridImpl::GetExtents(Pt3d& a_min, Pt3d& a_max) const
 {
   a_min.x = a_min.y = a_min.z = xms::XM_DBL_HIGHEST;
   a_max.x = a_max.y = a_max.z = xms::XM_DBL_LOWEST;
-  for (int i(0); i<m_points.size(); i++)
+  for (int i(0); i < m_points.size(); i++)
   {
     if (m_points[i].x < a_min.x)
       a_min.x = m_points[i].x;
@@ -461,9 +458,9 @@ VecInt XmUGridImpl::GetPointCells(const int a_pointIdx) const
 {
   VecInt cellsOfPoint;
   int numCells = m_pointsToCells[m_pointIdxToPointsToCells[a_pointIdx]];
-  for (int cellIdx=0; cellIdx<numCells; cellIdx++)
+  for (int cellIdx = 0; cellIdx < numCells; cellIdx++)
   {
-    cellsOfPoint.push_back(m_pointsToCells[m_pointIdxToPointsToCells[a_pointIdx]+cellIdx+1]);
+    cellsOfPoint.push_back(m_pointsToCells[m_pointIdxToPointsToCells[a_pointIdx] + cellIdx + 1]);
   }
   return cellsOfPoint;
 } // XmUGridImpl::GetPointCells
@@ -481,9 +478,8 @@ bool XmUGridImpl::GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream)
   {
     return false;
   }
-  int startIndex(m_cellIdxToStreamIdx[a_cellIdx]),
-    endIndex(m_cellIdxToStreamIdx[a_cellIdx+1]);
-  a_cellStream.assign(m_cellStream.begin()+startIndex, m_cellStream.begin()+endIndex);
+  int startIndex(m_cellIdxToStreamIdx[a_cellIdx]), endIndex(m_cellIdxToStreamIdx[a_cellIdx + 1]);
+  a_cellStream.assign(m_cellStream.begin() + startIndex, m_cellStream.begin() + endIndex);
   return true;
 } // XmUGridImpl::GetSingleCellStream
 //------------------------------------------------------------------------------
@@ -616,10 +612,10 @@ void XmUGridImpl::UpdatePointLinks()
         }
       }
 
-      //std::stable_sort(cellPoints.begin(), cellPoints.end());
-      //auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
+      // std::stable_sort(cellPoints.begin(), cellPoints.end());
+      // auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
 
-      //for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      // for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
       for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
       {
         m_pointIdxToPointsToCells[*pt] += 1;
@@ -642,7 +638,7 @@ void XmUGridImpl::UpdatePointLinks()
 
   // change array of counts to array of offsets
   int currCount = 0;
-  for (auto& item: m_pointIdxToPointsToCells)
+  for (auto& item : m_pointIdxToPointsToCells)
   {
     int count = item + 1;
     item = currCount;
@@ -678,15 +674,15 @@ void XmUGridImpl::UpdatePointLinks()
         }
       }
 
-      //std::stable_sort(cellPoints.begin(), cellPoints.end());
-      //auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
+      // std::stable_sort(cellPoints.begin(), cellPoints.end());
+      // auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
 
-      //for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
+      // for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
       for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
       {
         int countIdx = m_pointIdxToPointsToCells[*pt];
         int& count = m_pointsToCells[countIdx]; // point's cell count
-        ++count; // incrementing point's cell count
+        ++count;                                // incrementing point's cell count
         int updateIdx = countIdx + count;
         m_pointsToCells[updateIdx] = cellIdx;
       }
@@ -700,7 +696,7 @@ void XmUGridImpl::UpdatePointLinks()
         int pt = m_cellStream[currIdx++];
         int countIdx = m_pointIdxToPointsToCells[pt];
         int& count = m_pointsToCells[countIdx]; // point's cell count
-        ++count; // incrementing point's cell count
+        ++count;                                // incrementing point's cell count
         int updateIdx = countIdx + count;
         m_pointsToCells[updateIdx] = cellIdx;
       }
@@ -739,7 +735,7 @@ int XmUGridImpl::DimensionFromCellType(const XmUGridCellType a_cellType)
   case XMU_QUADRATIC_EDGE:
   case XMU_PARAMETRIC_CURVE:
   case XMU_HIGHER_ORDER_EDGE:
-  case XMU_CUBIC_LINE:  // Cubic, isoparametric cell
+  case XMU_CUBIC_LINE: // Cubic, isoparametric cell
     return 1;
     break;
   // 2D
@@ -771,7 +767,7 @@ int XmUGridImpl::DimensionFromCellType(const XmUGridCellType a_cellType)
   default:
     return 3;
     break;
-#if 0  // Remaining definitions
+#if 0 // Remaining definitions
     XMU_TETRA = 10,
     XMU_VOXEL = 11,
     XMU_HEXAHEDRON = 12,
@@ -803,7 +799,6 @@ int XmUGridImpl::DimensionFromCellType(const XmUGridCellType a_cellType)
     XMU_HIGHER_ORDER_PYRAMID = 66,
     XMU_HIGHER_ORDER_HEXAHEDRON = 67,
 #endif
-
   }
   return -1;
 
@@ -833,7 +828,7 @@ int XmUGridImpl::GetNumberOfItemsForCell(const int a_cellIdx) const
     int startIndex = m_cellIdxToStreamIdx[a_cellIdx];
     return m_cellStream[startIndex + 1];
   }
-}  // XmUGridImpl::GetNumberOfPointsForCell
+} // XmUGridImpl::GetNumberOfPointsForCell
 //------------------------------------------------------------------------------
 /// \brief Internal function to get start of cell stream for an individual cell.
 ///        Returns nullptr and zero length for invalid cell index.
@@ -841,7 +836,7 @@ int XmUGridImpl::GetNumberOfItemsForCell(const int a_cellIdx) const
 /// \param[out] a_start: pointer to the start of the stream for the cell
 /// \param[out] a_length: the length of the stream for the cell
 //------------------------------------------------------------------------------
-void XmUGridImpl::GetSingleCellStream(const int a_cellIdx, const int** a_start, int &a_length) const
+void XmUGridImpl::GetSingleCellStream(const int a_cellIdx, const int** a_start, int& a_length) const
 {
   int cellType = GetCellType(a_cellIdx);
   if (cellType == XMU_INVALID_CELL_TYPE)
@@ -852,7 +847,7 @@ void XmUGridImpl::GetSingleCellStream(const int a_cellIdx, const int** a_start, 
   else
   {
     int startIndex = m_cellIdxToStreamIdx[a_cellIdx];
-    int nextCellIndex = m_cellIdxToStreamIdx[a_cellIdx+1];
+    int nextCellIndex = m_cellIdxToStreamIdx[a_cellIdx + 1];
     *a_start = &m_cellStream[startIndex];
     a_length = nextCellIndex - startIndex;
   }
@@ -877,7 +872,7 @@ int XmUGridImpl::GetNumberOfPolyhedronEdges(const int a_cellIdx) const
       for (int pointIdx = 0; pointIdx < numPoints; ++pointIdx)
       {
         int pt1Idx = pointIdx;
-        int pt2Idx = (pointIdx + 1) % numPoints; 
+        int pt2Idx = (pointIdx + 1) % numPoints;
         // The % operator will reset the index back 0 so the final loop will
         // provide the last and first point
         int pt1 = cellStream[currItem + pt1Idx];
@@ -1039,7 +1034,7 @@ bool XmUGrid::ValidCellStream(const VecInt& a_cellStream)
         currIdx += numPoints;
       }
     }
-      break;
+    break;
     default:
       currIdx += numPoints;
       break;
@@ -1089,32 +1084,45 @@ BSHP<XmUGrid> TEST_XmUGrid1Left90Tri()
 //------------------------------------------------------------------------------
 BSHP<XmUGrid> TEST_XmUGrid2dLinear()
 {
-  VecPt3d points = {
-    {0, 0, 0},
-    {10, 0, 0},
-    {20, 0, 0},
-    {30, 0, 0},
-    {40, 0, 0},
-    {0, 10, 0},
-    {10, 10, 0},
-    {20, 10, 0},
-    {40, 10, 0},
-    {0, 20, 0},
-    {10, 20, 0},
-    {20, 20, 0},
-    {30, 20, 0},
-    {40, 20, 0}
-  };
+  VecPt3d points = {{0, 0, 0},   {10, 0, 0},  {20, 0, 0},  {30, 0, 0},  {40, 0, 0},
+                    {0, 10, 0},  {10, 10, 0}, {20, 10, 0}, {40, 10, 0}, {0, 20, 0},
+                    {10, 20, 0}, {20, 20, 0}, {30, 20, 0}, {40, 20, 0}};
 
   // Cell type (5), number of points (3), point numbers, counterclockwise
-  std::vector<int> cells = {
-    (int)XMU_QUAD, 4, 0, 1, 6, 5,
-    (int)XMU_PIXEL, 4, 1, 2, 6, 7,
-    (int)XMU_TRIANGLE, 3, 2, 3, 7,
-    (int)XMU_POLYGON, 6, 3, 4, 8, 13, 12, 7,
-    (int)XMU_POLY_LINE, 3, 7, 11, 10,
-    (int)XMU_LINE, 2, 5, 9
-  };
+  std::vector<int> cells = {(int)XMU_QUAD,
+                            4,
+                            0,
+                            1,
+                            6,
+                            5,
+                            (int)XMU_PIXEL,
+                            4,
+                            1,
+                            2,
+                            6,
+                            7,
+                            (int)XMU_TRIANGLE,
+                            3,
+                            2,
+                            3,
+                            7,
+                            (int)XMU_POLYGON,
+                            6,
+                            3,
+                            4,
+                            8,
+                            13,
+                            12,
+                            7,
+                            (int)XMU_POLY_LINE,
+                            3,
+                            7,
+                            11,
+                            10,
+                            (int)XMU_LINE,
+                            2,
+                            5,
+                            9};
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
@@ -1126,54 +1134,87 @@ BSHP<XmUGrid> TEST_XmUGrid2dLinear()
 //------------------------------------------------------------------------------
 BSHP<XmUGrid> TEST_XmUGrid3dLinear()
 {
-  VecPt3d points = {
-    {0, 0, 0},
-    {10, 0, 0},
-    {20, 0, 0},
-    {30, 0, 0},
-    {40, 0, 0},
-    {0, 10, 0},
-    {10, 10, 0},
-    {20, 10, 0},
-    {30, 10, 0},
-    {40, 10, 0},
-    {0, 10, 0},
-    {10, 20, 0},
-    {20, 20, 0},
-    {30, 20, 0},
-    {40, 20, 0},
-    {0, 0, 10},
-    {10, 0, 10},
-    {20, 0, 10},
-    {30, 0, 10},
-    {40, 0, 10},
-    {0, 10, 10},
-    {10, 10, 10},
-    {20, 10, 10},
-    {30, 10, 10},
-    {40, 10, 10},
-    {0, 10, 10},
-    {10, 20, 10},
-    {20, 20, 10},
-    {30, 20, 10},
-    {40, 20, 10}
-  };
+  VecPt3d points = {{0, 0, 0},   {10, 0, 0},   {20, 0, 0},   {30, 0, 0},   {40, 0, 0},
+                    {0, 10, 0},  {10, 10, 0},  {20, 10, 0},  {30, 10, 0},  {40, 10, 0},
+                    {0, 10, 0},  {10, 20, 0},  {20, 20, 0},  {30, 20, 0},  {40, 20, 0},
+                    {0, 0, 10},  {10, 0, 10},  {20, 0, 10},  {30, 0, 10},  {40, 0, 10},
+                    {0, 10, 10}, {10, 10, 10}, {20, 10, 10}, {30, 10, 10}, {40, 10, 10},
+                    {0, 10, 10}, {10, 20, 10}, {20, 20, 10}, {30, 20, 10}, {40, 20, 10}};
 
   // Cell type (5), number of points (3), point numbers, counterclockwise
-  std::vector<int> cells = {
-    (int)XMU_TETRA, 4, 0, 1, 5, 15,
-    (int)XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
-    (int)XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 22, 23,
-    (int)XMU_POLYHEDRON, 6,
-      4, 8, 9, 14, 13,
-      4, 8, 9, 24, 23,
-      4, 8, 13, 28, 23,
-      4, 13, 14, 29, 28,
-      4, 9, 14, 29, 24,
-      4, 23, 24, 29, 28,
-    (int)XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
-    (int)XMU_PYRAMID, 5, 5, 6, 11, 10, 20
-  };
+  std::vector<int> cells = {(int)XMU_TETRA,
+                            4,
+                            0,
+                            1,
+                            5,
+                            15,
+                            (int)XMU_VOXEL,
+                            8,
+                            1,
+                            2,
+                            6,
+                            7,
+                            16,
+                            17,
+                            21,
+                            22,
+                            (int)XMU_HEXAHEDRON,
+                            8,
+                            2,
+                            3,
+                            8,
+                            7,
+                            17,
+                            18,
+                            22,
+                            23,
+                            (int)XMU_POLYHEDRON,
+                            6,
+                            4,
+                            8,
+                            9,
+                            14,
+                            13,
+                            4,
+                            8,
+                            9,
+                            24,
+                            23,
+                            4,
+                            8,
+                            13,
+                            28,
+                            23,
+                            4,
+                            13,
+                            14,
+                            29,
+                            28,
+                            4,
+                            9,
+                            14,
+                            29,
+                            24,
+                            4,
+                            23,
+                            24,
+                            29,
+                            28,
+                            (int)XMU_WEDGE,
+                            6,
+                            3,
+                            4,
+                            18,
+                            8,
+                            9,
+                            23,
+                            (int)XMU_PYRAMID,
+                            5,
+                            5,
+                            6,
+                            11,
+                            10,
+                            20};
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
@@ -1186,25 +1227,43 @@ BSHP<XmUGrid> TEST_XmUGrid3dLinear()
 BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
 {
   VecPt3d points = {
-    {0, 0, 10},
-    {10, 0, 10},
-    {10, 10, 10},
-    {0, 10, 10},
-    {0, 0, 0},
-    {10, 0, 0},
-    {10, 10, 0},
-    {0, 10, 0},
+    {0, 0, 10}, {10, 0, 10}, {10, 10, 10}, {0, 10, 10},
+    {0, 0, 0},  {10, 0, 0},  {10, 10, 0},  {0, 10, 0},
   };
 
   // Cell type (5), number of points (3), point numbers, counterclockwise
-  std::vector<int> cells = {(int)XMU_POLYHEDRON, 6,
-    4, 0, 1, 2, 3,
-    4, 4, 5, 7, 2,
-    4, 5, 6, 2, 1,
-    4, 6, 7, 3, 2,
-    4, 7, 4, 0, 3,
-    4, 4, 7, 6, 5
-  };
+  std::vector<int> cells = {(int)XMU_POLYHEDRON,
+                            6,
+                            4,
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            4,
+                            5,
+                            7,
+                            2,
+                            4,
+                            5,
+                            6,
+                            2,
+                            1,
+                            4,
+                            6,
+                            7,
+                            3,
+                            2,
+                            4,
+                            7,
+                            4,
+                            0,
+                            3,
+                            4,
+                            4,
+                            7,
+                            6,
+                            5};
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
@@ -1226,37 +1285,38 @@ BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols)
 /// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
 /// \param[in] a_rows: number of rows in UGrid
 /// \param[in] a_cols: number of columns in UGrid
+/// \param[in] a_origin: Point where the UGrid begins (min x, min y, min z)
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols, const Pt3d &a_origin)
+BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols, const Pt3d& a_origin)
 {
   VecPt3d points;
-  points.reserve(a_rows*a_cols);
+  points.reserve(a_rows * a_cols);
   for (int i = 0; i < a_rows; ++i)
   {
     for (int j = 0; j < a_cols; ++j)
     {
-      points.push_back(Pt3d(j+a_origin.x, a_rows-i+a_origin.y));
+      points.push_back(Pt3d(j + a_origin.x, a_rows - i + a_origin.y));
     }
   }
 
   VecInt cells;
-  cells.reserve((a_rows-1)*(a_cols-1)*6);
-  for (int i = 0; i < a_rows-1; ++i)
+  cells.reserve((a_rows - 1) * (a_cols - 1) * 6);
+  for (int i = 0; i < a_rows - 1; ++i)
   {
-    for (int j = 0; j < a_cols-1; ++j)
+    for (int j = 0; j < a_cols - 1; ++j)
     {
       cells.push_back(XMU_QUAD);
       cells.push_back(4);
-      cells.push_back(j+a_cols*i);
-      cells.push_back(j+a_cols*(i+1));
-      cells.push_back(j+1+a_cols*(i+1));
-      cells.push_back(j+1+a_cols*i);
+      cells.push_back(j + a_cols * i);
+      cells.push_back(j + a_cols * (i + 1));
+      cells.push_back(j + 1 + a_cols * (i + 1));
+      cells.push_back(j + 1 + a_cols * i);
     }
   }
-  
+
   return XmUGrid::New(points, cells);
-}  // TEST_XmUBuildQuadUGrid
+} // TEST_XmUBuildQuadUGrid
 //------------------------------------------------------------------------------
 /// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
 /// \param[in] a_rows: number of rows in UGrid
@@ -1268,49 +1328,54 @@ BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols
 {
   Pt3d origin(0.0, 0.0, 0.0);
   return TEST_XmUBuildHexadronUgrid(a_rows, a_cols, a_lays, origin);
-}  // TEST_XmUBuildHexadronUgrid
+} // TEST_XmUBuildHexadronUgrid
 //------------------------------------------------------------------------------
 /// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
 /// \param[in] a_rows: number of rows in UGrid
 /// \param[in] a_cols: number of columns in UGrid
 /// \param[in] a_lays: number of layers in UGrid
+/// \param[in] a_origin: Point where the UGrid begins (min x, min y, min z)
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols, const int a_lays, const Pt3d &a_origin)
+BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows,
+                                              const int a_cols,
+                                              const int a_lays,
+                                              const Pt3d& a_origin)
 {
   VecPt3d points;
-  points.reserve(a_rows*a_cols);
+  points.reserve(a_rows * a_cols);
   for (int k = 0; k < a_lays; ++k)
   {
     for (int i = 0; i < a_rows; ++i)
     {
       for (int j = 0; j < a_cols; ++j)
       {
-        points.push_back(Pt3d(j+a_origin.x, a_rows-i-1+a_origin.y, a_lays-k-1+a_origin.z));
+        points.push_back(
+          Pt3d(j + a_origin.x, a_rows - i - 1 + a_origin.y, a_lays - k - 1 + a_origin.z));
       }
     }
   }
 
   VecInt cells;
-  cells.reserve((a_rows-1)*(a_cols-1)*(a_lays-1)*10);
-  int numInLayer = a_rows*a_cols;
-  for (int k = 0; k < a_lays-1; ++k)
+  cells.reserve((a_rows - 1) * (a_cols - 1) * (a_lays - 1) * 10);
+  int numInLayer = a_rows * a_cols;
+  for (int k = 0; k < a_lays - 1; ++k)
   {
-    int layOffset = numInLayer*k;
-    for (int i = 0; i < a_rows-1; ++i)
+    int layOffset = numInLayer * k;
+    for (int i = 0; i < a_rows - 1; ++i)
     {
-      for (int j = 0; j < a_cols-1; ++j)
+      for (int j = 0; j < a_cols - 1; ++j)
       {
         cells.push_back(XMU_HEXAHEDRON);
         cells.push_back(8);
-        cells.push_back(j + a_cols*i + layOffset);
-        cells.push_back(j + a_cols*(i+1) + layOffset);
-        cells.push_back(j + 1 + a_cols*(i+1) + layOffset);
-        cells.push_back(j + 1 + a_cols*i + layOffset);
-        cells.push_back(j + a_cols*i + layOffset + numInLayer);
-        cells.push_back(j + a_cols*(i+1) + layOffset + numInLayer);
-        cells.push_back(j + 1 + a_cols*(i+1) + layOffset + numInLayer);
-        cells.push_back(j + 1 + a_cols*i + layOffset + numInLayer);
+        cells.push_back(j + a_cols * i + layOffset);
+        cells.push_back(j + a_cols * (i + 1) + layOffset);
+        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset);
+        cells.push_back(j + 1 + a_cols * i + layOffset);
+        cells.push_back(j + a_cols * i + layOffset + numInLayer);
+        cells.push_back(j + a_cols * (i + 1) + layOffset + numInLayer);
+        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset + numInLayer);
+        cells.push_back(j + 1 + a_cols * i + layOffset + numInLayer);
       }
     }
   }
@@ -1323,7 +1388,9 @@ BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols
 /// \param[in] a_lays: number of layers in UGrid
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays)
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
+                                                const int a_cols,
+                                                const int a_lays)
 {
   Pt3d origin(0.0, 0.0, 0.0);
   return TEST_XmUBuildPolyhedronUgrid(a_rows, a_cols, a_lays, origin);
@@ -1333,41 +1400,45 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_co
 /// \param[in] a_rows: number of rows in UGrid
 /// \param[in] a_cols: number of columns in UGrid
 /// \param[in] a_lays: number of layers in UGrid
+/// \param[in] a_origin: Point where the UGrid begins (min x, min y, min z)
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays, const Pt3d &a_origin)
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
+                                                const int a_cols,
+                                                const int a_lays,
+                                                const Pt3d& a_origin)
 {
   VecPt3d points;
-  points.reserve(a_rows*a_cols);
+  points.reserve(a_rows * a_cols);
   for (int k = 0; k < a_lays; ++k)
   {
     for (int i = 0; i < a_rows; ++i)
     {
       for (int j = 0; j < a_cols; ++j)
       {
-        points.push_back(Pt3d(j+a_origin.x, a_rows-i+a_origin.y, a_lays-k+a_origin.z));
+        points.push_back(Pt3d(j + a_origin.x, a_rows - i + a_origin.y, a_lays - k + a_origin.z));
       }
     }
   }
 
   VecInt cells;
-  cells.reserve((a_rows-1)*(a_cols-1)*(a_lays-1)*10);
-  int numInLayer = a_rows*a_cols;
-  for (int k = 0; k < a_lays-1; ++k)
+  cells.reserve((a_rows - 1) * (a_cols - 1) * (a_lays - 1) * 10);
+  int numInLayer = a_rows * a_cols;
+  for (int k = 0; k < a_lays - 1; ++k)
   {
-    int layOffset = numInLayer*k;
-    for (int i = 0; i < a_rows-1; ++i)
+    int layOffset = numInLayer * k;
+    for (int i = 0; i < a_rows - 1; ++i)
     {
-      for (int j = 0; j < a_cols-1; ++j)
+      for (int j = 0; j < a_cols - 1; ++j)
       {
-        int pt0 = j + a_cols*i + layOffset;
-        int pt1 = j + a_cols*(i+1) + layOffset;
-        int pt2 = j + 1 + a_cols*(i+1) + layOffset;
-        int pt3 = j + 1 + a_cols*i + layOffset;
-        int pt4 = j + a_cols*i + layOffset + numInLayer;
-        int pt5 = j + a_cols*(i+1) + layOffset + numInLayer;
-        int pt6 = j + 1 + a_cols*(i+1) + layOffset + numInLayer;
-        int pt7 = j + 1 + a_cols*i + layOffset + numInLayer;
+        int pt0 = j + a_cols * i + layOffset;
+        int pt1 = j + a_cols * (i + 1) + layOffset;
+        int pt2 = j + 1 + a_cols * (i + 1) + layOffset;
+        int pt3 = j + 1 + a_cols * i + layOffset;
+        int pt4 = j + a_cols * i + layOffset + numInLayer;
+        int pt5 = j + a_cols * (i + 1) + layOffset + numInLayer;
+        int pt6 = j + 1 + a_cols * (i + 1) + layOffset + numInLayer;
+        int pt7 = j + 1 + a_cols * i + layOffset + numInLayer;
 
         cells.push_back(XMU_POLYHEDRON);
         cells.push_back(6);
@@ -1411,14 +1482,14 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_co
     }
   }
   return XmUGrid::New(points, cells);
-}  // TEST_XmUBuildPolyhedronUgrid
+} // TEST_XmUBuildPolyhedronUgrid
 //------------------------------------------------------------------------------
 /// \brief Path to test files.
 /// \return Returns path to test files.
 //------------------------------------------------------------------------------
 std::string TestFilesPath()
 {
-  //return "../" + std::string(XMSNG_TEST_PATH);
+  // return "../" + std::string(XMSNG_TEST_PATH);
   return "J:/xmsgrid/test_files/";
 } // TestFilesPath
 
@@ -1452,15 +1523,11 @@ void XmUGridUnitTests::testUGridStreams()
   /// \endcode
   BSHP<XmUGrid> ugrid = XmUGrid::New();
 
-  points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0}, {10, 0, 0},
+  points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
             {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
 
   // Cell type (9), number of points (4), point numbers, counterclockwise
-  cellStream = {
-    9, 4, 0, 3, 4, 1,
-    9, 4, 1, 4, 5, 2,
-    9, 4, 3, 6, 7, 4,
-    9, 4, 4, 7, 8, 5};
+  cellStream = {9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5};
 
   ugrid->SetPoints(points);
   VecPt3d pointsOut = ugrid->GetPoints();
@@ -1471,47 +1538,43 @@ void XmUGridUnitTests::testUGridStreams()
   TS_ASSERT_EQUALS(cellStream, cellStreamOut);
 
   // Test invalid cell streams
-  cellStream = { -1 };
+  cellStream = {-1};
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
-  cellStream = { 9, 4, 0, 3, 4 };
+  cellStream = {9, 4, 0, 3, 4};
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
-  cellStream = { 9, 3, 0, 3, 4, 1 };
+  cellStream = {9, 3, 0, 3, 4, 1};
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
 } // XmUGridUnitTests::testUGridStreams
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Test Getting a point
 /// \code
-  ///
-  ///     0----1----2
-  ///     |    |    |
-  ///     3----4----5
-  ///     |    |    |
-  ///     6----7----8
-  ///
-  /// \endcode
+///
+///     0----1----2
+///     |    |    |
+///     3----4----5
+///     |    |    |
+///     6----7----8
+///
+/// \endcode
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetSetPoint()
 {
-  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0}, {10, 0, 0},
-            {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
+  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
+                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
 
   // Cell type (9), number of points (4), point numbers, counterclockwise
-  VecInt cellStream = {
-    9, 4, 0, 3, 4, 1,
-    9, 4, 1, 4, 5, 2,
-    9, 4, 3, 6, 7, 4,
-    9, 4, 4, 7, 8, 5};
+  VecInt cellStream = {9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5};
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellStream);
 
   TS_ASSERT_EQUALS(Pt3d(), ugrid->GetPoint(-1));
-  for (int i=0; i < (int)points.size(); i++)
+  for (int i = 0; i < (int)points.size(); i++)
   {
     TS_ASSERT_EQUALS(points[i], ugrid->GetPoint(i));
   }
   TS_ASSERT_EQUALS(Pt3d(), ugrid->GetPoint((int)points.size()));
-  
+
   TS_ASSERT(!ugrid->SetPoint(-1, Pt3d()));
   TS_ASSERT(!ugrid->SetPoint((int)points.size(), Pt3d()));
 
@@ -1523,24 +1586,22 @@ void XmUGridUnitTests::testGetSetPoint()
 //------------------------------------------------------------------------------
 /// \brief Test Getting a cell stream.
 /// \code
-  ///
-  ///     0-----1-----2
-  ///     |  0  |  1  |
-  ///     3-----4-----5
-  ///     |  2  |  3  |
-  ///     6-----7-----8
-  ///
-  /// \endcode
+///
+///     0-----1-----2
+///     |  0  |  1  |
+///     3-----4-----5
+///     |  2  |  3  |
+///     6-----7-----8
+///
+/// \endcode
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetSingleCellStream()
 {
-  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0}, {10, 0, 0},
-            {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
+  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
+                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
 
-  VecInt cell0 = {9, 4, 0, 3, 4, 1},
-    cell1 = {9, 4, 1, 4, 5, 2},
-    cell2 = {9, 4, 3, 6, 7, 4},
-    cell3 = {9, 4, 4, 7, 8, 5};
+  VecInt cell0 = {9, 4, 0, 3, 4, 1}, cell1 = {9, 4, 1, 4, 5, 2}, cell2 = {9, 4, 3, 6, 7, 4},
+         cell3 = {9, 4, 4, 7, 8, 5};
   // Cell type (9), number of points (4), point numbers, counterclockwise
   VecInt cellStream;
   cellStream.insert(cellStream.end(), cell0.begin(), cell0.end());
@@ -1552,7 +1613,7 @@ void XmUGridUnitTests::testGetSingleCellStream()
   VecInt cellResult;
 
   TS_ASSERT_EQUALS(false, ugrid->GetSingleCellStream(-1, cellResult));
-  
+
   TS_ASSERT_EQUALS(true, ugrid->GetSingleCellStream(0, cellResult));
   TS_ASSERT_EQUALS(cell0, cellResult);
   TS_ASSERT_EQUALS(true, ugrid->GetSingleCellStream(1, cellResult));
@@ -1641,8 +1702,7 @@ void XmUGridUnitTests::testGetCellDimension()
   TS_ASSERT_EQUALS(3, ugrid3d->GetCellDimension(5));
 
   // Test Dimension Counts
-  std::vector<int> twoDResults(4, 0),
-    threeDResults(4, 0);
+  std::vector<int> twoDResults(4, 0), threeDResults(4, 0);
   twoDResults[1] = 2;
   twoDResults[2] = 4;
   threeDResults[3] = 6;
@@ -1654,12 +1714,6 @@ void XmUGridUnitTests::testGetCellDimension()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetExtents()
 {
-} // XmUGridUnitTests::testGetExtents
-//------------------------------------------------------------------------------
-/// \brief Test getting edges of single cells.
-//------------------------------------------------------------------------------
-void XmUGridUnitTests::testGetNumberOfCellEdges()
-{
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   if (!ugrid2d)
   {
@@ -1668,8 +1722,7 @@ void XmUGridUnitTests::testGetNumberOfCellEdges()
   }
 
   Pt3d min, max;
-  Pt3d expectedMin = {0.0, 0.0, 0.0}, 
-       expectMax = {40.0, 20.0, 0.0};
+  Pt3d expectedMin = {0.0, 0.0, 0.0}, expectMax = {40.0, 20.0, 0.0};
   ugrid2d->GetExtents(min, max);
   TS_ASSERT_EQUALS(expectedMin, min);
   TS_ASSERT_EQUALS(expectMax, max);
@@ -1699,6 +1752,43 @@ void XmUGridUnitTests::testGetNumberOfCellEdges()
   ugridBuild->GetExtents(min, max);
   TS_ASSERT_EQUALS(expectedMin, min);
   TS_ASSERT_EQUALS(expectMax, max);
+} // XmUGridUnitTests::testGetExtents
+//------------------------------------------------------------------------------
+/// \brief Test getting edges of single cells.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetNumberOfCellEdges()
+{
+  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  if (!ugrid2d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  TS_ASSERT_EQUALS(-1, ugrid2d->GetNumberOfCellEdges(-1));
+  TS_ASSERT_EQUALS(-1, ugrid2d->GetNumberOfCellEdges(6));
+  TS_ASSERT_EQUALS(4, ugrid2d->GetNumberOfCellEdges(0));
+  TS_ASSERT_EQUALS(4, ugrid2d->GetNumberOfCellEdges(1));
+  TS_ASSERT_EQUALS(3, ugrid2d->GetNumberOfCellEdges(2));
+  TS_ASSERT_EQUALS(5, ugrid2d->GetNumberOfCellEdges(3));
+  TS_ASSERT_EQUALS(2, ugrid2d->GetNumberOfCellEdges(4));
+  TS_ASSERT_EQUALS(1, ugrid2d->GetNumberOfCellEdges(5));
+
+  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  if (!ugrid3d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  TS_ASSERT_EQUALS(-1, ugrid3d->GetNumberOfCellEdges(-1));
+  TS_ASSERT_EQUALS(-1, ugrid3d->GetNumberOfCellEdges(6));
+  TS_ASSERT_EQUALS(6, ugrid3d->GetNumberOfCellEdges(0));
+  TS_ASSERT_EQUALS(12, ugrid3d->GetNumberOfCellEdges(1));
+  TS_ASSERT_EQUALS(12, ugrid3d->GetNumberOfCellEdges(2));
+  TS_ASSERT_EQUALS(12, ugrid3d->GetNumberOfCellEdges(3));
+  TS_ASSERT_EQUALS(9, ugrid3d->GetNumberOfCellEdges(4));
+  TS_ASSERT_EQUALS(8, ugrid3d->GetNumberOfCellEdges(5));
 
 } // XmUGridUnitTests::testGetNumberOfCellEdges
 //------------------------------------------------------------------------------
@@ -1750,15 +1840,14 @@ void XmUGridUnitTests::testGetNumberOfCellFaces()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetPointCellsSimple()
 {
-  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  
-                    {0, 0, 0},  {10, 0, 0},  {20, 0, 0}};
+  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0}, {0, 0, 0}, {10, 0, 0}, {20, 0, 0}};
 
   VecInt cellStream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2};
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellStream);
 
   VecInt cellZero = {0};
-  VecInt cellZeroAndOne = {0,1};
+  VecInt cellZeroAndOne = {0, 1};
   VecInt cellOne = {1};
   TS_ASSERT_EQUALS(cellZero, ugrid->GetPointCells(0));
   TS_ASSERT_EQUALS(cellZeroAndOne, ugrid->GetPointCells(1));
@@ -1781,28 +1870,26 @@ void XmUGridUnitTests::testGetPointCells()
     return;
   }
 
-  VecInt2d cellsFor2DPoints = 
-    {{ 0},         // point 0
-    {0, 1},        // point 1
-    {1, 2},        // point 2
-    {2, 3},        // point 3
-    {3},           // point 4
-    {0, 5},        // point 5
-    {0, 1},        // point 6
-    {1, 2, 3, 4},  // point 7
-    {3},           // point 8
-    {5},           // point 9
-    {4},           // point 10
-    {4},           // point 11
-    {3},           // point 12
-    {3}};          // point 13
+  VecInt2d cellsFor2DPoints = {{0},          // point 0
+                               {0, 1},       // point 1
+                               {1, 2},       // point 2
+                               {2, 3},       // point 3
+                               {3},          // point 4
+                               {0, 5},       // point 5
+                               {0, 1},       // point 6
+                               {1, 2, 3, 4}, // point 7
+                               {3},          // point 8
+                               {5},          // point 9
+                               {4},          // point 10
+                               {4},          // point 11
+                               {3},          // point 12
+                               {3}};         // point 13
 
   // test 1D and 2D cells
-  for (int i(0); i<cellsFor2DPoints.size(); i++)
+  for (int i(0); i < cellsFor2DPoints.size(); i++)
   {
     TS_ASSERT_EQUALS(cellsFor2DPoints[i], ugrid2d->GetPointCells(i));
   }
-  
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   if (!ugrid3d)
@@ -1810,41 +1897,40 @@ void XmUGridUnitTests::testGetPointCells()
     TS_FAIL("Unable to create UGrid.");
     return;
   }
-  VecInt2d cellsFor3DPoints = 
-    {{ 0},         // point 0
-    {0, 1},        // point 1
-    {1, 2},        // point 2
-    {2, 4},        // point 3
-    {4},           // point 4
-    {0, 5},           // point 5
-    {1,5},           // point 6
-    {1,2},           // point 7
-    {2,3,4},           // point 8
-    {3,4},           // point 9
-    {5},           // point 10
-    {5},           // point 11
-    {},           // point 12
-    {3},           // point 13
-    {3},           // point 14
-    {0},           // point 15
-    {1},           // point 16
-    {1,2},           // point 17
-    {2,4},           // point 18
-    {},           // point 19
-    {5},           // point 20
-    {1},           // point 21
-    {1,2},           // point 22
-    {2,3,4},           // point 23
-    {3},           // point 24
-    {},           // point 25
-    {},           // point 26
-    {},           // point 27
-    {3},           // point 28
-    {3},           // point 29
-    {}};           // point 30
+  VecInt2d cellsFor3DPoints = {{0},       // point 0
+                               {0, 1},    // point 1
+                               {1, 2},    // point 2
+                               {2, 4},    // point 3
+                               {4},       // point 4
+                               {0, 5},    // point 5
+                               {1, 5},    // point 6
+                               {1, 2},    // point 7
+                               {2, 3, 4}, // point 8
+                               {3, 4},    // point 9
+                               {5},       // point 10
+                               {5},       // point 11
+                               {},        // point 12
+                               {3},       // point 13
+                               {3},       // point 14
+                               {0},       // point 15
+                               {1},       // point 16
+                               {1, 2},    // point 17
+                               {2, 4},    // point 18
+                               {},        // point 19
+                               {5},       // point 20
+                               {1},       // point 21
+                               {1, 2},    // point 22
+                               {2, 3, 4}, // point 23
+                               {3},       // point 24
+                               {},        // point 25
+                               {},        // point 26
+                               {},        // point 27
+                               {3},       // point 28
+                               {3},       // point 29
+                               {}};       // point 30
 
   // test 3D cells
-  for (int i(0); i<cellsFor3DPoints.size(); i++)
+  for (int i(0); i < cellsFor3DPoints.size(); i++)
   {
     if (cellsFor3DPoints[i] != ugrid3d->GetPointCells(i))
     {
@@ -1869,8 +1955,8 @@ void XmUGridUnitTests::testLargeUGridLinkSpeed()
   int lays = 4;
 
   BSHP<xms::XmUGrid> grid = TEST_XmUBuildQuadUGrid(rows, cols);
-  //BSHP<xms::XmUGrid> grid = TEST_XmUBuildHexadronUgrid(rows, cols, lays);
-  //BSHP<xms::XmUGrid> grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
+  // BSHP<xms::XmUGrid> grid = TEST_XmUBuildHexadronUgrid(rows, cols, lays);
+  // BSHP<xms::XmUGrid> grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
 
   {
     boost::timer::cpu_timer timer;

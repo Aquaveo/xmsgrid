@@ -41,7 +41,6 @@ namespace xms
 
 namespace
 {
-
 //------------------------------------------------------------------------------
 /// \brief Save an XmUGrid ASCII text to output stream.
 /// \param[in] a_ugrid: the UGrid to save
@@ -232,7 +231,8 @@ void XmUGridUtilsTests::testWriteEmptyUGrid()
   std::ostringstream output;
   iWriteUGridToAsciiFile(ugrid, output);
 
-  std::string outputBase = "ASCII XmUGrid Version 1.0\n"
+  std::string outputBase =
+    "ASCII XmUGrid Version 1.0\n"
     "NUM_POINTS 0\n"
     "NUM_CELL_ITEMS 0\n";
   TS_ASSERT_EQUALS(outputBase, output.str());
@@ -387,7 +387,8 @@ void XmUGridUtilsTests::testWriteLinear3dCells()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testReadEmptyUGridAsciiFile()
 {
-  std::string inputText = "ASCII XmUGrid Version 1.0\n"
+  std::string inputText =
+    "ASCII XmUGrid Version 1.0\n"
     "NUM_POINTS 0\n"
     "NUM_CELL_ITEMS 0\n";
   std::istringstream input;
