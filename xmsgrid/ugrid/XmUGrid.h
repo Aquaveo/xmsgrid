@@ -134,6 +134,7 @@ public:
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
+  virtual bool GetCellPointIndexes(const int a_cellIdx, VecInt& a_cellPoints) const = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)

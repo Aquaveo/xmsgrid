@@ -189,10 +189,12 @@ BSHP<XmUGrid> iReadUGridFromAsciiFile(std::istream& a_inStream)
   return ugrid;
 } // iReadUGridFromAsciiFile
 
-} // namespace {
+} // namespace
 
 //------------------------------------------------------------------------------
 /// \brief Read XmUGrid from an ASCII file.
+/// \param[in] a_filePath: filename to read including path, file name, and
+/// extension \return the UGrid that was read from the file
 //------------------------------------------------------------------------------
 BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
 {
@@ -201,6 +203,9 @@ BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
 } // XmReadUGridFromAsciiFile
 //------------------------------------------------------------------------------
 /// \brief Write an XmUGrid to an ASCII file.
+/// \param[in] a_ugrid: The UGrid to write to the file
+/// \param[in] a_filePath: filename to write including path, file name, and
+/// extension
 //------------------------------------------------------------------------------
 void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePath)
 {
@@ -215,8 +220,8 @@ void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePat
 // Unit Tests
 //------------------------------------------------------------------------------
 using namespace xms;
-#include <xmsgrid/ugrid/XmUGridUtils.t.h>
 #include <xmsgrid/ugrid/XmUGrid.t.h>
+#include <xmsgrid/ugrid/XmUGridUtils.t.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGridTests

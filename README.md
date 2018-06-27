@@ -41,7 +41,7 @@ For Windows:
 
 2. Configure CMake
 ```
-    cmake .. -G "Visual Studio 12 2013 Win64" -DXMS_BUILD=TRUE -DBUILD_TESTING=TRUE -DJ:\
+    cmake .. -G "Visual Studio 12 2013 Win64" -DXMS_BUILD=TRUE -DBUILD_TESTING=TRUE
 ```
 
 3. Build - Build from generated solution file.
