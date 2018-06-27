@@ -18,6 +18,7 @@
 #include <boost/container/flat_set.hpp>
 
 // 5. Shared code headers
+#include <xmscore/misc/XmConst.h>
 #include <xmscore/misc/XmLog.h>
 
 // 6. Non-shared code headers
@@ -55,6 +56,8 @@ public:
   virtual std::vector<int> GetDimensionCount() const override;
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const override;
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
+
+  virtual void GetExtents(Pt3d &a_min, Pt3d &a_max) const override;
 
   virtual const VecPt3d& GetPoints() const override;
   virtual void SetPoints(const VecPt3d& a_points) override;
@@ -407,6 +410,31 @@ int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
   }
   return -1;  
 } // XmUGridImpl::GetNumberOfCellFaces
+//------------------------------------------------------------------------------
+/// \brief Get vector of UGrid points.
+/// \return constant reference to vector of points
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetExtents(Pt3d &a_min, Pt3d &a_max) const
+{
+  a_min.x = a_min.y = a_min.z = xms::XM_DBL_HIGHEST;
+  a_max.x = a_max.y = a_max.z = xms::XM_DBL_LOWEST;
+  for (int i(0); i<m_points.size(); i++)
+  {
+    if (m_points[i].x < a_min.x)
+      a_min.x = m_points[i].x;
+    if (m_points[i].y < a_min.y)
+      a_min.y = m_points[i].y;
+    if (m_points[i].z < a_min.z)
+      a_min.z = m_points[i].z;
+
+    if (m_points[i].x > a_max.x)
+      a_max.x = m_points[i].x;
+    if (m_points[i].y > a_max.y)
+      a_max.y = m_points[i].y;
+    if (m_points[i].z > a_max.z)
+      a_max.z = m_points[i].z;
+  }
+} // XmUGridImpl::GetExtents
 //------------------------------------------------------------------------------
 /// \brief Get vector of UGrid points.
 /// \return constant reference to vector of points
@@ -1190,13 +1218,25 @@ BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
 //------------------------------------------------------------------------------
 BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols)
 {
+  Pt3d origin(0.0, 0.0, 0.0);
+  return TEST_XmUBuildQuadUGrid(a_rows, a_cols, origin);
+} // TEST_XmUBuildQuadUGrid
+
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \param[in] a_rows: number of rows in UGrid
+/// \param[in] a_cols: number of columns in UGrid
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols, const Pt3d &a_origin)
+{
   VecPt3d points;
   points.reserve(a_rows*a_cols);
   for (int i = 0; i < a_rows; ++i)
   {
     for (int j = 0; j < a_cols; ++j)
     {
-      points.push_back(Pt3d(j, a_rows-i));
+      points.push_back(Pt3d(j+a_origin.x, a_rows-i+a_origin.y));
     }
   }
 
@@ -1226,6 +1266,18 @@ BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols)
 //------------------------------------------------------------------------------
 BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols, const int a_lays)
 {
+  Pt3d origin(0.0, 0.0, 0.0);
+  return TEST_XmUBuildHexadronUgrid(a_rows, a_cols, a_lays, origin);
+}  // TEST_XmUBuildHexadronUgrid
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \param[in] a_rows: number of rows in UGrid
+/// \param[in] a_cols: number of columns in UGrid
+/// \param[in] a_lays: number of layers in UGrid
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols, const int a_lays, const Pt3d &a_origin)
+{
   VecPt3d points;
   points.reserve(a_rows*a_cols);
   for (int k = 0; k < a_lays; ++k)
@@ -1234,7 +1286,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols
     {
       for (int j = 0; j < a_cols; ++j)
       {
-        points.push_back(Pt3d(j, a_rows-i, a_lays-k));
+        points.push_back(Pt3d(j+a_origin.x, a_rows-i-1+a_origin.y, a_lays-k-1+a_origin.z));
       }
     }
   }
@@ -1273,6 +1325,18 @@ BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols
 //------------------------------------------------------------------------------
 BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays)
 {
+  Pt3d origin(0.0, 0.0, 0.0);
+  return TEST_XmUBuildPolyhedronUgrid(a_rows, a_cols, a_lays, origin);
+} // TEST_XmUBuildPolyhedronUgrid
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \param[in] a_rows: number of rows in UGrid
+/// \param[in] a_cols: number of columns in UGrid
+/// \param[in] a_lays: number of layers in UGrid
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays, const Pt3d &a_origin)
+{
   VecPt3d points;
   points.reserve(a_rows*a_cols);
   for (int k = 0; k < a_lays; ++k)
@@ -1281,7 +1345,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_co
     {
       for (int j = 0; j < a_cols; ++j)
       {
-        points.push_back(Pt3d(j, a_rows-i, a_lays-k));
+        points.push_back(Pt3d(j+a_origin.x, a_rows-i+a_origin.y, a_lays-k+a_origin.z));
       }
     }
   }
@@ -1586,6 +1650,12 @@ void XmUGridUnitTests::testGetCellDimension()
   TS_ASSERT_EQUALS(threeDResults, ugrid3d->GetDimensionCount());
 } // XmUGridUnitTests::testGetCellDimension
 //------------------------------------------------------------------------------
+/// \brief Test getting the extents of a UGrid
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetExtents()
+{
+} // XmUGridUnitTests::testGetExtents
+//------------------------------------------------------------------------------
 /// \brief Test getting edges of single cells.
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetNumberOfCellEdges()
@@ -1597,14 +1667,12 @@ void XmUGridUnitTests::testGetNumberOfCellEdges()
     return;
   }
 
-  TS_ASSERT_EQUALS(-1, ugrid2d->GetNumberOfCellEdges(-1));
-  TS_ASSERT_EQUALS(-1, ugrid2d->GetNumberOfCellEdges(6));
-  TS_ASSERT_EQUALS(4, ugrid2d->GetNumberOfCellEdges(0));
-  TS_ASSERT_EQUALS(4, ugrid2d->GetNumberOfCellEdges(1));
-  TS_ASSERT_EQUALS(3, ugrid2d->GetNumberOfCellEdges(2));
-  TS_ASSERT_EQUALS(5, ugrid2d->GetNumberOfCellEdges(3));
-  TS_ASSERT_EQUALS(2, ugrid2d->GetNumberOfCellEdges(4));
-  TS_ASSERT_EQUALS(1, ugrid2d->GetNumberOfCellEdges(5));
+  Pt3d min, max;
+  Pt3d expectedMin = {0.0, 0.0, 0.0}, 
+       expectMax = {40.0, 20.0, 0.0};
+  ugrid2d->GetExtents(min, max);
+  TS_ASSERT_EQUALS(expectedMin, min);
+  TS_ASSERT_EQUALS(expectMax, max);
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   if (!ugrid3d)
@@ -1613,14 +1681,24 @@ void XmUGridUnitTests::testGetNumberOfCellEdges()
     return;
   }
 
-  TS_ASSERT_EQUALS(-1, ugrid3d->GetNumberOfCellEdges(-1));
-  TS_ASSERT_EQUALS(-1, ugrid3d->GetNumberOfCellEdges(6));
-  TS_ASSERT_EQUALS(6, ugrid3d->GetNumberOfCellEdges(0));
-  TS_ASSERT_EQUALS(12, ugrid3d->GetNumberOfCellEdges(1));
-  TS_ASSERT_EQUALS(12, ugrid3d->GetNumberOfCellEdges(2));
-  TS_ASSERT_EQUALS(12, ugrid3d->GetNumberOfCellEdges(3));
-  TS_ASSERT_EQUALS(9, ugrid3d->GetNumberOfCellEdges(4));
-  TS_ASSERT_EQUALS(8, ugrid3d->GetNumberOfCellEdges(5));
+  expectedMin = {0.0, 0.0, 0.0};
+  expectMax = {40.0, 20.0, 10.0};
+  ugrid3d->GetExtents(min, max);
+  TS_ASSERT_EQUALS(expectedMin, min);
+  TS_ASSERT_EQUALS(expectMax, max);
+
+  Pt3d origin(-25.0, -25.0, -15.0);
+  BSHP<XmUGrid> ugridBuild = TEST_XmUBuildHexadronUgrid(51, 51, 31, origin);
+  if (!ugridBuild)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+  expectedMin = {-25.0, -25.0, -15.0};
+  expectMax = {25.0, 25.0, 15.0};
+  ugridBuild->GetExtents(min, max);
+  TS_ASSERT_EQUALS(expectedMin, min);
+  TS_ASSERT_EQUALS(expectMax, max);
 
 } // XmUGridUnitTests::testGetNumberOfCellEdges
 //------------------------------------------------------------------------------
@@ -1777,33 +1855,14 @@ void XmUGridUnitTests::testGetPointCells()
 
 } // XmUGridUnitTests::testGetPointCells
 //------------------------------------------------------------------------------
-/// \brief Timer Code
-//------------------------------------------------------------------------------
-
-#include <chrono>
-
-class Timer
-{
-public:
-    Timer() : beg_(clock_::now()) {}
-    void reset() { beg_ = clock_::now(); }
-    double elapsed() const { 
-        return std::chrono::duration_cast<second_>
-            (clock_::now() - beg_).count(); }
-
-private:
-    typedef std::chrono::high_resolution_clock clock_;
-    typedef std::chrono::duration<double, std::ratio<1> > second_;
-    std::chrono::time_point<clock_> beg_;
-};
-
-
-//------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------
+//#define SPEEDTEST
+#ifdef SPEEDTEST
+#include <boost/timer/timer.hpp>
+#endif
 void XmUGridUnitTests::testLargeUGridLinkSpeed()
 {
-//#define SPEEDTEST 5
 #ifdef SPEEDTEST
   int rows = 500;
   int cols = 500;
@@ -1814,10 +1873,9 @@ void XmUGridUnitTests::testLargeUGridLinkSpeed()
   //BSHP<xms::XmUGrid> grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
 
   {
-    Timer timer2;
+    boost::timer::cpu_timer timer;
     BSHP<XmUGrid> ugrid = XmUGrid::New(grid->GetPoints(), grid->GetCellStream());
-    double seconds2 = timer2.elapsed();
-    TS_ASSERT_EQUALS(0.0, seconds2);
+    TS_FAIL(timer.format());
   }
 #endif
 } // XmUGridUnitTests::testLargeUGridLinkSpeed
