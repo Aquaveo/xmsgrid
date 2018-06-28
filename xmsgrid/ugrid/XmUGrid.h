@@ -128,8 +128,11 @@ public:
   virtual VecInt GetPointCells(const int a_pointIdx) const = 0; // cells associated with point
 
   virtual VecInt GetCommonCells(const VecInt& a_points)const = 0;
+
   // Cells
   virtual int GetNumberOfCells() const = 0;
+
+  virtual VecInt GetPointsOfCells(const int a_cellIdx) const = 0;
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
@@ -140,6 +143,7 @@ public:
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
   virtual bool GetCellPointIndexes(const int a_cellIdx,
                                    VecInt& a_cellPoints) const = 0; // Point indexes of a cell
+  virtual VecInt GetCellNeighbors(const int a_cellIdx) const = 0;
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;

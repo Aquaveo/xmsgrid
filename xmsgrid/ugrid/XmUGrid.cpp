@@ -60,8 +60,11 @@ public:
   virtual VecInt GetPointCells(const int a_pointIdx) const override; // cells associated with point
 
   virtual VecInt GetCommonCells(const VecInt& a_points) const override;
+
   // Cells
   virtual int GetNumberOfCells() const override;
+
+  virtual VecInt GetPointsOfCells(const int a_cellIdx) const override;
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const override;
   virtual std::vector<int> GetDimensionCount() const override;
@@ -72,6 +75,8 @@ public:
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const override;
   virtual bool GetCellPointIndexes(const int a_cellIdx,
                                    VecInt& a_cellPoints) const override; // Point indexes of a cell
+
+  virtual VecInt GetCellNeighbors(const int a_cellIdx) const override;
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const override;
@@ -258,7 +263,7 @@ VecInt XmUGridImpl::GetCommonCells(const VecInt& a_points) const
       break;
   }
   return commonCells;
-}
+} // XmUGridImpl::GetCommonCells
 // Cells
 //------------------------------------------------------------------------------
 /// \brief Get the number of cells.
@@ -271,6 +276,48 @@ int XmUGridImpl::GetNumberOfCells() const
   else
     return (int)m_cellIdxToStreamIdx.size() - 1;
 } // XmUGridImpl::GetNumberOfCells
+//------------------------------------------------------------------------------
+/// \brief Get the points of a cell (including polyhedron)
+/// \param[in] a_cellIdx: the index of the cell
+/// \return a vector of point indices
+//------------------------------------------------------------------------------
+VecInt XmUGridImpl::GetPointsOfCells(const int a_cellIdx) const
+{
+  const int* cellStream;
+  int streamLength;
+  VecInt points;
+  GetSingleCellStream(a_cellIdx, &cellStream, streamLength);
+  if (streamLength <= 0)
+    return points;
+  if (cellStream[0] != XMU_POLYHEDRON)
+  {
+    for (int i(2); i < streamLength; i++)
+    {
+      points.push_back(cellStream[i]);
+    }
+  }
+  else
+  {
+    // Polyhedron
+    boost::container::flat_set<int> polyPoints;
+    int currIdx(1);
+    int numFaces(cellStream[currIdx++]);
+    for (int i(0); i < numFaces; i++)
+    {
+      int numPoints(cellStream[currIdx++]);
+      for (int j(0); j < numPoints; j++)
+      {
+        polyPoints.insert(cellStream[currIdx++]);
+      }
+    }
+    for (auto pt = polyPoints.begin(); pt != polyPoints.end(); ++pt)
+    {
+      points.push_back(*pt);
+    }
+  }
+  return points;
+} // XmUGridImpl::GetNumberOfCells
+
 //------------------------------------------------------------------------------
 /// \brief Get the number of cells.
 /// \param[in] a_cellIdx: the index of the cell
@@ -394,6 +441,40 @@ bool XmUGridImpl::GetCellPointIndexes(const int a_cellIdx, VecInt& a_cellPoints)
   }
   return false;
 } // XmUGridImpl::GetCellPointIndexes
+//------------------------------------------------------------------------------
+/// \brief Get the cells neighboring a cell (cells associated with any of it's points)
+/// \param[in] a_cellIdx: the index of the cell
+/// \return vector of cell indices
+//------------------------------------------------------------------------------
+VecInt XmUGridImpl::GetCellNeighbors(const int a_cellIdx) const
+{
+  VecInt neighbors;
+  VecInt pointsOfCell;
+  pointsOfCell = GetPointsOfCells(a_cellIdx);
+  for (int i = 0; i < pointsOfCell.size(); i++)
+  {
+    VecInt associatedCells = GetPointCells(pointsOfCell[i]);
+    for (int j = 0; j < associatedCells.size(); j++)
+    {
+      if (associatedCells[j] != a_cellIdx)
+      {
+        bool found(false);
+        for (int k = 0; k < neighbors.size(); k++)
+        {
+          if (neighbors[k] == associatedCells[j])
+          {
+            found = true;
+          }
+        }
+        if (!found)
+        {
+          neighbors.push_back(associatedCells[j]);
+        }
+      }
+    }
+  }
+  return neighbors;
+} // XmUGridImpl::GetCellNeighbors
 // Edges
 //------------------------------------------------------------------------------
 /// \brief Get the number of edges with specified cell
@@ -700,8 +781,14 @@ std::pair<int, int> XmUGridImpl::GetCellEdgePointIndexes(const int a_cellIdx,
     XMU_HIGHER_ORDER_HEXAHEDRON = 67,
 #endif
   }
+  if (edge.second < edge.first)
+  {
+    int first = edge.second;
+    edge.second = edge.first;
+    edge.first = first;
+  }
   return edge;
-} // XmUGridImpl::GetCellPointIndexes
+} // XmUGridImpl::GetCellEdgePointIndexes
 // Faces
 //------------------------------------------------------------------------------
 /// \brief Get the number of cell faces for given cell.
@@ -1470,12 +1557,12 @@ BSHP<XmUGrid> TEST_XmUGrid2dLinear()
 
   // clang-format off
   // Cell type (5), number of points (3), point numbers, counterclockwise
-  std::vector<int> cells = {(int)XMU_QUAD, 4, 0, 1, 6, 5,
-                            (int)XMU_PIXEL, 4, 1, 2, 6, 7,
-                            (int)XMU_TRIANGLE, 3, 2, 3, 7,
-                            (int)XMU_POLYGON, 6, 3, 4, 8, 13, 12,7,
-                            (int)XMU_POLY_LINE, 3, 7, 11, 10,
-                            (int)XMU_LINE, 2, 5, 9};
+  std::vector<int> cells = {(int)XMU_QUAD, 4, 0, 1, 6, 5,            // 0
+                            (int)XMU_PIXEL, 4, 1, 2, 6, 7,           // 1
+                            (int)XMU_TRIANGLE, 3, 2, 3, 7,           // 2
+                            (int)XMU_POLYGON, 6, 3, 4, 8, 13, 12, 7, // 3
+                            (int)XMU_POLY_LINE, 3, 7, 11, 10,        // 4
+                            (int)XMU_LINE, 2, 5, 9};                 // 5
   // clang-format on
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
@@ -2299,9 +2386,9 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
   }
 
   {
-    std::pair<int, int> edge0(0, 3), edge1(3, 4), edge2(4, 1), edge3(1, 0), edge4(1, 4),
-      edge5(4, 5), edge6(5, 2), edge7(2, 1), edge8(3, 6), edge9(6, 7), edge10(7, 4), edge11(4, 3),
-      edge12(4, 7), edge13(7, 8), edge14(8, 5), edge15(5, 4);
+    std::pair<int, int> edge0(0, 3), edge1(3, 4), edge2(1, 4), edge3(0, 1), edge4(1, 4),
+      edge5(4, 5), edge6(2, 5), edge7(1, 2), edge8(3, 6), edge9(6, 7), edge10(4, 7), edge11(3, 4),
+      edge12(4, 7), edge13(7, 8), edge14(5, 8), edge15(4, 5);
 
     std::vector<std::vector<std::pair<int, int>>> expectedCellsCellEdges;
     expectedCellsCellEdges = {{edge0, edge1, edge2, edge3},
@@ -2322,15 +2409,15 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
 
   {
     std::pair<int, int> edge0(0, 1),                                            // Quad
-      edge1(1, 6), edge2(6, 5), edge3(5, 0),                                    // End of Quad
+      edge1(1, 6), edge2(5, 6), edge3(0, 5),                                    // End of Quad
       edge4(1, 2),                                                              // Pixel
-      edge5(2, 7), edge6(7, 6), edge7(6, 1),                                    // End of Pixel
+      edge5(2, 7), edge6(6, 7), edge7(1, 6),                                    // End of Pixel
       edge8(2, 3),                                                              // Triangle
-      edge9(3, 7), edge10(7, 2),                                                // End of Triangle
+      edge9(3, 7), edge10(2, 7),                                                // End of Triangle
       edge11(3, 4),                                                             // Polygon
-      edge12(4, 8), edge13(8, 13), edge14(13, 12), edge15(12, 7), edge16(7, 3), // End of Polygon
+      edge12(4, 8), edge13(8, 13), edge14(12, 13), edge15(7, 12), edge16(3, 7), // End of Polygon
       edge17(7, 11),                                                            // PolyLine
-      edge18(11, 10),                                                           // End of PolyLine
+      edge18(10, 11),                                                           // End of PolyLine
       edge19(5, 9);                                                             // Line
 
     // 2D Shapes
@@ -2361,24 +2448,24 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
   }
   {
     std::pair<int, int> edge0(0, 1),                                      // XMU_TETRA
-      edge1(1, 5), edge2(5, 0), edge3(0, 15), edge4(1, 15), edge5(5, 15), // End of XMU_TETRA
+      edge1(1, 5), edge2(0, 5), edge3(0, 15), edge4(1, 15), edge5(5, 15), // End of XMU_TETRA
       edge6(1, 2),                                                        // XMU_VOXEL
-      edge7(2, 7), edge8(7, 6), edge9(6, 1), edge10(16, 17), edge11(17, 22), edge12(22, 21),
-      edge13(21, 16), edge14(1, 16), edge15(2, 17), edge16(7, 22),
+      edge7(2, 7), edge8(6, 7), edge9(1, 6), edge10(16, 17), edge11(17, 22), edge12(21, 22),
+      edge13(16, 21), edge14(1, 16), edge15(2, 17), edge16(7, 22),
       edge17(6, 21), // End of XMU_VOXEL
       edge18(2, 3),  // XMU_HEXAHEDRON
-      edge19(3, 8), edge20(8, 7), edge21(7, 2), edge22(17, 18), edge23(18, 22), edge24(22, 23),
-      edge25(23, 17), edge26(2, 17), edge27(3, 18), edge28(8, 22),
+      edge19(3, 8), edge20(7, 8), edge21(2, 7), edge22(17, 18), edge23(18, 22), edge24(22, 23),
+      edge25(17, 23), edge26(2, 17), edge27(3, 18), edge28(8, 22),
       edge29(7, 23), // End of XMU_HEXAHEDRON
       edge30(8, 9),  // XMU_POLYHEDRON
       edge31(8, 13), edge32(8, 23), edge33(9, 14), edge34(9, 24), edge35(13, 14), edge36(13, 28),
       edge37(14, 29), edge38(23, 24), edge39(23, 28), edge40(24, 29),
       edge41(28, 29), // End of XMU_POLYHEDRON
       edge42(3, 4),   // XMU_WEDGE
-      edge43(4, 18), edge44(18, 3), edge45(8, 9), edge46(9, 23), edge47(23, 8), edge48(3, 8),
+      edge43(4, 18), edge44(3, 18), edge45(8, 9), edge46(9, 23), edge47(8, 23), edge48(3, 8),
       edge49(4, 9), edge50(18, 23), // End of XMU_WEDGE
       edge51(5, 6),                 // XMU_PYRAMID
-      edge52(6, 11), edge53(11, 10), edge54(10, 5), edge55(5, 20), edge56(6, 20), edge57(11, 20),
+      edge52(6, 11), edge53(10, 11), edge54(5, 10), edge55(5, 20), edge56(6, 20), edge57(11, 20),
       edge58(10, 20); // End of XMU_PYRAMID
 
     // 2D Shapes
@@ -2464,7 +2551,98 @@ void XmUGridUnitTests::testGetCommonCells()
   expectedCells.clear();
   points.clear();
   retrievedCells.clear();
-}
+} // XmUGridUnitTests::testGetCommonCells
+
+//------------------------------------------------------------------------------
+/// \brief Test retrieving Cell Neighbors
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCellNeighbors()
+{
+  /// \code
+  ///
+  ///     0-----1-----2
+  ///     |  0  |  1  |
+  ///     3-----4-----5
+  ///     |  2  |  3  |
+  ///     6-----7-----8
+  ///
+  /// \endcode
+  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  if (!ugrid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  VecInt expectedCells;
+
+  VecInt retrievedCells;
+  retrievedCells = ugrid->GetCellNeighbors(-1);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  retrievedCells = ugrid->GetCellNeighbors(0);
+  expectedCells = {2, 1, 3};
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells.clear();
+  retrievedCells = ugrid->GetCellNeighbors(4);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells.clear();
+  retrievedCells.clear();
+
+  // 2D Shapes
+  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  if (!ugrid2d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  expectedCells = {1, 5};
+  retrievedCells = ugrid2d->GetCellNeighbors(0);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {0, 2, 3, 4};
+  retrievedCells = ugrid2d->GetCellNeighbors(1);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {1, 3, 4};
+  retrievedCells = ugrid2d->GetCellNeighbors(2);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {2, 1, 4};
+  retrievedCells = ugrid2d->GetCellNeighbors(3);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {1, 2, 3};
+  retrievedCells = ugrid2d->GetCellNeighbors(4);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {0};
+  retrievedCells = ugrid2d->GetCellNeighbors(5);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+
+  // 3D Shapes
+  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  if (!ugrid3d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  expectedCells = {1, 5};
+  retrievedCells = ugrid3d->GetCellNeighbors(0);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {0, 2, 5};
+  retrievedCells = ugrid3d->GetCellNeighbors(1);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {1, 4, 3};
+  retrievedCells = ugrid3d->GetCellNeighbors(2);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {2, 4};
+  retrievedCells = ugrid3d->GetCellNeighbors(3);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {2, 3};
+  retrievedCells = ugrid3d->GetCellNeighbors(4);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells = {0, 1};
+  retrievedCells = ugrid3d->GetCellNeighbors(5);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+
+} // XmUGridUnitTests::testGetCellNeighbors
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------
