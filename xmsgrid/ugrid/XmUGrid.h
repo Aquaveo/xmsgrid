@@ -109,32 +109,44 @@ public:
   static BSHP<XmUGrid> New();
   virtual ~XmUGrid();
 
+  // Misc
   static bool ValidCellStream(const VecInt& a_cellStream);
 
   /// \cond
+
+  // Points
   virtual int GetNumberOfPoints() const = 0;
-  virtual int GetNumberOfCells() const = 0;
-
-  virtual Pt3d GetPoint(const int a_pointIdx) const = 0;
-  virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) = 0;
-
-  virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
-  virtual int GetCellDimension(const int a_cellIdx) const = 0;
-  virtual std::vector<int> GetDimensionCount() const = 0;
-  virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
-  virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
-
-  virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
 
   virtual const VecPt3d& GetPoints() const = 0;
   virtual void SetPoints(const VecPt3d& a_points) = 0;
 
-  virtual VecInt GetPointCells(const int a_pointIdx) const = 0;
+  virtual Pt3d GetPoint(const int a_pointIdx) const = 0;
+  virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) = 0;
 
-  virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
+  virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
+
+  virtual VecInt GetPointCells(const int a_pointIdx) const = 0; // cells associated with point
+
+  // Cells
+  virtual int GetNumberOfCells() const = 0;
+
+  virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
+  virtual std::vector<int> GetDimensionCount() const = 0;
+  virtual int GetCellDimension(const int a_cellIdx) const = 0;
+
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
-  virtual bool GetCellPointIndexes(const int a_cellIdx, VecInt& a_cellPoints) const = 0;
+  virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
+  virtual bool GetCellPointIndexes(const int a_cellIdx,
+                                   VecInt& a_cellPoints) const = 0; // Point indexes of a cell
+
+  // Edges
+  virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
+  virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
+                                                      const int a_edgeIdx) const = 0;
+
+  // Faces
+  virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)
