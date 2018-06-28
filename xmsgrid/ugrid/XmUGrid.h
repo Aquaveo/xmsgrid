@@ -127,6 +127,7 @@ public:
 
   virtual VecInt GetPointCells(const int a_pointIdx) const = 0; // cells associated with point
 
+  virtual VecInt GetCommonCells(const VecInt& a_points)const = 0;
   // Cells
   virtual int GetNumberOfCells() const = 0;
 

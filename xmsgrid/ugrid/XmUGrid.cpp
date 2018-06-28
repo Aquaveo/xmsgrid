@@ -59,6 +59,7 @@ public:
 
   virtual VecInt GetPointCells(const int a_pointIdx) const override; // cells associated with point
 
+  virtual VecInt GetCommonCells(const VecInt& a_points) const override;
   // Cells
   virtual int GetNumberOfCells() const override;
 
@@ -101,7 +102,7 @@ private:
     int& a_currIdx);
   static bool GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_cellStream,
                                                             VecInt& a_cellPoints);
-  static void XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream(
+  static void GetUniqueEdgesFromPolyhedronCellStream(
     const int** a_start,
     int& a_length,
     boost::container::flat_set<std::pair<int, int>>& a_cellEdges,
@@ -220,6 +221,44 @@ VecInt XmUGridImpl::GetPointCells(const int a_pointIdx) const
   }
   return cellsOfPoint;
 } // XmUGridImpl::GetPointCells
+//------------------------------------------------------------------------------
+/// \brief Gets the common cells from a vector of points
+/// \param[in] a_points: a vector of unique points
+/// \return a vector of cell indices
+//------------------------------------------------------------------------------
+VecInt XmUGridImpl::GetCommonCells(const VecInt& a_points) const
+{
+  VecInt commonCells;
+  if (a_points.size() == 0)
+    return commonCells;
+  commonCells = GetPointCells(a_points[0]);
+  for (int i = 1; i < a_points.size(); ++i)
+  {
+    VecInt tempAssociatedCells = GetPointCells(a_points[i]);
+    VecInt remove;
+    for (int j = 0; j < commonCells.size(); ++j)
+    {
+      bool found = false;
+      for (int k = 0; k < tempAssociatedCells.size(); ++k)
+      {
+        if (commonCells[j] == tempAssociatedCells[k])
+        {
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+        remove.push_back(j);
+    }
+    for (int j = (int)remove.size() - 1; j >= 0; --j)
+    {
+      commonCells.erase(commonCells.begin() + remove[j]);
+    }
+    if (commonCells.size() == 0)
+      break;
+  }
+  return commonCells;
+}
 // Cells
 //------------------------------------------------------------------------------
 /// \brief Get the number of cells.
@@ -1168,17 +1207,16 @@ bool XmUGridImpl::GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_
   }
   return true;
 } // XmUGridImpl::GetNumberOfPolyhedronEdges
-
 //------------------------------------------------------------------------------
-/// \brief Get the unique points in a flat set
-/// \param[in] a_cellStream: the UGrid cell stream
-/// \param[in] a_numCellItems: the number of cell faces in the polyhedron
+/// \brief Get the unique edges in a flat set for a given polyhedron
+/// \param[in] a_start: the UGrid cell stream (integer pointer)
+/// \param[in] a_length: the length of the cell stream
+/// \param[in] a_cellEdges: Unique cell edges of the polyhedron
 /// \param[in] a_currIdx: the index of the cell stream; this should reference
 ///       the number of points in the first face. This variable will be updated
 ///       to the cell type of the next cell.
 /// \note: This function does NOT verify cellstream size!!  This function
 ///      needs to be efficient!
-/// \return the unique points of the polyhedron
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream(
   const int** a_start,
@@ -2374,6 +2412,59 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
   }
 } // XmUGridUnitTests::testGetCellEdgePointIndexes
 
+//------------------------------------------------------------------------------
+/// \brief Test retrieving common cells from points
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCommonCells()
+{
+  /// \code
+  ///
+  ///     0-----1-----2
+  ///     |  0  |  1  |
+  ///     3-----4-----5
+  ///     |  2  |  3  |
+  ///     6-----7-----8
+  ///
+  /// \endcode
+  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  if (!ugrid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  VecInt expectedCells;
+  VecInt points = {0, 8};
+  VecInt retrievedCells;
+  retrievedCells = ugrid->GetCommonCells(points);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells.clear();
+  points.clear();
+  retrievedCells.clear();
+
+  expectedCells = {0, 2};
+  points = {3, 4};
+  retrievedCells = ugrid->GetCommonCells(points);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells.clear();
+  points.clear();
+  retrievedCells.clear();
+
+  expectedCells = {0};
+  points = {0, 3};
+  retrievedCells = ugrid->GetCommonCells(points);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells.clear();
+  points.clear();
+  retrievedCells.clear();
+
+  points = {3, 4, 5};
+  retrievedCells = ugrid->GetCommonCells(points);
+  TS_ASSERT_EQUALS(expectedCells, retrievedCells);
+  expectedCells.clear();
+  points.clear();
+  retrievedCells.clear();
+}
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------
