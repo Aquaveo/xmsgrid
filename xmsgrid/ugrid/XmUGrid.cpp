@@ -64,7 +64,7 @@ public:
   // Cells
   virtual int GetNumberOfCells() const override;
 
-  virtual VecInt GetPointsOfCells(const int a_cellIdx) const override;
+  virtual VecInt GetPointsOfCell(const int a_cellIdx) const override;
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const override;
   virtual std::vector<int> GetDimensionCount() const override;
@@ -77,12 +77,16 @@ public:
                                    VecInt& a_cellPoints) const override; // Point indexes of a cell
 
   virtual VecInt GetCellNeighbors(const int a_cellIdx) const override;
+  virtual bool GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const override;
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const override;
   virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
                                                       const int a_edgeIdx) const override;
-  virtual int GetAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const override;
+  virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const override;
+  virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
+                                               const int a_pointIdx2) const override;
+  virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const override;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
@@ -113,6 +117,9 @@ private:
     int& a_length,
     boost::container::flat_set<std::pair<int, int>>& a_cellEdges,
     int& a_currIdx);
+
+  bool GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const;
+  bool GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) const;
 
   VecPt3d m_points;                 ///< UGrid points
   VecInt m_cellStream;              ///< UGrid cell stream. @see SetCellStream, GetCellStream
@@ -284,7 +291,7 @@ int XmUGridImpl::GetNumberOfCells() const
 /// \param[in] a_cellIdx: the index of the cell
 /// \return a vector of point indices
 //------------------------------------------------------------------------------
-VecInt XmUGridImpl::GetPointsOfCells(const int a_cellIdx) const
+VecInt XmUGridImpl::GetPointsOfCell(const int a_cellIdx) const
 {
   const int* cellStream;
   int streamLength;
@@ -337,7 +344,7 @@ XmUGridCellType XmUGridImpl::GetCellType(const int a_cellIdx) const
     int cellStart = m_cellIdxToStreamIdx[a_cellIdx];
 #if _DEBUG
     if ((m_cellStream[cellStart] > XMU_PYRAMID) && (m_cellStream[cellStart] != XMU_POLYHEDRON) ||
-      (m_cellStream[cellStart] == XMU_TRIANGLE_STRIP))
+        (m_cellStream[cellStart] == XMU_TRIANGLE_STRIP))
     {
       assert("UNSUPPORTED TYPE!");
     }
@@ -460,7 +467,7 @@ VecInt XmUGridImpl::GetCellNeighbors(const int a_cellIdx) const
 {
   VecInt neighbors;
   VecInt pointsOfCell;
-  pointsOfCell = GetPointsOfCells(a_cellIdx);
+  pointsOfCell = GetPointsOfCell(a_cellIdx);
   for (int i = 0; i < pointsOfCell.size(); i++)
   {
     VecInt associatedCells = GetPointCells(pointsOfCell[i]);
@@ -485,6 +492,23 @@ VecInt XmUGridImpl::GetCellNeighbors(const int a_cellIdx) const
   }
   return neighbors;
 } // XmUGridImpl::GetCellNeighbors
+//------------------------------------------------------------------------------
+/// \brief Get a plan view polygon of a specified cell
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[out] a_polygon: vector of Pt3d that is the plan view polygon
+/// \return whether the operation was successful
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const
+{
+  a_polygon.clear();
+  if (a_cellIdx < 0 || a_cellIdx >= GetNumberOfCells())
+    return false;
+  if (GetCellDimension(a_cellIdx) == 3)
+    return GetPlanViewPolygon3d(a_cellIdx, a_polygon);
+  else
+    return GetPlanViewPolygon2d(a_cellIdx, a_polygon);
+} // XmUGridImpl::GetPlanViewPolygon
+
 // Edges
 //------------------------------------------------------------------------------
 /// \brief Get the number of edges with specified cell
@@ -614,7 +638,7 @@ std::pair<int, int> XmUGridImpl::GetCellEdgePointIndexes(const int a_cellIdx,
                                                          const int a_edgeIdx) const
 {
   std::pair<int, int> edge;
-  if (a_edgeIdx < 0  || a_edgeIdx > GetNumberOfCellEdges(a_cellIdx))
+  if (a_edgeIdx < 0 || a_edgeIdx > GetNumberOfCellEdges(a_cellIdx))
     return edge;
   VecInt cellStream;
   if (GetSingleCellStream(a_cellIdx, cellStream))
@@ -802,25 +826,25 @@ std::pair<int, int> XmUGridImpl::GetCellEdgePointIndexes(const int a_cellIdx,
   return edge;
 } // XmUGridImpl::GetCellEdgePointIndexes
 //------------------------------------------------------------------------------
-/// \brief Get the index of the adjacent cell (that shares the same cell edge)
+/// \brief Get the index of the adjacent cells (that shares the same cell edge)
 /// \param[in] a_cellIdx: the index of the cell
 /// \param[in] a_edgeIdx: the index of the edge
-/// \return a cell index of the adjacent cell
+/// \return a vector of cell indices of the adjacent cells
 //------------------------------------------------------------------------------
-int XmUGridImpl::GetAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const
+VecInt XmUGridImpl::GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const
 {
+  VecInt adjacentCells;
   VecInt cellNeighbors = GetCellNeighbors(a_cellIdx);
   if (cellNeighbors.size() == 0)
   {
-    return -1;
+    return adjacentCells;
   }
   if (a_edgeIdx < 0 && a_edgeIdx >= GetNumberOfCellEdges(a_cellIdx))
   {
-    return -1;
+    return adjacentCells;
   }
 
-  std::pair<int, int> currEdge,
-    neighborEdge;
+  std::pair<int, int> currEdge, neighborEdge;
   currEdge = GetCellEdgePointIndexes(a_cellIdx, a_edgeIdx);
   for (int j(0); j < cellNeighbors.size(); j++)
   {
@@ -829,13 +853,33 @@ int XmUGridImpl::GetAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const
       neighborEdge = GetCellEdgePointIndexes(cellNeighbors[j], k);
       if (currEdge == neighborEdge)
       {
-        return cellNeighbors[j];
+        adjacentCells.push_back(cellNeighbors[j]);
       }
     }
   }
-  return -1;
-} // XmUGridImpl::GetAdjacentCell
-
+  return adjacentCells;
+} // XmUGridImpl::GetAdjacentCells
+//------------------------------------------------------------------------------
+/// \brief Get the indices of the adjacent cells (that shares the same cell edge)
+/// \param[in] a_pointIdx1: the index of the first point
+/// \param[in] a_pointIdx2: the index of the second point
+/// \return a vector of cell indices of the adjacent cells
+//------------------------------------------------------------------------------
+VecInt XmUGridImpl::GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
+                                                  const int a_pointIdx2) const
+{
+  VecInt points = {a_pointIdx1, a_pointIdx2};
+  return GetCommonCells(points);
+} // XmUGridImpl::GetAdjacentCellsFromGivenEdge
+//------------------------------------------------------------------------------
+/// \brief Get the index of the adjacent cells (that shares the same cell edge)
+/// \param[in] a_edge: the edge (a pair of point indexes)
+/// \return a vector of cell indices of the adjacent cells
+//------------------------------------------------------------------------------
+VecInt XmUGridImpl::GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const
+{
+  return GetAdjacentCellsFromGivenEdge(a_edge.first, a_edge.second);
+} // XmUGridImpl::GetAdjacentCellsFromGivenEdge
 // Faces
 //------------------------------------------------------------------------------
 /// \brief Get the number of cell faces for given cell.
@@ -1378,7 +1422,48 @@ void XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream(
     }
     a_currIdx += numPoints;
   }
-}
+} // XmUGridImpl::GetPlanViewPolygon2d
+//------------------------------------------------------------------------------
+/// \brief Get a plan view polygon of a specified 2D cell
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[out] a_polygon: vector of Pt3d that is the plan view polygon
+/// \return whether the operation was successful
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const
+{
+  VecInt pointIndices = GetPointsOfCell(a_cellIdx);
+  for (int i(0); i < pointIndices.size(); i++)
+  {
+    a_polygon.push_back(GetPoint(pointIndices[i]));
+  }
+  if (a_polygon.size() > 0)
+  {
+    return true;
+  }
+  return false;
+} // XmUGridImpl::GetPlanViewPolygon2d
+//------------------------------------------------------------------------------
+/// \brief Get a plan view polygon of a specified 3D cell
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[out] a_polygon: vector of Pt3d that is the plan view polygon
+/// \return whether the operation was successful
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) const
+{
+  bool prismatic = true;
+  VecPt3d segments;
+  VecInt pointIndices = GetPointsOfCell(a_cellIdx);
+  for (int i(0); i < pointIndices.size(); i++)
+  {
+    a_polygon.push_back(GetPoint(pointIndices[i]));
+  }
+  if (a_polygon.size() > 0)
+  {
+    return true;
+  }
+  return false;
+} // XmUGridImpl::GetPlanViewPolygon3d
+
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
 /// \brief Geometry for an unstructured grid.
@@ -2254,8 +2339,8 @@ void XmUGridUnitTests::testGetPointCellsSimple()
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellStream);
 
-  VecInt cellEmpty = { };
-  VecInt cellZero = { 0 };
+  VecInt cellEmpty = {};
+  VecInt cellZero = {0};
   VecInt cellZeroAndOne = {0, 1};
   VecInt cellOne = {1};
   TS_ASSERT_EQUALS(cellEmpty, ugrid->GetPointCells(-1));
@@ -2444,7 +2529,7 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
       edge12(4, 7), edge13(7, 8), edge14(5, 8), edge15(4, 5);
     std::pair<int, int> emptyEdge;
     std::vector<std::vector<std::pair<int, int>>> expectedCellsCellEdges;
-    std::vector<std::pair<int, int>> emptyVec = { emptyEdge };
+    std::vector<std::pair<int, int>> emptyVec = {emptyEdge};
     std::vector<std::pair<int, int>> cellEdges;
 
     cellEdges.push_back(ugrid->GetCellEdgePointIndexes(0, -1));
@@ -2455,7 +2540,7 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
     TS_ASSERT_EQUALS(emptyVec, cellEdges);
 
     cellEdges.clear();
-    expectedCellsCellEdges = { { edge0, edge1, edge2, edge3 },
+    expectedCellsCellEdges = {{edge0, edge1, edge2, edge3},
                               {edge4, edge5, edge6, edge7},
                               {edge8, edge9, edge10, edge11},
                               {edge12, edge13, edge14, edge15}};
@@ -2589,11 +2674,11 @@ void XmUGridUnitTests::testGetCommonCells()
   retrievedCells = ugrid->GetCommonCells(points);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
 
-  points = { 0, -1 };
+  points = {0, -1};
   retrievedCells = ugrid->GetCommonCells(points);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
 
-  points = { 0, 8 };
+  points = {0, 8};
   retrievedCells = ugrid->GetCommonCells(points);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
   expectedCells.clear();
@@ -2623,11 +2708,11 @@ void XmUGridUnitTests::testGetCommonCells()
   points.clear();
   retrievedCells.clear();
 
-  points = { ugrid->GetNumberOfPoints(), 0 };
+  points = {ugrid->GetNumberOfPoints(), 0};
   retrievedCells = ugrid->GetCommonCells(points);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
 
-  points = { 0, ugrid->GetNumberOfPoints() };
+  points = {0, ugrid->GetNumberOfPoints()};
   retrievedCells = ugrid->GetCommonCells(points);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
 
@@ -2747,20 +2832,76 @@ void XmUGridUnitTests::testGetAdjacentCell()
     return;
   }
 
-  VecInt expectedCells = {-1, 2, 1, -1};
+  VecInt expectedFail;
+  VecInt2d expectedCells = {{}, {2}, {1}, {}};
 
-  int adjacentCells = ugrid->GetAdjacentCell(0, -1);
-  TS_ASSERT_EQUALS(-1, adjacentCells);
+  VecInt adjacentCells = ugrid->GetAdjacentCells(0, -1);
+  TS_ASSERT_EQUALS(expectedFail, adjacentCells);
   for (int i(0); i < ugrid->GetNumberOfCellEdges(0); i++)
   {
-    adjacentCells = ugrid->GetAdjacentCell(0, i);
+    adjacentCells = ugrid->GetAdjacentCells(0, i);
     TS_ASSERT_EQUALS(expectedCells[i], adjacentCells);
   }
-  adjacentCells = ugrid->GetAdjacentCell(0, ugrid->GetNumberOfCellEdges(0));
-  TS_ASSERT_EQUALS(-1, adjacentCells);
+  adjacentCells = ugrid->GetAdjacentCells(0, ugrid->GetNumberOfCellEdges(0));
+  TS_ASSERT_EQUALS(expectedFail, adjacentCells);
 
+  // Test a cell in the middle of an Hexadron grid
+  BSHP<XmUGrid> hexUgrid = TEST_XmUBuildHexadronUgrid(5, 5, 5);
+  if (!hexUgrid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+  expectedCells = {{5, 6, 21},   {6, 10, 26},  {6, 7, 23},   {2, 6, 18},
+                   {21, 37, 38}, {26, 38, 42}, {23, 38, 39}, {18, 34, 38},
+                   {17, 18, 21}, {21, 25, 26}, {26, 23, 27}, {18, 23, 19}};
+
+  for (int i(0); i < hexUgrid->GetNumberOfCellEdges(22); i++)
+  {
+    adjacentCells = hexUgrid->GetAdjacentCells(22, i);
+    TS_ASSERT_EQUALS(expectedCells[i], adjacentCells);
+  }
 
 } // XmUGridUnitTests::testGetAdjacentCell
+//------------------------------------------------------------------------------
+/// \brief Test retrieving Adjacent Cell
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge()
+{
+  /// \code
+  ///
+  ///     0-----1-----2
+  ///     |  0  |  1  |
+  ///     3-----4-----5
+  ///     |  2  |  3  |
+  ///     6-----7-----8
+  ///
+  /// \endcode
+  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  if (!ugrid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  VecInt expectedFail;
+  VecInt2d expectedCells = { {0,1}, { 0,2 }, {0 } };
+  std::vector<std::pair<int,int>> edges = { {1,4}, { 3,4 }, { 0,3 } };
+
+  VecInt adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(-1, -1);
+  TS_ASSERT_EQUALS(expectedFail, adjacentCells);
+  for (int i(0); i < edges.size(); i++)
+  {
+    adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(edges[i]);
+    TS_ASSERT_EQUALS(expectedCells[i], adjacentCells);
+  }
+  adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(edges[0].first, edges[1].second);
+  TS_ASSERT_EQUALS(expectedCells[0], adjacentCells);
+
+  adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(0, ugrid->GetNumberOfPoints());
+  TS_ASSERT_EQUALS(expectedFail, adjacentCells);
+} // XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge
+
 
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.

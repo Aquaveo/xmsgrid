@@ -127,12 +127,12 @@ public:
 
   virtual VecInt GetPointCells(const int a_pointIdx) const = 0; // cells associated with point
 
-  virtual VecInt GetCommonCells(const VecInt& a_points)const = 0;
+  virtual VecInt GetCommonCells(const VecInt& a_points) const = 0;
 
   // Cells
   virtual int GetNumberOfCells() const = 0;
 
-  virtual VecInt GetPointsOfCells(const int a_cellIdx) const = 0;
+  virtual VecInt GetPointsOfCell(const int a_cellIdx) const = 0;
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
@@ -144,12 +144,16 @@ public:
   virtual bool GetCellPointIndexes(const int a_cellIdx,
                                    VecInt& a_cellPoints) const = 0; // Point indexes of a cell
   virtual VecInt GetCellNeighbors(const int a_cellIdx) const = 0;
+  virtual bool GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const = 0;
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
   virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
                                                       const int a_edgeIdx) const = 0;
-  virtual int GetAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const = 0;
+  virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
+  virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
+                                               const int a_pointIdx2) const = 0;
+  virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
