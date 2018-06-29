@@ -149,6 +149,7 @@ public:
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
   virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
                                                       const int a_edgeIdx) const = 0;
+  virtual int GetAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const = 0;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
