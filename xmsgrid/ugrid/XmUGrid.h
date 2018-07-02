@@ -155,6 +155,7 @@ public:
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                                const int a_pointIdx2) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
+  virtual bool GetEdgesFromPoint(const int a_pointId, VecInt& a_edgeIdx, VecInt& a_cells) const = 0;
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  std::vector<std::pair<int, int>>& a_edges,
                                  VecInt& a_cells) const = 0;
