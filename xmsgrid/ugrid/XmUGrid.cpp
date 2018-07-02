@@ -88,6 +88,13 @@ public:
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                                const int a_pointIdx2) const override;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const override;
+  virtual bool GetEdgesFromPoint(const int a_pointId,
+                                 std::vector<std::pair<int, int>>& a_edges,
+                                 VecInt& a_cells) const override;
+  virtual bool GetEdgesFromPoint(const int a_pointId,
+                                 VecInt& a_edgePoints1,
+                                 VecInt& a_edgePoints2,
+                                 VecInt& a_cells) const override;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
@@ -888,7 +895,7 @@ int XmUGridImpl::Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) con
     assert("This is a 2D Function!");
     return -1;
   }
-}  // XmUGridImpl::Get2dAdjacentCell
+} // XmUGridImpl::Get2dAdjacentCell
 
 //------------------------------------------------------------------------------
 /// \brief Get the indices of the adjacent cells (that shares the same cell edge)
@@ -911,6 +918,63 @@ VecInt XmUGridImpl::GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_ed
 {
   return GetAdjacentCellsFromGivenEdge(a_edge.first, a_edge.second);
 } // XmUGridImpl::GetAdjacentCellsFromGivenEdge
+
+//------------------------------------------------------------------------------
+/// \brief Get the Edges associated with a point
+/// \param[in] a_pointId: the point
+/// \param[in] a_edges: the edges connected to the point
+/// \param[in] a_cells: the cells to whom the edges belong
+/// \return true if operation was successful
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetEdgesFromPoint(const int a_pointId,
+                                    std::vector<std::pair<int, int>>& a_edges,
+                                    VecInt& a_cells) const
+{
+  a_edges.clear();
+  a_cells.clear();
+  VecInt associatedCells = GetPointCells(a_pointId);
+  if (associatedCells.size() == 0)
+    return false;
+  for (int i = 0; i < associatedCells.size(); ++i)
+  {
+    for (int j = 0; j < GetNumberOfCellEdges(associatedCells[i]); ++j)
+    {
+      std::pair<int, int> temp = GetCellEdgePointIndexes(associatedCells[i], j);
+      if (temp.first == a_pointId || temp.second == a_pointId)
+      {
+        a_edges.push_back(temp);
+        a_cells.push_back(associatedCells[i]);
+      }
+    }
+  }
+  return true;
+} // XmUGridImpl::GetEdgesFromPoint
+
+//------------------------------------------------------------------------------
+/// \brief Get the Edges associated with a point
+/// \param[in] a_pointId: the point
+/// \param[in] a_edgePoints1: the first points of the edges connected to the point
+/// \param[in] a_edgePoints2: the second points of the edges connected to the point
+/// \param[in] a_cells: the cells to whom the edges belong
+/// \return true if operation was successful
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetEdgesFromPoint(const int a_pointId,
+                                    VecInt& a_edgePoints1,
+                                    VecInt& a_edgePoints2,
+                                    VecInt& a_cells) const
+{
+  a_edgePoints1.clear();
+  a_edgePoints2.clear();
+  std::vector<std::pair<int, int>> edges;
+  if (!GetEdgesFromPoint(a_pointId, edges, a_cells))
+    return false;
+  for (int i = 0; i < edges.size(); ++i)
+  {
+    a_edgePoints1.push_back(edges[i].first);
+    a_edgePoints2.push_back(edges[i].second);
+  }
+  return true;
+} // XmUGridImpl::GetEdgesFromPoint
 
 // Faces
 //------------------------------------------------------------------------------
@@ -3065,8 +3129,8 @@ void XmUGridUnitTests::testGetAdjacentCell()
   }
 
   VecInt expectedFail;
-  VecInt2d expectedCells = { {}, { 2 }, { 1 }, {} };
-  VecInt expected2dCells = { -1,  2 ,  1 , -1 };
+  VecInt2d expectedCells = {{}, {2}, {1}, {}};
+  VecInt expected2dCells = {-1, 2, 1, -1};
 
   int adjacentCell;
   VecInt adjacentCells = ugrid->GetAdjacentCells(0, -1);
@@ -3086,8 +3150,6 @@ void XmUGridUnitTests::testGetAdjacentCell()
   TS_ASSERT_EQUALS(expectedFail, adjacentCells);
   adjacentCell = ugrid->Get2dAdjacentCell(0, ugrid->GetNumberOfCellEdges(0));
   TS_ASSERT_EQUALS(-1, adjacentCell);
-
-
 
   // Test a cell in the middle of an Hexadron grid
   BSHP<XmUGrid> hexUgrid = TEST_XmUBuildHexadronUgrid(5, 5, 5);
@@ -3340,6 +3402,63 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
     }
   }
 } // XmUGridUnitTests::testGetCellFaceNeighbor
+
+//------------------------------------------------------------------------------
+/// \brief Test retrieving Cell Face Neighbor
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetEdgesFromPoint()
+{
+  /// \code
+  ///
+  ///     0-----1-----2
+  ///     |  0  |  1  |
+  ///     3-----4-----5
+  ///     |  2  |  3  |
+  ///     6-----7-----8
+  ///
+  /// \endcode
+  BSHP<xms::XmUGrid> grid = TEST_XmUGridSimpleQuad();
+  if (!grid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+  VecInt2d expectedCells{
+    {0, 0},       {0, 0, 1, 1}, {1, 1},       {0, 0, 2, 2}, {0, 0, 1, 1, 2, 2, 3, 3},
+    {1, 1, 3, 3}, {2, 2},       {2, 2, 3, 3}, {3, 3}};
+  std::vector<std::vector<std::pair<int, int>>> expectedEdges{
+    {{0, 3}, {0, 1}},
+    {{1, 4}, {0, 1}, {1, 4}, {1, 2}},
+    {{2, 5}, {1, 2}},
+    {{0, 3}, {3, 4}, {3, 6}, {3, 4}},
+    {{3, 4}, {1, 4}, {1, 4}, {4, 5}, {4, 7}, {3, 4}, {4, 7}, {4, 5}},
+    {{4, 5}, {2, 5}, {5, 8}, {4, 5}},
+    {{3, 6}, {6, 7}},
+    {{6, 7}, {4, 7}, {4, 7}, {7, 8}},
+    {{7, 8}, {5, 8}}};
+  VecInt2d expectedEdgePoints1{
+    {0, 0},       {1, 0, 1, 1}, {2, 1},       {0, 3, 3, 3}, {3, 1, 1, 4, 4, 3, 4, 4},
+    {4, 2, 5, 4}, {3, 6},       {6, 4, 4, 7}, {7, 5}};
+  VecInt2d expectedEdgePoints2{
+    {3, 1},       {4, 1, 4, 2}, {5, 2},       {3, 4, 6, 4}, {4, 4, 4, 5, 7, 4, 7, 5},
+    {5, 5, 8, 5}, {6, 7},       {7, 7, 7, 8}, {8, 8}};
+
+  std::vector<std::pair<int, int>> edges;
+  VecInt cells;
+  VecInt edgePoints1;
+  VecInt edgePoints2;
+
+  for (int i = 0; i < grid->GetNumberOfPoints(); ++i)
+  {
+    grid->GetEdgesFromPoint(i, edges, cells);
+    TS_ASSERT_EQUALS(expectedCells[i], cells);
+    TS_ASSERT_EQUALS(expectedEdges[i], edges);
+    grid->GetEdgesFromPoint(i, edgePoints1, edgePoints2, cells);
+    TS_ASSERT_EQUALS(expectedCells[i], cells);
+    TS_ASSERT_EQUALS(expectedEdgePoints1[i], edgePoints1);
+    TS_ASSERT_EQUALS(expectedEdgePoints2[i], edgePoints2);
+  }
+} // XmUGridUnitTests::testGetEdgesFromPoint
 
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
