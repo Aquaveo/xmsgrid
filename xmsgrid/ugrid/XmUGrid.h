@@ -158,6 +158,9 @@ public:
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
+  virtual int GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx) const = 0;
+  virtual bool GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx,
+    int &a_neighborCell, int &a_neighborFace) const = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)

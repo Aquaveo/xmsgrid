@@ -45,6 +45,7 @@ public:
   void testGetAdjacentCell();
   void testGetAdjacentCellsFromGivenEdge();
   void testGetCellFace();
+  void testGetCellFaceNeighbor();
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests
 

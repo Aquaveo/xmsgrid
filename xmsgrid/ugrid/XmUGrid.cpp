@@ -91,6 +91,11 @@ public:
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const override;
+  virtual int GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx) const override;
+  virtual bool GetCellFaceNeighbor(const int a_cellIdx,
+                                   const int a_faceIdx,
+                                   int& a_neighborCell,
+                                   int& a_neighborFace) const override;
 
   // Misc
 
@@ -1107,6 +1112,85 @@ VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
   }
   return facePoints;
 } // XmUGridImpl::GetCellFace
+//------------------------------------------------------------------------------
+/// \brief Get the cell face neighbors for given cell and face index.
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[in] a_faceIdx: the face index of the cell
+/// \return a cell index of the neighbor
+//------------------------------------------------------------------------------
+int XmUGridImpl::GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx) const
+{
+  VecInt cellFace = GetCellFace(a_cellIdx, a_faceIdx);
+  if (cellFace.empty())
+    return -1;
+  VecInt neighborCellFace = GetCommonCells(cellFace);
+  if (neighborCellFace.size() <= 1)
+    return -1;
+  if (neighborCellFace.size() > 2)
+  {
+    assert("Cell definitions are invalid; more than 2 cells found sharing the same face.");
+  }
+  for (int i(0); i < neighborCellFace.size(); i++)
+  {
+    if (neighborCellFace[i] != a_cellIdx)
+    {
+      return neighborCellFace[i];
+    }
+  }
+  return -1;
+} // XmUGridImpl::GetCellFaceNeighbor
+//------------------------------------------------------------------------------
+/// \brief Get the cell face neighbors for given cell and face index.
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[in] a_faceIdx: the face index of the cell
+/// \param[in] a_neighborCell: the index of the neighboring cell
+/// \param[in] a_neighborFace: the face index of the neighboring cell adjacent
+///      to the given face
+/// \return a cell index of the neighbor
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetCellFaceNeighbor(const int a_cellIdx,
+                                      const int a_faceIdx,
+                                      int& a_neighborCell,
+                                      int& a_neighborFace) const
+{
+  a_neighborCell = GetCellFaceNeighbor(a_cellIdx, a_faceIdx);
+  if (a_neighborCell < 0)
+  {
+    a_neighborCell = a_neighborFace = -1;
+    return false;
+  }
+  VecInt cellFace = GetCellFace(a_cellIdx, a_faceIdx);
+  for (int i(0); i < GetNumberOfCellFaces(a_neighborCell); i++)
+  {
+    VecInt curCellFace = GetCellFace(a_neighborCell, i);
+    if (cellFace.size() == curCellFace.size())
+    {
+      int j(0);
+      for (; j < cellFace.size(); ++j)
+      {
+        bool found = false;
+        for (int k(0); k < curCellFace.size(); ++k)
+        {
+          if (cellFace[j] == curCellFace[k])
+          {
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+          break; // This face is not the face we are l.
+      }
+      if (j == cellFace.size()) // Every point is found
+      {
+        a_neighborFace = i;
+        a_neighborFace = i;
+        return true;
+      }
+    }
+  }
+  a_neighborCell = a_neighborFace = -1;
+  return false;
+} // XmUGridImpl::GetCellFaceNeighbor
 //------------------------------------------------------------------------------
 /// \brief Update internal links to navigate between associated points and
 ///        cells.
@@ -3125,6 +3209,72 @@ void XmUGridUnitTests::testGetCellFace()
     }
   }
 } // XmUGridUnitTests::testGetCellFace
+//------------------------------------------------------------------------------
+/// \brief Test retrieving Cell Face Neighbor
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCellFaceNeighbor()
+{
+  // 2 hexahedrons
+  int rows = 3;
+  int cols = 2;
+  int lays = 2;
+
+  BSHP<xms::XmUGrid> grid = TEST_XmUBuildHexadronUgrid(rows, cols, lays);
+  if (!grid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  VecInt expectedNeighbor{-1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 0};
+  VecInt expectedFace{-1, -1, -1, 5, -1, -1, -1, -1, -1, -1, -1, 3};
+  int currId(0);
+  int neighborCell;
+  for (int i(0); i < grid->GetNumberOfCells(); i++)
+  {
+    for (int j(0); j < grid->GetNumberOfCellFaces(i); j++, currId++)
+    {
+      neighborCell = grid->GetCellFaceNeighbor(i, j);
+      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+      int faceIndex(-1);
+      grid->GetCellFaceNeighbor(i, j, neighborCell, faceIndex);
+      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+      TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);
+    }
+  }
+
+  rows = 3;
+  cols = 3;
+  lays = 3;
+  grid = TEST_XmUBuildHexadronUgrid(rows, cols, lays);
+  if (!grid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  expectedNeighbor.clear();
+  expectedNeighbor = {-1, 4, -1, 2,  1, -1, -1, 5,  0, 3,  -1, -1, -1, 6,  -1, -1,
+                      3,  0, -1, 7,  2, -1, -1, 1,  0, -1, -1, 6,  5,  -1, 1,  -1,
+                      4,  7, -1, -1, 2, -1, -1, -1, 7, 4,  3,  -1, 6,  -1, -1, 5};
+  expectedFace = {-1, 0, -1, 5,  2, -1, -1, 0,  4, 5,  -1, -1, -1, 0,  -1, -1,
+                  2,  3, -1, 0,  4, -1, -1, 3,  1, -1, -1, 5,  2,  -1, 1,  -1,
+                  4,  5, -1, -1, 1, -1, -1, -1, 2, 3,  1,  -1, 4,  -1, -1, 3};
+  currId = 0;
+  neighborCell;
+  for (int i(0); i < grid->GetNumberOfCells(); i++)
+  {
+    for (int j(0); j < grid->GetNumberOfCellFaces(i); j++, currId++)
+    {
+      neighborCell = grid->GetCellFaceNeighbor(i, j);
+      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+      int faceIndex(-1);
+      grid->GetCellFaceNeighbor(i, j, neighborCell, faceIndex);
+      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+      TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);
+    }
+  }
+} // XmUGridUnitTests::testGetCellFaceNeighbor
 
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
