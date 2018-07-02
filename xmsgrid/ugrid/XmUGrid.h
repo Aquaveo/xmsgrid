@@ -155,14 +155,16 @@ public:
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                                const int a_pointIdx2) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
-  virtual bool GetEdgesFromPoint(const int a_pointId, VecInt& a_edgeIdx, VecInt& a_cells) const = 0;
   virtual bool GetEdgesFromPoint(const int a_pointId,
-                                 std::vector<std::pair<int, int>>& a_edges,
-                                 VecInt& a_cells) const = 0;
+                                 VecInt& a_cellIdxs,
+                                 VecInt& a_edgeIdxs) const = 0;
   virtual bool GetEdgesFromPoint(const int a_pointId,
+                                 VecInt& a_cellIdxs,
+                                 std::vector<std::pair<int, int>>& a_edges) const = 0;
+  virtual bool GetEdgesFromPoint(const int a_pointId,
+                                 VecInt& a_cellIdxs,
                                  VecInt& a_edgePoints1,
-                                 VecInt& a_edgePoints2,
-                                 VecInt& a_cells) const = 0;
+                                 VecInt& a_edgePoints2) const = 0;
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
@@ -171,6 +173,9 @@ public:
                                    const int a_faceIdx,
                                    int& a_neighborCell,
                                    int& a_neighborFace) const = 0;
+  virtual bool GetFacesFromPoint(const int a_pointId,
+                                 VecInt& a_cellIdxs,
+                                 VecInt& a_faceIdxs) const = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)
