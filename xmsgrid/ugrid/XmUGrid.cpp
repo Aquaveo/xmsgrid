@@ -90,6 +90,7 @@ public:
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
+  virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const override;
 
   // Misc
 
@@ -674,7 +675,7 @@ std::pair<int, int> XmUGridImpl::GetCellEdgePointIndexes(const int a_cellIdx,
         edge.second = cellStream[2];            // Get the first point
       }
       break;
-
+    // 3D
     case XMU_VOXEL:
     {
       // Swap point 2 & 3, 6 & 7
@@ -985,6 +986,127 @@ int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
   }
   return -1;
 } // XmUGridImpl::GetNumberOfCellFaces
+//------------------------------------------------------------------------------
+/// \brief Get the cell face for given cell and face index.
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[in] a_faceIdx: the face index of the cell
+/// \return a vector of point indexes for the face index of the cell
+//------------------------------------------------------------------------------
+VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
+{
+  int numFaces = GetNumberOfCellFaces(a_cellIdx);
+  VecInt facePoints;
+  if (numFaces < 1)
+  {
+    return facePoints;
+  }
+  if (numFaces == 1)
+  {
+    facePoints = GetPointsOfCell(a_cellIdx);
+  }
+  else
+  {
+    VecInt cellStream;
+    if (GetSingleCellStream(a_cellIdx, cellStream))
+    {
+      if (cellStream.size() < 4)
+        return facePoints;
+
+      int numPointsInAFace(-1);
+      switch (cellStream[0])
+      {
+      case XMU_VOXEL:
+      {
+        // Swap point 2 & 3, 6 & 7
+        int itemp = cellStream[4];
+        cellStream[4] = cellStream[5];
+        cellStream[5] = itemp;
+        itemp = cellStream[8];
+        cellStream[8] = cellStream[9];
+        cellStream[9] = itemp;
+      }
+      case XMU_HEXAHEDRON:
+        numPointsInAFace = 4;
+      case XMU_WEDGE:
+        if (numPointsInAFace < 0)
+        {
+          numPointsInAFace = 3;
+        }
+        // First & Second Face
+        if (a_faceIdx <= 1) // numPointsInAFace > a_edgeIdx + 1)
+        {
+          facePoints.assign(cellStream.begin() + (2 + numPointsInAFace * a_faceIdx),
+                            cellStream.begin() + (2 + numPointsInAFace * (a_faceIdx + 1)));
+        }
+        // Edges between First and Second Faces
+        else
+        {
+          facePoints.push_back(
+            cellStream[a_faceIdx]); // point in First Face (FaceIndex starts at 2)
+          facePoints.push_back(
+            cellStream[2 + ((a_faceIdx - 1) % numPointsInAFace)]); // 2nd point in First Face
+          facePoints.push_back(
+            cellStream[2 + numPointsInAFace +
+                       ((a_faceIdx - 1) % numPointsInAFace)]); // corresponding point in Second Face
+          facePoints.push_back(cellStream[a_faceIdx + numPointsInAFace]); // 2nd point corresponding
+                                                                          // point in Second Face
+        }
+        break;
+
+      case XMU_PYRAMID:
+        numPointsInAFace = 4;
+      case XMU_TETRA:
+        if (numPointsInAFace < 0)
+        {
+          numPointsInAFace = 3;
+        }
+        // First Face
+        if (a_faceIdx < 1)
+        {
+          facePoints.assign(cellStream.begin() + (2), cellStream.begin() + (2 + numPointsInAFace));
+        }
+        // edges along point
+        else
+        {
+          facePoints.push_back(
+            cellStream[1 + a_faceIdx]); // point in First Face (FaceIndex starts at 1)
+          facePoints.push_back(cellStream[2 + a_faceIdx % numPointsInAFace]); // point in First Face
+                                                                              // (FaceIndex starts
+                                                                              // at 1)
+          facePoints.push_back(
+            cellStream[2 + numPointsInAFace]); // point in First Face (FaceIndex starts at 2)
+        }
+        break;
+
+      case XMU_POLYHEDRON:
+      {
+        int currIdx = 1;
+        int numFaces = cellStream[currIdx++];
+        for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+        {
+          int numFacePoints = cellStream[currIdx++];
+          if (faceIdx == a_faceIdx)
+          {
+            facePoints.assign(cellStream.begin() + (currIdx),
+                              cellStream.begin() + (currIdx + numFacePoints));
+          }
+          currIdx += numFacePoints;
+        }
+      }
+      break;
+
+      case XMU_EMPTY_CELL:
+      case XMU_VERTEX:
+      case XMU_POLY_VERTEX:
+      case XMU_INVALID_CELL_TYPE:
+      default:
+        // Do nothing!
+        break;
+      }
+    }
+  }
+  return facePoints;
+} // XmUGridImpl::GetCellFace
 //------------------------------------------------------------------------------
 /// \brief Update internal links to navigate between associated points and
 ///        cells.
@@ -2885,8 +3007,8 @@ void XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge()
   }
 
   VecInt expectedFail;
-  VecInt2d expectedCells = { {0,1}, { 0,2 }, {0 } };
-  std::vector<std::pair<int,int>> edges = { {1,4}, { 3,4 }, { 0,3 } };
+  VecInt2d expectedCells = {{0, 1}, {0, 2}, {0}};
+  std::vector<std::pair<int, int>> edges = {{1, 4}, {3, 4}, {0, 3}};
 
   VecInt adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(-1, -1);
   TS_ASSERT_EQUALS(expectedFail, adjacentCells);
@@ -2902,6 +3024,107 @@ void XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge()
   TS_ASSERT_EQUALS(expectedFail, adjacentCells);
 } // XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge
 
+//------------------------------------------------------------------------------
+/// \brief Test retrieving Cell Face
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCellFace()
+{
+  // 2D Tests, include the bounds check
+  VecInt emptyCellFaces = {};
+  VecInt2d expectedCellFaces = {// XMU_QUAD
+                                {},
+                                // XMU_PIXEL
+                                {},
+                                // XMU_TRIANGLE
+                                {},
+                                // XMU_POLYGON
+                                {},
+                                // XMU_POLY_LINE
+                                {},
+                                // XMU_LINE
+                                {}};
+  VecInt cellFaces;
+
+  // 2D Shapes
+  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  if (!ugrid2d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  cellFaces = ugrid2d->GetCellFace(-1, 0);
+  TS_ASSERT_EQUALS(emptyCellFaces, cellFaces);
+  cellFaces = ugrid2d->GetCellFace(0, -1);
+  TS_ASSERT_EQUALS(emptyCellFaces, cellFaces);
+
+  for (int i(0); i < ugrid2d->GetNumberOfCells(); i++)
+  {
+    cellFaces = ugrid2d->GetCellFace(i, 0);
+    TS_ASSERT_EQUALS(expectedCellFaces[i], cellFaces);
+  }
+
+  cellFaces = ugrid2d->GetCellFace(ugrid2d->GetNumberOfCells(), 0);
+  TS_ASSERT_EQUALS(emptyCellFaces, cellFaces);
+  cellFaces = ugrid2d->GetCellFace(0, 1);
+  TS_ASSERT_EQUALS(emptyCellFaces, cellFaces);
+
+  // 3D Shapes
+  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  if (!ugrid3d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  expectedCellFaces = {// Tetra
+                       {0, 1, 5},
+                       {0, 1, 15},
+                       {1, 5, 15},
+                       {5, 0, 15},
+                       // Voxel
+                       {1, 2, 7, 6},
+                       {16, 17, 22, 21},
+                       {1, 2, 17, 16},
+                       {2, 7, 22, 17},
+                       {7, 6, 21, 22},
+                       {6, 1, 16, 21},
+                       // Hexahedron
+                       {2, 3, 8, 7},
+                       {17, 18, 22, 23},
+                       {2, 3, 18, 17},
+                       {3, 8, 22, 18},
+                       {8, 7, 23, 22},
+                       {7, 2, 17, 23},
+                       // Polyhedron
+                       {8, 9, 14, 13},
+                       {8, 9, 24, 23},
+                       {8, 13, 28, 23},
+                       {13, 14, 29, 28},
+                       {9, 14, 29, 24},
+                       {23, 24, 29, 28},
+                       // Wedge
+                       {3, 4, 18},
+                       {8, 9, 23},
+                       {3, 4, 9, 8},
+                       {4, 18, 23, 9},
+                       {18, 3, 8, 23},
+                       // Pyramid
+                       {5, 6, 11, 10},
+                       {5, 6, 20},
+                       {6, 11, 20},
+                       {11, 10, 20},
+                       {10, 5, 20}};
+  int currId(0);
+  for (int i(0); i < ugrid3d->GetNumberOfCells(); i++)
+  {
+    for (int j(0); j < ugrid3d->GetNumberOfCellFaces(i); j++, currId++)
+    {
+      cellFaces = ugrid3d->GetCellFace(i, j);
+      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFaces);
+    }
+  }
+} // XmUGridUnitTests::testGetCellFace
 
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.

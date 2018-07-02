@@ -157,6 +157,7 @@ public:
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
+  virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)
