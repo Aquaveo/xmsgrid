@@ -84,6 +84,7 @@ public:
   virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
                                                       const int a_edgeIdx) const override;
   virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const override;
+  virtual int Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const override;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                                const int a_pointIdx2) const override;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const override;
@@ -866,6 +867,30 @@ VecInt XmUGridImpl::GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) c
   return adjacentCells;
 } // XmUGridImpl::GetAdjacentCells
 //------------------------------------------------------------------------------
+/// \brief Get the index of the adjacent cells (that shares the same cell edge)
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[in] a_edgeIdx: the index of the edge
+/// \return a vector of cell indices of the adjacent cells
+//------------------------------------------------------------------------------
+int XmUGridImpl::Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const
+{
+  VecInt adjacentCells = GetAdjacentCells(a_cellIdx, a_edgeIdx);
+  if (adjacentCells.size() == 1)
+  {
+    return adjacentCells[0];
+  }
+  else if (adjacentCells.size() == 0)
+  {
+    return -1;
+  }
+  else
+  {
+    assert("This is a 2D Function!");
+    return -1;
+  }
+}  // XmUGridImpl::Get2dAdjacentCell
+
+//------------------------------------------------------------------------------
 /// \brief Get the indices of the adjacent cells (that shares the same cell edge)
 /// \param[in] a_pointIdx1: the index of the first point
 /// \param[in] a_pointIdx2: the index of the second point
@@ -886,6 +911,7 @@ VecInt XmUGridImpl::GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_ed
 {
   return GetAdjacentCellsFromGivenEdge(a_edge.first, a_edge.second);
 } // XmUGridImpl::GetAdjacentCellsFromGivenEdge
+
 // Faces
 //------------------------------------------------------------------------------
 /// \brief Get the number of cell faces for given cell.
@@ -3039,17 +3065,29 @@ void XmUGridUnitTests::testGetAdjacentCell()
   }
 
   VecInt expectedFail;
-  VecInt2d expectedCells = {{}, {2}, {1}, {}};
+  VecInt2d expectedCells = { {}, { 2 }, { 1 }, {} };
+  VecInt expected2dCells = { -1,  2 ,  1 , -1 };
 
+  int adjacentCell;
   VecInt adjacentCells = ugrid->GetAdjacentCells(0, -1);
   TS_ASSERT_EQUALS(expectedFail, adjacentCells);
+  adjacentCell = ugrid->Get2dAdjacentCell(0, -1);
+  TS_ASSERT_EQUALS(-1, adjacentCell);
+
   for (int i(0); i < ugrid->GetNumberOfCellEdges(0); i++)
   {
     adjacentCells = ugrid->GetAdjacentCells(0, i);
     TS_ASSERT_EQUALS(expectedCells[i], adjacentCells);
+
+    adjacentCell = ugrid->Get2dAdjacentCell(0, i);
+    TS_ASSERT_EQUALS(expected2dCells[i], adjacentCell);
   }
   adjacentCells = ugrid->GetAdjacentCells(0, ugrid->GetNumberOfCellEdges(0));
   TS_ASSERT_EQUALS(expectedFail, adjacentCells);
+  adjacentCell = ugrid->Get2dAdjacentCell(0, ugrid->GetNumberOfCellEdges(0));
+  TS_ASSERT_EQUALS(-1, adjacentCell);
+
+
 
   // Test a cell in the middle of an Hexadron grid
   BSHP<XmUGrid> hexUgrid = TEST_XmUBuildHexadronUgrid(5, 5, 5);
@@ -3106,6 +3144,7 @@ void XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge()
 
   adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(0, ugrid->GetNumberOfPoints());
   TS_ASSERT_EQUALS(expectedFail, adjacentCells);
+
 } // XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge
 
 //------------------------------------------------------------------------------
@@ -3234,12 +3273,25 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
   {
     for (int j(0); j < grid->GetNumberOfCellFaces(i); j++, currId++)
     {
+      // Check first function
       neighborCell = grid->GetCellFaceNeighbor(i, j);
       TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+
+      // Check overload function
       int faceIndex(-1);
       grid->GetCellFaceNeighbor(i, j, neighborCell, faceIndex);
       TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
       TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);
+
+      // Check that faces are the same
+      VecInt expectedFacePt = grid->GetCellFace(i, j);
+      std::sort(expectedFacePt.begin(), expectedFacePt.end());
+      VecInt neighborFacePt = grid->GetCellFace(i, j);
+      std::sort(neighborFacePt.begin(), neighborFacePt.end());
+      if (!expectedFacePt.empty() && !neighborFacePt.empty())
+      {
+        TS_ASSERT_EQUALS(neighborFacePt, neighborFacePt);
+      }
     }
   }
 
@@ -3266,12 +3318,25 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
   {
     for (int j(0); j < grid->GetNumberOfCellFaces(i); j++, currId++)
     {
+      // Check first function
       neighborCell = grid->GetCellFaceNeighbor(i, j);
       TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+
+      // Check overload function
       int faceIndex(-1);
       grid->GetCellFaceNeighbor(i, j, neighborCell, faceIndex);
       TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
       TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);
+
+      // Check that faces are the same
+      VecInt expectedFacePt = grid->GetCellFace(i, j);
+      std::sort(expectedFacePt.begin(), expectedFacePt.end());
+      VecInt neighborFacePt = grid->GetCellFace(i, j);
+      std::sort(neighborFacePt.begin(), neighborFacePt.end());
+      if (!expectedFacePt.empty() && !neighborFacePt.empty())
+      {
+        TS_ASSERT_EQUALS(neighborFacePt, neighborFacePt);
+      }
     }
   }
 } // XmUGridUnitTests::testGetCellFaceNeighbor

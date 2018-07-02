@@ -151,6 +151,7 @@ public:
   virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
                                                       const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
+  virtual int Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                                const int a_pointIdx2) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
@@ -159,8 +160,10 @@ public:
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
   virtual int GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx) const = 0;
-  virtual bool GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx,
-    int &a_neighborCell, int &a_neighborFace) const = 0;
+  virtual bool GetCellFaceNeighbor(const int a_cellIdx,
+                                   const int a_faceIdx,
+                                   int& a_neighborCell,
+                                   int& a_neighborFace) const = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)
