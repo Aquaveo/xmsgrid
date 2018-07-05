@@ -99,6 +99,17 @@ enum XmUGridCellType {
 
 };
 
+/// The orientation of a face must be one of these.
+enum XmUGridFaceOrientation {
+  XMU_ORIENTATION_UNKNOWN = -1,
+
+  // Linear cells
+  XMU_ORIENTATION_SIDE = 0,
+  XMU_ORIENTATION_TOP = 1,
+  XMU_ORIENTATION_BOTTOM = 2,
+  XMU_ORIENTATION_NUMBER
+};
+
 //----- Structs / Classes ------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -176,6 +187,8 @@ public:
   virtual bool GetFacesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_faceIdxs) const = 0;
+  // virtual XmUGridFaceOrientation GetFaceOrientation(const int a_cellIdx, const int a_faceIdx)
+  // const = 0;
 
 private:
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)

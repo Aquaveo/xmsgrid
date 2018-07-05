@@ -43,11 +43,13 @@ link_directories(${EXT_LIB_DIRS})
 set(xmsgrid_sources
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
+  xmsgrid/ugrid/XmConvexHull.cpp
 )
 
 set(xmsgrid_headers
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
+  xmsgrid/ugrid/XmConvexHull.h
 )
 
 # Pybind11 sources
@@ -64,6 +66,7 @@ if (BUILD_TESTING)
  list(APPEND xmsgrid_sources
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
+   xmsgrid/ugrid/XmConvexHull.t.h
  )
 
  find_package(CxxTest)

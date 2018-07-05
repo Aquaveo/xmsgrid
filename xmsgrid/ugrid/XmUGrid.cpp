@@ -22,6 +22,7 @@
 #include <xmscore/misc/XmLog.h>
 
 // 6. Non-shared code headers
+#include <xmsgrid/ugrid/XmConvexHull.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -110,6 +111,8 @@ public:
   virtual bool GetFacesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_faceIdxs) const override;
+  // virtual XmUGridFaceOrientation GetFaceOrientation(const int a_cellIdx, const int a_faceIdx)
+  // const override;
 
   // Misc
 
@@ -140,6 +143,9 @@ private:
 
   bool GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const;
   bool GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) const;
+
+  bool IsFaceSide(const VecInt& a_facePts) const;
+  bool GetCellXySegments(int cellIdx, VecPt3d& segments) const;
 
   VecPt3d m_points;                 ///< UGrid points
   VecInt m_cellStream;              ///< UGrid cell stream. @see SetCellStream, GetCellStream
@@ -523,10 +529,13 @@ bool XmUGridImpl::GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const
   a_polygon.clear();
   if (a_cellIdx < 0 || a_cellIdx >= GetNumberOfCells())
     return false;
-  if (GetCellDimension(a_cellIdx) == 3)
+  int dimension = GetCellDimension(a_cellIdx);
+  if (dimension == 3)
     return GetPlanViewPolygon3d(a_cellIdx, a_polygon);
-  else
+  else if (dimension == 2)
     return GetPlanViewPolygon2d(a_cellIdx, a_polygon);
+  else
+    return false;
 } // XmUGridImpl::GetPlanViewPolygon
 
 // Edges
@@ -1120,7 +1129,7 @@ VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
 {
   int numFaces = GetNumberOfCellFaces(a_cellIdx);
   VecInt facePoints;
-  if (numFaces < 1)
+  if ((numFaces < 1) || (a_faceIdx < 0))
   {
     return facePoints;
   }
@@ -1811,20 +1820,126 @@ bool XmUGridImpl::GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const
 //------------------------------------------------------------------------------
 bool XmUGridImpl::GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) const
 {
-  bool prismatic = true;
   VecPt3d segments;
-  VecInt pointIndices = GetPointsOfCell(a_cellIdx);
-  for (int i(0); i < pointIndices.size(); i++)
+  if (GetCellXySegments(a_cellIdx, segments))
   {
-    a_polygon.push_back(GetPoint(pointIndices[i]));
+    // Prismatic cell
+    a_polygon = segments;
+    return true;
   }
-  if (a_polygon.size() > 0)
+  else
   {
+    // Non-prismatic cell
+    VecInt uniquePoints = GetPointsOfCell(a_cellIdx);
+    VecPt3d cellPoints(uniquePoints.size());
+    for (int i(0); i < uniquePoints.size(); i++)
+    {
+      cellPoints[i] = GetPoint(uniquePoints[i]);
+      cellPoints[i].z = 0.0; // Insist that our z values are 0.0 for plan view
+    }
+    a_polygon = ConvexHull(cellPoints);
     return true;
   }
   return false;
 } // XmUGridImpl::GetPlanViewPolygon3d
+//------------------------------------------------------------------------------
+/// \brief Get whether the cell face is of a side orientation.
+/// \param[in] a_facePts: the points in the face
+/// \return whether the face is a Side
+//------------------------------------------------------------------------------
+bool XmUGridImpl::IsFaceSide(const VecInt& a_facePts) const
+{
+  // if any face point has same x and y as any other face point then
+  // the face is a side face
+  if (a_facePts.size() > 2)
+  {
+    Pt3d ptLast = GetPoint(a_facePts[0]);
+    for (size_t facePtIdx = 1; facePtIdx < a_facePts.size(); ++facePtIdx)
+    {
+      Pt3d ptCurr = GetPoint(a_facePts[facePtIdx]);
+      if ((ptLast.x == ptCurr.x) && (ptLast.y == ptCurr.y))
+        return true;
 
+      ptLast = ptCurr;
+    }
+  }
+  return false;
+} // XmUGridImpl::IsFaceSide
+//------------------------------------------------------------------------------
+/// \brief Get the XY segments of a cell.
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[out] a_segments: The XY segments of a cell
+/// \return whether the collected segments form a valid polygon
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetCellXySegments(int a_cellIdx, VecPt3d& a_segments) const
+{
+  int numFaces(GetNumberOfCellFaces(a_cellIdx));
+  if (numFaces <= 0)
+    return false;
+
+  a_segments.clear();
+  VecPt3d2d segment2d;
+  segment2d.resize(numFaces);
+  for (int faceIdx = 0; faceIdx < GetNumberOfCellFaces(a_cellIdx); ++faceIdx)
+  {
+    // Gather only side faces (faces that have duplicate XY values)
+    VecInt facePoints = GetCellFace(a_cellIdx, faceIdx);
+    if (IsFaceSide(facePoints))
+    {
+      // Gather the unique points of each face
+      for (int i(0); i < facePoints.size(); i++)
+      {
+        Pt3d curPoint = GetPoint(facePoints[i]);
+        curPoint.z = 0.0; // clear the z-values (in our copy)
+        // See if we have added this point to our vector previously
+        if (a_segments.empty())
+        {
+          segment2d[i].push_back(curPoint);
+        }
+        if (std::find(segment2d[i].begin(), segment2d[i].end(), curPoint) == segment2d[i].end())
+        {
+          segment2d[i].push_back(curPoint);
+        }
+      }
+    }
+  }
+  // stitch together faces into one polygon
+  // Need at least 3 side faces to make a polygon
+  if (segment2d.size() < 3 || segment2d[0].size() < 2)
+    return false;
+  Pt3d lastPoint = segment2d[0][1];
+  a_segments.push_back(segment2d[0][0]);
+  a_segments.push_back(segment2d[0][1]);
+  while (lastPoint != a_segments[0])
+  {
+    int faceId;
+    bool found = false;
+    for (faceId = 0; faceId < segment2d.size(); ++faceId)
+    {
+      if (segment2d[faceId].size() > 1 && segment2d[faceId][0] == lastPoint)
+      {
+        found = true;
+        break;
+      }
+    }
+    if (!found)
+      return false; // There is no connecting face.
+    for (int i = 1; i < segment2d[faceId].size(); ++i)
+    {
+      lastPoint = segment2d[faceId][i];
+      if (lastPoint == a_segments[0])
+        break;
+      a_segments.push_back(segment2d[faceId][i]);
+    }
+    segment2d[faceId].clear();
+  }
+
+  // Need 3 segments to make a polygon
+  if (a_segments.size() <= 3)
+    return false;
+
+  return true;
+} // XmUGridImpl::GetCellXySegments
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
 /// \brief Geometry for an unstructured grid.
@@ -2070,22 +2185,22 @@ BSHP<XmUGrid> TEST_XmUGrid3dLinear()
 {
   VecPt3d points = {{0, 0, 0},   {10, 0, 0},   {20, 0, 0},   {30, 0, 0},   {40, 0, 0},
                     {0, 10, 0},  {10, 10, 0},  {20, 10, 0},  {30, 10, 0},  {40, 10, 0},
-                    {0, 10, 0},  {10, 20, 0},  {20, 20, 0},  {30, 20, 0},  {40, 20, 0},
+                    {0, 20, 0},  {10, 20, 0},  {20, 20, 0},  {30, 20, 0},  {40, 20, 0},
                     {0, 0, 10},  {10, 0, 10},  {20, 0, 10},  {30, 0, 10},  {40, 0, 10},
                     {0, 10, 10}, {10, 10, 10}, {20, 10, 10}, {30, 10, 10}, {40, 10, 10},
-                    {0, 10, 10}, {10, 20, 10}, {20, 20, 10}, {30, 20, 10}, {40, 20, 10}};
+                    {0, 20, 10}, {10, 20, 10}, {20, 20, 10}, {30, 20, 10}, {40, 20, 10}};
 
   // clang-format off
   // Cell type (5), number of points (3), point numbers, counterclockwise
   std::vector<int> cells = {(int)XMU_TETRA, 4, 0, 1, 5, 15,
                             (int)XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
-                            (int)XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 22, 23,
+                            (int)XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
                             (int)XMU_POLYHEDRON, 6, 
                             4, 8, 9, 14, 13, 
                             4, 8, 9, 24, 23,
-                            4, 8, 13, 28, 23,
-                            4, 13, 14, 29, 28,
                             4, 9, 14, 29, 24,
+                            4, 13, 14, 29, 28,
+                            4, 8, 13, 28, 23,
                             4, 23, 24, 29, 28,
                             (int)XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
                             (int)XMU_PYRAMID, 5, 5, 6, 11, 10, 20};
@@ -2337,6 +2452,50 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
   }
   return XmUGrid::New(points, cells);
 } // TEST_XmUBuildPolyhedronUgrid
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid with one 3D Chevron polyhedron
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
+{
+  VecPt3d ugridPoints = {{0.0, 0.0, 0.0},   {20.0, 10.0, 0.0}, {40.0, 0.0, 0.0},
+                         {20.0, 50.0, 0.0}, {0.0, 0.0, 10.0},  {20.0, 10.0, 10.0},
+                         {40.0, 0.0, 10.0}, {20.0, 50.0, 10.0}};
+  VecInt ugridCell = {(int)XMU_POLYHEDRON,
+                      6,
+                      4,
+                      0,
+                      3,
+                      2,
+                      1,
+                      4,
+                      4,
+                      5,
+                      6,
+                      7,
+                      4,
+                      0,
+                      1,
+                      5,
+                      4,
+                      4,
+                      1,
+                      2,
+                      6,
+                      5,
+                      4,
+                      2,
+                      3,
+                      7,
+                      6,
+                      4,
+                      3,
+                      0,
+                      4,
+                      7};
+
+  return XmUGrid::New(ugridPoints, ugridCell);
+} // TEST_XmUBuild3DChevronUgrid
 //------------------------------------------------------------------------------
 /// \brief Path to test files.
 /// \return Returns path to test files.
@@ -2841,7 +3000,7 @@ void XmUGridUnitTests::testGetCellPointIndexes()
 
   expectedCellPoints = {{0, 1, 5, 15},
                         {1, 2, 6, 7, 16, 17, 21, 22},
-                        {2, 3, 8, 7, 17, 18, 22, 23},
+                        {2, 3, 8, 7, 17, 18, 23, 22},
                         {8, 9, 13, 14, 23, 24, 28, 29},
                         {3, 4, 18, 8, 9, 23},
                         {5, 6, 11, 10, 20}};
@@ -2963,9 +3122,9 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
       edge13(16, 21), edge14(1, 16), edge15(2, 17), edge16(7, 22),
       edge17(6, 21), // End of XMU_VOXEL
       edge18(2, 3),  // XMU_HEXAHEDRON
-      edge19(3, 8), edge20(7, 8), edge21(2, 7), edge22(17, 18), edge23(18, 22), edge24(22, 23),
-      edge25(17, 23), edge26(2, 17), edge27(3, 18), edge28(8, 22),
-      edge29(7, 23), // End of XMU_HEXAHEDRON
+      edge19(3, 8), edge20(7, 8), edge21(2, 7), edge22(17, 18), edge23(18, 23), edge24(22, 23),
+      edge25(17, 22), edge26(2, 17), edge27(3, 18), edge28(8, 23),
+      edge29(7, 22), // End of XMU_HEXAHEDRON
       edge30(8, 9),  // XMU_POLYHEDRON
       edge31(8, 13), edge32(8, 23), edge33(9, 14), edge34(9, 24), edge35(13, 14), edge36(13, 28),
       edge37(14, 29), edge38(23, 24), edge39(23, 28), edge40(24, 29),
@@ -3341,17 +3500,17 @@ void XmUGridUnitTests::testGetCellFace()
                        {6, 1, 16, 21},
                        // Hexahedron
                        {2, 3, 8, 7},
-                       {17, 18, 22, 23},
+                       {17, 18, 23, 22},
                        {2, 3, 18, 17},
-                       {3, 8, 22, 18},
-                       {8, 7, 23, 22},
-                       {7, 2, 17, 23},
+                       {3, 8, 23, 18},
+                       {8, 7, 22, 23},
+                       {7, 2, 17, 22},
                        // Polyhedron
                        {8, 9, 14, 13},
                        {8, 9, 24, 23},
-                       {8, 13, 28, 23},
-                       {13, 14, 29, 28},
                        {9, 14, 29, 24},
+                       {13, 14, 29, 28},
+                       {8, 13, 28, 23},
                        {23, 24, 29, 28},
                        // Wedge
                        {3, 4, 18},
@@ -3396,6 +3555,12 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
   VecInt expectedFace{-1, -1, -1, 5, -1, -1, -1, -1, -1, -1, -1, 3};
   int currId(0);
   int neighborCell;
+
+  neighborCell = grid->GetCellFaceNeighbor(-1, 0);
+  TS_ASSERT_EQUALS(-1, neighborCell);
+  neighborCell = grid->GetCellFaceNeighbor(0, -1);
+  TS_ASSERT_EQUALS(-1, neighborCell);
+
   for (int i(0); i < grid->GetNumberOfCells(); i++)
   {
     for (int j(0); j < grid->GetNumberOfCellFaces(i); j++, currId++)
@@ -3421,6 +3586,10 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
       }
     }
   }
+  neighborCell = grid->GetCellFaceNeighbor(grid->GetNumberOfCells(), 0);
+  TS_ASSERT_EQUALS(-1, neighborCell);
+  neighborCell = grid->GetCellFaceNeighbor(0, grid->GetNumberOfCells());
+  TS_ASSERT_EQUALS(-1, neighborCell);
 
   rows = 3;
   cols = 3;
@@ -3516,6 +3685,11 @@ void XmUGridUnitTests::testGetEdgesFromPoint()
   VecInt edgeIdx;
   VecInt edgePoints1;
   VecInt edgePoints2;
+  VecInt empty;
+
+  TS_ASSERT(!grid->GetEdgesFromPoint(-1, cells, edgeIdx));
+  TS_ASSERT_EQUALS(empty, cells);
+  TS_ASSERT_EQUALS(empty, edgeIdx);
 
   for (int i = 0; i < grid->GetNumberOfPoints(); ++i)
   {
@@ -3533,6 +3707,10 @@ void XmUGridUnitTests::testGetEdgesFromPoint()
     TS_ASSERT_EQUALS(expectedEdgePoints1[i], edgePoints1);
     TS_ASSERT_EQUALS(expectedEdgePoints2[i], edgePoints2);
   }
+
+  TS_ASSERT(!grid->GetEdgesFromPoint(grid->GetNumberOfPoints(), cells, edgeIdx));
+  TS_ASSERT_EQUALS(empty, cells);
+  TS_ASSERT_EQUALS(empty, edgeIdx);
 } // XmUGridUnitTests::testGetEdgesFromPoint
 //------------------------------------------------------------------------------
 /// \brief Test retrieving Cell Faces From Point
@@ -3550,7 +3728,7 @@ void XmUGridUnitTests::testGetFacesFromPoint()
     TS_FAIL("Unable to create UGrid.");
     return;
   }
-
+  VecInt empty;
   VecInt2d expectedCell{
     {0, 0, 0}, {0, 0, 0}, {0, 0, 0, 1, 1, 1}, {0, 0, 0, 1, 1, 1}, {1, 1, 1}, {1, 1, 1},
     {0, 0, 0}, {0, 0, 0}, {0, 0, 0, 1, 1, 1}, {0, 0, 0, 1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
@@ -3559,6 +3737,9 @@ void XmUGridUnitTests::testGetFacesFromPoint()
     {1, 2, 5}, {1, 4, 5}, {1, 2, 3, 1, 2, 5}, {1, 3, 4, 1, 4, 5}, {1, 2, 3}, {1, 3, 4}};
   VecInt cells, faces;
   int currId(0);
+  TS_ASSERT(!grid->GetFacesFromPoint(-1, cells, faces));
+  TS_ASSERT_EQUALS(empty, cells);
+  TS_ASSERT_EQUALS(empty, faces);
   for (int i(0); i < grid->GetNumberOfPoints(); i++, currId++)
   {
     // Check first function
@@ -3566,7 +3747,76 @@ void XmUGridUnitTests::testGetFacesFromPoint()
     TS_ASSERT_EQUALS(expectedCell[currId], cells);
     TS_ASSERT_EQUALS(expectedFaces[currId], faces);
   }
+  TS_ASSERT(!grid->GetFacesFromPoint(grid->GetNumberOfPoints(), cells, faces));
+  TS_ASSERT_EQUALS(empty, cells);
+  TS_ASSERT_EQUALS(empty, faces);
 } // XmUGridUnitTests::testGetFacesFromPoint
+//------------------------------------------------------------------------------
+/// \brief Test getting the plan view of a polygon
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetPlanViewPolygon()
+{
+  // 2d
+  BSHP<xms::XmUGrid> grid2d = TEST_XmUGrid2dLinear();
+  if (!grid2d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+  VecPt3d2d expectedPolygons{
+    {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}},
+    {{10, 0, 0}, {20, 0, 0}, {10, 10, 0}, {20, 10, 0}},
+    {{20, 0, 0}, {30, 0, 0}, {20, 10, 0}},
+    {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {20, 10, 0}},
+    {},
+    {}};
+  VecPt3d viewPolygon;
+  VecPt3d empty;
+  // Bounds testing
+  TS_ASSERT(!grid2d->GetPlanViewPolygon(-1, viewPolygon));
+  TS_ASSERT_EQUALS(empty, viewPolygon);
+  TS_ASSERT(!grid2d->GetPlanViewPolygon(grid2d->GetNumberOfCells(), viewPolygon));
+  TS_ASSERT_EQUALS(empty, viewPolygon);
+  // Regular testing
+  for (int i = 0; i < grid2d->GetNumberOfCells(); ++i)
+  {
+    // Should return true for the first 4 cells, and false for the last 2
+    TS_ASSERT(grid2d->GetPlanViewPolygon(i, viewPolygon) != i >= 4);
+    TS_ASSERT_EQUALS(expectedPolygons[i], viewPolygon);
+  }
+
+  // 3d
+  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  if (!ugrid3d)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+  expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},
+                      {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},
+                      {{20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}},
+                      {{30, 10, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}},
+                      {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {30, 10, 0}},
+                      {{0, 10, 0}, {10, 10, 0}, {10, 20, 0}, {0, 20, 0}}};
+
+  for (int i = 0; i < ugrid3d->GetNumberOfCells(); ++i)
+  {
+    TS_ASSERT(ugrid3d->GetPlanViewPolygon(i, viewPolygon));
+    TS_ASSERT_EQUALS(expectedPolygons[i], viewPolygon);
+  }
+
+  BSHP<xms::XmUGrid> chevronUgrid = TEST_XmUBuild3DChevronUgrid();
+  if (!chevronUgrid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  expectedPolygons = {{{0.0, 0.0, 0.0}, {20.0, 10.0, 0.0}, {40.0, 0.0, 0.0}, {20.0, 50.0, 0.0}}};
+  TS_ASSERT(chevronUgrid->GetPlanViewPolygon(0, viewPolygon));
+  TS_ASSERT_EQUALS(expectedPolygons[0], viewPolygon);
+
+} // XmUGridUnitTests::testGetPlanViewPolygon
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------

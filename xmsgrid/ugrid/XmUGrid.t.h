@@ -48,6 +48,7 @@ public:
   void testGetCellFaceNeighbor();
   void testGetEdgesFromPoint();
   void testGetFacesFromPoint();
+  void testGetPlanViewPolygon();
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests
 
@@ -72,6 +73,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
                                                 const int a_cols,
                                                 const int a_lays,
                                                 const xms::Pt3d& a_origin);
+BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid();
 std::string TestFilesPath();
 
 #endif
