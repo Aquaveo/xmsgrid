@@ -179,6 +179,7 @@ public:
                                  VecInt& a_edgePoints1,
                                  VecInt& a_edgePoints2) const = 0;
   virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const = 0;
+
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
@@ -190,6 +191,7 @@ public:
   virtual bool GetFacesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_faceIdxs) const = 0;
+  virtual VecInt2d GetFacesOfCell(const int a_cellIdx) const = 0;
   // virtual XmUGridFaceOrientation GetFaceOrientation(const int a_cellIdx, const int a_faceIdx)
   // const = 0;
 

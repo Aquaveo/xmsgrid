@@ -114,6 +114,7 @@ public:
   virtual bool GetFacesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_faceIdxs) const override;
+  virtual VecInt2d GetFacesOfCell(const int a_cellIdx) const override;
   // virtual XmUGridFaceOrientation GetFaceOrientation(const int a_cellIdx, const int a_faceIdx)
   // const override;
 
@@ -149,7 +150,13 @@ private:
 
   bool IsFaceSide(const VecInt& a_facePts) const;
   bool GetCellXySegments(int cellIdx, VecPt3d& segments) const;
-  bool IsCellValidWithPointChange(int a_cellIdx, int a_changedPtIdx, Pt3d a_newPosition) const;
+  bool IsCellValidWithPointChange(const int a_cellIdx,
+                                  const int a_changedPtIdx,
+                                  const Pt3d& a_newPosition) const;
+  void GetEdgesOfFace(const VecInt& a_face, std::vector<std::pair<int, int>>& a_edges) const;
+  bool DoEdgesCrossWithPointChange(const int a_changedPtIdx,
+                                   const Pt3d& a_newPosition,
+                                   const std::vector<std::pair<int, int>>& a_edges) const;
 
   VecPt3d m_points;                 ///< UGrid points
   VecInt m_cellStream;              ///< UGrid cell stream. @see SetCellStream, GetCellStream
@@ -222,13 +229,10 @@ bool XmUGridImpl::SetPoint(const int a_pointIdx, const Pt3d& a_point)
     bool badCell = false;
     for (int i(0); i < affectedCells.size(); i++)
     {
-      if (GetCellDimension(affectedCells[i]) == 2)
+      if (!IsCellValidWithPointChange(affectedCells[i], a_pointIdx, a_point))
       {
-        if (!IsCellValidWithPointChange(affectedCells[i], a_pointIdx, a_point))
-        {
-          badCell = true;
-          break;
-        }
+        badCell = true;
+        break;
       }
     }
     if (!badCell)
@@ -579,27 +583,85 @@ bool XmUGridImpl::GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const
 /// \param[in] a_newPosition: location the point is to be moved to
 /// \return whether the cell is valid
 //------------------------------------------------------------------------------
-bool XmUGridImpl::IsCellValidWithPointChange(int a_cellIdx,
-                                             int a_changedPtIdx,
-                                             Pt3d a_newPosition) const
+bool XmUGridImpl::IsCellValidWithPointChange(const int a_cellIdx,
+                                             const int a_changedPtIdx,
+                                             const Pt3d& a_newPosition) const
 {
-  std::vector<std::pair<int, int>> edges = GetEdgesOfCell(a_cellIdx);
+  if (GetCellDimension(a_cellIdx) == 2)
+  {
+    std::vector<std::pair<int, int>> edges = GetEdgesOfCell(a_cellIdx);
+    return !DoEdgesCrossWithPointChange(a_changedPtIdx, a_newPosition, edges);
+  }
+  else if (GetCellDimension(a_cellIdx) == 3)
+  {
+    //  Go through the affected faces and if they are not a side face
+    // check if the edges cross each other
+    VecInt2d faces = GetFacesOfCell(a_cellIdx);
+    for (int faceIdx = 0; faceIdx < faces.size(); faceIdx++)
+    {
+      bool faceIsAffected = false;
+      for (int ptIdx = 0; ptIdx < faces[faceIdx].size(); ptIdx++)
+      {
+        if (faces[faceIdx][ptIdx] == a_changedPtIdx)
+        {
+          faceIsAffected = true;
+        }
+      }
+      if (faceIsAffected)
+      {
+        std::vector<std::pair<int, int>> edges;
+        GetEdgesOfFace(faces[faceIdx], edges);
+        if (DoEdgesCrossWithPointChange(a_changedPtIdx, a_newPosition, edges))
+          return false;
+      }
+    }
+  }
+  return true;
+} // XmUGridImpl::IsCellValidWithPointChange
+//------------------------------------------------------------------------------
+/// \brief Get the edges of a cell given a face
+/// \param[in] a_face: a vector of point indices of a face
+/// \param[out] a_edges: a vector of point indices of an edge
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetEdgesOfFace(const VecInt& a_face,
+                                 std::vector<std::pair<int, int>>& a_edges) const
+{
+  a_edges.reserve(a_face.size());
+  for (int i = 1; i < a_face.size(); ++i)
+  {
+    a_edges.push_back(std::pair<int, int>(a_face[i - 1], a_face[i]));
+  }
+  if (a_edges.size() > 1)
+    a_edges.push_back(std::pair<int, int>(a_face[a_face.size() - 1], a_face[0]));
+} // XmUGridImpl::GetEdgesOfFace
+
+//------------------------------------------------------------------------------
+/// \brief Gets whether or not edges cross with a point change
+/// \param[out] a_edges: The edges to check
+/// \param[in] a_changedPtIdx: index of the point to be changed
+/// \param[in] a_newPosition: location the point is to be moved to
+/// \return whether the edges cross
+//------------------------------------------------------------------------------
+bool XmUGridImpl::DoEdgesCrossWithPointChange(const int a_changedPtIdx,
+                                              const Pt3d& a_newPosition,
+                                              const std::vector<std::pair<int, int>>& a_edges) const
+{
   std::vector<std::pair<Pt3d, Pt3d>> changedEdges;
   std::vector<std::pair<Pt3d, Pt3d>> unChangedEdges;
-  for (int i = 0; i < edges.size(); ++i)
+  for (int i = 0; i < a_edges.size(); ++i)
   {
-    if (edges[i].first == a_changedPtIdx)
+    if (a_edges[i].first == a_changedPtIdx)
     {
-      changedEdges.push_back(std::pair<Pt3d, Pt3d>(a_newPosition, GetPoint(edges[i].second)));
+      changedEdges.push_back(std::pair<Pt3d, Pt3d>(a_newPosition, GetPoint(a_edges[i].second)));
     }
-    else if (edges[i].second == a_changedPtIdx)
+    else if (a_edges[i].second == a_changedPtIdx)
     {
-      changedEdges.push_back(std::pair<Pt3d, Pt3d>(GetPoint(edges[i].first), a_newPosition));
+      changedEdges.push_back(std::pair<Pt3d, Pt3d>(GetPoint(a_edges[i].first), a_newPosition));
     }
     else
     {
       unChangedEdges.push_back(
-        std::pair<Pt3d, Pt3d>(GetPoint(edges[i].first), GetPoint(edges[i].second)));
+        std::pair<Pt3d, Pt3d>(GetPoint(a_edges[i].first), GetPoint(a_edges[i].second)));
     }
   }
   for (int i = 0; i < changedEdges.size(); ++i)
@@ -607,12 +669,11 @@ bool XmUGridImpl::IsCellValidWithPointChange(int a_cellIdx,
     for (int j = 0; j < unChangedEdges.size(); ++j)
     {
       if (DoLineSegmentsCross(changedEdges[i], unChangedEdges[j]))
-        return false;
+        return true;
     }
   }
-  return true;
-} // XmUGridImpl::IsCellValidWithPointChange
-
+  return false;
+} // XmUGridImpl::DoEdgesCrossWithPointChange
 // Edges
 //------------------------------------------------------------------------------
 /// \brief Get the number of edges with specified cell
@@ -1449,6 +1510,22 @@ bool XmUGridImpl::GetFacesFromPoint(const int a_pointId,
   }
   return true;
 } // XmUGridImpl::GetFacesFromPoint
+//------------------------------------------------------------------------------
+/// \brief Get the faces of a cell.
+/// \param[in] a_cellIdx: the cells to whom the faces belong
+/// \return a vector of faces, which is a vector of point indices
+//------------------------------------------------------------------------------
+VecInt2d XmUGridImpl::GetFacesOfCell(const int a_cellIdx) const
+{
+  int numFaces = GetNumberOfCellFaces(a_cellIdx);
+  ;
+  VecInt2d faces(numFaces);
+  for (int i(0); i < numFaces; i++)
+  {
+    faces[i] = GetCellFace(a_cellIdx, i);
+  }
+  return faces;
+} // XmUGridImpl::::GetFacesOfCell
 
 //------------------------------------------------------------------------------
 /// \brief Update internal links to navigate between associated points and
@@ -3944,6 +4021,15 @@ void XmUGridUnitTests::testIsCellValidWithPointChange()
 
   TS_ASSERT(ugrid->SetPoint(4, valid));
   TS_ASSERT(!ugrid->SetPoint(4, invalid));
+
+  BSHP<XmUGrid> ugrid3d = TEST_XmUBuildHexadronUgrid(4, 4, 4);
+
+  valid = ugrid3d->GetPoint(21);
+  valid.x += 0.5;
+  valid.y += 0.5;
+  valid.z += 0.5;
+  TS_ASSERT(ugrid3d->SetPoint(21, valid));
+  TS_ASSERT(!ugrid3d->SetPoint(21, invalid));
 
 } // XmUGridUnitTests::testIsCellValidWithPointChange
 //------------------------------------------------------------------------------
