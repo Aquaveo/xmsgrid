@@ -134,6 +134,8 @@ public:
   virtual Pt3d GetPoint(const int a_pointIdx) const = 0;
   virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) = 0;
 
+  virtual VecPt3d GetPointsFromPointIdxs(const VecInt& a_points) const = 0;
+
   virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
 
   virtual VecInt GetPointCells(const int a_pointIdx) const = 0; // cells associated with point

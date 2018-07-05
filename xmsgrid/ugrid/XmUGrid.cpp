@@ -56,6 +56,8 @@ public:
   virtual Pt3d GetPoint(const int a_pointIdx) const override;
   virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) override;
 
+  virtual VecPt3d GetPointsFromPointIdxs(const VecInt& a_points) const override;
+
   virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const override;
 
   virtual VecInt GetPointCells(const int a_pointIdx) const override; // cells associated with point
@@ -218,6 +220,22 @@ bool XmUGridImpl::SetPoint(const int a_pointIdx, const Pt3d& a_point)
     return true;
   }
   return false;
+} // XmUGridImpl::SetPoint
+//------------------------------------------------------------------------------
+/// \brief Set the point
+/// \param[in] a_pointIdx: the index of the point
+/// \param[in] a_point: The point that will replace the data of the specified
+///            point in the UGrid
+/// \return whether the point was successfully set
+//------------------------------------------------------------------------------
+VecPt3d XmUGridImpl::GetPointsFromPointIdxs(const VecInt& a_points) const
+{
+  VecPt3d point3d;
+  for (int i(0); i < a_points.size(); i++)
+  {
+    point3d.push_back(GetPoint(a_points[i]));
+  }
+  return point3d;
 } // XmUGridImpl::SetPoint
 //------------------------------------------------------------------------------
 /// \brief Get extents of all points in UGrid
@@ -1807,10 +1825,7 @@ void XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream(
 bool XmUGridImpl::GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const
 {
   VecInt pointIndices = GetPointsOfCell(a_cellIdx);
-  for (int i(0); i < pointIndices.size(); i++)
-  {
-    a_polygon.push_back(GetPoint(pointIndices[i]));
-  }
+  a_polygon = GetPointsFromPointIdxs(pointIndices);
   if (a_polygon.size() > 0)
   {
     return true;
@@ -2562,6 +2577,11 @@ void XmUGridUnitTests::testUGridStreams()
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
   cellStream = {9, 3, 0, 3, 4, 1};
   TS_ASSERT(!XmUGrid::ValidCellStream(cellStream));
+
+  // Test adding cellstream then points (should fail)
+  BSHP<XmUGrid> ugridBadOrder = XmUGrid::New();
+  TS_ASSERT(!ugridBadOrder->SetCellStream(cellStream));
+
 } // XmUGridUnitTests::testUGridStreams
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
