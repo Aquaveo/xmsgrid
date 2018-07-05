@@ -47,7 +47,7 @@ namespace xms
 /// \param[in] a_B: second point
 /// \return the cross product
 //------------------------------------------------------------------------------
-coord2_t cross(const Pt3d &a_origin, const Pt3d &a_A, const Pt3d &a_B)
+coord2_t cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
 {
   return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
 }
@@ -56,7 +56,7 @@ coord2_t cross(const Pt3d &a_origin, const Pt3d &a_A, const Pt3d &a_B)
 /// \param[in] a_points: The list of points
 /// \return the list of points in the convex hull
 /// \note a convex hull is the minimum set of points which contains (not connects)
-///   all of the points in a set and is convex. 
+///   all of the points in a set and is convex.
 //------------------------------------------------------------------------------
 std::vector<Pt3d> ConvexHull(std::vector<Pt3d> a_points)
 {
@@ -93,7 +93,7 @@ std::vector<Pt3d> ConvexHull(std::vector<Pt3d> a_points)
 /// \param[in] a_ugrid: The ugrid that contains the points.
 /// \return the list of indices to points in the convex hull
 /// \note a convex hull is the minimum set of points which contains (not connects)
-///   all of the points in a set and is convex. 
+///   all of the points in a set and is convex.
 //------------------------------------------------------------------------------
 VecInt ConvexHullWithIndices(const VecInt& a_points, BSHP<XmUGrid> a_ugrid)
 {
@@ -134,16 +134,12 @@ void XmUGridConvexHullTests::TestConvexHull()
   std::vector<Pt3d> inputPoints;
   std::vector<Pt3d> expectedHull;
   std::vector<Pt3d> hull;
-  //Pyramid
-  expectedHull = {
-    { 0.0, 0.0, 0.0 },
-    { 1.0, 0.0, 0.0 },
-    { 1.0, 1.0, 0.0 },
-    {0.0, 1.0, 0.0 }
-  };
+  // Pyramid
+  expectedHull = {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 0.0}, {0.0, 1.0, 0.0}};
   for (int i = 0; i < 2; ++i)
   {
-    for (int j = 0; j < 2; ++j){
+    for (int j = 0; j < 2; ++j)
+    {
       inputPoints.push_back(Pt3d(i, j));
     }
   }
@@ -151,7 +147,7 @@ void XmUGridConvexHullTests::TestConvexHull()
   hull = ConvexHull(inputPoints);
   TS_ASSERT_EQUALS(expectedHull, hull);
 
-  //bounds test
+  // bounds test
   expectedHull.clear();
   inputPoints.clear();
   hull = ConvexHull(inputPoints);

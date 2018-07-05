@@ -1170,6 +1170,8 @@ VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
         {
           facePoints.assign(cellStream.begin() + (2 + numPointsInAFace * a_faceIdx),
                             cellStream.begin() + (2 + numPointsInAFace * (a_faceIdx + 1)));
+          if (a_faceIdx == 0)
+            std::reverse(facePoints.begin() + 1, facePoints.end());
         }
         // Edges between First and Second Faces
         else
@@ -1184,6 +1186,8 @@ VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
           facePoints.push_back(cellStream[a_faceIdx + numPointsInAFace]); // 2nd point corresponding
                                                                           // point in Second Face
         }
+        if (cellStream[0] == XMU_WEDGE)
+          std::reverse(facePoints.begin() + 1, facePoints.end());
         break;
 
       case XMU_PYRAMID:
@@ -1197,6 +1201,7 @@ VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
         if (a_faceIdx < 1)
         {
           facePoints.assign(cellStream.begin() + (2), cellStream.begin() + (2 + numPointsInAFace));
+          std::reverse(facePoints.begin() + 1, facePoints.end());
         }
         // edges along point
         else
@@ -3487,19 +3492,19 @@ void XmUGridUnitTests::testGetCellFace()
   }
 
   expectedCellFaces = {// Tetra
-                       {0, 1, 5},
+                       {0, 5, 1},
                        {0, 1, 15},
                        {1, 5, 15},
                        {5, 0, 15},
                        // Voxel
-                       {1, 2, 7, 6},
+                       {1, 6, 7, 2},
                        {16, 17, 22, 21},
                        {1, 2, 17, 16},
                        {2, 7, 22, 17},
                        {7, 6, 21, 22},
                        {6, 1, 16, 21},
                        // Hexahedron
-                       {2, 3, 8, 7},
+                       {2, 7, 8, 3},
                        {17, 18, 23, 22},
                        {2, 3, 18, 17},
                        {3, 8, 23, 18},
@@ -3514,12 +3519,12 @@ void XmUGridUnitTests::testGetCellFace()
                        {23, 24, 29, 28},
                        // Wedge
                        {3, 4, 18},
-                       {8, 9, 23},
-                       {3, 4, 9, 8},
-                       {4, 18, 23, 9},
-                       {18, 3, 8, 23},
+                       {8, 23, 9},
+                       {3, 8, 9, 4},
+                       {4, 9, 23, 18},
+                       {18, 23, 8, 3},
                        // Pyramid
-                       {5, 6, 11, 10},
+                       {5, 10, 11, 6},
                        {5, 6, 20},
                        {6, 11, 20},
                        {11, 10, 20},
