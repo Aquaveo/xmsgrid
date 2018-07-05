@@ -21,6 +21,8 @@
 class XmUGridUtilsTests : public CxxTest::TestSuite
 {
 public:
+  void testDoLineSegmentsCross();
+
   void testWriteEmptyUGrid();
   void testWriteBasicUGrid();
   void testWritePolyhedronUGrid();

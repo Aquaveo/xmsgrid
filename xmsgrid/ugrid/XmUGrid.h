@@ -161,8 +161,8 @@ public:
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
-  virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
-                                                      const int a_edgeIdx) const = 0;
+  virtual std::pair<int, int> GetCellEdgeFromEdgeIndex(const int a_cellIdx,
+                                                       const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
   virtual int Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
@@ -178,6 +178,7 @@ public:
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgePoints1,
                                  VecInt& a_edgePoints2) const = 0;
+  virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const = 0;
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;

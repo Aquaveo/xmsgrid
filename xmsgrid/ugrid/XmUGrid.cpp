@@ -23,6 +23,7 @@
 
 // 6. Non-shared code headers
 #include <xmsgrid/ugrid/XmConvexHull.h>
+#include <xmsgrid/ugrid/XmUGridUtils.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -84,8 +85,8 @@ public:
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const override;
-  virtual std::pair<int, int> GetCellEdgePointIndexes(const int a_cellIdx,
-                                                      const int a_edgeIdx) const override;
+  virtual std::pair<int, int> GetCellEdgeFromEdgeIndex(const int a_cellIdx,
+                                                       const int a_edgeIdx) const override;
   virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const override;
   virtual int Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const override;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
@@ -101,7 +102,7 @@ public:
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgePoints1,
                                  VecInt& a_edgePoints2) const override;
-
+  virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const override;
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const override;
@@ -148,6 +149,7 @@ private:
 
   bool IsFaceSide(const VecInt& a_facePts) const;
   bool GetCellXySegments(int cellIdx, VecPt3d& segments) const;
+  bool IsCellValidWithPointChange(int a_cellIdx, int a_changedPtIdx, Pt3d a_newPosition) const;
 
   VecPt3d m_points;                 ///< UGrid points
   VecInt m_cellStream;              ///< UGrid cell stream. @see SetCellStream, GetCellStream
@@ -216,17 +218,32 @@ bool XmUGridImpl::SetPoint(const int a_pointIdx, const Pt3d& a_point)
 {
   if (a_pointIdx >= 0 && a_pointIdx < m_points.size())
   {
-    m_points[a_pointIdx] = a_point;
-    return true;
+    VecInt affectedCells = GetPointCells(a_pointIdx);
+    bool badCell = false;
+    for (int i(0); i < affectedCells.size(); i++)
+    {
+      if (GetCellDimension(affectedCells[i]) == 2)
+      {
+        if (!IsCellValidWithPointChange(affectedCells[i], a_pointIdx, a_point))
+        {
+          badCell = true;
+          break;
+        }
+      }
+    }
+    if (!badCell)
+    {
+      m_points[a_pointIdx] = a_point;
+      return true;
+    }
+    return false;
   }
   return false;
 } // XmUGridImpl::SetPoint
 //------------------------------------------------------------------------------
-/// \brief Set the point
-/// \param[in] a_pointIdx: the index of the point
-/// \param[in] a_point: The point that will replace the data of the specified
-///            point in the UGrid
-/// \return whether the point was successfully set
+/// \brief Convert a vector of point indices into a vector of point 3d
+/// \param[in] a_points: a vector of point indices
+/// \return vector of point 3d
 //------------------------------------------------------------------------------
 VecPt3d XmUGridImpl::GetPointsFromPointIdxs(const VecInt& a_points) const
 {
@@ -555,6 +572,46 @@ bool XmUGridImpl::GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const
   else
     return false;
 } // XmUGridImpl::GetPlanViewPolygon
+//------------------------------------------------------------------------------
+/// \brief Determine whether a cell is valid after a point is moved.
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[in] a_changedPtIdx: index of the point to be changed
+/// \param[in] a_newPosition: location the point is to be moved to
+/// \return whether the cell is valid
+//------------------------------------------------------------------------------
+bool XmUGridImpl::IsCellValidWithPointChange(int a_cellIdx,
+                                             int a_changedPtIdx,
+                                             Pt3d a_newPosition) const
+{
+  std::vector<std::pair<int, int>> edges = GetEdgesOfCell(a_cellIdx);
+  std::vector<std::pair<Pt3d, Pt3d>> changedEdges;
+  std::vector<std::pair<Pt3d, Pt3d>> unChangedEdges;
+  for (int i = 0; i < edges.size(); ++i)
+  {
+    if (edges[i].first == a_changedPtIdx)
+    {
+      changedEdges.push_back(std::pair<Pt3d, Pt3d>(a_newPosition, GetPoint(edges[i].second)));
+    }
+    else if (edges[i].second == a_changedPtIdx)
+    {
+      changedEdges.push_back(std::pair<Pt3d, Pt3d>(GetPoint(edges[i].first), a_newPosition));
+    }
+    else
+    {
+      unChangedEdges.push_back(
+        std::pair<Pt3d, Pt3d>(GetPoint(edges[i].first), GetPoint(edges[i].second)));
+    }
+  }
+  for (int i = 0; i < changedEdges.size(); ++i)
+  {
+    for (int j = 0; j < unChangedEdges.size(); ++j)
+    {
+      if (DoLineSegmentsCross(changedEdges[i], unChangedEdges[j]))
+        return false;
+    }
+  }
+  return true;
+} // XmUGridImpl::IsCellValidWithPointChange
 
 // Edges
 //------------------------------------------------------------------------------
@@ -681,8 +738,8 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
 /// \param[in] a_edgeIdx: the index of the edge
 /// \return a standard pair of point indexes (which is an edge)
 //------------------------------------------------------------------------------
-std::pair<int, int> XmUGridImpl::GetCellEdgePointIndexes(const int a_cellIdx,
-                                                         const int a_edgeIdx) const
+std::pair<int, int> XmUGridImpl::GetCellEdgeFromEdgeIndex(const int a_cellIdx,
+                                                          const int a_edgeIdx) const
 {
   std::pair<int, int> edge;
   if (a_edgeIdx < 0 || a_edgeIdx > GetNumberOfCellEdges(a_cellIdx))
@@ -871,7 +928,7 @@ std::pair<int, int> XmUGridImpl::GetCellEdgePointIndexes(const int a_cellIdx,
     edge.first = first;
   }
   return edge;
-} // XmUGridImpl::GetCellEdgePointIndexes
+} // XmUGridImpl::GetCellEdgeFromEdgeIndex
 //------------------------------------------------------------------------------
 /// \brief Get the index of the adjacent cells (that shares the same cell edge)
 /// \param[in] a_cellIdx: the index of the cell
@@ -892,12 +949,12 @@ VecInt XmUGridImpl::GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) c
   }
 
   std::pair<int, int> currEdge, neighborEdge;
-  currEdge = GetCellEdgePointIndexes(a_cellIdx, a_edgeIdx);
+  currEdge = GetCellEdgeFromEdgeIndex(a_cellIdx, a_edgeIdx);
   for (int j(0); j < cellNeighbors.size(); j++)
   {
     for (int k(0); k < GetNumberOfCellEdges(cellNeighbors[j]); k++)
     {
-      neighborEdge = GetCellEdgePointIndexes(cellNeighbors[j], k);
+      neighborEdge = GetCellEdgeFromEdgeIndex(cellNeighbors[j], k);
       if (currEdge == neighborEdge)
       {
         adjacentCells.push_back(cellNeighbors[j]);
@@ -972,7 +1029,7 @@ bool XmUGridImpl::GetEdgesFromPoint(const int a_pointId,
   {
     for (int j = 0; j < GetNumberOfCellEdges(associatedCells[i]); ++j)
     {
-      std::pair<int, int> temp = GetCellEdgePointIndexes(associatedCells[i], j);
+      std::pair<int, int> temp = GetCellEdgeFromEdgeIndex(associatedCells[i], j);
       if (temp.first == a_pointId || temp.second == a_pointId)
       {
         a_edgeIdxs.push_back(j);
@@ -982,6 +1039,21 @@ bool XmUGridImpl::GetEdgesFromPoint(const int a_pointId,
   }
   return true;
 } // XmUGridImpl::GetEdgesFromPoint
+//------------------------------------------------------------------------------
+/// \brief Get the Edges of a cell.
+/// \param[in] a_cellIdx: the cells to whom the edges belong
+/// \return a vector of edges (organized in std::pairs)
+//------------------------------------------------------------------------------
+std::vector<std::pair<int, int>> XmUGridImpl::GetEdgesOfCell(const int a_cellIdx) const
+{
+  std::vector<std::pair<int, int>> edges;
+  int numEdges = GetNumberOfCellEdges(a_cellIdx);
+  for (int i = 0; i < numEdges; ++i)
+  {
+    edges.push_back(GetCellEdgeFromEdgeIndex(a_cellIdx, i));
+  }
+  return edges;
+} // XmUGridImpl::GetEdgesOfCell
 
 //------------------------------------------------------------------------------
 /// \brief Get the Edges associated with a point
@@ -1001,7 +1073,7 @@ bool XmUGridImpl::GetEdgesFromPoint(const int a_pointId,
     return false;
   for (int i = 0; i < edgeIdx.size(); ++i)
   {
-    a_edges.push_back(GetCellEdgePointIndexes(a_cellIdxs[i], edgeIdx[i]));
+    a_edges.push_back(GetCellEdgeFromEdgeIndex(a_cellIdxs[i], edgeIdx[i]));
   }
   return true;
 } // XmUGridImpl::GetEdgesFromPoint
@@ -3049,7 +3121,7 @@ void XmUGridUnitTests::testGetCellPointIndexes()
 //------------------------------------------------------------------------------
 /// \brief Test iterating through the edges of cells
 //------------------------------------------------------------------------------
-void XmUGridUnitTests::testGetCellEdgePointIndexes()
+void XmUGridUnitTests::testGetCellEdgeFromEdgeIndex()
 {
   /// \code
   ///
@@ -3077,11 +3149,11 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
     std::vector<std::pair<int, int>> emptyVec = {emptyEdge};
     std::vector<std::pair<int, int>> cellEdges;
 
-    cellEdges.push_back(ugrid->GetCellEdgePointIndexes(0, -1));
+    cellEdges.push_back(ugrid->GetCellEdgeFromEdgeIndex(0, -1));
     TS_ASSERT_EQUALS(emptyVec, cellEdges);
 
     cellEdges.clear();
-    cellEdges.push_back(ugrid->GetCellEdgePointIndexes(0, ugrid->GetNumberOfCellEdges(0)));
+    cellEdges.push_back(ugrid->GetCellEdgeFromEdgeIndex(0, ugrid->GetNumberOfCellEdges(0)));
     TS_ASSERT_EQUALS(emptyVec, cellEdges);
 
     cellEdges.clear();
@@ -3093,7 +3165,7 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
     {
       for (int j(0); j < ugrid->GetNumberOfCellEdges(i); j++)
       {
-        cellEdges.push_back(ugrid->GetCellEdgePointIndexes(i, j));
+        cellEdges.push_back(ugrid->GetCellEdgeFromEdgeIndex(i, j));
       }
       TS_ASSERT_EQUALS(expectedCellsCellEdges[i], cellEdges);
       cellEdges.clear();
@@ -3133,7 +3205,7 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
     {
       for (int j(0); j < ugrid2d->GetNumberOfCellEdges(i); j++)
       {
-        cellEdges.push_back(ugrid2d->GetCellEdgePointIndexes(i, j));
+        cellEdges.push_back(ugrid2d->GetCellEdgeFromEdgeIndex(i, j));
       }
       TS_ASSERT_EQUALS(expectedCellsCellEdges[i], cellEdges);
       cellEdges.clear();
@@ -3184,13 +3256,13 @@ void XmUGridUnitTests::testGetCellEdgePointIndexes()
     {
       for (int j(0); j < ugrid3d->GetNumberOfCellEdges(i); j++)
       {
-        cellEdges.push_back(ugrid3d->GetCellEdgePointIndexes(i, j));
+        cellEdges.push_back(ugrid3d->GetCellEdgeFromEdgeIndex(i, j));
       }
       TS_ASSERT_EQUALS(expectedCellsCellEdges[i], cellEdges);
       cellEdges.clear();
     }
   }
-} // XmUGridUnitTests::testGetCellEdgePointIndexes
+} // XmUGridUnitTests::testGetCellEdgeFromEdgeIndex
 
 //------------------------------------------------------------------------------
 /// \brief Test retrieving common cells from points
@@ -3842,6 +3914,38 @@ void XmUGridUnitTests::testGetPlanViewPolygon()
   TS_ASSERT_EQUALS(expectedPolygons[0], viewPolygon);
 
 } // XmUGridUnitTests::testGetPlanViewPolygon
+//------------------------------------------------------------------------------
+/// \brief Test validating a cell for a changed point
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testIsCellValidWithPointChange()
+{
+  /// \code
+  ///
+  ///     0-----1-----2
+  ///     |  0  |  1  |
+  ///     3-----4-----5
+  ///     |  2  |  3  |
+  ///     6-----7-----8
+  ///
+  /// \endcode
+
+  // VecPt3d points = { { 0, 10, 0 }, { 10, 10, 0 }, { 20, 10, 0 }, { 0, 0, 0 }, { 10, 0, 0 },
+  //{ 20, 0, 0 }, { 0, -10, 0 }, { 10, -10, 0 }, { 20, -10, 0 } };
+
+  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  if (!ugrid)
+  {
+    TS_FAIL("Unable to create UGrid.");
+    return;
+  }
+
+  Pt3d valid = {5.0, 5.0, 0.0};
+  Pt3d invalid = {500.0, 500.0, 0.0};
+
+  TS_ASSERT(ugrid->SetPoint(4, valid));
+  TS_ASSERT(!ugrid->SetPoint(4, invalid));
+
+} // XmUGridUnitTests::testIsCellValidWithPointChange
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------

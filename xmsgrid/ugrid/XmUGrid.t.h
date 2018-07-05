@@ -39,7 +39,7 @@ public:
   void testGetPointCellsSimple();
   void testGetPointCells();
   void testGetCellPointIndexes();
-  void testGetCellEdgePointIndexes();
+  void testGetCellEdgeFromEdgeIndex();
   void testGetCommonCells();
   void testGetCellNeighbors();
   void testGetAdjacentCell();
@@ -49,6 +49,7 @@ public:
   void testGetEdgesFromPoint();
   void testGetFacesFromPoint();
   void testGetPlanViewPolygon();
+  void testIsCellValidWithPointChange();
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests
 

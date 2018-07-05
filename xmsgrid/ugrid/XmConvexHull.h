@@ -31,11 +31,8 @@ class XmUGrid;
 //----- Constants / Enumerations -----------------------------------------------
 
 //----- Structs / Classes ------------------------------------------------------
-typedef double coord_t;  // coordinate type
-typedef double coord2_t; // must be big enough to hold 2*max(|coordinate|)^2
 
 //----- Function prototypes ----------------------------------------------------
-coord2_t cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B);
 std::vector<Pt3d> ConvexHull(std::vector<Pt3d> a_points);
 VecInt ConvexHullWithIndices(const VecInt& a_points, BSHP<XmUGrid> a_ugrid);
 

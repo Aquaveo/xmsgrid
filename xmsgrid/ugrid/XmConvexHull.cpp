@@ -23,6 +23,7 @@
 
 // 6. Non-shared code headers
 #include <xmsgrid/ugrid/XmUGrid.h>
+#include <xmsgrid/ugrid/XmUGridUtils.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -40,17 +41,7 @@ namespace xms
 //----- Class / Function definitions -------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------
-/// \brief 2D cross product of two points
-/// \param[in] a_origin: origin point for the "vectors"
-/// \param[in] a_A: first point
-/// \param[in] a_B: second point
-/// \return the cross product
-//------------------------------------------------------------------------------
-coord2_t cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
-{
-  return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
-}
+
 //------------------------------------------------------------------------------
 /// \brief Returns the convex hull of a set of points
 /// \param[in] a_points: The list of points
