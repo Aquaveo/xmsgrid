@@ -1,7 +1,7 @@
 #pragma once
 //------------------------------------------------------------------------------
 /// \file XmConvexHull.cpp
-/// \brief
+/// \brief Code to calculate the convex hull of a set of points in two dimensions.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under the xmsng
 ///  Software License, Version 1.0. (See accompanying file
@@ -23,6 +23,8 @@
 //----- Forward declarations ---------------------------------------------------
 
 //----- Namespace declaration --------------------------------------------------
+
+/// XMS Namespace
 namespace xms
 {
 //----- Forward declarations ---------------------------------------------------

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-/// \file
+/// \file XmUGridUtils
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018.
 //------------------------------------------------------------------------------
@@ -29,6 +29,8 @@
 //----- External globals -------------------------------------------------------
 
 //----- Namespace declaration --------------------------------------------------
+
+/// XMS Namespace
 namespace xms
 {
 //----- Constants / Enumerations -----------------------------------------------
@@ -38,69 +40,6 @@ namespace xms
 //----- Internal functions -----------------------------------------------------
 
 //----- Class / Function definitions -------------------------------------------
-
-//------------------------------------------------------------------------------
-/// \brief 2D cross product of two points
-/// \param[in] a_origin: origin point for the "vectors"
-/// \param[in] a_A: first point
-/// \param[in] a_B: second point
-/// \return the cross product
-//------------------------------------------------------------------------------
-double cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
-{
-  return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
-} // cross
-//------------------------------------------------------------------------------
-/// \brief Determine whether 2 line segments intersect
-/// \param[in] a_segment1: The first line segment
-/// \param[in] a_segment2: The second line segment
-/// \return true if the line segments intersect
-//------------------------------------------------------------------------------
-bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
-                         const std::pair<Pt3d, Pt3d>& a_segment2)
-{
-  return DoLineSegmentsCross(a_segment1.first, a_segment1.second, a_segment2.first,
-                             a_segment2.second);
-} // DoLineSegmentsCross
-
-//------------------------------------------------------------------------------
-/// \brief Determine whether 2 line segments cross
-/// \param[in] a_segment1Point1: First point 3d of line segment 1
-/// \param[in] a_segment1Point2: Second point 3d of line segment 1
-/// \param[in] a_segment2Point1: First point 3d of line segment 2
-/// \param[in] a_segment2Point2: Second point 3d of line segment 2
-/// \return true if the line segments cross
-//------------------------------------------------------------------------------
-bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
-                         const Pt3d& a_segment1Point2,
-                         const Pt3d& a_segment2Point1,
-                         const Pt3d& a_segment2Point2)
-{
-  // Boundary case checks
-  // Any of the points from line segment 1 are the same as any points from line segment 2
-  if ((a_segment1Point1 == a_segment2Point1 || a_segment1Point1 == a_segment2Point2) &&
-      (a_segment1Point2 == a_segment2Point1 || a_segment1Point2 == a_segment2Point2))
-    return true;
-
-  // The segments AB and CD intersect if and only if both of the following are true:
-  //
-  // A and B lie on different sides of the line through C and D
-  // C and D lie on different sides of the line through A and B
-  // These two conditions can be tested for using the notion of a scalar cross product(formulas
-  // below).
-
-  // is true if and only if the scalar cross products CA->×CD-> and CB->×CD-> have opposite signs.
-  // is true if and only if the scalar cross products AC->×AB-> and AD->×AB-> have opposite signs.
-
-  // Conclusion: the line segments intersect if and only if both are negative
-  double result1 = cross(a_segment2Point1, a_segment1Point1, a_segment2Point2);
-  double result2 = cross(a_segment2Point1, a_segment1Point2, a_segment2Point2);
-  double result3 = cross(a_segment1Point1, a_segment2Point1, a_segment1Point2);
-  double result4 = cross(a_segment2Point1, a_segment2Point2, a_segment1Point2);
-
-  return (result1 * result2 < 0 && result3 * result4 < 0);
-
-} // DoLineSegmentsCross
 
 namespace
 {
@@ -276,6 +215,68 @@ void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePat
   iWriteUGridToAsciiFile(a_ugrid, outFile);
 } // XmWriteUGridToAsciiFile
 
+//------------------------------------------------------------------------------
+/// \brief 2D cross product of two points
+/// \param[in] a_origin: origin point for the "vectors"
+/// \param[in] a_A: first point
+/// \param[in] a_B: second point
+/// \return the cross product
+//------------------------------------------------------------------------------
+double cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
+{
+  return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
+} // cross
+//------------------------------------------------------------------------------
+/// \brief Determine whether 2 line segments intersect
+/// \param[in] a_segment1: The first line segment
+/// \param[in] a_segment2: The second line segment
+/// \return true if the line segments intersect
+//------------------------------------------------------------------------------
+bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
+  const std::pair<Pt3d, Pt3d>& a_segment2)
+{
+  return DoLineSegmentsCross(a_segment1.first, a_segment1.second, a_segment2.first,
+    a_segment2.second);
+} // DoLineSegmentsCross
+
+//------------------------------------------------------------------------------
+/// \brief Determine whether 2 line segments cross
+/// \param[in] a_segment1Point1: First point 3d of line segment 1
+/// \param[in] a_segment1Point2: Second point 3d of line segment 1
+/// \param[in] a_segment2Point1: First point 3d of line segment 2
+/// \param[in] a_segment2Point2: Second point 3d of line segment 2
+/// \return true if the line segments cross
+//------------------------------------------------------------------------------
+bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
+  const Pt3d& a_segment1Point2,
+  const Pt3d& a_segment2Point1,
+  const Pt3d& a_segment2Point2)
+{
+  // Boundary case checks
+  // Any of the points from line segment 1 are the same as any points from line segment 2
+  if ((a_segment1Point1 == a_segment2Point1 || a_segment1Point1 == a_segment2Point2) &&
+    (a_segment1Point2 == a_segment2Point1 || a_segment1Point2 == a_segment2Point2))
+    return true;
+
+  // The segments AB and CD intersect if and only if both of the following are true:
+  //
+  // A and B lie on different sides of the line through C and D
+  // C and D lie on different sides of the line through A and B
+  // These two conditions can be tested for using the notion of a scalar cross product(formulas
+  // below).
+
+  // is true if and only if the scalar cross products CA->×CD-> and CB->×CD-> have opposite signs.
+  // is true if and only if the scalar cross products AC->×AB-> and AD->×AB-> have opposite signs.
+
+  // Conclusion: the line segments intersect if and only if both are negative
+  double result1 = cross(a_segment2Point1, a_segment1Point1, a_segment2Point2);
+  double result2 = cross(a_segment2Point1, a_segment1Point2, a_segment2Point2);
+  double result3 = cross(a_segment1Point1, a_segment2Point1, a_segment1Point2);
+  double result4 = cross(a_segment2Point1, a_segment2Point2, a_segment1Point2);
+
+  return (result1 * result2 < 0 && result3 * result4 < 0);
+
+} // DoLineSegmentsCross
 } // namespace xms
 
 #ifdef CXX_TEST
@@ -693,7 +694,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
   TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
-//! [snip_test_WriteReadAscci]
+//! [snip_test_WriteReadAscii]
 //------------------------------------------------------------------------------
 /// \brief Test reading from file.
 //------------------------------------------------------------------------------
@@ -717,6 +718,6 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
   TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
-//! [snip_test_WriteReadAscci]
+//! [snip_test_WriteReadAscii]
 
 #endif

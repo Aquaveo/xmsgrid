@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-/// \file
+/// \file XmUGrid
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018.
 //------------------------------------------------------------------------------
@@ -30,6 +30,8 @@
 //----- External globals -------------------------------------------------------
 
 //----- Namespace declaration --------------------------------------------------
+
+/// XMS Namespace
 namespace xms
 {
 //----- Constants / Enumerations -----------------------------------------------
@@ -2346,13 +2348,13 @@ BSHP<XmUGrid> TEST_XmUGrid3dLinear()
   std::vector<int> cells = {(int)XMU_TETRA, 4, 0, 1, 5, 15,
                             (int)XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
                             (int)XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
-                            (int)XMU_POLYHEDRON, 6, 
-                            4, 8, 9, 14, 13, 
-                            4, 8, 9, 24, 23,
-                            4, 9, 14, 29, 24,
-                            4, 13, 14, 29, 28,
-                            4, 8, 13, 28, 23,
-                            4, 23, 24, 29, 28,
+                            (int)XMU_POLYHEDRON, 6, // A polyhedron with 6 faces
+                            4, 8, 9, 14, 13, // First face with 4 points : 8, 9, 14, 13
+                            4, 8, 9, 24, 23, // Second face with 4 points : 8, 9, 24, 23
+                            4, 9, 14, 29, 24, // Third face with 4 points : 9, 14, 29, 28
+                            4, 13, 14, 29, 28, // Fourth face with 4 points : 13, 14, 29, 28
+                            4, 8, 13, 28, 23, // Fifth face with 4 points : 8, 13, 28, 23
+                            4, 23, 24, 29, 28, // Sixth face with 4 points : 23, 24, 29, 28
                             (int)XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
                             (int)XMU_PYRAMID, 5, 5, 6, 11, 10, 20};
   //! [snip_test_3DShapes]

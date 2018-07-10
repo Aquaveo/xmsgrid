@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file
+/// \file XmConvexHull
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018.
 //------------------------------------------------------------------------------
@@ -19,6 +19,7 @@
 
 // 6. Non-shared Headers
 
+/// XMS Namespace
 namespace xms
 {
 class XmUGrid;
