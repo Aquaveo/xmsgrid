@@ -146,6 +146,8 @@ public:
   virtual int GetNumberOfCells() const = 0;
 
   virtual VecInt GetPointsOfCell(const int a_cellIdx) const = 0;
+  virtual bool GetPointsOfCell(const int a_cellIdx,
+    VecInt& a_cellPoints) const = 0; // Point indexes of a cell
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
@@ -154,8 +156,7 @@ public:
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
-  virtual bool GetCellPointIndexes(const int a_cellIdx,
-                                   VecInt& a_cellPoints) const = 0; // Point indexes of a cell
+  
   virtual VecInt GetCellNeighbors(const int a_cellIdx) const = 0;
   virtual bool GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const = 0;
 
@@ -168,6 +169,7 @@ public:
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                                const int a_pointIdx2) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
+
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgeIdxs) const = 0;
@@ -178,20 +180,26 @@ public:
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgePoints1,
                                  VecInt& a_edgePoints2) const = 0;
+
   virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const = 0;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
+
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
+  virtual VecInt2d GetFacesOfCell(const int a_cellIdx) const = 0;
+
+  virtual bool GetFacesFromPoint(const int a_pointId,
+    VecInt& a_cellIdxs,
+    VecInt& a_faceIdxs) const = 0;
+
   virtual int GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx) const = 0;
   virtual bool GetCellFaceNeighbor(const int a_cellIdx,
                                    const int a_faceIdx,
                                    int& a_neighborCell,
                                    int& a_neighborFace) const = 0;
-  virtual bool GetFacesFromPoint(const int a_pointId,
-                                 VecInt& a_cellIdxs,
-                                 VecInt& a_faceIdxs) const = 0;
-  virtual VecInt2d GetFacesOfCell(const int a_cellIdx) const = 0;
+
+
   // virtual XmUGridFaceOrientation GetFaceOrientation(const int a_cellIdx, const int a_faceIdx)
   // const = 0;
 

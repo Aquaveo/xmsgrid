@@ -38,7 +38,7 @@ public:
   void testGetNumberOfCellFaces();
   void testGetPointCellsSimple();
   void testGetPointCells();
-  void testGetCellPointIndexes();
+  void testGetPointsOfCell();
   void testGetCellEdgeFromEdgeIndex();
   void testGetCommonCells();
   void testGetCellNeighbors();
@@ -50,6 +50,12 @@ public:
   void testGetFacesFromPoint();
   void testGetPlanViewPolygon();
   void testIsCellValidWithPointChange();
+  void testPointFunctions();
+  void testCellFunctions();
+  void testGetCellStreamFunctions();
+  void testGetAdjacentCellFunctions();
+  void testGetEdgesOfCell();
+  void testGetFaces();
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests
 
@@ -62,8 +68,8 @@ BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols);
 BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows,
                                           const int a_cols,
                                           const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows, const int a_cols, const int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexadronUgrid(const int a_rows,
+BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows, const int a_cols, const int a_lays);
+BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows,
                                               const int a_cols,
                                               const int a_lays,
                                               const xms::Pt3d& a_origin);

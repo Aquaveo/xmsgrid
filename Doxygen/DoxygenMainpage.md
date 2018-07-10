@@ -1,4 +1,4 @@
-xmscore {#mainpage}
+xmsgrid {#mainpage}
 ============
 \tableofcontents
 
@@ -23,7 +23,13 @@ The code is distributed under the xmsng Software License, Version 1.0. (See acco
 
 Features {#XmsgridFeatures}
 --------
+
 The library supports unstructured grids with 0D, 1D, 2D and 3D elements.
+
+The following tutorials are available:
+* [2D UGrid Tutorial](TwoD_Tutorial.md)
+* [3D UGrid Tutorial](ThreeD_Tutorial.md)
+* [UGrid File IO Tutorial](FileIO_Tutorial.md)
 
 Testing {#XmsgridTesting}
 -------
