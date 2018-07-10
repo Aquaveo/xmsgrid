@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file XmGridUtils
+/// \file XmUGridUtils.h
 /// \brief Contains IO functions as well as several utility functions for XmUGrid
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under the xmsng

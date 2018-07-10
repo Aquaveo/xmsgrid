@@ -1,7 +1,0 @@
-C:/code/xmsUGrid/xmsgrid/ugrid/XmConvexHull.t.h:3: warning: the name `XmConvexHull' supplied as the second argument in the \file statement is not an input file
-C:/code/xmsUGrid/xmsgrid/ugrid/XmUGrid.cpp:2: warning: the name `XmUGrid' supplied as the second argument in the \file statement is not an input file
-C:/code/xmsUGrid/xmsgrid/ugrid/XmUGrid.h:3: warning: the name `XmUGrid' supplied as the second argument in the \file statement is not an input file
-C:/code/xmsUGrid/xmsgrid/ugrid/XmUGrid.t.h:3: warning: the name `XmUGrid' supplied as the second argument in the \file statement is not an input file
-C:/code/xmsUGrid/xmsgrid/ugrid/XmUGridUtils.cpp:2: warning: the name `XmUGridUtils' supplied as the second argument in the \file statement is not an input file
-C:/code/xmsUGrid/xmsgrid/ugrid/XmUGridUtils.h:3: warning: the name `XmGridUtils' supplied as the second argument in the \file statement is not an input file
-C:/code/xmsUGrid/xmsgrid/ugrid/XmUGridUtils.t.h:3: warning: the name `XmUGridUtils' supplied as the second argument in the \file statement is not an input file

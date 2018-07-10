@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file XmUGrid
+/// \file XmUGrid.h
 /// \brief Contains the XmUGrid Class and supporting data types.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under the xmsng
@@ -211,6 +211,7 @@ private:
 
 protected:
   XmUGrid();
+
 };
 
 //----- Function prototypes ----------------------------------------------------

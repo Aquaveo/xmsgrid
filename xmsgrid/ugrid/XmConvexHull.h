@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file XmConvexHull.cpp
+/// \file XmConvexHull.h
 /// \brief Code to calculate the convex hull of a set of points in two dimensions.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under the xmsng
