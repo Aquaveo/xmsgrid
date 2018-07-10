@@ -42,7 +42,6 @@ namespace xms
 //----- Internal functions -----------------------------------------------------
 
 //----- Class / Function definitions -------------------------------------------
-
 ////////////////////////////////////////////////////////////////////////////////
 /// Implementation for XmUGrid
 class XmUGridImpl : public XmUGrid
@@ -142,11 +141,11 @@ private:
   void GetSingleCellStream(const int a_cellIdx, const int** a_start, int& a_length) const;
 
   int GetNumberOfPolyhedronEdges(const int a_cellIdx) const;
-  static void GetUniquePointsFromPolyhedronCellStream(
-    const VecInt& a_cellStream,
-    const int a_numCellItems,
-    int& a_currIdx,
-    boost::container::flat_set<int>& a_uniquePoints);
+  static void GetUniquePointsFromPolyhedronCellStream(const VecInt& a_cellStream,
+                                                       const int a_numCellItems,
+                                                       int& a_currIdx,
+                                                       VecInt& a_uniquePoints,
+                                                       VecInt& a_cellMask);
   static bool GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_cellStream,
                                                             VecInt& a_cellPoints);
   static void GetUniqueEdgesFromPolyhedronCellStream(
@@ -1574,10 +1573,11 @@ void XmUGridImpl::UpdatePointLinks()
   m_pointsToCells.clear();
 
   // get number of cells for each point
-  boost::container::flat_set<int> cellPoints;
   int numStreamItems = (int)m_cellStream.size();
   int cellIdx = 0;
   int currIdx = 0;
+  VecInt cellPointMask(m_points.size(), -1);
+  VecInt cellPoints;
   while (currIdx < numStreamItems)
   {
     // get cell type
@@ -1592,7 +1592,7 @@ void XmUGridImpl::UpdatePointLinks()
 
     if (cellType == XMU_POLYHEDRON)
     {
-      GetUniquePointsFromPolyhedronCellStream(m_cellStream, numCellItems, currIdx, cellPoints);
+      GetUniquePointsFromPolyhedronCellStream(m_cellStream, numCellItems, currIdx, cellPoints,cellPointMask);
 
       // Deemed to be slower than flat set-- Left only as a warning to others!
       // std::stable_sort(cellPoints.begin(), cellPoints.end());
@@ -1631,6 +1631,7 @@ void XmUGridImpl::UpdatePointLinks()
   cellIdx = 0;
   currIdx = 0;
   m_pointsToCells.resize(currCount, 0);
+  std::fill(cellPointMask.begin(), cellPointMask.end(), -1);
   while (currIdx < numStreamItems)
   {
     // get cell type
@@ -1645,7 +1646,7 @@ void XmUGridImpl::UpdatePointLinks()
 
     if (cellType == XMU_POLYHEDRON)
     {
-      GetUniquePointsFromPolyhedronCellStream(m_cellStream, numCellItems, currIdx, cellPoints);
+      GetUniquePointsFromPolyhedronCellStream(m_cellStream, numCellItems, currIdx, cellPoints,cellPointMask);
 
       // Deemed to be slower than flat set-- Left only as a warning to others!
       // std::stable_sort(cellPoints.begin(), cellPoints.end());
@@ -1679,7 +1680,6 @@ void XmUGridImpl::UpdatePointLinks()
     ++cellIdx;
   }
 } // XmUGridImpl::UpdatePointLinks
-
 //------------------------------------------------------------------------------
 /// \brief Get the dimension given the cell type (0d, 1d, 2d, or 3d).
 /// \param[in] a_cellType: the cell type
@@ -1857,6 +1857,7 @@ int XmUGridImpl::GetNumberOfPolyhedronEdges(const int a_cellIdx) const
 ///       the number of points in the first face. This variable will be updated
 ///       to the cell type of the next cell.
 /// \param[out] a_uniqueCellPoints: the unique points of the polyhedron
+/// \param[out] a_cellMask: a list of integers representing the last time a point was found
 /// \note: This function does NOT verify cellstream size!!  This function
 ///      needs to be efficient!
 //------------------------------------------------------------------------------
@@ -1864,8 +1865,10 @@ void XmUGridImpl::GetUniquePointsFromPolyhedronCellStream(
   const VecInt& a_cellStream,
   const int a_numCellItems,
   int& a_currIdx,
-  boost::container::flat_set<int>& a_uniqueCellPoints)
+  VecInt& a_uniqueCellPoints,
+  VecInt& a_cellMask)
 {
+  int stable = a_currIdx;
   a_uniqueCellPoints.clear();
   int numFaces = a_numCellItems;
   for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
@@ -1874,11 +1877,14 @@ void XmUGridImpl::GetUniquePointsFromPolyhedronCellStream(
     for (int ptIdx = 0; ptIdx < numFacePoints; ++ptIdx)
     {
       int pt = a_cellStream[a_currIdx++];
-      a_uniqueCellPoints.insert(pt);
+      if (a_cellMask[pt] < stable)
+      {
+        a_cellMask[pt] = stable;
+        a_uniqueCellPoints.push_back(pt);
+      }
     }
   }
 } // XmUGridImpl::GetNumberOfPolyhedronEdges
-
 //------------------------------------------------------------------------------
 /// \brief Get the unique points in a flat set
 /// \param[in] a_cellStream: a single cell stream that is a polyhedron type
@@ -1900,8 +1906,9 @@ bool XmUGridImpl::GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_
   }
   int currIdx(1);
   int numCellItems = a_cellStream[currIdx++];
-  boost::container::flat_set<int> cellPoints;
-  GetUniquePointsFromPolyhedronCellStream(a_cellStream, numCellItems, currIdx, cellPoints);
+  VecInt cellPoints;
+  VecInt mask(a_cellStream.size(),-1);//Larger than it needs to be
+  GetUniquePointsFromPolyhedronCellStream(a_cellStream, numCellItems, currIdx, cellPoints,mask);
 
   for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
   {
@@ -3136,7 +3143,7 @@ void XmUGridUnitTests::testGetPointsOfCell()
   expectedCellPoints = {{0, 1, 5, 15},
                         {1, 2, 6, 7, 16, 17, 21, 22},
                         {2, 3, 8, 7, 17, 18, 23, 22},
-                        {8, 9, 13, 14, 23, 24, 28, 29},
+                        {8, 9, 14, 13, 24, 23, 29, 28},
                         {3, 4, 18, 8, 9, 23},
                         {5, 6, 11, 10, 20}};
   cellPoints.clear();
@@ -4257,7 +4264,7 @@ void XmUGridUnitTests::testGetFaces()
 void XmUGridUnitTests::testLargeUGridLinkSpeed()
 {
 #ifdef SPEEDTEST
-  int rows = 500;
+  int rows = 1000;
   int cols = 500;
   int lays = 4;
 
