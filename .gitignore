@@ -29,6 +29,7 @@ test_package/build/
 *.so
 *.dylib
 *.dll
+*.pyd
 
 # Fortran module files
 *.mod
