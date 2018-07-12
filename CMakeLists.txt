@@ -8,6 +8,7 @@ set(BUILD_TESTING NO CACHE BOOL "Enable/Disable testing")
 set(IS_CONDA_BUILD NO CACHE BOOL "Set this if you want to make a conda package.")
 set(CONDA_PREFIX "" CACHE PATH "Path to the conda environment used to build.")
 set(IS_PYTHON_BUILD NO CACHE BOOL "Set this if you want to build the python bindings.")
+set(XMSGRID_TEST_PATH "../../test_files/" CACHE PATH "Path to test files for testing")
 
 project(xmsgrid C CXX)
 
@@ -60,7 +61,7 @@ set(xmsgrid_py
 
 # Tests
 if (BUILD_TESTING)
- add_definitions(-DXMSNG_TEST_PATH="test_files/")
+ add_definitions(-DXMSGRID_TEST_PATH="${XMSGRID_TEST_PATH}/")
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources

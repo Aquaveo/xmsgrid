@@ -2643,8 +2643,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
 //------------------------------------------------------------------------------
 std::string TestFilesPath()
 {
-  // return "../" + std::string(XMSNG_TEST_PATH);
-  return "c:/code/xmsUgrid/test_files/";
+  return std::string(XMSGRID_TEST_PATH);
 } // TestFilesPath
 
 ////////////////////////////////////////////////////////////////////////////////
