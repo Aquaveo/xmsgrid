@@ -55,8 +55,15 @@ set(xmsgrid_headers
 
 # Pybind11 sources
 set(xmsgrid_py
-  xmsgrid/python/cxxtest.cpp
   xmsgrid/python/xmsgrid_py.cpp
+  #UGrid
+  xmsgrid/python/ugrid/ugrid_py.cpp
+  xmsgrid/python/ugrid/XmUGrid_py.cpp
+  xmsgrid/python/ugrid/XmUGridUtils_py.cpp
+)
+
+set(xmsgrid_py_headers
+  xmsgrid/python/ugrid/ugrid_py.h
 )
 
 # Tests
@@ -119,14 +126,19 @@ if(IS_PYTHON_BUILD)
         include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Tools.cmake")
 
     else()
-        include("pybind11Tools.cmake") # TODO: Set this using conan variables...
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Targets.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/FindPythonLibsNew.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Config.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11ConfigVersion.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Tools.cmake")
     endif()
 
     pybind11_add_module(xmsgrid_py
-      ${xmsgrid_py} 
+      ${xmsgrid_py} ${xmsgrid_py_headers}
     )
     target_include_directories(xmsgrid_py
         PRIVATE
+          ${EXT_LIBS}
           PYTHON_INCLUDE_DIRS
     )
     target_link_libraries(xmsgrid_py
@@ -139,7 +151,6 @@ if(IS_PYTHON_BUILD)
     )
 
     execute_process(COMMAND python -c "import os; print('${PYTHON_SITE_PACKAGES}'.replace('${CONDA_PREFIX}' + os.sep, ''))" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_TRIMMED OUTPUT_STRIP_TRAILING_WHITESPACE)
-    message("Site Packages: ${PYTHON_SITE_PACKAGES_TRIMMED}")
 
     # Install recipe
     install(
@@ -157,7 +168,7 @@ install(
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
 )
-foreach (header IN LISTS xmsgrid_headers)
+foreach (header IN LISTS xmsgrid_headers xmsgrid_py_headers)
   get_filename_component(subdir "${header}" DIRECTORY)
   install(
     FILES "${header}"
