@@ -11,13 +11,11 @@ if __name__ == "__main__":
 
     # Add environment variables to build definitions
     XMS_VERSION = os.environ.get('XMS_VERSION', None)
-    XMS_RUN_TESTS = os.environ.get('XMS_RUN_TESTS', None)
 
     for settings, options, env_vars, build_requires, reference in builder.items:
         # General Options
         env_vars.update({
             'XMS_VERSION': XMS_VERSION,
-            "XMS_RUN_TESTS": XMS_RUN_TESTS,
             'VERBOSE': 1
         })
 
