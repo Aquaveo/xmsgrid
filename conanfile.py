@@ -23,7 +23,7 @@ class XmsgridConan(ConanFile):
     generators = "cmake"
     build_requires = "cxxtest/4.4@aquaveo/stable"
     exports = "CMakeLists.txt", "LICENSE", "test_files/*"
-    exports_sources = "xmsgrid/*"
+    exports_sources = "xmsgrid/*", "test_files/*"
 
     def configure(self):
         # Set verion dynamically using XMS_VERSION env variable.
@@ -102,9 +102,14 @@ class XmsgridConan(ConanFile):
 
         # Make sure we build without tests
         cmake.definitions["IS_PYTHON_BUILD"] = self.options.pybind
-        cmake.definitions["BUILD_TESTING"] = False
-        cmake.configure(source_folder=".")
-        cmake.build()
+
+        # If pybind build again because we can't have tests in pybind
+        # We may want to do this with other builds too, it just takes
+        # quite a bit of time to build all the configurations twice.
+        if self.options.pybind:
+            cmake.definitions["BUILD_TESTING"] = False
+            cmake.configure(source_folder=".")
+            cmake.build()
 
     def package(self):
         self.copy("*.h", dst="include/xmsgrid", src="xmsgrid")
