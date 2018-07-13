@@ -27,7 +27,6 @@ if __name__ == "__main__":
                 'compiler.libcxx': 'libstdc++11'
             })
 
-
     pybind_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # pybind option
