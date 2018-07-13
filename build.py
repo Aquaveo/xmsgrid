@@ -53,8 +53,8 @@ if __name__ == "__main__":
 
     testing_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-        # xms option
-        if not options.get('xmsinterp:xms', False) and not options.get('xmsinterp:pybind', False):
+        # testing option
+        if not options.get('xmsgrid:xms', False) and not options.get('xmsgrid:pybind', False):
             testing_options = dict(options)
             testing_options.update({'xmsgrid:testing': True})
             testing_updated_builds.append([settings, testing_options, env_vars, build_requires])
