@@ -40,6 +40,8 @@ class XmsgridConan(ConanFile):
 
         if s_compiler != "Visual Studio" and s_compiler != "apple-clang":
             self.options['boost'].fPIC = True
+        else:
+            self.options['boost'].fPIC = False
 
         if s_compiler == "apple-clang" and s_os == 'Linux':
             raise ConanException("Clang on Linux is not supported.")
@@ -66,13 +68,7 @@ class XmsgridConan(ConanFile):
         self.requires("xmscore/[>1.0.25]@aquaveo/stable")
 
     def build(self):
-        xms_run_tests = self.env.get('XMS_RUN_TESTS', None)
-        run_tests = xms_run_tests != 'None' and xms_run_tests is not None
-
         cmake = CMake(self)
-
-        cmake.definitions["XMSGRID_TEST_PATH"] = "test_files"
-        cmake.definitions["IS_PYTHON_BUILD"] = self.options.pybind
 
         if self.settings.compiler == 'Visual Studio' \
            and self.settings.compiler.version == "12":
@@ -82,12 +78,12 @@ class XmsgridConan(ConanFile):
         # have tests in release code. Thus, if we want to run tests, we will
         # build a test version (without python), run the tests, and then (on
         # sucess) rebuild the library without tests.
-        if run_tests:
-            cmake.definitions["IS_PYTHON_BUILD"] = False
-            cmake.definitions["BUILD_TESTING"] = run_tests
-            cmake.configure(source_folder=".")
-            cmake.build()
+        cmake.definitions["IS_PYTHON_BUILD"] = self.options.pybind
+        cmake.definitions["BUILD_TESTING"] = self.options.testing
+        cmake.configure(source_folder=".")
+        cmake.build()
 
+        if self.options.testing:
             print("***********(0.0)*************")
             try:
                 cmake.test()
@@ -100,17 +96,6 @@ class XmsgridConan(ConanFile):
                             no_newline = line.strip('\n')
                             print(no_newline)
                 print("***********(0.0)*************")
-
-        # Make sure we build without tests
-        cmake.definitions["IS_PYTHON_BUILD"] = self.options.pybind
-
-        # If pybind build again because we can't have tests in pybind
-        # We may want to do this with other builds too, it just takes
-        # quite a bit of time to build all the configurations twice.
-        if self.options.pybind:
-            cmake.definitions["BUILD_TESTING"] = False
-            cmake.configure(source_folder=".")
-            cmake.build()
 
     def package(self):
         self.copy("*.h", dst="include/xmsgrid", src="xmsgrid")
