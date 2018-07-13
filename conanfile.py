@@ -71,6 +71,7 @@ class XmsgridConan(ConanFile):
 
         cmake = CMake(self)
 
+        cmake.definitions["XMSGRID_TEST_PATH"] = "test_files"
         cmake.definitions["IS_PYTHON_BUILD"] = self.options.pybind
 
         if self.settings.compiler == 'Visual Studio' \
