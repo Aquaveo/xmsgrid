@@ -22,7 +22,7 @@ class XmsgridConan(ConanFile):
     default_options = "xms=False", "pybind=False", "testing=False"
     generators = "cmake"
     build_requires = "cxxtest/4.4@aquaveo/stable"
-    exports = "CMakeLists.txt", "LICENSE"
+    exports = "CMakeLists.txt", "LICENSE", "test_files/*"
     exports_sources = "xmsgrid/*", "test_files/*"
 
     def configure(self):
@@ -80,7 +80,7 @@ class XmsgridConan(ConanFile):
         # sucess) rebuild the library without tests.
         cmake.definitions["IS_PYTHON_BUILD"] = self.options.pybind
         cmake.definitions["BUILD_TESTING"] = self.options.testing
-        cmake.definitions["XMSGRID_TEST_PATH"] = "../test_files"
+        cmake.definitions["XMSGRID_TEST_PATH"] = "test_files"
         cmake.configure(source_folder=".")
         cmake.build()
 
