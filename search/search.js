@@ -7,9 +7,9 @@
 
 var indexSectionsWithContent =
 {
-  0: "cdgimnstuvx~",
-  1: "x",
-  2: "x",
+  0: "cdgimnpstuvx~",
+  1: "tx",
+  2: "px",
   3: "ux",
   4: "cdginstuvx~",
   5: "m",

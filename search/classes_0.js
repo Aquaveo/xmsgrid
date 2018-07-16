@@ -1,9 +1,5 @@
 var searchData=
 [
-  ['xmugrid',['XmUGrid',['../classxms_1_1_xm_u_grid.html',1,'xms']]],
-  ['xmugridconvexhulltests',['XmUGridConvexHullTests',['../class_xm_u_grid_convex_hull_tests.html',1,'']]],
-  ['xmugridimpl',['XmUGridImpl',['../classxms_1_1_xm_u_grid_impl.html',1,'xms']]],
-  ['xmugridtests',['XmUGridTests',['../class_xm_u_grid_tests.html',1,'']]],
-  ['xmugridunittests',['XmUGridUnitTests',['../class_xm_u_grid_unit_tests.html',1,'']]],
-  ['xmugridutilstests',['XmUGridUtilsTests',['../class_xm_u_grid_utils_tests.html',1,'']]]
+  ['testxmugridcelltypeenum',['TestXmUGridCellTypeEnum',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_cell_type_enum.html',1,'python::ugrid::XmUGrid_pyt']]],
+  ['testxmugridfaceorientationenum',['TestXmUGridFaceOrientationEnum',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_face_orientation_enum.html',1,'python::ugrid::XmUGrid_pyt']]]
 ];

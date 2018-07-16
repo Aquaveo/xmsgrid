@@ -654,6 +654,20 @@
     </member>
   </compound>
   <compound kind="namespace">
+    <name>python::ugrid::XmUGrid_pyt</name>
+    <filename>namespacepython_1_1ugrid_1_1_xm_u_grid__pyt.html</filename>
+    <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridCellTypeEnum</class>
+    <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridFaceOrientationEnum</class>
+  </compound>
+  <compound kind="class">
+    <name>python::ugrid::XmUGrid_pyt::TestXmUGridCellTypeEnum</name>
+    <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_cell_type_enum.html</filename>
+  </compound>
+  <compound kind="class">
+    <name>python::ugrid::XmUGrid_pyt::TestXmUGridFaceOrientationEnum</name>
+    <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_face_orientation_enum.html</filename>
+  </compound>
+  <compound kind="namespace">
     <name>xms</name>
     <filename>namespacexms.html</filename>
     <class kind="class">xms::XmUGridImpl</class>
