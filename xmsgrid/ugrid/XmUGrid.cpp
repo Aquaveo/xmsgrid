@@ -20,6 +20,7 @@
 
 // 5. Shared code headers
 #include <xmscore/misc/XmConst.h>
+#include <xmscore/misc/XmError.h>
 #include <xmscore/misc/XmLog.h>
 
 // 6. Non-shared code headers
@@ -491,14 +492,24 @@ bool XmUGridImpl::GetPointsOfCell(const int a_cellIdx, VecInt& a_cellPoints) con
   VecInt cellStream;
   if (GetSingleCellStream(a_cellIdx, cellStream))
   {
-    if (cellStream.size() > 0 && cellStream[0] != XMU_POLYHEDRON)
-    {
-      a_cellPoints.assign(cellStream.begin() + 2, cellStream.end());
-      return true;
-    }
-    else if (cellStream.size() > 0)
+    XM_ENSURE_TRUE_NO_ASSERT(!cellStream.empty(), false);
+    int cellType = cellStream[0];
+    if (cellType == XMU_POLYHEDRON)
     {
       GetUniquePointsFromPolyhedronSingleCellStream(cellStream, a_cellPoints);
+      return true;
+    }
+    else if (cellType == XMU_PIXEL)
+    {
+      a_cellPoints.push_back(cellStream[2]);
+      a_cellPoints.push_back(cellStream[3]);
+      a_cellPoints.push_back(cellStream[5]);
+      a_cellPoints.push_back(cellStream[4]);
+      return true;
+    }
+    else
+    {
+      a_cellPoints.assign(cellStream.begin() + 2, cellStream.end());
       return true;
     }
   }
@@ -3122,7 +3133,7 @@ void XmUGridUnitTests::testGetPointsOfCell()
     TS_ASSERT_EQUALS(expectedCellPoints[i], cellPoints[i]);
   }
 
-  expectedCellPoints = {{0, 1, 6, 5},         {1, 2, 6, 7}, {2, 3, 7},
+  expectedCellPoints = {{0, 1, 6, 5},         {1, 2, 7, 6}, {2, 3, 7},
                         {3, 4, 8, 13, 12, 7}, {7, 11, 10},  {5, 9}};
   cellPoints.clear();
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
@@ -3900,7 +3911,7 @@ void XmUGridUnitTests::testGetPlanViewPolygon()
   }
   VecPt3d2d expectedPolygons{
     {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}},
-    {{10, 0, 0}, {20, 0, 0}, {10, 10, 0}, {20, 10, 0}},
+    {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},
     {{20, 0, 0}, {30, 0, 0}, {20, 10, 0}},
     {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {20, 10, 0}},
     {},
