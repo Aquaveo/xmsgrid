@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7exmugrid',['~XmUGrid',['../classxms_1_1_xm_u_grid.html#a00ece5dcb23ebc06e2651f4a3f3695c4',1,'xms::XmUGrid']]]
+  ['validcellstream',['ValidCellStream',['../classxms_1_1_xm_u_grid.html#addf4c365d29c55d7624100b35c7bf223',1,'xms::XmUGrid']]]
 ];
