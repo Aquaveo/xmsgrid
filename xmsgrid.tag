@@ -22,6 +22,7 @@
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid/</path>
     <filename>_xm_u_grid_utils__py_8cpp</filename>
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
+    <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
   </compound>
   <compound kind="file">
     <name>xmsgrid_py.cpp</name>
@@ -335,91 +336,6 @@
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_utils_8t_8h</filename>
     <class kind="class">XmUGridUtilsTests</class>
-  </compound>
-  <compound kind="page">
-    <name>md_FileIO_Tutorial</name>
-    <title>UGrid File IO Tutorial</title>
-    <filename>md__file_i_o__tutorial</filename>
-    <docanchor file="md__file_i_o__tutorial" title="UGrid File IO Tutorial">FileIO_Tutorial</docanchor>
-    <docanchor file="md__file_i_o__tutorial" title="Introduction">Intro_FileIO</docanchor>
-    <docanchor file="md__file_i_o__tutorial" title="Example - Writing UGrid data to ASCII file format">Example_XmWriteUGridFromAsciiFile</docanchor>
-    <docanchor file="md__file_i_o__tutorial" title="Example - Reading a UGrid from ASCII file format">Example_XmReadUGridFromAsciiFile</docanchor>
-  </compound>
-  <compound kind="page">
-    <name>md_ThreeD_Tutorial</name>
-    <title>3D UGrid Tutorial</title>
-    <filename>md__three_d__tutorial</filename>
-    <docanchor file="md__three_d__tutorial" title="3D UGrid Tutorial">ThreeD_Tutorial</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Introduction">Intro_3Ugrid</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Defining Ugrid Cells">Example_DefiningA3dUGridCell</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Creating a New 3D UGrid With Data">Example_New_With_Data_3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Creating a New 3D UGrid">Example_New3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Setting the UGrid Points">Example_SetPoints3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Setting the UGrid Cell Stream">Example_SetCellStream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Validating the Cellstream">Example_ValidatingCellStream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Number Of Points">Example_GetNumberOfPoints3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Points">Example_GetPoints3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Point">Example_GetPoint3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Set Point">Example_SetPoint3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Points from Point Indices">Example_GetPointsFromPointIdxs3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Extents of UGrid">Example_GetExtents3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Cells Associated with a Point">Example_GetPointCells3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Cells that Share the Same Point or Points">Example_GetCommonCells3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Points of a Cell">Example_GetPointsOfCell3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Type of a Cell">Example_GetCellType3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Count of the Dimensions of Cells used in a UGrid">Example_GetDimensionCount3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Dimension of a Cell">Example_GetCellDimension3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Cellstream of the UGrid">Example_GetCellStream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get a Single Cellstream for One Cell">Example_GetSingleCellStream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Cells that Neighbor a Given Cell">Example_GetCellNeighbors3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get a Plan View Polygon">Example_GetPlanViewPolygon3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Number of Cell Edges">Example_GetNumberOfCellEdges3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Cell Edge from Edge Index">Example_GetCellEdgeFromEdgeIndex3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Adjacent Cells">Example_GetAdjacentCells3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Adjacent Cells from Given Edge">Example_GetAdjacentCellsFromAGivenEdge3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Edges Associated with a Point">Example_GetEdgesFromPoint3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Edges Associated with a Cell">Example_GetEdgesOfCell3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Number of Faces for a Cell">Example_GetNumberOfFacesForCell</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Cell Face">Example_GetCellFace</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Faces of Cell">Example_GetFacesOfCell</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example GetFacesFromPoint">Example_GetFacesFromPoint</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Cell Face Neighbor">Example_GetCellFaceNeighbor</docanchor>
-  </compound>
-  <compound kind="page">
-    <name>md_TwoD_Tutorial</name>
-    <title>2D UGrid Tutorial</title>
-    <filename>md__two_d__tutorial</filename>
-    <docanchor file="md__two_d__tutorial" title="2D UGrid Tutorial">TwoD_Tutorial</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Introduction">Intro_2Ugrid</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Defining Ugrid Cells">Example_DefiningA2dUGridCell</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Creating a New 2D UGrid With Data">Example_New_With_Data_2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Creating a New 2D UGrid">Example_New2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Setting the UGrid Points">Example_SetPoints2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Setting the UGrid Cell Stream">Example_SetCellStream2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Validating the Cellstream">Example_ValidatingCellStream2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Number Of Points">Example_GetNumberOfPoints2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Points">Example_GetPoints2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Point">Example_GetPoint2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Set Point">Example_SetPoint2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Points from Point Indices">Example_GetPointsFromPointIdxs2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Extents of UGrid">Example_GetExtents2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Cells Associated with a Point">Example_GetPointCells2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Cells that Share the Same Point or Points">Example_GetCommonCells2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Points of a Cell">Example_GetPointsOfCell2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Type of a Cell">Example_GetCellType2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Count of the Dimensions of Cells used in a UGrid">Example_GetDimensionCount2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Dimension of a Cell">Example_GetCellDimension2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Cellstream of the UGrid">Example_GetCellStream2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get a Single Cellstream for One Cell">Example_GetSingleCellStream2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Cells that Neighbor a Given Cell">Example_GetCellNeighbors2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get a Plan View Polygon">Example_GetPlanViewPolygon2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Number of Cell Edges">Example_GetNumberOfCellEdges2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Cell Edge from Edge Index">Example_GetCellEdgeFromEdgeIndex2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example Get Adjacent Cells">Example_GetAdjacentCells2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example 2D Get Adjacent Cell">Example_GetAdjacent2DCell</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example Get Adjacent Cells from Given Edge">Example_GetAdjacentCellsFromAGivenEdge2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example Get Edges Associated with a Point">Example_GetEdgesFromPoint2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example Get Edges Associated with a Cell">Example_GetEdgesOfCell2d</docanchor>
   </compound>
   <compound kind="class">
     <name>XmUGridConvexHullTests</name>
@@ -741,8 +657,13 @@
   <compound kind="namespace">
     <name>python::ugrid::XmUGrid_pyt</name>
     <filename>namespacepython_1_1ugrid_1_1_xm_u_grid__pyt.html</filename>
+    <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions</class>
     <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridCellTypeEnum</class>
     <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridFaceOrientationEnum</class>
+  </compound>
+  <compound kind="class">
+    <name>python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions</name>
+    <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html</filename>
   </compound>
   <compound kind="class">
     <name>python::ugrid::XmUGrid_pyt::TestXmUGridCellTypeEnum</name>
