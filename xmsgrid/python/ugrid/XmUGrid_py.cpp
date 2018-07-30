@@ -10,6 +10,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <boost/shared_ptr.hpp>
+#include <xmscore/python/misc/PyUtils.h>
 #include <xmsgrid/ugrid/XmUGrid.h>
 
 //----- Namespace declaration --------------------------------------------------
@@ -19,11 +20,127 @@ namespace py = pybind11;
 PYBIND11_DECLARE_HOLDER_TYPE(T, boost::shared_ptr<T>);
 
 void initXmUGrid(py::module &m) {
-    py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUgrid(m, "XmUGrid");
-    //     .def(py::init(&xms::XmUGrid::New))
+    py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUg(m, "XmUGrid");
+    xmUg
+        .def(py::init([]() {
+            return boost::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New());
+        }))
+        .def(py::init([](py::iterable pts, py::iterable cell_stream) {
+            boost::shared_ptr<xms::VecPt3d> points = xms::VecPt3dFromPyIter(pts);
+            boost::shared_ptr<xms::VecInt> cellStream = xms::VecIntFromPyIter(cell_stream);
+            return boost::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New(*points, *cellStream));
+        }))
+        // Point Functions
+        .def("get_number_of_points", &xms::XmUGrid::GetNumberOfPoints)
+        .def("get_points", [](xms::XmUGrid &self) -> py::iterable {
+            return xms::PyIterFromVecPt3d(self.GetPoints());
+        })
+        .def("set_points", [](xms::XmUGrid &self, py::iterable pts) {
+            boost::shared_ptr<xms::VecPt3d> points = xms::VecPt3dFromPyIter(pts);
+            self.SetPoints(*points);
+        })
+        .def("get_point", [](xms::XmUGrid &self, int pt_index) -> py::iterable {
+            return xms::PyIterFromPt3d(self.GetPoint(pt_index));
+        })
+        .def("set_point", [](xms::XmUGrid &self, int pt_index, py::iterable pt) -> bool {
+            xms::Pt3d point = xms::Pt3dFromPyIter(pt);
+            return self.SetPoint(pt_index, point);
+        })
+        .def("get_points_from_point_idxs", [](xms::XmUGrid &self, py::iterable pt_idx) -> py::iterable {
+            boost::shared_ptr<xms::VecInt> point_indexs = xms::VecIntFromPyIter(pt_idx);
+            xms::VecPt3d points = self.GetPointsFromPointIdxs(*point_indexs);
+            return xms::PyIterFromVecPt3d(points);
+        })
+        .def("get_extents", [](xms::XmUGrid &self) -> py::iterable {
+            xms::Pt3d p_min, p_max;
+            self.GetExtents(p_min, p_max);
+            return py::make_tuple(xms::PyIterFromPt3d(p_min), xms::PyIterFromPt3d(p_max));
+        })
+        .def("get_point_cells", [](xms::XmUGrid &self, int pt_idx) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetPointCells(pt_idx));
+        })
+        .def("get_common_cells", [](xms::XmUGrid &self, py::iterable pts) -> py::iterable {
+            boost::shared_ptr<xms::VecInt> points = xms::VecIntFromPyIter(pts);
+            return xms::PyIterFromVecInt(self.GetCommonCells(*points));
+        })
+        // Cell Functions
+        .def("get_number_of_cells", &xms::XmUGrid::GetNumberOfCells)
+        .def("get_points_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetPointsOfCell(cell_index));
+        })
+        .def("get_cell_type", &xms::XmUGrid::GetCellType)
+        .def("get_dimension_count", [](xms::XmUGrid &self) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetDimensionCount());
+        })
+        .def("get_cell_dimension", &xms::XmUGrid::GetCellDimension)
+        .def("get_cell_stream", [](xms::XmUGrid &self) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetCellStream());
+        })
+        .def("set_cell_stream", [](xms::XmUGrid &self, py::iterable cell_stream) -> bool {
+            boost::shared_ptr<xms::VecInt> cellStream = xms::VecIntFromPyIter(cell_stream);
+            return self.SetCellStream(*cellStream);
+        })
+        .def("get_single_cell_stream", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            xms::VecInt cellStream;
+            bool ret_val = self.GetSingleCellStream(cell_index, cellStream);
+            return py::make_tuple(ret_val, xms::PyIterFromVecInt(cellStream));
+        })
+        .def("get_cell_neighbors", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetCellNeighbors(cell_index));
+        })
+        .def("get_plan_view_polygon", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            xms::VecPt3d polygon;
+            bool ret_val = self.GetPlanViewPolygon(cell_index, polygon);
+            return py::make_tuple(ret_val, xms::PyIterFromVecPt3d(polygon));
+        })
+
+//      // Edges Functions
+//        .def("get_number_of_cell_edges", &xms::XmUGrid::GetNumberOfCellEdges)
+//        .def("get_cell_edge_from_edge_index", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
+//            return xms::PyIterFromIntPair(self.GetCellEdgeFromEdgeIndex(cell_index, edge_index));
+//        })
+//        .def("get_adjacent_cells", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
+//            return xms::PyIterFromVecInt(self.GetAdjacentCells(cell_index, edge_index));
+//        })
+//        .def("get_2d_adjacent_cell", &xms::XmUGrid::Get2dAdjacentCell)
+//        .def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, int pt_index_1, int pt_index_2) -> py::iterable {
+//            return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(pt_index_1, pt_index_2));
+//        })
+//        .def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, py::iterable edge) -> py::iterable {
+//            std::pair<int, int> a_edge = xms::IntPairFromPyIter(edge);
+//            return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(edge));
+//        })
+//        .def("get_edges_from_point", [](xms::XmUGrid &self, int pt_id) -> bool {
+//            xms::VecInt, cell_idxs, edge_idxs;
+//            self.GetEdgesFromPoint(pt_id, cell_idxs, edge_idxs);
+//            return py::make_tuple(xms::PyIterFromVecInt(cell_idxs),
+//                                  xms::PyIterFromVecInt(edge_idxs),
+//        })
+//        .def("get_edges_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+//            return xms::PyIterFromVecIntPair(self.GetEdgesOfCell(cell_index));
+//        })
+//        // Face Functions
+//        .def("get_number_of_cell_faces", &xms::XmUGrid::GetNumberOfCellFaces)
+//        .def("get_cell_face", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
+//            return xms::PyIterFromVecInt(self.GetCellFace(cell_idx, face_idx));
+//        })
+//        .def("get_faces_of_cell", [](xms::XmUGrid &self, int cell_idx) -> py::iterable {
+//            return xms::PyIterFromVecInt2d(self.GetFacesOfCell(cell_idx));
+//        })
+//        .def("get_faces_from_point", [](xms::XmUGrid &self, int point_id) -> py::iterable {
+//            xms::VecInt cell_idxs, face_idxs;
+//            bool ret = self.GetFacesFromPoint(point_id, cell_idxs, face_idxs);
+//            return py::make_tuple(ret,
+//                                  xms::PyIterFromVecInt(cell_idxs),
+//                                  xms::PyIterFromVecInt(face_idxs));
+//        })
+//        .def("get_cell_face_neighbor", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
+//            return self.GetCellFaceNeighbor(cell_idx, face_idx);
+//        })
+    ;
 
     // UGrid CellType
-    py::enum_<xms::XmUGridCellType>(xmUgrid, "xmugrid_celltype_enum",
+    py::enum_<xms::XmUGridCellType>(xmUg, "xmugrid_celltype_enum",
                                     "ugrid_celltype_enum for XmUGrid class")
         .value("XMU_INVALID_CELL_TYPE", xms::XmUGridCellType::XMU_INVALID_CELL_TYPE)
         .value("XMU_EMPTY_CELL", xms::XmUGridCellType::XMU_EMPTY_CELL)
@@ -79,7 +196,7 @@ void initXmUGrid(py::module &m) {
         .export_values();
 
     // UGrid FaceOrientation
-    py::enum_<xms::XmUGridFaceOrientation>(xmUgrid, "xmugrid_faceorientation_enum",
+    py::enum_<xms::XmUGridFaceOrientation>(xmUg, "xmugrid_faceorientation_enum",
                                     "xmugrid_faceorientation_enum for XmUGrid class")
         .value("XMU_ORIENTATION_UNKNOWN", xms::XmUGridFaceOrientation::XMU_ORIENTATION_UNKNOWN)
         .value("XMU_ORIENTATION_SIDE", xms::XmUGridFaceOrientation::XMU_ORIENTATION_SIDE)
