@@ -64,51 +64,51 @@ void initXmUGrid(py::module &m) {
             return xms::PyIterFromVecInt(self.GetCommonCells(*points));
         })
         // Cell Functions
-//        .def("get_number_of_cells", &xms::XmUGrid::GetNumberOfCells)
-//        .def("get_points_of_cells", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
-//            return xms::PyIterFromVecInt(self.GetPointsOfCells(cell_index));
-//        })
-//        .def("get_cell_type", xms::XmUGrid::GetCellType)
-//        .def("get_dimension_count", [](xms::XmUGrid &self) -> py::iterable {
-//            return xms::PyIterFromVecInt(self.GetDimensionCount());
-//        })
-//        .def("get_cell_dimension", xms::XmUGrid::GetCellDimension)
-//        .def("get_cell_stream", [](xms::XmUGrid &self) -> py::iterable {
-//            return xms::PyIterFromVecInt(self.GetCellStream());
-//        })
-//        .def("set_cell_stream", [](xms::XmUGrid &self, py::iterable cell_stream) -> bool {
-//            boost::shared_ptr<VecInt> cellStream = xms::VecIntFromPyIter(cell_stream);
-//            return self.SetCellStream(*cellStream);
-//        })
-//        .def("get_single_cell_stream", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
-//            xms::VecInt cellStream;
-//            bool ret_val = self.GetSingleCellStream(cellStream);
-//            return py::make_tuple(ret_val, xms::VecIntFromPyIter(cellStream));
-//        })
-//        .def("get_cell_neighbors", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
-//            return xms::PyIterFromVecInt(self.GetCellNeighbors(cell_index));
-//        })
-//        .def("get_plan_view_polygon", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
-//            xms::VecPt3d polygon;
-//            bool ret_val = self.GetPlanViewPolygon(cell_index, polygon);
-//            return py::make_tuple(ret_val, polygon);
-//        })
+        .def("get_number_of_cells", &xms::XmUGrid::GetNumberOfCells)
+        .def("get_points_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetPointsOfCell(cell_index));
+        })
+        .def("get_cell_type", &xms::XmUGrid::GetCellType)
+        .def("get_dimension_count", [](xms::XmUGrid &self) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetDimensionCount());
+        })
+        .def("get_cell_dimension", &xms::XmUGrid::GetCellDimension)
+        .def("get_cell_stream", [](xms::XmUGrid &self) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetCellStream());
+        })
+        .def("set_cell_stream", [](xms::XmUGrid &self, py::iterable cell_stream) -> bool {
+            boost::shared_ptr<xms::VecInt> cellStream = xms::VecIntFromPyIter(cell_stream);
+            return self.SetCellStream(*cellStream);
+        })
+        .def("get_single_cell_stream", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            xms::VecInt cellStream;
+            bool ret_val = self.GetSingleCellStream(cell_index, cellStream);
+            return py::make_tuple(ret_val, xms::PyIterFromVecInt(cellStream));
+        })
+        .def("get_cell_neighbors", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            return xms::PyIterFromVecInt(self.GetCellNeighbors(cell_index));
+        })
+        .def("get_plan_view_polygon", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            xms::VecPt3d polygon;
+            bool ret_val = self.GetPlanViewPolygon(cell_index, polygon);
+            return py::make_tuple(ret_val, xms::PyIterFromVecPt3d(polygon));
+        })
 
-      // Edges Functions
-//        .def("get_number_of_cell_edges", xms::XmUGrid::GetNumberOfCellEdges)
+//      // Edges Functions
+//        .def("get_number_of_cell_edges", &xms::XmUGrid::GetNumberOfCellEdges)
 //        .def("get_cell_edge_from_edge_index", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
-//            return xms::PyIterFromIntPair(self.GetCellEdgeFromEdgeIndex(cell_edge, edge_index));
+//            return xms::PyIterFromIntPair(self.GetCellEdgeFromEdgeIndex(cell_index, edge_index));
 //        })
 //        .def("get_adjacent_cells", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
 //            return xms::PyIterFromVecInt(self.GetAdjacentCells(cell_index, edge_index));
 //        })
-//        .def("get_2d_adjacent_cell", xms::XmUGrid::Get2dAdjacentCell)
+//        .def("get_2d_adjacent_cell", &xms::XmUGrid::Get2dAdjacentCell)
 //        .def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, int pt_index_1, int pt_index_2) -> py::iterable {
 //            return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(pt_index_1, pt_index_2));
 //        })
 //        .def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, py::iterable edge) -> py::iterable {
 //            std::pair<int, int> a_edge = xms::IntPairFromPyIter(edge);
-//            return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(*edge));
+//            return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(edge));
 //        })
 //        .def("get_edges_from_point", [](xms::XmUGrid &self, int pt_id) -> bool {
 //            xms::VecInt, cell_idxs, edge_idxs;
@@ -119,25 +119,24 @@ void initXmUGrid(py::module &m) {
 //        .def("get_edges_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
 //            return xms::PyIterFromVecIntPair(self.GetEdgesOfCell(cell_index));
 //        })
-          // Face Functions
-//          .def("get_number_of_cell_faces", &xms::XmUGrid::GetNumberOfCellFaces)
-//          .def("get_cell_face", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
-//              return xms::PyIterFromVecInt(self.GetCellFace(cell_idx, face_idx));
-//          })
-//          .def("get_faces_of_cell", [](xms::XmUGrid &self, int cell_idx) -> py::iterable {
-//              return xms::PyIterFromVecInt2d(self.GetFacesOfCell(cell_idx));
-//          })
-//          .def("get_faces_from_point", [](xms::XmUGrid &self, int point_id) -> py::iterable {
-//              xms::VecInt cell_idxs, face_idxs;
-//              bool ret = self.GetFacesFromPoint(point_id, cell_idxs, face_idxs);
-//              return py::make_tuple(ret,
-//                                    xms::PyIterFromVecInt(cell_idxs),
-//                                    xms::PyIterFromVecInt(face_idxs));
-//          })
-//          .def("get_cell_face_neighbor", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
-//              return self.GetCellFaceNeighbor(cell_idx, face_idx);
-//          })
-
+//        // Face Functions
+//        .def("get_number_of_cell_faces", &xms::XmUGrid::GetNumberOfCellFaces)
+//        .def("get_cell_face", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
+//            return xms::PyIterFromVecInt(self.GetCellFace(cell_idx, face_idx));
+//        })
+//        .def("get_faces_of_cell", [](xms::XmUGrid &self, int cell_idx) -> py::iterable {
+//            return xms::PyIterFromVecInt2d(self.GetFacesOfCell(cell_idx));
+//        })
+//        .def("get_faces_from_point", [](xms::XmUGrid &self, int point_id) -> py::iterable {
+//            xms::VecInt cell_idxs, face_idxs;
+//            bool ret = self.GetFacesFromPoint(point_id, cell_idxs, face_idxs);
+//            return py::make_tuple(ret,
+//                                  xms::PyIterFromVecInt(cell_idxs),
+//                                  xms::PyIterFromVecInt(face_idxs));
+//        })
+//        .def("get_cell_face_neighbor", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
+//            return self.GetCellFaceNeighbor(cell_idx, face_idx);
+//        })
     ;
 
     // UGrid CellType
