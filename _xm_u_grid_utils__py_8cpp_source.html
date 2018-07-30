@@ -46,6 +46,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -93,7 +94,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__py_8cpp_source.html'
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -132,7 +133,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__py_8cpp_source.html'
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;          xms::Pt3d a = xms::Pt3dFromPyIter(A);</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;          xms::Pt3d b = xms::Pt3dFromPyIter(B);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;          <span class="keywordflow">return</span> <a class="code" href="namespacexms.html#a19d9cf623f58dfd2c0f07818b00c3ef0">xms::cross</a>(origin, a, b);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;      })</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;      },<span class="stringliteral">&quot;2D cross product of two points&quot;</span>,py::arg(<span class="stringliteral">&quot;Origin&quot;</span>),py::arg(<span class="stringliteral">&quot;A&quot;</span>),py::arg(<span class="stringliteral">&quot;B&quot;</span>))</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;      .def(<span class="stringliteral">&quot;do_line_segments_cross&quot;</span>, [](py::iterable seg1_pt1, py::iterable seg1_pt2,</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                                        py::iterable seg2_pt1, py::iterable seg2_pt2) -&gt; <span class="keywordtype">bool</span> {</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;          xms::Pt3d s1p1 = xms::Pt3dFromPyIter(seg1_pt1);</div>
@@ -140,9 +141,11 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__py_8cpp_source.html'
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;          xms::Pt3d s2p1 = xms::Pt3dFromPyIter(seg2_pt1);</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;          xms::Pt3d s2p2 = xms::Pt3dFromPyIter(seg2_pt2);</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;          <span class="keywordflow">return</span> <a class="code" href="namespacexms.html#ae637b67d3f1510d9d944bbf58b357f96">DoLineSegmentsCross</a>(s1p1, s1p2, s2p1, s2p2);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      })</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    ;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      },<span class="stringliteral">&quot;Determine whether 2 line segments intersect&quot;</span>,</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        py::arg(<span class="stringliteral">&quot;seg1_pt1&quot;</span>),py::arg(<span class="stringliteral">&quot;set1_pt2&quot;</span>),py::arg(<span class="stringliteral">&quot;seg2_pt1&quot;</span>),py::arg(<span class="stringliteral">&quot;seg2_pt2&quot;</span>)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;     )</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    ;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
 <div class="ttc" id="_xm_u_grid_8h_html"><div class="ttname"><a href="_xm_u_grid_8h.html">XmUGrid.h</a></div><div class="ttdoc">Contains the XmUGrid Class and supporting data types. </div></div>
 <div class="ttc" id="_xm_u_grid_utils_8h_html"><div class="ttname"><a href="_xm_u_grid_utils_8h.html">XmUGridUtils.h</a></div><div class="ttdoc">Contains IO functions as well as several utility functions for XmUGrid. </div></div>
 <div class="ttc" id="namespacexms_html_a19d9cf623f58dfd2c0f07818b00c3ef0"><div class="ttname"><a href="namespacexms.html#a19d9cf623f58dfd2c0f07818b00c3ef0">xms::cross</a></div><div class="ttdeci">double cross(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</div><div class="ttdoc">2D cross product of two points </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00225">XmUGridUtils.cpp:225</a></div></div>
@@ -154,7 +157,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__py_8cpp_source.html'
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_ed63beb1e79dd2a15db8cfd74099fc48.html">python</a></li><li class="navelem"><a class="el" href="dir_df63a72722e2a18a23dc615b97003480.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_u_grid_utils__py_8cpp.html">XmUGridUtils_py.cpp</a></li>
-    <li class="footer">Generated on Mon Jul 30 2018 15:32:14 for xmsgrid by
+    <li class="footer">Generated on Mon Jul 30 2018 17:38:21 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
