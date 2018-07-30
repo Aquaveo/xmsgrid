@@ -28,7 +28,7 @@ void initXmUGridUtils(py::module &m) {
           xms::Pt3d a = xms::Pt3dFromPyIter(A);
           xms::Pt3d b = xms::Pt3dFromPyIter(B);
           return xms::cross(origin, a, b);
-      })
+      },"2D cross product of two points",py::arg("Origin"),py::arg("A"),py::arg("B"))
       .def("do_line_segments_cross", [](py::iterable seg1_pt1, py::iterable seg1_pt2,
                                         py::iterable seg2_pt1, py::iterable seg2_pt2) -> bool {
           xms::Pt3d s1p1 = xms::Pt3dFromPyIter(seg1_pt1);
@@ -36,6 +36,8 @@ void initXmUGridUtils(py::module &m) {
           xms::Pt3d s2p1 = xms::Pt3dFromPyIter(seg2_pt1);
           xms::Pt3d s2p2 = xms::Pt3dFromPyIter(seg2_pt2);
           return DoLineSegmentsCross(s1p1, s1p2, s2p1, s2p2);
-      })
+      },"Determine whether 2 line segments intersect",
+        py::arg("seg1_pt1"),py::arg("set1_pt2"),py::arg("seg2_pt1"),py::arg("seg2_pt2")
+     )
     ;
 }
