@@ -1357,7 +1357,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div class="line"><a name="l01396"></a><span class="lineno"><a class="line" href="classxms_1_1_xm_u_grid_impl.html#a6a6bbe57df7df77b3be92ceaa4aa998a"> 1396</a></span>&#160;VecInt2d <a class="code" href="classxms_1_1_xm_u_grid_impl.html#a6a6bbe57df7df77b3be92ceaa4aa998a">XmUGridImpl::GetFacesOfCell</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> a_cellIdx)<span class="keyword"> const</span></div>
 <div class="line"><a name="l01397"></a><span class="lineno"> 1397</span>&#160;<span class="keyword"></span>{</div>
 <div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;  <span class="keywordtype">int</span> numFaces = <a class="code" href="classxms_1_1_xm_u_grid_impl.html#a43ecb6e3a520df054be4b4f9dfdaeac4">GetNumberOfCellFaces</a>(a_cellIdx);</div>
-<div class="line"><a name="l01399"></a><span class="lineno"> 1399</span>&#160;  ;</div>
+<div class="line"><a name="l01399"></a><span class="lineno"> 1399</span>&#160;</div>
 <div class="line"><a name="l01400"></a><span class="lineno"> 1400</span>&#160;  VecInt2d faces(numFaces);</div>
 <div class="line"><a name="l01401"></a><span class="lineno"> 1401</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; numFaces; i++)</div>
 <div class="line"><a name="l01402"></a><span class="lineno"> 1402</span>&#160;  {</div>
@@ -3490,11 +3490,11 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div class="line"><a name="l03722"></a><span class="lineno"> 3722</span>&#160;      <span class="comment">// Check that faces are the same</span></div>
 <div class="line"><a name="l03723"></a><span class="lineno"> 3723</span>&#160;      VecInt expectedFacePt = grid-&gt;GetCellFace(i, j);</div>
 <div class="line"><a name="l03724"></a><span class="lineno"> 3724</span>&#160;      std::sort(expectedFacePt.begin(), expectedFacePt.end());</div>
-<div class="line"><a name="l03725"></a><span class="lineno"> 3725</span>&#160;      VecInt neighborFacePt = grid-&gt;GetCellFace(i, j);</div>
+<div class="line"><a name="l03725"></a><span class="lineno"> 3725</span>&#160;      VecInt neighborFacePt = grid-&gt;GetCellFace(neighborCell, faceIndex);</div>
 <div class="line"><a name="l03726"></a><span class="lineno"> 3726</span>&#160;      std::sort(neighborFacePt.begin(), neighborFacePt.end());</div>
 <div class="line"><a name="l03727"></a><span class="lineno"> 3727</span>&#160;      <span class="keywordflow">if</span> (!expectedFacePt.empty() &amp;&amp; !neighborFacePt.empty())</div>
 <div class="line"><a name="l03728"></a><span class="lineno"> 3728</span>&#160;      {</div>
-<div class="line"><a name="l03729"></a><span class="lineno"> 3729</span>&#160;        TS_ASSERT_EQUALS(neighborFacePt, neighborFacePt);</div>
+<div class="line"><a name="l03729"></a><span class="lineno"> 3729</span>&#160;        TS_ASSERT_EQUALS(expectedFacePt, neighborFacePt);</div>
 <div class="line"><a name="l03730"></a><span class="lineno"> 3730</span>&#160;      }</div>
 <div class="line"><a name="l03731"></a><span class="lineno"> 3731</span>&#160;    }</div>
 <div class="line"><a name="l03732"></a><span class="lineno"> 3732</span>&#160;  }</div>
@@ -3539,11 +3539,11 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div class="line"><a name="l03771"></a><span class="lineno"> 3771</span>&#160;      <span class="comment">// Check that faces are the same</span></div>
 <div class="line"><a name="l03772"></a><span class="lineno"> 3772</span>&#160;      VecInt expectedFacePt = grid-&gt;GetCellFace(i, j);</div>
 <div class="line"><a name="l03773"></a><span class="lineno"> 3773</span>&#160;      std::sort(expectedFacePt.begin(), expectedFacePt.end());</div>
-<div class="line"><a name="l03774"></a><span class="lineno"> 3774</span>&#160;      VecInt neighborFacePt = grid-&gt;GetCellFace(i, j);</div>
+<div class="line"><a name="l03774"></a><span class="lineno"> 3774</span>&#160;      VecInt neighborFacePt = grid-&gt;GetCellFace(neighborCell, faceIndex);</div>
 <div class="line"><a name="l03775"></a><span class="lineno"> 3775</span>&#160;      std::sort(neighborFacePt.begin(), neighborFacePt.end());</div>
 <div class="line"><a name="l03776"></a><span class="lineno"> 3776</span>&#160;      <span class="keywordflow">if</span> (!expectedFacePt.empty() &amp;&amp; !neighborFacePt.empty())</div>
 <div class="line"><a name="l03777"></a><span class="lineno"> 3777</span>&#160;      {</div>
-<div class="line"><a name="l03778"></a><span class="lineno"> 3778</span>&#160;        TS_ASSERT_EQUALS(neighborFacePt, neighborFacePt);</div>
+<div class="line"><a name="l03778"></a><span class="lineno"> 3778</span>&#160;        TS_ASSERT_EQUALS(expectedFacePt, neighborFacePt);</div>
 <div class="line"><a name="l03779"></a><span class="lineno"> 3779</span>&#160;      }</div>
 <div class="line"><a name="l03780"></a><span class="lineno"> 3780</span>&#160;    }</div>
 <div class="line"><a name="l03781"></a><span class="lineno"> 3781</span>&#160;  }</div>
@@ -3897,139 +3897,136 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div class="line"><a name="l04151"></a><span class="lineno"> 4151</span>&#160;    adjacentCell = ugrid-&gt;Get2dAdjacentCell(0, i);</div>
 <div class="line"><a name="l04152"></a><span class="lineno"> 4152</span>&#160;    TS_ASSERT_EQUALS(expected2dCells[i], adjacentCell);</div>
 <div class="line"><a name="l04153"></a><span class="lineno"> 4153</span>&#160;  }</div>
-<div class="line"><a name="l04154"></a><span class="lineno"> 4154</span>&#160;  adjacentCells = ugrid-&gt;GetAdjacentCells(0, ugrid-&gt;GetNumberOfCellEdges(0));</div>
-<div class="line"><a name="l04155"></a><span class="lineno"> 4155</span>&#160;</div>
-<div class="line"><a name="l04156"></a><span class="lineno"> 4156</span>&#160;  <span class="comment">// Get Adjacent cells from given Edge</span></div>
-<div class="line"><a name="l04157"></a><span class="lineno"> 4157</span>&#160;  VecInt2d expectedCellsFromEdge = {{0, 1}, {0, 2}, {0}};</div>
-<div class="line"><a name="l04158"></a><span class="lineno"> 4158</span>&#160;  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = {{1, 4}, {3, 4}, {0, 3}};</div>
-<div class="line"><a name="l04159"></a><span class="lineno"> 4159</span>&#160;  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(-1, -1);</div>
-<div class="line"><a name="l04160"></a><span class="lineno"> 4160</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; edges.size(); i++)</div>
-<div class="line"><a name="l04161"></a><span class="lineno"> 4161</span>&#160;  {</div>
-<div class="line"><a name="l04162"></a><span class="lineno"> 4162</span>&#160;    adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[i]);</div>
-<div class="line"><a name="l04163"></a><span class="lineno"> 4163</span>&#160;    TS_ASSERT_EQUALS(expectedCellsFromEdge[i], adjacentCells);</div>
-<div class="line"><a name="l04164"></a><span class="lineno"> 4164</span>&#160;  }</div>
-<div class="line"><a name="l04165"></a><span class="lineno"> 4165</span>&#160;  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[0].first, edges[1].second);</div>
-<div class="line"><a name="l04166"></a><span class="lineno"> 4166</span>&#160;  TS_ASSERT_EQUALS(expectedCellsFromEdge[0], adjacentCells);</div>
-<div class="line"><a name="l04167"></a><span class="lineno"> 4167</span>&#160;</div>
-<div class="line"><a name="l04168"></a><span class="lineno"> 4168</span>&#160;  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(0, ugrid-&gt;GetNumberOfPoints());</div>
-<div class="line"><a name="l04169"></a><span class="lineno"> 4169</span>&#160;} <span class="comment">// XmUGridUnitTests::testGetAdjacentCellFunctions</span></div>
-<div class="line"><a name="l04172"></a><span class="lineno"> 4172</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l04174"></a><span class="lineno"> 4174</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l04175"></a><span class="lineno"><a class="line" href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030"> 4175</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030">XmUGridUnitTests::testGetEdgesOfCell</a>()</div>
-<div class="line"><a name="l04176"></a><span class="lineno"> 4176</span>&#160;{</div>
-<div class="line"><a name="l04177"></a><span class="lineno"> 4177</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
-<div class="line"><a name="l04178"></a><span class="lineno"> 4178</span>&#160;  <span class="keywordflow">if</span> (!ugrid)</div>
-<div class="line"><a name="l04179"></a><span class="lineno"> 4179</span>&#160;  {</div>
-<div class="line"><a name="l04180"></a><span class="lineno"> 4180</span>&#160;    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
-<div class="line"><a name="l04181"></a><span class="lineno"> 4181</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l04182"></a><span class="lineno"> 4182</span>&#160;  }</div>
-<div class="line"><a name="l04183"></a><span class="lineno"> 4183</span>&#160;</div>
-<div class="line"><a name="l04184"></a><span class="lineno"> 4184</span>&#160;  <span class="comment">// Test GetEdgesOfCell</span></div>
-<div class="line"><a name="l04185"></a><span class="lineno"> 4185</span>&#160;  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = ugrid-&gt;GetEdgesOfCell(0);</div>
-<div class="line"><a name="l04186"></a><span class="lineno"> 4186</span>&#160;  std::vector&lt;std::pair&lt;int, int&gt;&gt; expectededges = {{0, 3}, {3, 4}, {1, 4}, {0, 1}};</div>
-<div class="line"><a name="l04187"></a><span class="lineno"> 4187</span>&#160;  TS_ASSERT_EQUALS(expectededges, edges);</div>
-<div class="line"><a name="l04188"></a><span class="lineno"> 4188</span>&#160;</div>
-<div class="line"><a name="l04189"></a><span class="lineno"> 4189</span>&#160;} <span class="comment">// XmUGridUnitTests::testGetEdgesOfCell</span></div>
-<div class="line"><a name="l04192"></a><span class="lineno"> 4192</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l04194"></a><span class="lineno"> 4194</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l04195"></a><span class="lineno"><a class="line" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879"> 4195</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879">XmUGridUnitTests::testGetFaces</a>()</div>
-<div class="line"><a name="l04196"></a><span class="lineno"> 4196</span>&#160;{</div>
-<div class="line"><a name="l04197"></a><span class="lineno"> 4197</span>&#160;  <span class="comment">// 3D Shapes</span></div>
-<div class="line"><a name="l04198"></a><span class="lineno"> 4198</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="_xm_u_grid_8cpp.html#adae3b643305100b325b7fd7ee3b42e50">TEST_XmUGrid3dLinear</a>();</div>
-<div class="line"><a name="l04199"></a><span class="lineno"> 4199</span>&#160;  <span class="keywordflow">if</span> (!ugrid3d)</div>
-<div class="line"><a name="l04200"></a><span class="lineno"> 4200</span>&#160;  {</div>
-<div class="line"><a name="l04201"></a><span class="lineno"> 4201</span>&#160;    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
-<div class="line"><a name="l04202"></a><span class="lineno"> 4202</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l04203"></a><span class="lineno"> 4203</span>&#160;  }</div>
-<div class="line"><a name="l04204"></a><span class="lineno"> 4204</span>&#160;</div>
-<div class="line"><a name="l04205"></a><span class="lineno"> 4205</span>&#160;  VecInt cellFace;</div>
-<div class="line"><a name="l04206"></a><span class="lineno"> 4206</span>&#160;  VecInt2d expectedCellFaces = {<span class="comment">// Tetra</span></div>
-<div class="line"><a name="l04207"></a><span class="lineno"> 4207</span>&#160;                                {0, 5, 1},</div>
-<div class="line"><a name="l04208"></a><span class="lineno"> 4208</span>&#160;                                {0, 1, 15},</div>
-<div class="line"><a name="l04209"></a><span class="lineno"> 4209</span>&#160;                                {1, 5, 15},</div>
-<div class="line"><a name="l04210"></a><span class="lineno"> 4210</span>&#160;                                {5, 0, 15},</div>
-<div class="line"><a name="l04211"></a><span class="lineno"> 4211</span>&#160;                                <span class="comment">// Voxel</span></div>
-<div class="line"><a name="l04212"></a><span class="lineno"> 4212</span>&#160;                                {1, 6, 7, 2},</div>
-<div class="line"><a name="l04213"></a><span class="lineno"> 4213</span>&#160;                                {16, 17, 22, 21},</div>
-<div class="line"><a name="l04214"></a><span class="lineno"> 4214</span>&#160;                                {1, 2, 17, 16},</div>
-<div class="line"><a name="l04215"></a><span class="lineno"> 4215</span>&#160;                                {2, 7, 22, 17},</div>
-<div class="line"><a name="l04216"></a><span class="lineno"> 4216</span>&#160;                                {7, 6, 21, 22},</div>
-<div class="line"><a name="l04217"></a><span class="lineno"> 4217</span>&#160;                                {6, 1, 16, 21},</div>
-<div class="line"><a name="l04218"></a><span class="lineno"> 4218</span>&#160;                                <span class="comment">// Hexahedron</span></div>
-<div class="line"><a name="l04219"></a><span class="lineno"> 4219</span>&#160;                                {2, 7, 8, 3},</div>
-<div class="line"><a name="l04220"></a><span class="lineno"> 4220</span>&#160;                                {17, 18, 23, 22},</div>
-<div class="line"><a name="l04221"></a><span class="lineno"> 4221</span>&#160;                                {2, 3, 18, 17},</div>
-<div class="line"><a name="l04222"></a><span class="lineno"> 4222</span>&#160;                                {3, 8, 23, 18},</div>
-<div class="line"><a name="l04223"></a><span class="lineno"> 4223</span>&#160;                                {8, 7, 22, 23},</div>
-<div class="line"><a name="l04224"></a><span class="lineno"> 4224</span>&#160;                                {7, 2, 17, 22},</div>
-<div class="line"><a name="l04225"></a><span class="lineno"> 4225</span>&#160;                                <span class="comment">// Polyhedron</span></div>
-<div class="line"><a name="l04226"></a><span class="lineno"> 4226</span>&#160;                                {8, 9, 14, 13},</div>
-<div class="line"><a name="l04227"></a><span class="lineno"> 4227</span>&#160;                                {8, 9, 24, 23},</div>
-<div class="line"><a name="l04228"></a><span class="lineno"> 4228</span>&#160;                                {9, 14, 29, 24},</div>
-<div class="line"><a name="l04229"></a><span class="lineno"> 4229</span>&#160;                                {13, 14, 29, 28},</div>
-<div class="line"><a name="l04230"></a><span class="lineno"> 4230</span>&#160;                                {8, 13, 28, 23},</div>
-<div class="line"><a name="l04231"></a><span class="lineno"> 4231</span>&#160;                                {23, 24, 29, 28},</div>
-<div class="line"><a name="l04232"></a><span class="lineno"> 4232</span>&#160;                                <span class="comment">// Wedge</span></div>
-<div class="line"><a name="l04233"></a><span class="lineno"> 4233</span>&#160;                                {3, 4, 18},</div>
-<div class="line"><a name="l04234"></a><span class="lineno"> 4234</span>&#160;                                {8, 23, 9},</div>
-<div class="line"><a name="l04235"></a><span class="lineno"> 4235</span>&#160;                                {3, 8, 9, 4},</div>
-<div class="line"><a name="l04236"></a><span class="lineno"> 4236</span>&#160;                                {4, 9, 23, 18},</div>
-<div class="line"><a name="l04237"></a><span class="lineno"> 4237</span>&#160;                                {18, 23, 8, 3},</div>
-<div class="line"><a name="l04238"></a><span class="lineno"> 4238</span>&#160;                                <span class="comment">// Pyramid</span></div>
-<div class="line"><a name="l04239"></a><span class="lineno"> 4239</span>&#160;                                {5, 10, 11, 6},</div>
-<div class="line"><a name="l04240"></a><span class="lineno"> 4240</span>&#160;                                {5, 6, 20},</div>
-<div class="line"><a name="l04241"></a><span class="lineno"> 4241</span>&#160;                                {6, 11, 20},</div>
-<div class="line"><a name="l04242"></a><span class="lineno"> 4242</span>&#160;                                {11, 10, 20},</div>
-<div class="line"><a name="l04243"></a><span class="lineno"> 4243</span>&#160;                                {10, 5, 20}};</div>
-<div class="line"><a name="l04244"></a><span class="lineno"> 4244</span>&#160;  <span class="keywordtype">int</span> currId(0);</div>
-<div class="line"><a name="l04245"></a><span class="lineno"> 4245</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid3d-&gt;GetNumberOfCells(); i++)</div>
-<div class="line"><a name="l04246"></a><span class="lineno"> 4246</span>&#160;  {</div>
-<div class="line"><a name="l04247"></a><span class="lineno"> 4247</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
-<div class="line"><a name="l04248"></a><span class="lineno"> 4248</span>&#160;    {</div>
-<div class="line"><a name="l04249"></a><span class="lineno"> 4249</span>&#160;      cellFace = ugrid3d-&gt;GetCellFace(i, j);</div>
-<div class="line"><a name="l04250"></a><span class="lineno"> 4250</span>&#160;      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFace);</div>
-<div class="line"><a name="l04251"></a><span class="lineno"> 4251</span>&#160;    }</div>
-<div class="line"><a name="l04252"></a><span class="lineno"> 4252</span>&#160;  }</div>
-<div class="line"><a name="l04253"></a><span class="lineno"> 4253</span>&#160;  <span class="comment">// Tetra</span></div>
-<div class="line"><a name="l04254"></a><span class="lineno"> 4254</span>&#160;  VecInt2d cellFaces;</div>
-<div class="line"><a name="l04255"></a><span class="lineno"> 4255</span>&#160;  currId = 0;</div>
-<div class="line"><a name="l04256"></a><span class="lineno"> 4256</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid3d-&gt;GetNumberOfCells(); i++)</div>
-<div class="line"><a name="l04257"></a><span class="lineno"> 4257</span>&#160;  {</div>
-<div class="line"><a name="l04258"></a><span class="lineno"> 4258</span>&#160;    cellFaces = ugrid3d-&gt;GetFacesOfCell(i);</div>
-<div class="line"><a name="l04259"></a><span class="lineno"> 4259</span>&#160;    TS_ASSERT_EQUALS(cellFaces.size(), ugrid3d-&gt;GetNumberOfCellFaces(i));</div>
-<div class="line"><a name="l04260"></a><span class="lineno"> 4260</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
-<div class="line"><a name="l04261"></a><span class="lineno"> 4261</span>&#160;    {</div>
-<div class="line"><a name="l04262"></a><span class="lineno"> 4262</span>&#160;      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFaces[j]);</div>
-<div class="line"><a name="l04263"></a><span class="lineno"> 4263</span>&#160;    }</div>
-<div class="line"><a name="l04264"></a><span class="lineno"> 4264</span>&#160;  }</div>
-<div class="line"><a name="l04265"></a><span class="lineno"> 4265</span>&#160;} <span class="comment">// XmUGridUnitTests::testGetFaces</span></div>
-<div class="line"><a name="l04267"></a><span class="lineno"> 4267</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l04269"></a><span class="lineno"> 4269</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l04270"></a><span class="lineno"> 4270</span>&#160;<span class="comment">//#define SPEEDTEST</span></div>
-<div class="line"><a name="l04271"></a><span class="lineno"> 4271</span>&#160;<span class="preprocessor">#ifdef SPEEDTEST</span></div>
-<div class="line"><a name="l04272"></a><span class="lineno"> 4272</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#include &lt;boost/timer/timer.hpp&gt;</span></div>
-<div class="line"><a name="l04273"></a><span class="lineno"> 4273</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l04274"></a><span class="lineno"><a class="line" href="class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f"> 4274</a></span>&#160;<span class="preprocessor"></span><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f">XmUGridUnitTests::testLargeUGridLinkSpeed</a>()</div>
-<div class="line"><a name="l04275"></a><span class="lineno"> 4275</span>&#160;{</div>
-<div class="line"><a name="l04276"></a><span class="lineno"> 4276</span>&#160;<span class="preprocessor">#ifdef SPEEDTEST</span></div>
-<div class="line"><a name="l04277"></a><span class="lineno"> 4277</span>&#160;<span class="preprocessor"></span>  <span class="keywordtype">int</span> rows = 1000;</div>
-<div class="line"><a name="l04278"></a><span class="lineno"> 4278</span>&#160;  <span class="keywordtype">int</span> cols = 500;</div>
-<div class="line"><a name="l04279"></a><span class="lineno"> 4279</span>&#160;  <span class="keywordtype">int</span> lays = 4;</div>
-<div class="line"><a name="l04280"></a><span class="lineno"> 4280</span>&#160;</div>
-<div class="line"><a name="l04281"></a><span class="lineno"> 4281</span>&#160;  <span class="comment">// BSHP&lt;xms::XmUGrid&gt; grid = TEST_XmUBuildQuadUGrid(rows, cols);</span></div>
-<div class="line"><a name="l04282"></a><span class="lineno"> 4282</span>&#160;  <span class="comment">// BSHP&lt;xms::XmUGrid&gt; grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);</span></div>
-<div class="line"><a name="l04283"></a><span class="lineno"> 4283</span>&#160;  BSHP&lt;xms::XmUGrid&gt; grid = <a class="code" href="_xm_u_grid_8cpp.html#adeaa5d1fea81372470f12da9ec83ba78">TEST_XmUBuildPolyhedronUgrid</a>(rows, cols, lays);</div>
-<div class="line"><a name="l04284"></a><span class="lineno"> 4284</span>&#160;</div>
-<div class="line"><a name="l04285"></a><span class="lineno"> 4285</span>&#160;  {</div>
-<div class="line"><a name="l04286"></a><span class="lineno"> 4286</span>&#160;    boost::timer::cpu_timer timer;</div>
-<div class="line"><a name="l04287"></a><span class="lineno"> 4287</span>&#160;    BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">XmUGrid::New</a>(grid-&gt;GetPoints(), grid-&gt;GetCellStream());</div>
-<div class="line"><a name="l04288"></a><span class="lineno"> 4288</span>&#160;    TS_FAIL(timer.format());</div>
-<div class="line"><a name="l04289"></a><span class="lineno"> 4289</span>&#160;  }</div>
+<div class="line"><a name="l04154"></a><span class="lineno"> 4154</span>&#160;</div>
+<div class="line"><a name="l04155"></a><span class="lineno"> 4155</span>&#160;  <span class="comment">// Get Adjacent cells from given Edge</span></div>
+<div class="line"><a name="l04156"></a><span class="lineno"> 4156</span>&#160;  VecInt2d expectedCellsFromEdge = {{0, 1}, {0, 2}, {0}};</div>
+<div class="line"><a name="l04157"></a><span class="lineno"> 4157</span>&#160;  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = {{1, 4}, {3, 4}, {0, 3}};</div>
+<div class="line"><a name="l04158"></a><span class="lineno"> 4158</span>&#160;  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(-1, -1);</div>
+<div class="line"><a name="l04159"></a><span class="lineno"> 4159</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; edges.size(); i++)</div>
+<div class="line"><a name="l04160"></a><span class="lineno"> 4160</span>&#160;  {</div>
+<div class="line"><a name="l04161"></a><span class="lineno"> 4161</span>&#160;    adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[i]);</div>
+<div class="line"><a name="l04162"></a><span class="lineno"> 4162</span>&#160;    TS_ASSERT_EQUALS(expectedCellsFromEdge[i], adjacentCells);</div>
+<div class="line"><a name="l04163"></a><span class="lineno"> 4163</span>&#160;  }</div>
+<div class="line"><a name="l04164"></a><span class="lineno"> 4164</span>&#160;  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[0].first, edges[1].second);</div>
+<div class="line"><a name="l04165"></a><span class="lineno"> 4165</span>&#160;  TS_ASSERT_EQUALS(expectedCellsFromEdge[0], adjacentCells);</div>
+<div class="line"><a name="l04166"></a><span class="lineno"> 4166</span>&#160;} <span class="comment">// XmUGridUnitTests::testGetAdjacentCellFunctions</span></div>
+<div class="line"><a name="l04169"></a><span class="lineno"> 4169</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l04171"></a><span class="lineno"> 4171</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l04172"></a><span class="lineno"><a class="line" href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030"> 4172</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030">XmUGridUnitTests::testGetEdgesOfCell</a>()</div>
+<div class="line"><a name="l04173"></a><span class="lineno"> 4173</span>&#160;{</div>
+<div class="line"><a name="l04174"></a><span class="lineno"> 4174</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line"><a name="l04175"></a><span class="lineno"> 4175</span>&#160;  <span class="keywordflow">if</span> (!ugrid)</div>
+<div class="line"><a name="l04176"></a><span class="lineno"> 4176</span>&#160;  {</div>
+<div class="line"><a name="l04177"></a><span class="lineno"> 4177</span>&#160;    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
+<div class="line"><a name="l04178"></a><span class="lineno"> 4178</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l04179"></a><span class="lineno"> 4179</span>&#160;  }</div>
+<div class="line"><a name="l04180"></a><span class="lineno"> 4180</span>&#160;</div>
+<div class="line"><a name="l04181"></a><span class="lineno"> 4181</span>&#160;  <span class="comment">// Test GetEdgesOfCell</span></div>
+<div class="line"><a name="l04182"></a><span class="lineno"> 4182</span>&#160;  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = ugrid-&gt;GetEdgesOfCell(0);</div>
+<div class="line"><a name="l04183"></a><span class="lineno"> 4183</span>&#160;  std::vector&lt;std::pair&lt;int, int&gt;&gt; expectededges = {{0, 3}, {3, 4}, {1, 4}, {0, 1}};</div>
+<div class="line"><a name="l04184"></a><span class="lineno"> 4184</span>&#160;  TS_ASSERT_EQUALS(expectededges, edges);</div>
+<div class="line"><a name="l04185"></a><span class="lineno"> 4185</span>&#160;</div>
+<div class="line"><a name="l04186"></a><span class="lineno"> 4186</span>&#160;} <span class="comment">// XmUGridUnitTests::testGetEdgesOfCell</span></div>
+<div class="line"><a name="l04189"></a><span class="lineno"> 4189</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l04191"></a><span class="lineno"> 4191</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l04192"></a><span class="lineno"><a class="line" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879"> 4192</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879">XmUGridUnitTests::testGetFaces</a>()</div>
+<div class="line"><a name="l04193"></a><span class="lineno"> 4193</span>&#160;{</div>
+<div class="line"><a name="l04194"></a><span class="lineno"> 4194</span>&#160;  <span class="comment">// 3D Shapes</span></div>
+<div class="line"><a name="l04195"></a><span class="lineno"> 4195</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="_xm_u_grid_8cpp.html#adae3b643305100b325b7fd7ee3b42e50">TEST_XmUGrid3dLinear</a>();</div>
+<div class="line"><a name="l04196"></a><span class="lineno"> 4196</span>&#160;  <span class="keywordflow">if</span> (!ugrid3d)</div>
+<div class="line"><a name="l04197"></a><span class="lineno"> 4197</span>&#160;  {</div>
+<div class="line"><a name="l04198"></a><span class="lineno"> 4198</span>&#160;    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
+<div class="line"><a name="l04199"></a><span class="lineno"> 4199</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l04200"></a><span class="lineno"> 4200</span>&#160;  }</div>
+<div class="line"><a name="l04201"></a><span class="lineno"> 4201</span>&#160;</div>
+<div class="line"><a name="l04202"></a><span class="lineno"> 4202</span>&#160;  VecInt cellFace;</div>
+<div class="line"><a name="l04203"></a><span class="lineno"> 4203</span>&#160;  VecInt2d expectedCellFaces = {<span class="comment">// Tetra</span></div>
+<div class="line"><a name="l04204"></a><span class="lineno"> 4204</span>&#160;                                {0, 5, 1},</div>
+<div class="line"><a name="l04205"></a><span class="lineno"> 4205</span>&#160;                                {0, 1, 15},</div>
+<div class="line"><a name="l04206"></a><span class="lineno"> 4206</span>&#160;                                {1, 5, 15},</div>
+<div class="line"><a name="l04207"></a><span class="lineno"> 4207</span>&#160;                                {5, 0, 15},</div>
+<div class="line"><a name="l04208"></a><span class="lineno"> 4208</span>&#160;                                <span class="comment">// Voxel</span></div>
+<div class="line"><a name="l04209"></a><span class="lineno"> 4209</span>&#160;                                {1, 6, 7, 2},</div>
+<div class="line"><a name="l04210"></a><span class="lineno"> 4210</span>&#160;                                {16, 17, 22, 21},</div>
+<div class="line"><a name="l04211"></a><span class="lineno"> 4211</span>&#160;                                {1, 2, 17, 16},</div>
+<div class="line"><a name="l04212"></a><span class="lineno"> 4212</span>&#160;                                {2, 7, 22, 17},</div>
+<div class="line"><a name="l04213"></a><span class="lineno"> 4213</span>&#160;                                {7, 6, 21, 22},</div>
+<div class="line"><a name="l04214"></a><span class="lineno"> 4214</span>&#160;                                {6, 1, 16, 21},</div>
+<div class="line"><a name="l04215"></a><span class="lineno"> 4215</span>&#160;                                <span class="comment">// Hexahedron</span></div>
+<div class="line"><a name="l04216"></a><span class="lineno"> 4216</span>&#160;                                {2, 7, 8, 3},</div>
+<div class="line"><a name="l04217"></a><span class="lineno"> 4217</span>&#160;                                {17, 18, 23, 22},</div>
+<div class="line"><a name="l04218"></a><span class="lineno"> 4218</span>&#160;                                {2, 3, 18, 17},</div>
+<div class="line"><a name="l04219"></a><span class="lineno"> 4219</span>&#160;                                {3, 8, 23, 18},</div>
+<div class="line"><a name="l04220"></a><span class="lineno"> 4220</span>&#160;                                {8, 7, 22, 23},</div>
+<div class="line"><a name="l04221"></a><span class="lineno"> 4221</span>&#160;                                {7, 2, 17, 22},</div>
+<div class="line"><a name="l04222"></a><span class="lineno"> 4222</span>&#160;                                <span class="comment">// Polyhedron</span></div>
+<div class="line"><a name="l04223"></a><span class="lineno"> 4223</span>&#160;                                {8, 9, 14, 13},</div>
+<div class="line"><a name="l04224"></a><span class="lineno"> 4224</span>&#160;                                {8, 9, 24, 23},</div>
+<div class="line"><a name="l04225"></a><span class="lineno"> 4225</span>&#160;                                {9, 14, 29, 24},</div>
+<div class="line"><a name="l04226"></a><span class="lineno"> 4226</span>&#160;                                {13, 14, 29, 28},</div>
+<div class="line"><a name="l04227"></a><span class="lineno"> 4227</span>&#160;                                {8, 13, 28, 23},</div>
+<div class="line"><a name="l04228"></a><span class="lineno"> 4228</span>&#160;                                {23, 24, 29, 28},</div>
+<div class="line"><a name="l04229"></a><span class="lineno"> 4229</span>&#160;                                <span class="comment">// Wedge</span></div>
+<div class="line"><a name="l04230"></a><span class="lineno"> 4230</span>&#160;                                {3, 4, 18},</div>
+<div class="line"><a name="l04231"></a><span class="lineno"> 4231</span>&#160;                                {8, 23, 9},</div>
+<div class="line"><a name="l04232"></a><span class="lineno"> 4232</span>&#160;                                {3, 8, 9, 4},</div>
+<div class="line"><a name="l04233"></a><span class="lineno"> 4233</span>&#160;                                {4, 9, 23, 18},</div>
+<div class="line"><a name="l04234"></a><span class="lineno"> 4234</span>&#160;                                {18, 23, 8, 3},</div>
+<div class="line"><a name="l04235"></a><span class="lineno"> 4235</span>&#160;                                <span class="comment">// Pyramid</span></div>
+<div class="line"><a name="l04236"></a><span class="lineno"> 4236</span>&#160;                                {5, 10, 11, 6},</div>
+<div class="line"><a name="l04237"></a><span class="lineno"> 4237</span>&#160;                                {5, 6, 20},</div>
+<div class="line"><a name="l04238"></a><span class="lineno"> 4238</span>&#160;                                {6, 11, 20},</div>
+<div class="line"><a name="l04239"></a><span class="lineno"> 4239</span>&#160;                                {11, 10, 20},</div>
+<div class="line"><a name="l04240"></a><span class="lineno"> 4240</span>&#160;                                {10, 5, 20}};</div>
+<div class="line"><a name="l04241"></a><span class="lineno"> 4241</span>&#160;  <span class="keywordtype">int</span> currId(0);</div>
+<div class="line"><a name="l04242"></a><span class="lineno"> 4242</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid3d-&gt;GetNumberOfCells(); i++)</div>
+<div class="line"><a name="l04243"></a><span class="lineno"> 4243</span>&#160;  {</div>
+<div class="line"><a name="l04244"></a><span class="lineno"> 4244</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
+<div class="line"><a name="l04245"></a><span class="lineno"> 4245</span>&#160;    {</div>
+<div class="line"><a name="l04246"></a><span class="lineno"> 4246</span>&#160;      cellFace = ugrid3d-&gt;GetCellFace(i, j);</div>
+<div class="line"><a name="l04247"></a><span class="lineno"> 4247</span>&#160;      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFace);</div>
+<div class="line"><a name="l04248"></a><span class="lineno"> 4248</span>&#160;    }</div>
+<div class="line"><a name="l04249"></a><span class="lineno"> 4249</span>&#160;  }</div>
+<div class="line"><a name="l04250"></a><span class="lineno"> 4250</span>&#160;  <span class="comment">// Tetra</span></div>
+<div class="line"><a name="l04251"></a><span class="lineno"> 4251</span>&#160;  VecInt2d cellFaces;</div>
+<div class="line"><a name="l04252"></a><span class="lineno"> 4252</span>&#160;  currId = 0;</div>
+<div class="line"><a name="l04253"></a><span class="lineno"> 4253</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid3d-&gt;GetNumberOfCells(); i++)</div>
+<div class="line"><a name="l04254"></a><span class="lineno"> 4254</span>&#160;  {</div>
+<div class="line"><a name="l04255"></a><span class="lineno"> 4255</span>&#160;    cellFaces = ugrid3d-&gt;GetFacesOfCell(i);</div>
+<div class="line"><a name="l04256"></a><span class="lineno"> 4256</span>&#160;    TS_ASSERT_EQUALS(cellFaces.size(), ugrid3d-&gt;GetNumberOfCellFaces(i));</div>
+<div class="line"><a name="l04257"></a><span class="lineno"> 4257</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
+<div class="line"><a name="l04258"></a><span class="lineno"> 4258</span>&#160;    {</div>
+<div class="line"><a name="l04259"></a><span class="lineno"> 4259</span>&#160;      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFaces[j]);</div>
+<div class="line"><a name="l04260"></a><span class="lineno"> 4260</span>&#160;    }</div>
+<div class="line"><a name="l04261"></a><span class="lineno"> 4261</span>&#160;  }</div>
+<div class="line"><a name="l04262"></a><span class="lineno"> 4262</span>&#160;} <span class="comment">// XmUGridUnitTests::testGetFaces</span></div>
+<div class="line"><a name="l04264"></a><span class="lineno"> 4264</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l04266"></a><span class="lineno"> 4266</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l04267"></a><span class="lineno"> 4267</span>&#160;<span class="comment">//#define SPEEDTEST</span></div>
+<div class="line"><a name="l04268"></a><span class="lineno"> 4268</span>&#160;<span class="preprocessor">#ifdef SPEEDTEST</span></div>
+<div class="line"><a name="l04269"></a><span class="lineno"> 4269</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#include &lt;boost/timer/timer.hpp&gt;</span></div>
+<div class="line"><a name="l04270"></a><span class="lineno"> 4270</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l04271"></a><span class="lineno"><a class="line" href="class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f"> 4271</a></span>&#160;<span class="preprocessor"></span><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f">XmUGridUnitTests::testLargeUGridLinkSpeed</a>()</div>
+<div class="line"><a name="l04272"></a><span class="lineno"> 4272</span>&#160;{</div>
+<div class="line"><a name="l04273"></a><span class="lineno"> 4273</span>&#160;<span class="preprocessor">#ifdef SPEEDTEST</span></div>
+<div class="line"><a name="l04274"></a><span class="lineno"> 4274</span>&#160;<span class="preprocessor"></span>  <span class="keywordtype">int</span> rows = 1000;</div>
+<div class="line"><a name="l04275"></a><span class="lineno"> 4275</span>&#160;  <span class="keywordtype">int</span> cols = 500;</div>
+<div class="line"><a name="l04276"></a><span class="lineno"> 4276</span>&#160;  <span class="keywordtype">int</span> lays = 4;</div>
+<div class="line"><a name="l04277"></a><span class="lineno"> 4277</span>&#160;</div>
+<div class="line"><a name="l04278"></a><span class="lineno"> 4278</span>&#160;  <span class="comment">// BSHP&lt;xms::XmUGrid&gt; grid = TEST_XmUBuildQuadUGrid(rows, cols);</span></div>
+<div class="line"><a name="l04279"></a><span class="lineno"> 4279</span>&#160;  <span class="comment">// BSHP&lt;xms::XmUGrid&gt; grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);</span></div>
+<div class="line"><a name="l04280"></a><span class="lineno"> 4280</span>&#160;  BSHP&lt;xms::XmUGrid&gt; grid = <a class="code" href="_xm_u_grid_8cpp.html#adeaa5d1fea81372470f12da9ec83ba78">TEST_XmUBuildPolyhedronUgrid</a>(rows, cols, lays);</div>
+<div class="line"><a name="l04281"></a><span class="lineno"> 4281</span>&#160;</div>
+<div class="line"><a name="l04282"></a><span class="lineno"> 4282</span>&#160;  {</div>
+<div class="line"><a name="l04283"></a><span class="lineno"> 4283</span>&#160;    boost::timer::cpu_timer timer;</div>
+<div class="line"><a name="l04284"></a><span class="lineno"> 4284</span>&#160;    BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">XmUGrid::New</a>(grid-&gt;GetPoints(), grid-&gt;GetCellStream());</div>
+<div class="line"><a name="l04285"></a><span class="lineno"> 4285</span>&#160;    TS_FAIL(timer.format());</div>
+<div class="line"><a name="l04286"></a><span class="lineno"> 4286</span>&#160;  }</div>
+<div class="line"><a name="l04287"></a><span class="lineno"> 4287</span>&#160;</div>
+<div class="line"><a name="l04288"></a><span class="lineno"> 4288</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l04289"></a><span class="lineno"> 4289</span>&#160;<span class="preprocessor"></span>} <span class="comment">// XmUGridUnitTests::testLargeUGridLinkSpeed</span></div>
 <div class="line"><a name="l04290"></a><span class="lineno"> 4290</span>&#160;</div>
 <div class="line"><a name="l04291"></a><span class="lineno"> 4291</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l04292"></a><span class="lineno"> 4292</span>&#160;<span class="preprocessor"></span>} <span class="comment">// XmUGridUnitTests::testLargeUGridLinkSpeed</span></div>
-<div class="line"><a name="l04293"></a><span class="lineno"> 4293</span>&#160;</div>
-<div class="line"><a name="l04294"></a><span class="lineno"> 4294</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="class_xm_u_grid_unit_tests_html_afecce71921cd7ff64d695314747a48aa"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa">XmUGridUnitTests::testUGridStreams</a></div><div class="ttdeci">void testUGridStreams()</div><div class="ttdoc">Test XmUGrid point and cell streams. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02668">XmUGrid.cpp:2668</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a207213ebc3c71b3b616d153985e10a29"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a207213ebc3c71b3b616d153985e10a29">xms::XmUGridImpl::SetCellStream</a></div><div class="ttdeci">virtual bool SetCellStream(const VecInt &amp;a_cellStream) override</div><div class="ttdoc">[snip_test_SetCellStream] </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l00450">XmUGrid.cpp:450</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a3a1f3e0d8166e40b1f23cfe20827c2b0"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a3a1f3e0d8166e40b1f23cfe20827c2b0">xms::XmUGridImpl::GetDimensionCount</a></div><div class="ttdeci">virtual std::vector&lt; int &gt; GetDimensionCount() const override</div><div class="ttdoc">Count all number of the cells with each dimenion (0, 1, 2, 3) </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l00404">XmUGrid.cpp:404</a></div></div>
@@ -4056,7 +4053,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a033f6aaa6e64b716bfa334148198630c"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a033f6aaa6e64b716bfa334148198630c">xms::XmUGridImpl::GetPoints</a></div><div class="ttdeci">virtual const VecPt3d &amp; GetPoints() const override</div><div class="ttdoc">Get vector of UGrid points. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l00204">XmUGrid.cpp:204</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_ad3da23ee4f06663ef4be50bb1ed461af"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#ad3da23ee4f06663ef4be50bb1ed461af">xms::XmUGridImpl::UpdateLinks</a></div><div class="ttdeci">void UpdateLinks()</div><div class="ttdoc">Update internal links to navigate between associated points and cells. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l01526">XmUGrid.cpp:1526</a></div></div>
 <div class="ttc" id="class_xm_u_grid_unit_tests_html_a22bf030434d4e2e88f5ad2c6b9af0d32"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#a22bf030434d4e2e88f5ad2c6b9af0d32">XmUGridUnitTests::testGetAdjacentCellsFromGivenEdge</a></div><div class="ttdeci">void testGetAdjacentCellsFromGivenEdge()</div><div class="ttdoc">Test retrieving Adjacent Cell. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l03545">XmUGrid.cpp:3545</a></div></div>
-<div class="ttc" id="class_xm_u_grid_unit_tests_html_a9fbe5c625e131c222db1d9a39db33030"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030">XmUGridUnitTests::testGetEdgesOfCell</a></div><div class="ttdeci">void testGetEdgesOfCell()</div><div class="ttdoc">Test various cell functions. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04175">XmUGrid.cpp:4175</a></div></div>
+<div class="ttc" id="class_xm_u_grid_unit_tests_html_a9fbe5c625e131c222db1d9a39db33030"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030">XmUGridUnitTests::testGetEdgesOfCell</a></div><div class="ttdeci">void testGetEdgesOfCell()</div><div class="ttdoc">Test various cell functions. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04172">XmUGrid.cpp:4172</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a1d3d657289605c92c9060aa4caf82788"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a1d3d657289605c92c9060aa4caf82788">xms::XmUGridImpl::GetCellNeighbors</a></div><div class="ttdeci">virtual VecInt GetCellNeighbors(const int a_cellIdx) const override</div><div class="ttdoc">Get the cells neighboring a cell (cells associated with any of it&#39;s points) </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l00523">XmUGrid.cpp:523</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a696c700c32e8447677009c8c69e9ca7a"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a696c700c32e8447677009c8c69e9ca7a">xms::XmUGridImpl::GetEdgesOfFace</a></div><div class="ttdeci">void GetEdgesOfFace(const VecInt &amp;a_face, std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;a_edges) const </div><div class="ttdoc">Get the edges of a cell given a face. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l00618">XmUGrid.cpp:618</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_html_a51464b4cc71bddbb97e9e8a6ff7fb798"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">xms::XmUGrid::New</a></div><div class="ttdeci">static BSHP&lt; XmUGrid &gt; New()</div><div class="ttdoc">Create a new XmUGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02120">XmUGrid.cpp:2120</a></div></div>
@@ -4099,7 +4096,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div class="ttc" id="_xm_u_grid_8cpp_html_a95cce469cb2bf795b70937e09bea4a78"><div class="ttname"><a href="_xm_u_grid_8cpp.html#a95cce469cb2bf795b70937e09bea4a78">TEST_XmUBuildQuadUGrid</a></div><div class="ttdeci">BSHP&lt; xms::XmUGrid &gt; TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols)</div><div class="ttdoc">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02419">XmUGrid.cpp:2419</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_html"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a></div><div class="ttdoc">Implementation for XmUGrid which provides geometry for an unstructured grid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8h_source.html#l00118">XmUGrid.h:118</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_aa92a854c953c726ac57593b5b4b0106f"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#aa92a854c953c726ac57593b5b4b0106f">xms::XmUGridImpl::Get2dAdjacentCell</a></div><div class="ttdeci">virtual int Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const override</div><div class="ttdoc">Get the index of the adjacent cells (that shares the same cell edge) </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l01025">XmUGrid.cpp:1025</a></div></div>
-<div class="ttc" id="class_xm_u_grid_unit_tests_html_ac8fa905af3b1c7f8c37e45a407a9d879"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879">XmUGridUnitTests::testGetFaces</a></div><div class="ttdeci">void testGetFaces()</div><div class="ttdoc">Test various get face functions. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04195">XmUGrid.cpp:4195</a></div></div>
+<div class="ttc" id="class_xm_u_grid_unit_tests_html_ac8fa905af3b1c7f8c37e45a407a9d879"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879">XmUGridUnitTests::testGetFaces</a></div><div class="ttdeci">void testGetFaces()</div><div class="ttdoc">Test various get face functions. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04192">XmUGrid.cpp:4192</a></div></div>
 <div class="ttc" id="class_xm_u_grid_unit_tests_html_aed54639cef412b0227d0726bce50ea08"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#aed54639cef412b0227d0726bce50ea08">XmUGridUnitTests::testGetAdjacentCellFunctions</a></div><div class="ttdeci">void testGetAdjacentCellFunctions()</div><div class="ttdoc">Test all get adjacent cell functions. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04127">XmUGrid.cpp:4127</a></div></div>
 <div class="ttc" id="_xm_u_grid_8t_8h_html"><div class="ttname"><a href="_xm_u_grid_8t_8h.html">XmUGrid.t.h</a></div></div>
 <div class="ttc" id="_xm_u_grid_8cpp_html_aae054eb972140e14bf5c8bd873c8b282"><div class="ttname"><a href="_xm_u_grid_8cpp.html#aae054eb972140e14bf5c8bd873c8b282">TEST_XmUGrid2dLinear</a></div><div class="ttdeci">BSHP&lt; XmUGrid &gt; TEST_XmUGrid2dLinear()</div><div class="ttdoc">Builds an XmUGrid with supported 1D and 2D linear cells for testing. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02329">XmUGrid.cpp:2329</a></div></div>
@@ -4122,7 +4119,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div class="ttc" id="class_xm_u_grid_unit_tests_html_af94b78cd1c7f2bb1824cb970907825c2"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#af94b78cd1c7f2bb1824cb970907825c2">XmUGridUnitTests::testGetCellDimension</a></div><div class="ttdeci">void testGetCellDimension()</div><div class="ttdoc">Test getting dimension of single cells and all cells. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02837">XmUGrid.cpp:2837</a></div></div>
 <div class="ttc" id="class_xm_u_grid_unit_tests_html_ae950f2efb2ef0e1d655bf12ed1803f83"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#ae950f2efb2ef0e1d655bf12ed1803f83">XmUGridUnitTests::testPointFunctions</a></div><div class="ttdeci">void testPointFunctions()</div><div class="ttdoc">[snip_test_PointFunctions] </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04008">XmUGrid.cpp:4008</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a0159fb385445f033a12395ae0b11ce2b"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a0159fb385445f033a12395ae0b11ce2b">xms::XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream</a></div><div class="ttdeci">static void GetUniqueEdgesFromPolyhedronCellStream(const int **a_start, int &amp;a_length, boost::container::flat_set&lt; std::pair&lt; int, int &gt;&gt; &amp;a_cellEdges, int &amp;a_currIdx)</div><div class="ttdoc">Get the unique edges in a flat set for a given polyhedron. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l01941">XmUGrid.cpp:1941</a></div></div>
-<div class="ttc" id="class_xm_u_grid_unit_tests_html_a8e9078332f58080823880c04eb37b94f"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f">XmUGridUnitTests::testLargeUGridLinkSpeed</a></div><div class="ttdeci">void testLargeUGridLinkSpeed()</div><div class="ttdoc">[snip_test_GetFaces] </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04274">XmUGrid.cpp:4274</a></div></div>
+<div class="ttc" id="class_xm_u_grid_unit_tests_html_a8e9078332f58080823880c04eb37b94f"><div class="ttname"><a href="class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f">XmUGridUnitTests::testLargeUGridLinkSpeed</a></div><div class="ttdeci">void testLargeUGridLinkSpeed()</div><div class="ttdoc">[snip_test_GetFaces] </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l04271">XmUGrid.cpp:4271</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a27b9e9634e5cacaad9f66f673488b2c0"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a27b9e9634e5cacaad9f66f673488b2c0">xms::XmUGridImpl::GetPlanViewPolygon3d</a></div><div class="ttdeci">bool GetPlanViewPolygon3d(int a_cellIdx, VecPt3d &amp;a_polygon) const </div><div class="ttdoc">Get a plan view polygon of a specified 3D cell. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l01990">XmUGrid.cpp:1990</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_aca7001e994cb008ff79ce51ab6dade80"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#aca7001e994cb008ff79ce51ab6dade80">xms::XmUGridImpl::GetAdjacentCells</a></div><div class="ttdeci">virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const override</div><div class="ttdoc">Get the index of the adjacent cells (that shares the same cell edge) </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l00991">XmUGrid.cpp:991</a></div></div>
 <div class="ttc" id="classxms_1_1_xm_u_grid_impl_html_a4a14d466d4e09e40ba5b13a8a77c6b7f"><div class="ttname"><a href="classxms_1_1_xm_u_grid_impl.html#a4a14d466d4e09e40ba5b13a8a77c6b7f">xms::XmUGridImpl::GetCellXySegments</a></div><div class="ttdeci">bool GetCellXySegments(int cellIdx, VecPt3d &amp;segments) const </div><div class="ttdoc">Get the XY segments of a cell. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02043">XmUGrid.cpp:2043</a></div></div>
@@ -4140,7 +4137,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_a4f80c8107f4df91c21d011369fb1e1d.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_u_grid_8cpp.html">XmUGrid.cpp</a></li>
-    <li class="footer">Generated on Mon Jul 30 2018 17:38:21 for xmsgrid by
+    <li class="footer">Generated on Tue Jul 31 2018 21:21:05 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

@@ -758,6 +758,10 @@
     <name>python::ugrid::XmUGrid_pyt::TestXmUGridFaceOrientationEnum</name>
     <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_face_orientation_enum.html</filename>
   </compound>
+  <compound kind="class">
+    <name>python::ugrid::XmUGridUtils_pyt::TestXmUGridUtilFunctions</name>
+    <filename>classpython_1_1ugrid_1_1_xm_u_grid_utils__pyt_1_1_test_xm_u_grid_util_functions.html</filename>
+  </compound>
   <compound kind="namespace">
     <name>xms</name>
     <filename>namespacexms.html</filename>

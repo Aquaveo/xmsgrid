@@ -644,7 +644,6 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line">    adjacentCell = ugrid-&gt;Get2dAdjacentCell(0, i);</div>
 <div class="line">    TS_ASSERT_EQUALS(expected2dCells[i], adjacentCell);</div>
 <div class="line">  }</div>
-<div class="line">  adjacentCells = ugrid-&gt;GetAdjacentCells(0, ugrid-&gt;GetNumberOfCellEdges(0));</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Get Adjacent cells from given Edge</span></div>
 <div class="line">  VecInt2d expectedCellsFromEdge = {{0, 1}, {0, 2}, {0}};</div>
@@ -657,8 +656,6 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line">  }</div>
 <div class="line">  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[0].first, edges[1].second);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedCellsFromEdge[0], adjacentCells);</div>
-<div class="line"></div>
-<div class="line">  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(0, ugrid-&gt;GetNumberOfPoints());</div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetAdjacentCellFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetEdgesFromPoint2d"></a>
 Example Get Edges Associated with a Point</h2>
@@ -760,7 +757,7 @@ Example Get Edges Associated with a Cell</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Jul 30 2018 17:38:22 for xmsgrid by
+    <li class="footer">Generated on Tue Jul 31 2018 21:21:06 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
