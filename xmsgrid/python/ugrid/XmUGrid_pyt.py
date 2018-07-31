@@ -11,7 +11,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
     def get_simple_quad_ugrid():
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
-                          (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
+                           (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
         cells = np.array((9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5))
         xu = XmUGrid(points, cells)
         return xu
@@ -50,6 +50,36 @@ class TestXmUGridPointFunctions(unittest.TestCase):
                  4, 23, 24, 29, 28,
                  XmUGrid.xmugrid_celltype_enum.XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
                  XmUGrid.xmugrid_celltype_enum.XMU_PYRAMID, 5, 5, 6, 11, 10, 20)
+        xu = XmUGrid(points, cells)
+        return xu
+
+    @staticmethod
+    def get_hexahedron_ugrid(rows, cols, lays, origin):
+        points = [None] * rows * cols * lays
+        curr_id = 0
+        for k in range(0, lays):
+            for i in range(0, rows):
+                for j in range(0, cols):
+                    points[curr_id] = (j + origin[0], rows - i - 1 + origin[1], lays - k - 1 + origin[2])
+                    curr_id += 1
+        cells = [None] * (rows - 1) * (cols - 1) * (lays - 1) * 10
+        num_in_layer = rows * cols
+        curr_id = 0
+        for k in range(0, lays - 1):
+            lay_offset = num_in_layer * k
+            for i in range(0, rows - 1):
+                for j in range(0, cols - 1):
+                    cells[curr_id] = XmUGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON
+                    cells[curr_id + 1] = 8
+                    cells[curr_id + 2] = j + cols * i + lay_offset
+                    cells[curr_id + 3] = j + cols * (i + 1) + lay_offset
+                    cells[curr_id + 4] = j + 1 + cols * (i + 1) + lay_offset
+                    cells[curr_id + 5] = j + 1 + cols * i + lay_offset
+                    cells[curr_id + 6] = j + cols * i + lay_offset + num_in_layer
+                    cells[curr_id + 7] = j + cols * (i + 1) + lay_offset + num_in_layer
+                    cells[curr_id + 8] = j + 1 + cols * (i + 1) + lay_offset + num_in_layer
+                    cells[curr_id + 9] = j + 1 + cols * i + lay_offset + num_in_layer
+                    curr_id += 10
         xu = XmUGrid(points, cells)
         return xu
 
@@ -96,7 +126,6 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         points_out = xu.get_points()
         np.testing.assert_array_equal(np.array(points), points_out)
 
-
     def test_xmugrid_set_points_numpy(self):
         import numpy as np
         points = np.array(((0, 0, 0), (20, 0, 0), (0, 20, 0)))
@@ -120,7 +149,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertEqual((20, 0, 0), p2)
         self.assertEqual((0, 20, 0), p3)
         self.assertEqual((0, 0, 0), p4)
-        
+
     def test_xmugrid_set_point(self):
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                   (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0))
@@ -134,7 +163,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
     def test_xmugrid_set_point_numpy(self):
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
-                          (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
+                           (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
         cells = np.array((9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5))
         xu = XmUGrid(points, cells)
         self.assertFalse(xu.set_point(-1, (0, 0, 0)))
@@ -145,14 +174,14 @@ class TestXmUGridPointFunctions(unittest.TestCase):
     def test_xmugrid_get_points_from_point_indxs(self):
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
-                  (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
+                           (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
         cells = np.array((9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5))
         xu = XmUGrid(points, cells)
         point_indices = np.array((0, 3, 6))
         expected_points = np.array(((0, 10, 0), (0, 0, 0), (0, -10, 0)))
         points_from_indxs = xu.get_points_from_point_idxs(point_indices)
         np.testing.assert_array_equal(expected_points, points_from_indxs)
-        
+
     def test_xmugrid_get_extents(self):
         points = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (40, 0, 0),
                   (0, 10, 0), (10, 10, 0), (20, 10, 0), (40, 10, 0), (0, 20, 0),
@@ -169,7 +198,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         act_min, act_max = xu.get_extents()
         self.assertEqual(exp_min, act_min)
         self.assertEqual(exp_max, act_max)
-        
+
     def test_get_point_cells(self):
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0), (20, 0, 0))
         cellStream = (XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 3, 4, 1,
@@ -189,9 +218,9 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertEqual(cell_zero_and_one, xu.get_point_cells(4))
         self.assertEqual(cell_one, xu.get_point_cells(5))
         self.assertEqual(cell_empty, xu.get_point_cells(6))
-        
+
     def test_get_common_cells(self):
-        points = ((0, 10, 0), (10, 10, 0), (20, 10, 0),  (0, 0, 0),   (10, 0, 0),
+        points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                   (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0))
         cell_stream = (XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 3, 4, 1,
                        XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 1, 4, 5, 2,
@@ -199,7 +228,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
                        XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 4, 7, 8, 5)
         xu = XmUGrid(points, cell_stream)
         expected_cells = ()
-        
+
         points = (-1, 0)
         retrieved_cells = xu.get_common_cells(points)
         self.assertEqual(expected_cells, retrieved_cells)
@@ -259,25 +288,25 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         for i in range(0, len(expected_cell_points)):
             cell_points = xu.get_points_of_cell(i)
             np.testing.assert_array_equal(expected_cell_points[i], cell_points)
-            
+
         xu2d = self.get_2d_linear_ugrid()
         expected_cell_points_2d = [np.array((0, 1, 6, 5)),
-                              np.array((1, 2, 6, 7)), 
-                              np.array((2, 3, 7)),
-                              np.array((3, 4, 8, 13, 12, 7)), 
-                              np.array((7, 11, 10)), 
-                              np.array((5, 9))]
+                                   np.array((1, 2, 7, 6)),
+                                   np.array((2, 3, 7)),
+                                   np.array((3, 4, 8, 13, 12, 7)),
+                                   np.array((7, 11, 10)),
+                                   np.array((5, 9))]
         for i in range(0, len(expected_cell_points_2d)):
             cell_points = xu2d.get_points_of_cell(i)
             np.testing.assert_array_equal(expected_cell_points_2d[i], cell_points)
-            
+
         xu3d = self.get_3d_linear_ugrid()
         expected_cell_points_3d = [np.array((0, 1, 5, 15)),
-                        np.array((1, 2, 6, 7, 16, 17, 21, 22)),
-                        np.array((2, 3, 8, 7, 17, 18, 23, 22)),
-                        np.array((8, 9, 14, 13, 24, 23, 29, 28)),
-                        np.array((3, 4, 18, 8, 9, 23)),
-                        np.array((5, 6, 11, 10, 20))]
+                                   np.array((1, 2, 6, 7, 16, 17, 21, 22)),
+                                   np.array((2, 3, 8, 7, 17, 18, 23, 22)),
+                                   np.array((8, 9, 14, 13, 24, 23, 29, 28)),
+                                   np.array((3, 4, 18, 8, 9, 23)),
+                                   np.array((5, 6, 11, 10, 20))]
         for i in range(0, len(expected_cell_points_3d)):
             cell_points = xu3d.get_points_of_cell(i)
             np.testing.assert_array_equal(expected_cell_points_3d[i], cell_points)
@@ -340,15 +369,15 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         xu = self.get_simple_quad_ugrid()
         cell_stream = xu.get_cell_stream()
         expected_cell_stream = np.array((XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 3, 4, 1,
-                              XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 1, 4, 5, 2,
-                              XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 3, 6, 7, 4,
-                              XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 4, 7, 8, 5))
+                                         XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 1, 4, 5, 2,
+                                         XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 3, 6, 7, 4,
+                                         XmUGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 4, 7, 8, 5))
         np.testing.assert_array_equal(expected_cell_stream, cell_stream)
 
     def test_set_cell_stream(self):
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
-                          (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
+                           (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
         cells = np.array((9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5))
         xu = XmUGrid()
         xu.set_points(points)
@@ -368,26 +397,397 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         import numpy as np
         xu = self.get_simple_quad_ugrid()
 
-        expected_cells = np.array([])
+        expected_cells = np.array(())
         retrieved_cells = xu.get_cell_neighbors(-1)
         np.testing.assert_array_equal(expected_cells, retrieved_cells)
         retrieved_cells = xu.get_cell_neighbors(0)
         expected_cells = np.array((2, 1, 3))
         np.testing.assert_array_equal(expected_cells, retrieved_cells)
-        expected_cells = np.array([])
+        expected_cells = np.array(())
         retrieved_cells = xu.get_cell_neighbors(4)
         np.testing.assert_array_equal(expected_cells, retrieved_cells)
-        expected_cells = np.array([])
+        expected_cells = np.array(())
         retrieved_cells = xu.get_cell_neighbors(5)
         np.testing.assert_array_equal(expected_cells, retrieved_cells)
+
+    def test_get_number_of_cell_edges(self):
+        xu2d = self.get_2d_linear_ugrid()
+        self.assertEqual(-1, xu2d.get_number_of_cell_edges(-1))
+        self.assertEqual(-1, xu2d.get_number_of_cell_edges(6))
+        self.assertEqual(4, xu2d.get_number_of_cell_edges(0))
+        self.assertEqual(4, xu2d.get_number_of_cell_edges(1))
+        self.assertEqual(3, xu2d.get_number_of_cell_edges(2))
+        self.assertEqual(6, xu2d.get_number_of_cell_edges(3))
+        self.assertEqual(2, xu2d.get_number_of_cell_edges(4))
+        self.assertEqual(1, xu2d.get_number_of_cell_edges(5))
+
+        xu3d = self.get_3d_linear_ugrid()
+        self.assertEqual(-1, xu3d.get_number_of_cell_edges(-1))
+        self.assertEqual(-1, xu3d.get_number_of_cell_edges(6))
+        self.assertEqual(6, xu3d.get_number_of_cell_edges(0))
+        self.assertEqual(12, xu3d.get_number_of_cell_edges(1))
+        self.assertEqual(12, xu3d.get_number_of_cell_edges(2))
+        self.assertEqual(12, xu3d.get_number_of_cell_edges(3))
+        self.assertEqual(9, xu3d.get_number_of_cell_edges(4))
+        self.assertEqual(8, xu3d.get_number_of_cell_edges(5))
+
+    def test_get_cell_edge_from_edge_index(self):
+        xu2d = self.get_simple_quad_ugrid()
+        edge0 = (0, 3)
+        edge1 = (3, 4)
+        edge2 = (1, 4)
+        edge3 = (0, 1)
+        edge4 = (1, 4)
+        edge5 = (4, 5)
+        edge6 = (2, 5)
+        edge7 = (1, 2)
+        edge8 = (3, 6)
+        edge9 = (6, 7)
+        edge10 = (4, 7)
+        edge11 = (3, 4)
+        edge12 = (4, 7)
+        edge13 = (7, 8)
+        edge14 = (5, 8)
+        edge15 = (4, 5)
+
+        self.assertEqual(xu2d.get_cell_edge_from_edge_index(0, -1), (0, 0))
+        self.assertEqual(xu2d.get_cell_edge_from_edge_index(0, xu2d.get_number_of_cell_edges(0)), (0, 0))
+
+        expected_cell_edges = [[edge0, edge1, edge2, edge3]
+            , [edge4, edge5, edge6, edge7]
+            , [edge8, edge9, edge10, edge11]
+            , [edge12, edge13, edge14, edge15]]
+        self.assertEqual(len(expected_cell_edges), xu2d.get_number_of_cells())
+        for i in range(0, xu2d.get_number_of_cells()):
+            self.assertEqual(len(expected_cell_edges[i]), xu2d.get_number_of_cell_edges(i))
+            for j in range(0, xu2d.get_number_of_cell_edges(i)):
+                self.assertEqual(xu2d.get_cell_edge_from_edge_index(i, j), expected_cell_edges[i][j])
+
+        edge0 = (0, 1)
+        edge1 = (1, 6)
+        edge2 = (5, 6)
+        edge3 = (0, 5)
+        edge4 = (1, 2)
+        edge5 = (2, 7)
+        edge6 = (6, 7)
+        edge7 = (1, 6)
+        edge8 = (2, 3)
+        edge9 = (3, 7)
+        edge10 = (2, 7)
+        edge11 = (3, 4)
+        edge12 = (4, 8)
+        edge13 = (8, 13)
+        edge14 = (12, 13)
+        edge15 = (7, 12)
+        edge16 = (3, 7)
+        edge17 = (7, 11)
+        edge18 = (10, 11)
+        edge19 = (5, 9)
+
+        xu2d = self.get_2d_linear_ugrid()
+        expected_cell_edges = [[edge0, edge1, edge2, edge3],
+                               [edge4, edge5, edge6, edge7],
+                               [edge8, edge9, edge10],
+                               [edge11, edge12, edge13, edge14, edge15, edge16],
+                               [edge17, edge18],
+                               [edge19]]
+        self.assertEqual(len(expected_cell_edges), xu2d.get_number_of_cells())
+        for i in range(0, xu2d.get_number_of_cells()):
+            self.assertEqual(len(expected_cell_edges[i]), xu2d.get_number_of_cell_edges(i))
+            for j in range(0, xu2d.get_number_of_cell_edges(i)):
+                self.assertEqual(expected_cell_edges[i][j], xu2d.get_cell_edge_from_edge_index(i, j))
+
+        edge0 = (0, 1)
+        edge1 = (1, 5)
+        edge2 = (0, 5)
+        edge3 = (0, 15)
+        edge4 = (1, 15)
+        edge5 = (5, 15)
+        edge6 = (1, 2)
+        edge7 = (2, 7)
+        edge8 = (6, 7)
+        edge9 = (1, 6)
+        edge10 = (16, 17)
+        edge11 = (17, 22)
+        edge12 = (21, 22)
+        edge13 = (16, 21)
+        edge14 = (1, 16)
+        edge15 = (2, 17)
+        edge16 = (7, 22)
+        edge17 = (6, 21)
+        edge18 = (2, 3)
+        edge19 = (3, 8)
+        edge20 = (7, 8)
+        edge21 = (2, 7)
+        edge22 = (17, 18)
+        edge23 = (18, 23)
+        edge24 = (22, 23)
+        edge25 = (17, 22)
+        edge26 = (2, 17)
+        edge27 = (3, 18)
+        edge28 = (8, 23)
+        edge29 = (7, 22)
+        edge30 = (8, 9)
+        edge31 = (8, 13)
+        edge32 = (8, 23)
+        edge33 = (9, 14)
+        edge34 = (9, 24)
+        edge35 = (13, 14)
+        edge36 = (13, 28)
+        edge37 = (14, 29)
+        edge38 = (23, 24)
+        edge39 = (23, 28)
+        edge40 = (24, 29)
+        edge41 = (28, 29)
+        edge42 = (3, 4)
+        edge43 = (4, 18)
+        edge44 = (3, 18)
+        edge45 = (8, 9)
+        edge46 = (9, 23)
+        edge47 = (8, 23)
+        edge48 = (3, 8)
+        edge49 = (4, 9)
+        edge50 = (18, 23)
+        edge51 = (5, 6)
+        edge52 = (6, 11)
+        edge53 = (10, 11)
+        edge54 = (5, 10)
+        edge55 = (5, 20)
+        edge56 = (6, 20)
+        edge57 = (11, 20)
+        edge58 = (10, 20)
+
+        xu3d = self.get_3d_linear_ugrid()
+        expected_cell_edges = [
+            [edge0, edge1, edge2, edge3, edge4, edge5],
+            [edge6, edge7, edge8, edge9, edge10, edge11, edge12, edge13, edge14, edge15, edge16, edge17],
+            [edge18, edge19, edge20, edge21, edge22, edge23, edge24, edge25, edge26, edge27, edge28, edge29],
+            [edge30, edge31, edge32, edge33, edge34, edge35, edge36, edge37, edge38, edge39, edge40, edge41],
+            [edge42, edge43, edge44, edge45, edge46, edge47, edge48, edge49, edge50],
+            [edge51, edge52, edge53, edge54, edge55, edge56, edge57, edge58]]
+
+        self.assertEqual(xu3d.get_number_of_cells(), len(expected_cell_edges))
+        for i in range(0, xu3d.get_number_of_cells()):
+            self.assertEqual(len(expected_cell_edges[i]), xu3d.get_number_of_cell_edges(i))
+            for j in range(0, xu3d.get_number_of_cell_edges(i)):
+                self.assertEqual(xu3d.get_cell_edge_from_edge_index(i, j), expected_cell_edges[i][j])
+
+    def test_get_adjacent_cell_functions(self):
+        xuquad = self.get_simple_quad_ugrid()
+        expected_cells = [(), (2,), (1,), ()]
+        expected_2d_cells = [-1, 2, 1, -1]
+        for i in range(0, xuquad.get_number_of_cell_edges(0)):
+            self.assertEqual(expected_cells[i], xuquad.get_adjacent_cells(0, i))
+            self.assertEqual(expected_2d_cells[i], xuquad.get_2d_adjacent_cell(0, i))
+
+        expected_cells_from_edge = [(0, 1), (0, 2), (0,)]
+        edges = [(1, 4), (3, 4), (0, 3)]
+        for i in range(0, len(edges)):
+            print(xuquad.get_adjacent_cells_from_given_edge(edges[i]))
+            self.assertEqual(expected_cells_from_edge[i], xuquad.get_adjacent_cells_from_given_edge(edges[i][0],edges[i][1]))
+        self.assertEqual(expected_cells_from_edge[0],
+                         xuquad.get_adjacent_cells_from_given_edge(edges[0][0], edges[1][1]))
+
+    def test_get_edges_from_point(self):
+        xuquad = self.get_simple_quad_ugrid()
+        expected_cell = [(0, 0), (0, 0, 1, 1), (1, 1), (0, 0, 2, 2), (0, 0, 1, 1, 2, 2, 3, 3), (1, 1, 3, 3), (2, 2),
+                         (2, 2, 3, 3), (3, 3)]
+        expected_edge_indxs = [(0, 3), (2, 3, 0, 3), (2, 3), (0, 1, 0, 3), (1, 2, 0, 1, 2, 3, 0, 3), (1, 2, 2, 3),
+                               (0, 1), (1, 2, 0, 1), (1, 2)]
+        result = xuquad.get_edges_from_point(-1)
+        self.assertEqual(result[0], False)
+        self.assertEqual(result[1], ())
+        self.assertEqual(result[2], ())
+        for i in range(0, xuquad.get_number_of_points()):
+            result = xuquad.get_edges_from_point(i)
+            self.assertEqual(result[0], True)
+            self.assertEqual(expected_cell[i], result[1])
+            self.assertEqual(expected_edge_indxs[i], result[2])
+        result = xuquad.get_edges_from_point(xuquad.get_number_of_points())
+        self.assertEqual(result[0], False)
+        self.assertEqual(result[1], ())
+        self.assertEqual(result[2], ())
+
+    def test_get_edges_of_cell(self):
+        xuquad = self.get_simple_quad_ugrid()
+        expected_edges = ((0, 3), (3, 4), (1, 4), (0, 1))
+        edges = xuquad.get_edges_of_cell(0)
+        self.assertEqual(expected_edges, edges)
+
+    def test_get_number_of_cell_faces(self):
+        xu2d = self.get_2d_linear_ugrid()
+        self.assertEqual(-1, xu2d.get_number_of_cell_faces(-1))
+        for i in range(0, xu2d.get_number_of_cells()):
+            self.assertEqual(0, xu2d.get_number_of_cell_faces(i))
+        self.assertEqual(-1, xu2d.get_number_of_cell_faces(xu2d.get_number_of_cells()))
+
+        xu3d = self.get_3d_linear_ugrid()
+
+        self.assertEqual(-1, xu3d.get_number_of_cell_faces(-1))
+        self.assertEqual(-1, xu3d.get_number_of_cell_faces(6))
+        self.assertEqual(4, xu3d.get_number_of_cell_faces(0))
+        self.assertEqual(6, xu3d.get_number_of_cell_faces(1))
+        self.assertEqual(6, xu3d.get_number_of_cell_faces(2))
+        self.assertEqual(6, xu3d.get_number_of_cell_faces(3))
+        self.assertEqual(5, xu3d.get_number_of_cell_faces(4))
+        self.assertEqual(5, xu3d.get_number_of_cell_faces(5))
+
+    def test_get_cell_face(self):
+        xu2d = self.get_2d_linear_ugrid()
+        self.assertEqual((), xu2d.get_cell_face(-1, 0))
+        self.assertEqual((), xu2d.get_cell_face(0, -1))
+        for i in range(0, xu2d.get_number_of_cells()):
+            self.assertEqual((), xu2d.get_cell_face(i, 0))
+        self.assertEqual((), xu2d.get_cell_face(xu2d.get_number_of_cells(), 0))
+        self.assertEqual((), xu2d.get_cell_face(0, 1))
+
+        xu3d = self.get_3d_linear_ugrid()
+        expected_cell_faces = [  # Tetra
+            (0, 5, 1),
+            (0, 1, 15),
+            (1, 5, 15),
+            (5, 0, 15),
+            # Voxel
+            (1, 6, 7, 2),
+            (16, 17, 22, 21),
+            (1, 2, 17, 16),
+            (2, 7, 22, 17),
+            (7, 6, 21, 22),
+            (6, 1, 16, 21),
+            # Hexahedron
+            (2, 7, 8, 3),
+            (17, 18, 23, 22),
+            (2, 3, 18, 17),
+            (3, 8, 23, 18),
+            (8, 7, 22, 23),
+            (7, 2, 17, 22),
+            # Polyhedron
+            (8, 9, 14, 13),
+            (8, 9, 24, 23),
+            (9, 14, 29, 24),
+            (13, 14, 29, 28),
+            (8, 13, 28, 23),
+            (23, 24, 29, 28),
+            # Wedge
+            (3, 4, 18),
+            (8, 23, 9),
+            (3, 8, 9, 4),
+            (4, 9, 23, 18),
+            (18, 23, 8, 3),
+            # Pyramid
+            (5, 10, 11, 6),
+            (5, 6, 20),
+            (6, 11, 20),
+            (11, 10, 20),
+            (10, 5, 20)]
+        curr_id = 0
+        for i in range(0, xu3d.get_number_of_cells()):
+            for j in range(0, xu3d.get_number_of_cell_faces(i)):
+                self.assertEqual(xu3d.get_cell_face(i, j), expected_cell_faces[curr_id])
+                curr_id += 1
+
+    def test_get_faces_of_cell(self):
+        xu3d = self.get_3d_linear_ugrid()
+        expected_cell_faces = [  # Tetra
+            (0, 5, 1),
+            (0, 1, 15),
+            (1, 5, 15),
+            (5, 0, 15),
+            # Voxel
+            (1, 6, 7, 2),
+            (16, 17, 22, 21),
+            (1, 2, 17, 16),
+            (2, 7, 22, 17),
+            (7, 6, 21, 22),
+            (6, 1, 16, 21),
+            # Hexahedron
+            (2, 7, 8, 3),
+            (17, 18, 23, 22),
+            (2, 3, 18, 17),
+            (3, 8, 23, 18),
+            (8, 7, 22, 23),
+            (7, 2, 17, 22),
+            # Polyhedron
+            (8, 9, 14, 13),
+            (8, 9, 24, 23),
+            (9, 14, 29, 24),
+            (13, 14, 29, 28),
+            (8, 13, 28, 23),
+            (23, 24, 29, 28),
+            # Wedge
+            (3, 4, 18),
+            (8, 23, 9),
+            (3, 8, 9, 4),
+            (4, 9, 23, 18),
+            (18, 23, 8, 3),
+            # Pyramid
+            (5, 10, 11, 6),
+            (5, 6, 20),
+            (6, 11, 20),
+            (11, 10, 20),
+            (10, 5, 20)]
+        curr_id = 0
+        for i in range(0, xu3d.get_number_of_cells()):
+            faces = xu3d.get_faces_of_cell(i)
+            for j in range(0, len(faces)):
+                self.assertEqual(faces[j], expected_cell_faces[curr_id])
+                curr_id += 1
+
+    def test_get_faces_from_point(self):
+        xuhex = self.get_hexahedron_ugrid(3, 2, 2, (0, 0, 0))
+        expected_cell = [
+            (0, 0, 0), (0, 0, 0), (0, 0, 0, 1, 1, 1), (0, 0, 0, 1, 1, 1), (1, 1, 1), (1, 1, 1),
+            (0, 0, 0), (0, 0, 0), (0, 0, 0, 1, 1, 1), (0, 0, 0, 1, 1, 1), (1, 1, 1), (1, 1, 1)]
+        expected_faces = [
+            (0, 2, 5), (0, 4, 5), (0, 2, 3, 0, 2, 5), (0, 3, 4, 0, 4, 5), (0, 2, 3), (0, 3, 4),
+            (1, 2, 5), (1, 4, 5), (1, 2, 3, 1, 2, 5), (1, 3, 4, 1, 4, 5), (1, 2, 3), (1, 3, 4)]
+        result = xuhex.get_faces_from_point(-1)
+        self.assertEqual(result[0], False)
+        self.assertEqual(result[1], ())
+        self.assertEqual(result[2], ())
+        for i in range(0, xuhex.get_number_of_points()):
+            result = xuhex.get_faces_from_point(i)
+            self.assertEqual(result[0], True)
+            self.assertEqual(result[1], expected_cell[i])
+            self.assertEqual(result[2], expected_faces[i])
+        result = xuhex.get_faces_from_point(xuhex.get_number_of_points())
+        self.assertEqual(result[0], False)
+        self.assertEqual(result[1], ())
+        self.assertEqual(result[2], ())
+
+    def test_get_cell_face_neighbor(self):
+        xuhex = self.get_hexahedron_ugrid(3, 2, 2, (0, 0, 0))
+        expected_neighbor = [-1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 0]
+        self.assertEqual(-1, xuhex.get_cell_face_neighbor(-1, 0))
+        self.assertEqual(-1, xuhex.get_cell_face_neighbor(0, -1))
+        curr_id = 0
+        for i in range(0, xuhex.get_number_of_cells()):
+            for j in range(0, xuhex.get_number_of_cell_faces(i)):
+                neighbor_cell = xuhex.get_cell_face_neighbor(i, j)
+                self.assertEqual(expected_neighbor[curr_id], neighbor_cell)
+                curr_id += 1
+        self.assertEqual(-1, xuhex.get_cell_face_neighbor(xuhex.get_number_of_cells(), 0))
+        self.assertEqual(-1, xuhex.get_cell_face_neighbor(0,xuhex.get_number_of_cells()))
+
+        xuhex = self.get_hexahedron_ugrid(3, 3, 3, (0, 0, 0))
+        expected_neighbor = [-1, 4, -1, 2, 1, -1, -1, 5, 0, 3, -1, -1, -1, 6, -1, -1,
+                             3, 0, -1, 7, 2, -1, -1, 1, 0, -1, -1, 6, 5, -1, 1, -1,
+                             4, 7, -1, -1, 2, -1, -1, -1, 7, 4, 3, -1, 6, -1, -1, 5]
+        curr_id = 0
+        for i in range(0, xuhex.get_number_of_cells()):
+            for j in range(0, xuhex.get_number_of_cell_faces(i)):
+                neighbor_cell = xuhex.get_cell_face_neighbor(i, j)
+                self.assertEqual(expected_neighbor[curr_id], neighbor_cell)
+                curr_id += 1
 
 
 class TestXmUGridCellTypeEnum(unittest.TestCase):
     """CellType enum tests"""
+
     def test_xmugrid_celltype_enum(self):
         from xmsgrid_py.ugrid import XmUGrid
         self.assertEqual("xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE))
         self.assertEqual("xmugrid_celltype_enum.XMU_EMPTY_CELL", str(XmUGrid.xmugrid_celltype_enum.XMU_EMPTY_CELL))
         self.assertEqual("xmugrid_celltype_enum.XMU_VERTEX", str(XmUGrid.xmugrid_celltype_enum.XMU_VERTEX))
         self.assertEqual("xmugrid_celltype_enum.XMU_POLY_VERTEX", str(XmUGrid.xmugrid_celltype_enum.XMU_POLY_VERTEX))
@@ -411,33 +811,33 @@ class TestXmUGridCellTypeEnum(unittest.TestCase):
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_EDGE",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_EDGE))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_TRIANGLE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_TRIANGLE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_TRIANGLE))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_QUAD",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_QUAD))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_POLYGON",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_POLYGON))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_POLYGON))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_TETRA",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_TETRA))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_HEXAHEDRON",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_HEXAHEDRON))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_HEXAHEDRON))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_WEDGE",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_WEDGE))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_PYRAMID",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_PYRAMID))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_PYRAMID))
         self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_QUAD",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUAD))
         self.assertEqual("xmugrid_celltype_enum.XMU_TRIQUADRATIC_HEXAHEDRON",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_TRIQUADRATIC_HEXAHEDRON))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_TRIQUADRATIC_HEXAHEDRON))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_QUAD",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_QUAD))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_QUAD))
         self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_WEDGE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_WEDGE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_WEDGE))
         self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_WEDGE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_WEDGE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_WEDGE))
         self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON))
         self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_TRIANGLE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_TRIANGLE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_TRIANGLE))
         self.assertEqual("xmugrid_celltype_enum.XMU_CUBIC_LINE", str(XmUGrid.xmugrid_celltype_enum.XMU_CUBIC_LINE))
         self.assertEqual("xmugrid_celltype_enum.XMU_CONVEX_POINT_SET",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_CONVEX_POINT_SET))
@@ -446,46 +846,47 @@ class TestXmUGridCellTypeEnum(unittest.TestCase):
         self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_CURVE",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_CURVE))
         self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_SURFACE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_SURFACE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_SURFACE))
         self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_TRI_SURFACE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_TRI_SURFACE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_TRI_SURFACE))
         self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_QUAD_SURFACE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_QUAD_SURFACE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_QUAD_SURFACE))
         self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_TETRA_REGION",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_TETRA_REGION))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_TETRA_REGION))
         self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_HEX_REGION",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_HEX_REGION))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_HEX_REGION))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_EDGE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_EDGE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_EDGE))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_TRIANGLE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_TRIANGLE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_TRIANGLE))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_QUAD",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_QUAD))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_QUAD))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_POLYGON",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_POLYGON))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_POLYGON))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_TETRAHEDRON",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_TETRAHEDRON))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_TETRAHEDRON))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_WEDGE",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_WEDGE))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_WEDGE))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_PYRAMID",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_PYRAMID))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_PYRAMID))
         self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_HEXAHEDRON",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_HEXAHEDRON))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_HEXAHEDRON))
         self.assertEqual("xmugrid_celltype_enum.XMU_NUMBER_OF_CELL_TYPES",
-                          str(XmUGrid.xmugrid_celltype_enum.XMU_NUMBER_OF_CELL_TYPES))
+                         str(XmUGrid.xmugrid_celltype_enum.XMU_NUMBER_OF_CELL_TYPES))
         self.assertEqual(51, len(XmUGrid.xmugrid_celltype_enum.__members__))
 
 
 class TestXmUGridFaceOrientationEnum(unittest.TestCase):
     """FaceOrientation enum tests"""
+
     def test_xmugrid_faceorientation_enum(self):
         from xmsgrid_py.ugrid import XmUGrid
         self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_UNKNOWN",
-                          str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_UNKNOWN))
+                         str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_UNKNOWN))
         self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE",
-                          str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE))
+                         str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE))
         self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP",
-                          str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
+                         str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
         self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM",
-                          str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM))
+                         str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM))
         self.assertEqual(4, len(XmUGrid.xmugrid_faceorientation_enum.__members__))

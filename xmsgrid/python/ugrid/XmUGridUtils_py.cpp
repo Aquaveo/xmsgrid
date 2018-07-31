@@ -22,7 +22,10 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, boost::shared_ptr<T>);
 
 void initXmUGridUtils(py::module &m) {
     py::module modXmUGridUtils = m.def_submodule("XmUGridUtils")
-      .def("xm_write_ugrid_to_ascii_file", &xms::XmWriteUGridToAsciiFile)
+      .def("xm_read_ugrid_from_ascii_file", &xms::XmReadUGridFromAsciiFile,
+        "Read XmUGrid from an ASCII file.",py::arg("file_path"))
+      .def("xm_write_ugrid_to_ascii_file", &xms::XmWriteUGridToAsciiFile,
+        "Write an XmUGrid to an ASCII file.",py::arg("ugrid"),py::arg("file_path"))
       .def("cross", [](py::iterable Origin, py::iterable A, py::iterable B) -> double {
           xms::Pt3d origin = xms::Pt3dFromPyIter(Origin);
           xms::Pt3d a = xms::Pt3dFromPyIter(A);
