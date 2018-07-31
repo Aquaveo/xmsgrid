@@ -1396,7 +1396,7 @@ VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
 VecInt2d XmUGridImpl::GetFacesOfCell(const int a_cellIdx) const
 {
   int numFaces = GetNumberOfCellFaces(a_cellIdx);
-  ;
+
   VecInt2d faces(numFaces);
   for (int i(0); i < numFaces; i++)
   {
@@ -3722,11 +3722,11 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
       // Check that faces are the same
       VecInt expectedFacePt = grid->GetCellFace(i, j);
       std::sort(expectedFacePt.begin(), expectedFacePt.end());
-      VecInt neighborFacePt = grid->GetCellFace(i, j);
+      VecInt neighborFacePt = grid->GetCellFace(neighborCell, faceIndex);
       std::sort(neighborFacePt.begin(), neighborFacePt.end());
       if (!expectedFacePt.empty() && !neighborFacePt.empty())
       {
-        TS_ASSERT_EQUALS(neighborFacePt, neighborFacePt);
+        TS_ASSERT_EQUALS(expectedFacePt, neighborFacePt);
       }
     }
   }
@@ -3771,11 +3771,11 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
       // Check that faces are the same
       VecInt expectedFacePt = grid->GetCellFace(i, j);
       std::sort(expectedFacePt.begin(), expectedFacePt.end());
-      VecInt neighborFacePt = grid->GetCellFace(i, j);
+      VecInt neighborFacePt = grid->GetCellFace(neighborCell, faceIndex);
       std::sort(neighborFacePt.begin(), neighborFacePt.end());
       if (!expectedFacePt.empty() && !neighborFacePt.empty())
       {
-        TS_ASSERT_EQUALS(neighborFacePt, neighborFacePt);
+        TS_ASSERT_EQUALS(expectedFacePt, neighborFacePt);
       }
     }
   }
@@ -4151,7 +4151,6 @@ void XmUGridUnitTests::testGetAdjacentCellFunctions()
     adjacentCell = ugrid->Get2dAdjacentCell(0, i);
     TS_ASSERT_EQUALS(expected2dCells[i], adjacentCell);
   }
-  adjacentCells = ugrid->GetAdjacentCells(0, ugrid->GetNumberOfCellEdges(0));
 
   // Get Adjacent cells from given Edge
   VecInt2d expectedCellsFromEdge = {{0, 1}, {0, 2}, {0}};
@@ -4164,8 +4163,6 @@ void XmUGridUnitTests::testGetAdjacentCellFunctions()
   }
   adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(edges[0].first, edges[1].second);
   TS_ASSERT_EQUALS(expectedCellsFromEdge[0], adjacentCells);
-
-  adjacentCells = ugrid->GetAdjacentCellsFromGivenEdge(0, ugrid->GetNumberOfPoints());
 } // XmUGridUnitTests::testGetAdjacentCellFunctions
 //! [snip_test_GetAdjacentCellFunctions]
 //! [snip_test_GetEdgesOfCell]
