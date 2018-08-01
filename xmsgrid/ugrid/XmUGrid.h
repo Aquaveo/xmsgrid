@@ -141,15 +141,20 @@ public:
   virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
 
   virtual VecInt GetPointCells(const int a_pointIdx) const = 0; // cells associated with point
+  virtual void GetPointCells(const int a_pointIdx, VecInt& a_attachedCellIdxs) const = 0;
 
   virtual VecInt GetCommonCells(const VecInt& a_points) const = 0;
+  virtual void GetCommonCells(const VecInt& a_points, VecInt& a_commonCellIdxs) const = 0;
+  virtual void GetCommonCells(const int a_ptIdx1,
+                              const int a_ptIdx2,
+                              VecInt& a_commonCellIdxs) const = 0;
 
   // Cells
   virtual int GetNumberOfCells() const = 0;
 
   virtual VecInt GetPointsOfCell(const int a_cellIdx) const = 0;
   virtual bool GetPointsOfCell(const int a_cellIdx,
-    VecInt& a_cellPoints) const = 0; // Point indexes of a cell
+                               VecInt& a_cellPoints) const = 0; // Point indexes of a cell
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
@@ -158,8 +163,9 @@ public:
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
   virtual bool GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream) const = 0;
-  
+
   virtual VecInt GetCellNeighbors(const int a_cellIdx) const = 0;
+  virtual void GetCellNeighbors(const int a_cellIdx, VecInt& a_cellNeighbors) const = 0;
   virtual bool GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const = 0;
 
   // Edges
@@ -167,9 +173,15 @@ public:
   virtual std::pair<int, int> GetCellEdgeFromEdgeIndex(const int a_cellIdx,
                                                        const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
+  virtual void GetAdjacentCells(const int a_cellIdx,
+                                const int a_edgeIdx,
+                                VecInt& a_adjacentCellIdxs) const = 0;
   virtual int Get2dAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                                const int a_pointIdx2) const = 0;
+  virtual void GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
+                                             const int a_pointIdx2,
+                                             VecInt& a_adjacentCellIdxs) const = 0;
   virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
 
   virtual bool GetEdgesFromPoint(const int a_pointId,
@@ -184,23 +196,27 @@ public:
                                  VecInt& a_edgePoints2) const = 0;
 
   virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const = 0;
+  virtual void GetEdgesOfCell(const int a_cellIdx,
+                              std::vector<std::pair<int, int>>& a_edges) const = 0;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
 
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
+  virtual void GetCellFace(const int a_cellIdx,
+                           const int a_faceIdx,
+                           VecInt& a_facePtIdxs) const = 0;
   virtual VecInt2d GetFacesOfCell(const int a_cellIdx) const = 0;
 
   virtual bool GetFacesFromPoint(const int a_pointId,
-    VecInt& a_cellIdxs,
-    VecInt& a_faceIdxs) const = 0;
+                                 VecInt& a_cellIdxs,
+                                 VecInt& a_faceIdxs) const = 0;
 
   virtual int GetCellFaceNeighbor(const int a_cellIdx, const int a_faceIdx) const = 0;
   virtual bool GetCellFaceNeighbor(const int a_cellIdx,
                                    const int a_faceIdx,
                                    int& a_neighborCell,
                                    int& a_neighborFace) const = 0;
-
 
   // virtual XmUGridFaceOrientation GetFaceOrientation(const int a_cellIdx, const int a_faceIdx)
   // const = 0;
@@ -211,7 +227,6 @@ private:
 
 protected:
   XmUGrid();
-
 };
 
 //----- Function prototypes ----------------------------------------------------

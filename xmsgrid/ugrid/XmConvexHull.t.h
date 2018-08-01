@@ -30,7 +30,7 @@ class XmUGrid;
 class XmUGridConvexHullTests : public CxxTest::TestSuite
 {
 public:
-  void TestConvexHull();
+  void testConvexHull();
 }; // XmUGridConvexHullTests
 
 #endif

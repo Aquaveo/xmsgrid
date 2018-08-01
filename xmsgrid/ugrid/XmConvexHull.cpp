@@ -122,7 +122,7 @@ using namespace xms;
 //------------------------------------------------------------------------------
 /// \brief Test building a convex hull
 //------------------------------------------------------------------------------
-void XmUGridConvexHullTests::TestConvexHull()
+void XmUGridConvexHullTests::testConvexHull()
 {
   std::vector<Pt3d> inputPoints;
   std::vector<Pt3d> expectedHull;
