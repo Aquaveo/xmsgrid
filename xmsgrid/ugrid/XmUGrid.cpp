@@ -360,6 +360,7 @@ VecInt XmUGridImpl::GetCommonCells(const VecInt& a_points) const
 //------------------------------------------------------------------------------
 /// \brief Gets the common cells from a vector of points
 /// \param[in] a_pointIdxs: an array of point indexes
+/// \param[in] a_numPointIdxs: number of points in array
 /// \param[out] a_commonCellIdxs a vector of cell indices
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetCommonCells(const int* a_pointIdxs,
@@ -398,8 +399,8 @@ void XmUGridImpl::GetCommonCells(const int* a_pointIdxs,
 } // XmUGridImpl::GetCommonCells
 //------------------------------------------------------------------------------
 /// \brief Gets the common cells from a vector of points
-/// \param[in] a_points: a vector of unique points
-/// \return a vector of cell indices
+/// \param[in] a_points a vector of unique points
+/// \param[out] a_commonCellIdxs a vector of cell indices
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetCommonCells(const VecInt& a_points, VecInt& a_commonCellIdxs) const
 {
@@ -410,7 +411,7 @@ void XmUGridImpl::GetCommonCells(const VecInt& a_points, VecInt& a_commonCellIdx
 /// \brief Gets the common cells for two points.
 /// \param[in] a_idx1 first point index
 /// \param[in] a_idx2 second point index
-/// \param[out] a vector of cell indices
+/// \param[out] a_commonCellIdxs a vector of cell indices
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetCommonCells(const int a_idx1, const int a_idx2, VecInt& a_commonCellIdxs) const
 {
