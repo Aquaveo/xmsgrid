@@ -10,7 +10,7 @@ var searchData=
   ['test_5fxmugridhexagonalpolyhedron',['TEST_XmUGridHexagonalPolyhedron',['../_xm_u_grid_8cpp.html#a35ea59a275774db42c8581755f643d0c',1,'TEST_XmUGridHexagonalPolyhedron():&#160;XmUGrid.cpp'],['../_xm_u_grid_8t_8h.html#aa4c036b5a8c4a975166c4f846315c183',1,'TEST_XmUGridHexagonalPolyhedron():&#160;XmUGrid.cpp']]],
   ['test_5fxmugridsimplequad',['TEST_XmUGridSimpleQuad',['../_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b',1,'TEST_XmUGridSimpleQuad():&#160;XmUGrid.cpp'],['../_xm_u_grid_8t_8h.html#aca819ffe97cb3a3312d0721806f23e84',1,'TEST_XmUGridSimpleQuad():&#160;XmUGrid.cpp']]],
   ['testcellfunctions',['testCellFunctions',['../class_xm_u_grid_unit_tests.html#aa04937d86269192d53cf353366f6fdd5',1,'XmUGridUnitTests']]],
-  ['testconvexhull',['TestConvexHull',['../class_xm_u_grid_convex_hull_tests.html#a99c34f8aa64eeda6afbec8e3f1da0d1e',1,'XmUGridConvexHullTests']]],
+  ['testconvexhull',['testConvexHull',['../class_xm_u_grid_convex_hull_tests.html#a9932d57a000ebc02420243211c67858c',1,'XmUGridConvexHullTests']]],
   ['testdolinesegmentscross',['testDoLineSegmentsCross',['../class_xm_u_grid_utils_tests.html#abdb6587684de536f93a0905e482d089e',1,'XmUGridUtilsTests']]],
   ['testfilespath',['TestFilesPath',['../_xm_u_grid_8cpp.html#a5077e9a31a7514c737aec71ff1732e1c',1,'TestFilesPath():&#160;XmUGrid.cpp'],['../_xm_u_grid_8t_8h.html#a5077e9a31a7514c737aec71ff1732e1c',1,'TestFilesPath():&#160;XmUGrid.cpp']]],
   ['testgetadjacentcell',['testGetAdjacentCell',['../class_xm_u_grid_unit_tests.html#ad1668ba70a8c5e40716a6c5623f77487',1,'XmUGridUnitTests']]],

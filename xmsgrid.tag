@@ -427,9 +427,9 @@
     <filename>class_xm_u_grid_convex_hull_tests.html</filename>
     <member kind="function">
       <type>void</type>
-      <name>TestConvexHull</name>
+      <name>testConvexHull</name>
       <anchorfile>class_xm_u_grid_convex_hull_tests.html</anchorfile>
-      <anchor>a99c34f8aa64eeda6afbec8e3f1da0d1e</anchor>
+      <anchor>a9932d57a000ebc02420243211c67858c</anchor>
       <arglist>()</arglist>
     </member>
   </compound>
@@ -892,11 +892,39 @@
       <arglist>(const int a_pointIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetPointCells</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>aeb1b007fd36f0b4863952632373ae8e2</anchor>
+      <arglist>(const int a_pointIdx, VecInt &amp;a_attachedCellIdxs) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
       <name>GetCommonCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>a5a1c0c6182486cdc3af32029df1997ea</anchor>
       <arglist>(const VecInt &amp;a_points) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetCommonCells</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a930d9c285a2fb10f4973b12589423fa2</anchor>
+      <arglist>(const int *a_pointIdxs, int a_numpointIdxs, VecInt &amp;a_commonCellIdxs) const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetCommonCells</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a767a1ea118fa6c3f91760a4375bb6047</anchor>
+      <arglist>(const VecInt &amp;a_points, VecInt &amp;a_commonCellIdxs) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetCommonCells</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>ac02a9605873e356f281ea7f4901a9642</anchor>
+      <arglist>(const int a_ptIdx1, const int a_ptIdx2, VecInt &amp;a_commonCellIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
@@ -969,6 +997,13 @@
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetCellNeighbors</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>aaa181863e578e2335811f268d8de89d0</anchor>
+      <arglist>(const int a_cellIdx, VecInt &amp;a_cellNeighbors) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
       <name>GetPlanViewPolygon</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
@@ -997,6 +1032,13 @@
       <arglist>(const int a_cellIdx, const int a_edgeIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetAdjacentCells</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a5ecc5936065410531ad8aa1dad85ffa0</anchor>
+      <arglist>(const int a_cellIdx, const int a_edgeIdx, VecInt &amp;a_adjacentCellIdxs) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
       <type>virtual int</type>
       <name>Get2dAdjacentCell</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
@@ -1009,6 +1051,13 @@
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>ac371852cdb7b830b52f29a8e9b63895d</anchor>
       <arglist>(const int a_pointIdx1, const int a_pointIdx2) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetAdjacentCellsFromGivenEdge</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a68b8994e2b85f742b1098c3d57c56e5f</anchor>
+      <arglist>(const int a_pointIdx1, const int a_pointIdx2, VecInt &amp;a_adjacentCellIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
@@ -1046,6 +1095,13 @@
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetEdgesOfCell</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>ad572516a6cd31d2d4abcfd1234edc616</anchor>
+      <arglist>(const int a_cellIdx, std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;a_edges) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
       <type>virtual int</type>
       <name>GetNumberOfCellFaces</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
@@ -1058,6 +1114,13 @@
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>a2559e30a768709cf32b41bc8eb315d48</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>GetCellFace</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a568b8aeeaff9c6c8ee5fc790fa8ddc22</anchor>
+      <arglist>(const int a_cellIdx, const int a_faceIdx, VecInt &amp;a_facePtIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt2d</type>

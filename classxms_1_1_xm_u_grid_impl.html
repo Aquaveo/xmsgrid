@@ -154,9 +154,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5914a901abb898e83ec0dbb5e466ef2d"><td class="memItemLeft" align="right" valign="top">virtual VecInt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5914a901abb898e83ec0dbb5e466ef2d">GetPointCells</a> (const int a_pointIdx) const override</td></tr>
 <tr class="memdesc:a5914a901abb898e83ec0dbb5e466ef2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells that are associated with the specified point.  <a href="#a5914a901abb898e83ec0dbb5e466ef2d">More...</a><br/></td></tr>
 <tr class="separator:a5914a901abb898e83ec0dbb5e466ef2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb1b007fd36f0b4863952632373ae8e2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#aeb1b007fd36f0b4863952632373ae8e2">GetPointCells</a> (const int a_pointIdx, VecInt &amp;a_attachedCellIdxs) const override</td></tr>
+<tr class="memdesc:aeb1b007fd36f0b4863952632373ae8e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells that are associated with the specified point.  <a href="#aeb1b007fd36f0b4863952632373ae8e2">More...</a><br/></td></tr>
+<tr class="separator:aeb1b007fd36f0b4863952632373ae8e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a1c0c6182486cdc3af32029df1997ea"><td class="memItemLeft" align="right" valign="top">virtual VecInt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5a1c0c6182486cdc3af32029df1997ea">GetCommonCells</a> (const VecInt &amp;a_points) const override</td></tr>
 <tr class="memdesc:a5a1c0c6182486cdc3af32029df1997ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the common cells from a vector of points.  <a href="#a5a1c0c6182486cdc3af32029df1997ea">More...</a><br/></td></tr>
 <tr class="separator:a5a1c0c6182486cdc3af32029df1997ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a930d9c285a2fb10f4973b12589423fa2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a930d9c285a2fb10f4973b12589423fa2">GetCommonCells</a> (const int *a_pointIdxs, int a_numpointIdxs, VecInt &amp;a_commonCellIdxs) const </td></tr>
+<tr class="memdesc:a930d9c285a2fb10f4973b12589423fa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the common cells from a vector of points.  <a href="#a930d9c285a2fb10f4973b12589423fa2">More...</a><br/></td></tr>
+<tr class="separator:a930d9c285a2fb10f4973b12589423fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a767a1ea118fa6c3f91760a4375bb6047"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a767a1ea118fa6c3f91760a4375bb6047">GetCommonCells</a> (const VecInt &amp;a_points, VecInt &amp;a_commonCellIdxs) const override</td></tr>
+<tr class="memdesc:a767a1ea118fa6c3f91760a4375bb6047"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the common cells from a vector of points.  <a href="#a767a1ea118fa6c3f91760a4375bb6047">More...</a><br/></td></tr>
+<tr class="separator:a767a1ea118fa6c3f91760a4375bb6047"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac02a9605873e356f281ea7f4901a9642"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#ac02a9605873e356f281ea7f4901a9642">GetCommonCells</a> (const int a_ptIdx1, const int a_ptIdx2, VecInt &amp;a_commonCellIdxs) const override</td></tr>
+<tr class="memdesc:ac02a9605873e356f281ea7f4901a9642"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the common cells for two points.  <a href="#ac02a9605873e356f281ea7f4901a9642">More...</a><br/></td></tr>
+<tr class="separator:ac02a9605873e356f281ea7f4901a9642"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00a62d8ed93904cbd4cf270394cfe748"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a00a62d8ed93904cbd4cf270394cfe748">GetNumberOfCells</a> () const override</td></tr>
 <tr class="memdesc:a00a62d8ed93904cbd4cf270394cfe748"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of cells.  <a href="#a00a62d8ed93904cbd4cf270394cfe748">More...</a><br/></td></tr>
 <tr class="separator:a00a62d8ed93904cbd4cf270394cfe748"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -187,6 +199,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1d3d657289605c92c9060aa4caf82788"><td class="memItemLeft" align="right" valign="top">virtual VecInt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a1d3d657289605c92c9060aa4caf82788">GetCellNeighbors</a> (const int a_cellIdx) const override</td></tr>
 <tr class="memdesc:a1d3d657289605c92c9060aa4caf82788"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells neighboring a cell (cells associated with any of it's points)  <a href="#a1d3d657289605c92c9060aa4caf82788">More...</a><br/></td></tr>
 <tr class="separator:a1d3d657289605c92c9060aa4caf82788"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa181863e578e2335811f268d8de89d0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#aaa181863e578e2335811f268d8de89d0">GetCellNeighbors</a> (const int a_cellIdx, VecInt &amp;a_cellNeighbors) const override</td></tr>
+<tr class="memdesc:aaa181863e578e2335811f268d8de89d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells neighboring a cell (cells associated with any of it's points)  <a href="#aaa181863e578e2335811f268d8de89d0">More...</a><br/></td></tr>
+<tr class="separator:aaa181863e578e2335811f268d8de89d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac697de12080085c4390901b6886f3c34"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#ac697de12080085c4390901b6886f3c34">GetPlanViewPolygon</a> (int a_cellIdx, VecPt3d &amp;a_polygon) const override</td></tr>
 <tr class="memdesc:ac697de12080085c4390901b6886f3c34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a plan view polygon of a specified cell.  <a href="#ac697de12080085c4390901b6886f3c34">More...</a><br/></td></tr>
 <tr class="separator:ac697de12080085c4390901b6886f3c34"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,12 +214,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aca7001e994cb008ff79ce51ab6dade80"><td class="memItemLeft" align="right" valign="top">virtual VecInt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#aca7001e994cb008ff79ce51ab6dade80">GetAdjacentCells</a> (const int a_cellIdx, const int a_edgeIdx) const override</td></tr>
 <tr class="memdesc:aca7001e994cb008ff79ce51ab6dade80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#aca7001e994cb008ff79ce51ab6dade80">More...</a><br/></td></tr>
 <tr class="separator:aca7001e994cb008ff79ce51ab6dade80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ecc5936065410531ad8aa1dad85ffa0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5ecc5936065410531ad8aa1dad85ffa0">GetAdjacentCells</a> (const int a_cellIdx, const int a_edgeIdx, VecInt &amp;a_adjacentCellIdxs) const override</td></tr>
+<tr class="memdesc:a5ecc5936065410531ad8aa1dad85ffa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#a5ecc5936065410531ad8aa1dad85ffa0">More...</a><br/></td></tr>
+<tr class="separator:a5ecc5936065410531ad8aa1dad85ffa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa92a854c953c726ac57593b5b4b0106f"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#aa92a854c953c726ac57593b5b4b0106f">Get2dAdjacentCell</a> (const int a_cellIdx, const int a_edgeIdx) const override</td></tr>
 <tr class="memdesc:aa92a854c953c726ac57593b5b4b0106f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#aa92a854c953c726ac57593b5b4b0106f">More...</a><br/></td></tr>
 <tr class="separator:aa92a854c953c726ac57593b5b4b0106f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac371852cdb7b830b52f29a8e9b63895d"><td class="memItemLeft" align="right" valign="top">virtual VecInt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#ac371852cdb7b830b52f29a8e9b63895d">GetAdjacentCellsFromGivenEdge</a> (const int a_pointIdx1, const int a_pointIdx2) const override</td></tr>
 <tr class="memdesc:ac371852cdb7b830b52f29a8e9b63895d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the indices of the adjacent cells (that shares the same cell edge)  <a href="#ac371852cdb7b830b52f29a8e9b63895d">More...</a><br/></td></tr>
 <tr class="separator:ac371852cdb7b830b52f29a8e9b63895d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68b8994e2b85f742b1098c3d57c56e5f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a68b8994e2b85f742b1098c3d57c56e5f">GetAdjacentCellsFromGivenEdge</a> (const int a_pointIdx1, const int a_pointIdx2, VecInt &amp;a_adjacentCellIdxs) const override</td></tr>
+<tr class="memdesc:a68b8994e2b85f742b1098c3d57c56e5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the indices of the adjacent cells (that shares the same cell edge)  <a href="#a68b8994e2b85f742b1098c3d57c56e5f">More...</a><br/></td></tr>
+<tr class="separator:a68b8994e2b85f742b1098c3d57c56e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52a55a45f08e054c19427e60cde0473d"><td class="memItemLeft" align="right" valign="top">virtual VecInt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a52a55a45f08e054c19427e60cde0473d">GetAdjacentCellsFromGivenEdge</a> (const std::pair&lt; int, int &gt; a_edge) const override</td></tr>
 <tr class="memdesc:a52a55a45f08e054c19427e60cde0473d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#a52a55a45f08e054c19427e60cde0473d">More...</a><br/></td></tr>
 <tr class="separator:a52a55a45f08e054c19427e60cde0473d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -221,12 +242,18 @@ Public Member Functions</h2></td></tr>
 &lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a8222666c6e8747a5f81f602ad87a7c44">GetEdgesOfCell</a> (const int a_cellIdx) const override</td></tr>
 <tr class="memdesc:a8222666c6e8747a5f81f602ad87a7c44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Edges of a cell.  <a href="#a8222666c6e8747a5f81f602ad87a7c44">More...</a><br/></td></tr>
 <tr class="separator:a8222666c6e8747a5f81f602ad87a7c44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad572516a6cd31d2d4abcfd1234edc616"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#ad572516a6cd31d2d4abcfd1234edc616">GetEdgesOfCell</a> (const int a_cellIdx, std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;a_edges) const override</td></tr>
+<tr class="memdesc:ad572516a6cd31d2d4abcfd1234edc616"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Edges of a cell.  <a href="#ad572516a6cd31d2d4abcfd1234edc616">More...</a><br/></td></tr>
+<tr class="separator:ad572516a6cd31d2d4abcfd1234edc616"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43ecb6e3a520df054be4b4f9dfdaeac4"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a43ecb6e3a520df054be4b4f9dfdaeac4">GetNumberOfCellFaces</a> (const int a_cellIdx) const override</td></tr>
 <tr class="memdesc:a43ecb6e3a520df054be4b4f9dfdaeac4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of cell faces for given cell.  <a href="#a43ecb6e3a520df054be4b4f9dfdaeac4">More...</a><br/></td></tr>
 <tr class="separator:a43ecb6e3a520df054be4b4f9dfdaeac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2559e30a768709cf32b41bc8eb315d48"><td class="memItemLeft" align="right" valign="top">virtual VecInt&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a2559e30a768709cf32b41bc8eb315d48">GetCellFace</a> (const int a_cellIdx, const int a_faceIdx) const override</td></tr>
 <tr class="memdesc:a2559e30a768709cf32b41bc8eb315d48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cell face for given cell and face index.  <a href="#a2559e30a768709cf32b41bc8eb315d48">More...</a><br/></td></tr>
 <tr class="separator:a2559e30a768709cf32b41bc8eb315d48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a568b8aeeaff9c6c8ee5fc790fa8ddc22"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a568b8aeeaff9c6c8ee5fc790fa8ddc22">GetCellFace</a> (const int a_cellIdx, const int a_faceIdx, VecInt &amp;a_facePtIdxs) const override</td></tr>
+<tr class="memdesc:a568b8aeeaff9c6c8ee5fc790fa8ddc22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cell face for given cell and face index.  <a href="#a568b8aeeaff9c6c8ee5fc790fa8ddc22">More...</a><br/></td></tr>
+<tr class="separator:a568b8aeeaff9c6c8ee5fc790fa8ddc22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a6bbe57df7df77b3be92ceaa4aa998a"><td class="memItemLeft" align="right" valign="top">virtual VecInt2d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a6a6bbe57df7df77b3be92ceaa4aa998a">GetFacesOfCell</a> (const int a_cellIdx) const override</td></tr>
 <tr class="memdesc:a6a6bbe57df7df77b3be92ceaa4aa998a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the faces of a cell.  <a href="#a6a6bbe57df7df77b3be92ceaa4aa998a">More...</a><br/></td></tr>
 <tr class="separator:a6a6bbe57df7df77b3be92ceaa4aa998a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -377,9 +404,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the dimension of the cell type </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01699">1699</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01833">1833</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00424">GetCellDimension()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00493">GetCellDimension()</a>.</p>
 
 </div>
 </div>
@@ -432,11 +459,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the edges cross </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">637</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00716">716</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00235">xms::DoLineSegmentsCross()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00221">GetPoint()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00235">xms::DoLineSegmentsCross()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00242">GetPoint()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00578">IsCellValidWithPointChange()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00657">IsCellValidWithPointChange()</a>.</p>
 
 </div>
 </div>
@@ -482,9 +509,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of cell indices of the adjacent cells </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01025">1025</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01119">1119</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00991">GetAdjacentCells()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01070">GetAdjacentCells()</a>.</p>
 
 </div>
 </div>
@@ -530,11 +557,63 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of cell indices of the adjacent cells </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00991">991</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01070">1070</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00523">GetCellNeighbors()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">GetNumberOfCellEdges()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01119">Get2dAdjacentCell()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01025">Get2dAdjacentCell()</a>.</p>
+</div>
+</div>
+<a class="anchor" id="a5ecc5936065410531ad8aa1dad85ffa0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_edgeIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_adjacentCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the index of the adjacent cells (that shares the same cell edge) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_edgeIdx</td><td>the index of the edge </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_adjacentCellIdxs</td><td>a vector of cell indices of the adjacent cells </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01083">1083</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00592">GetCellNeighbors()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">GetNumberOfCellEdges()</a>.</p>
 
 </div>
 </div>
@@ -580,11 +659,65 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of cell indices of the adjacent cells </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01049">1049</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01143">1143</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00319">GetCommonCells()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00353">GetCommonCells()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01060">GetAdjacentCellsFromGivenEdge()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01167">GetAdjacentCellsFromGivenEdge()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a68b8994e2b85f742b1098c3d57c56e5f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetAdjacentCellsFromGivenEdge </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_adjacentCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the indices of the adjacent cells (that shares the same cell edge) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx1</td><td>the index of the first point </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx2</td><td>the index of the second point </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_adjacentCellIdxs</td><td>a vector of cell indices of the adjacent cells </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01156">1156</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00353">GetCommonCells()</a>.</p>
 
 </div>
 </div>
@@ -619,9 +752,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of cell indices of the adjacent cells </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01060">1060</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01167">1167</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01049">GetAdjacentCellsFromGivenEdge()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01143">GetAdjacentCellsFromGivenEdge()</a>.</p>
 
 </div>
 </div>
@@ -656,11 +789,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the dimension of the cells or -1 if invalid index or invalid dimension </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00424">424</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00493">493</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01699">DimensionFromCellType()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00381">GetCellType()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01833">DimensionFromCellType()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">GetCellType()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00404">GetDimensionCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">GetPlanViewPolygon()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00578">IsCellValidWithPointChange()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00473">GetDimensionCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">GetPlanViewPolygon()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00657">IsCellValidWithPointChange()</a>.</p>
 
 </div>
 </div>
@@ -706,11 +839,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a standard pair of point indexes (which is an edge) </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">794</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">873</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">GetNumberOfCellEdges()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00472">GetSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01941">GetUniqueEdgesFromPolyhedronCellStream()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">GetNumberOfCellEdges()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00541">GetSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02074">GetUniqueEdgesFromPolyhedronCellStream()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00991">GetAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01072">GetEdgesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01100">GetEdgesOfCell()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01083">GetAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01179">GetEdgesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01218">GetEdgesOfCell()</a>.</p>
 
 </div>
 </div>
@@ -756,11 +889,63 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of point indexes for the face index of the cell </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">1271</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01389">1389</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">GetNumberOfCellFaces()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00369">GetPointsOfCell()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00472">GetSingleCellStream()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01545">GetCellFaceNeighbor()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02176">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01626">GetFacesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01528">GetFacesOfCell()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01413">GetCellFaceNeighbor()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02043">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01494">GetFacesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01396">GetFacesOfCell()</a>.</p>
+</div>
+</div>
+<a class="anchor" id="a568b8aeeaff9c6c8ee5fc790fa8ddc22"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetCellFace </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_faceIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_facePtIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cell face for given cell and face index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_faceIdx</td><td>the face index of the cell </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_facePtIdxs</td><td>a vector of point indexes for the face index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01402">1402</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">GetNumberOfCellFaces()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00438">GetPointsOfCell()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00541">GetSingleCellStream()</a>.</p>
 
 </div>
 </div>
@@ -806,11 +991,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a cell index of the neighbor </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01413">1413</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01545">1545</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00319">GetCommonCells()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01389">GetCellFace()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00353">GetCommonCells()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01443">GetCellFaceNeighbor()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01575">GetCellFaceNeighbor()</a>.</p>
 
 </div>
 </div>
@@ -870,9 +1055,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a cell index of the neighbor </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01443">1443</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01575">1575</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01413">GetCellFaceNeighbor()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">GetNumberOfCellFaces()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01389">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01545">GetCellFaceNeighbor()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">GetNumberOfCellFaces()</a>.</p>
 
 </div>
 </div>
@@ -907,11 +1092,56 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>vector of cell indices </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00523">523</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00592">592</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">GetPointCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00369">GetPointsOfCell()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01083">GetAdjacentCells()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00991">GetAdjacentCells()</a>.</p>
+</div>
+</div>
+<a class="anchor" id="aaa181863e578e2335811f268d8de89d0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetCellNeighbors </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_cellNeighbors</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cells neighboring a cell (cells associated with any of it's points) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_cellNeighbors</td><td>vector of cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00603">603</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00323">GetPointCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00438">GetPointsOfCell()</a>.</p>
 
 </div>
 </div>
@@ -939,9 +1169,9 @@ Additional Inherited Members</h2></td></tr>
 <p>Get cell stream vector for the entire UGrid. </p>
 <dl class="section return"><dt>Returns</dt><dd>constant reference to the cell stream vector </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00432">432</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00501">501</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00172">m_cellStream</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00193">m_cellStream</a>.</p>
 
 </div>
 </div>
@@ -976,11 +1206,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the number of cells or -1 if invalid index </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00381">381</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">450</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00173">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00172">m_cellStream</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00194">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00193">m_cellStream</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00424">GetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">GetNumberOfCellEdges()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">GetNumberOfCellFaces()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01799">GetNumberOfItemsForCell()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01825">GetSingleCellStream()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00493">GetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">GetNumberOfCellEdges()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">GetNumberOfCellFaces()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01933">GetNumberOfItemsForCell()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01959">GetSingleCellStream()</a>.</p>
 
 </div>
 </div>
@@ -1026,11 +1256,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the collected segments form a valid polygon </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02043">2043</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02176">2176</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">GetNumberOfCellFaces()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00221">GetPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02019">IsFaceSide()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01389">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">GetNumberOfCellFaces()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00242">GetPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02152">IsFaceSide()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01990">GetPlanViewPolygon3d()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02123">GetPlanViewPolygon3d()</a>.</p>
 
 </div>
 </div>
@@ -1065,11 +1295,164 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of cell indices </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00319">319</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00353">353</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">GetPointCells()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01143">GetAdjacentCellsFromGivenEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01545">GetCellFaceNeighbor()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00405">GetCommonCells()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01049">GetAdjacentCellsFromGivenEdge()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01413">GetCellFaceNeighbor()</a>.</p>
+</div>
+</div>
+<a class="anchor" id="a930d9c285a2fb10f4973b12589423fa2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetCommonCells </td>
+          <td>(</td>
+          <td class="paramtype">const int *&#160;</td>
+          <td class="paramname"><em>a_pointIdxs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a_numPointIdxs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_commonCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the common cells from a vector of points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdxs</td><td>an array of point indexes </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_numPointIdxs</td><td>number of points in array </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_commonCellIdxs</td><td>a vector of cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00366">366</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00323">GetPointCells()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a767a1ea118fa6c3f91760a4375bb6047"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetCommonCells </td>
+          <td>(</td>
+          <td class="paramtype">const VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_commonCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the common cells from a vector of points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_points</td><td>a vector of unique points </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_commonCellIdxs</td><td>a vector of cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00405">405</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00353">GetCommonCells()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ac02a9605873e356f281ea7f4901a9642"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetCommonCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_idx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_idx2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_commonCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the common cells for two points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_idx1</td><td>first point index </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_idx2</td><td>second point index </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_commonCellIdxs</td><td>a vector of cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00416">416</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00353">GetCommonCells()</a>.</p>
 
 </div>
 </div>
@@ -1097,9 +1480,9 @@ Additional Inherited Members</h2></td></tr>
 <p>Count all number of the cells with each dimenion (0, 1, 2, 3) </p>
 <dl class="section return"><dt>Returns</dt><dd>the count of dimensions of all of the cells of the ugrid </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00404">404</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00473">473</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00424">GetCellDimension()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00173">m_cellIdxToStreamIdx</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00493">GetCellDimension()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00194">m_cellIdxToStreamIdx</a>.</p>
 
 </div>
 </div>
@@ -1152,11 +1535,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if operation was successful </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01072">1072</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01179">1179</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">GetNumberOfCellEdges()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">GetPointCells()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">GetNumberOfCellEdges()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00323">GetPointCells()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01118">GetEdgesFromPoint()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01236">GetEdgesFromPoint()</a>.</p>
 
 </div>
 </div>
@@ -1209,9 +1592,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if operation was successful </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01118">1118</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01236">1236</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">GetCellEdgeFromEdgeIndex()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01072">GetEdgesFromPoint()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">GetCellEdgeFromEdgeIndex()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01179">GetEdgesFromPoint()</a>.</p>
 
 </div>
 </div>
@@ -1271,9 +1654,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if operation was successful </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01142">1142</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01260">1260</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01072">GetEdgesFromPoint()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01179">GetEdgesFromPoint()</a>.</p>
 
 </div>
 </div>
@@ -1308,11 +1691,56 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of edges (organized in std::pairs) </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01100">1100</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01207">1207</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">GetCellEdgeFromEdgeIndex()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">GetNumberOfCellEdges()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00657">IsCellValidWithPointChange()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00578">IsCellValidWithPointChange()</a>.</p>
+</div>
+</div>
+<a class="anchor" id="ad572516a6cd31d2d4abcfd1234edc616"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetEdgesOfCell </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>a_edges</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Edges of a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the cells to whom the edges belong </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_edges</td><td>a vector of edges (organized in std::pairs) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01218">1218</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">GetCellEdgeFromEdgeIndex()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">GetNumberOfCellEdges()</a>.</p>
 
 </div>
 </div>
@@ -1357,9 +1785,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00618">618</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00697">697</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00578">IsCellValidWithPointChange()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00657">IsCellValidWithPointChange()</a>.</p>
 
 </div>
 </div>
@@ -1404,9 +1832,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00276">276</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00297">297</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00171">m_points</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00192">m_points</a>.</p>
 
 </div>
 </div>
@@ -1459,9 +1887,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a cell index of the neighbor </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01494">1494</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01626">1626</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">GetNumberOfCellFaces()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">GetPointCells()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01389">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">GetNumberOfCellFaces()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00323">GetPointCells()</a>.</p>
 
 </div>
 </div>
@@ -1496,11 +1924,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of faces, which is a vector of point indices </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01396">1396</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01528">1528</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">GetNumberOfCellFaces()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01389">GetCellFace()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">GetNumberOfCellFaces()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00578">IsCellValidWithPointChange()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00657">IsCellValidWithPointChange()</a>.</p>
 
 </div>
 </div>
@@ -1535,11 +1963,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the count of cell edges </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">675</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">754</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00381">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01799">GetNumberOfItemsForCell()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01846">GetNumberOfPolyhedronEdges()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01933">GetNumberOfItemsForCell()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01980">GetNumberOfPolyhedronEdges()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00991">GetAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01072">GetEdgesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01100">GetEdgesOfCell()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01083">GetAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01179">GetEdgesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01218">GetEdgesOfCell()</a>.</p>
 
 </div>
 </div>
@@ -1574,11 +2002,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the count of cell faces </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">1166</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">1284</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00381">GetCellType()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01799">GetNumberOfItemsForCell()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">GetCellType()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01933">GetNumberOfItemsForCell()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01443">GetCellFaceNeighbor()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02043">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01494">GetFacesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01396">GetFacesOfCell()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01402">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01575">GetCellFaceNeighbor()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02176">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01626">GetFacesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01528">GetFacesOfCell()</a>.</p>
 
 </div>
 </div>
@@ -1606,11 +2034,11 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of cells. </p>
 <dl class="section return"><dt>Returns</dt><dd>the number of cells </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00357">357</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00426">426</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00173">m_cellIdxToStreamIdx</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00194">m_cellIdxToStreamIdx</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">GetPlanViewPolygon()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">GetPlanViewPolygon()</a>.</p>
 
 </div>
 </div>
@@ -1645,11 +2073,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the number of faces for polyhedron or number of points. </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01799">1799</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01933">1933</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00381">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00173">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00172">m_cellStream</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00194">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00193">m_cellStream</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">GetNumberOfCellEdges()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01166">GetNumberOfCellFaces()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">GetNumberOfCellEdges()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01284">GetNumberOfCellFaces()</a>.</p>
 
 </div>
 </div>
@@ -1677,9 +2105,9 @@ Additional Inherited Members</h2></td></tr>
 <p>Get the number of points. </p>
 <dl class="section return"><dt>Returns</dt><dd>the number of points </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00196">196</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00217">217</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00171">m_points</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00192">m_points</a>.</p>
 
 </div>
 </div>
@@ -1714,11 +2142,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the number of edges </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01846">1846</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01980">1980</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00472">GetSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01941">GetUniqueEdgesFromPolyhedronCellStream()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00541">GetSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02074">GetUniqueEdgesFromPolyhedronCellStream()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00675">GetNumberOfCellEdges()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00754">GetNumberOfCellEdges()</a>.</p>
 
 </div>
 </div>
@@ -1764,9 +2192,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the operation was successful </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">558</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">637</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00424">GetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00357">GetNumberOfCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01974">GetPlanViewPolygon2d()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01990">GetPlanViewPolygon3d()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00493">GetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00426">GetNumberOfCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02107">GetPlanViewPolygon2d()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02123">GetPlanViewPolygon3d()</a>.</p>
 
 </div>
 </div>
@@ -1812,11 +2240,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the operation was successful </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01974">1974</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02107">2107</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00262">GetPointsFromPointIdxs()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00369">GetPointsOfCell()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00283">GetPointsFromPointIdxs()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00438">GetPointsOfCell()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">GetPlanViewPolygon()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">GetPlanViewPolygon()</a>.</p>
 
 </div>
 </div>
@@ -1862,11 +2290,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the operation was successful </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01990">1990</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02123">2123</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_convex_hull_8cpp_source.html#l00054">xms::ConvexHull()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02043">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00221">GetPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00369">GetPointsOfCell()</a>.</p>
+<p>References <a class="el" href="_xm_convex_hull_8cpp_source.html#l00054">xms::ConvexHull()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02176">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00242">GetPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00438">GetPointsOfCell()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">GetPlanViewPolygon()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">GetPlanViewPolygon()</a>.</p>
 
 </div>
 </div>
@@ -1901,11 +2329,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the point or an initialize point if the index is invalid </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00221">221</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00242">242</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00171">m_points</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00192">m_points</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">DoEdgesCrossWithPointChange()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02043">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01990">GetPlanViewPolygon3d()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00262">GetPointsFromPointIdxs()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02019">IsFaceSide()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00716">DoEdgesCrossWithPointChange()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02176">GetCellXySegments()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02123">GetPlanViewPolygon3d()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00283">GetPointsFromPointIdxs()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02152">IsFaceSide()</a>.</p>
 
 </div>
 </div>
@@ -1940,11 +2368,57 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of the cell indexes associated with this point </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">302</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00323">323</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00176">m_pointIdxToPointsToCells</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00171">m_points</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00174">m_pointsToCells</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00603">GetCellNeighbors()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00366">GetCommonCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01179">GetEdgesFromPoint()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01626">GetFacesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00255">SetPoint()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00523">GetCellNeighbors()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00319">GetCommonCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01072">GetEdgesFromPoint()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01494">GetFacesFromPoint()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00234">SetPoint()</a>.</p>
+</div>
+</div>
+<a class="anchor" id="aeb1b007fd36f0b4863952632373ae8e2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::XmUGridImpl::GetPointCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">VecInt &amp;&#160;</td>
+          <td class="paramname"><em>a_attachedCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cells that are associated with the specified point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>the index of the point </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_attachedCellIdxs</td><td>a vector of the cell indexes associated with the point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of the cell indexes associated with this point </dd></dl>
+
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00336">336</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00197">m_pointIdxToPointsToCells</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00192">m_points</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00195">m_pointsToCells</a>.</p>
 
 </div>
 </div>
@@ -1972,9 +2446,9 @@ Additional Inherited Members</h2></td></tr>
 <p>Get vector of UGrid points. </p>
 <dl class="section return"><dt>Returns</dt><dd>constant reference to vector of points </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00204">204</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00225">225</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00171">m_points</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00192">m_points</a>.</p>
 
 </div>
 </div>
@@ -2009,11 +2483,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>vector of point 3d </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00262">262</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00283">283</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00221">GetPoint()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00242">GetPoint()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01974">GetPlanViewPolygon2d()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02107">GetPlanViewPolygon2d()</a>.</p>
 
 </div>
 </div>
@@ -2048,9 +2522,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector of point indices </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00369">369</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00438">438</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00523">GetCellNeighbors()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01974">GetPlanViewPolygon2d()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01990">GetPlanViewPolygon3d()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01402">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00603">GetCellNeighbors()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02107">GetPlanViewPolygon2d()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02123">GetPlanViewPolygon3d()</a>.</p>
 
 </div>
 </div>
@@ -2096,9 +2570,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>if the cell index is valid </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00489">489</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">558</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00472">GetSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01906">GetUniquePointsFromPolyhedronSingleCellStream()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00541">GetSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02039">GetUniquePointsFromPolyhedronSingleCellStream()</a>.</p>
 
 </div>
 </div>
@@ -2146,11 +2620,11 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a207213ebc3c71b3b616d153985e10a29" title="[snip_test_SetCellStream] ">SetCellStream</a> for more detail on cell stream definitions. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>whether it was successfull or not </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00472">472</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00541">541</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00173">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00172">m_cellStream</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00194">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00193">m_cellStream</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01271">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01846">GetNumberOfPolyhedronEdges()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00489">GetPointsOfCell()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">GetCellEdgeFromEdgeIndex()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01402">GetCellFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01980">GetNumberOfPolyhedronEdges()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">GetPointsOfCell()</a>.</p>
 
 </div>
 </div>
@@ -2202,9 +2676,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01825">1825</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01959">1959</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00381">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00173">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00172">m_cellStream</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00194">m_cellIdxToStreamIdx</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00193">m_cellStream</a>.</p>
 
 </div>
 </div>
@@ -2264,9 +2738,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>: This function does NOT verify cellstream size!! This function needs to be efficient! </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01941">1941</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02074">2074</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00794">GetCellEdgeFromEdgeIndex()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01846">GetNumberOfPolyhedronEdges()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00873">GetCellEdgeFromEdgeIndex()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01980">GetNumberOfPolyhedronEdges()</a>.</p>
 
 </div>
 </div>
@@ -2333,9 +2807,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>: This function does NOT verify cellstream size!! This function needs to be efficient! </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01875">1875</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02009">2009</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01906">GetUniquePointsFromPolyhedronSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01580">UpdatePointLinks()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02039">GetUniquePointsFromPolyhedronSingleCellStream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01712">UpdatePointLinks()</a>.</p>
 
 </div>
 </div>
@@ -2381,11 +2855,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the unique points of the polyhedron. If the data is invalid an empty set will be returned </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l01906">1906</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02039">2039</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l01875">GetUniquePointsFromPolyhedronCellStream()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l02009">GetUniquePointsFromPolyhedronCellStream()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00489">GetPointsOfCell()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00558">GetPointsOfCell()</a>.</p>
 
 </div>
 </div>
@@ -2438,11 +2912,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the cell is valid </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00578">578</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00657">657</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00637">DoEdgesCrossWithPointChange()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00424">GetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01100">GetEdgesOfCell()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00618">GetEdgesOfFace()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01396">GetFacesOfCell()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00716">DoEdgesCrossWithPointChange()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00493">GetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01207">GetEdgesOfCell()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00697">GetEdgesOfFace()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01528">GetFacesOfCell()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00234">SetPoint()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00255">SetPoint()</a>.</p>
 
 </div>
 </div>
@@ -2477,11 +2951,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the face is a Side </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02019">2019</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02152">2152</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00221">GetPoint()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00242">GetPoint()</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02043">GetCellXySegments()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02176">GetCellXySegments()</a>.</p>
 
 </div>
 </div>
@@ -2517,9 +2991,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>if successfully set </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">450</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00519">519</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00172">m_cellStream</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01526">UpdateLinks()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02156">xms::XmUGrid::ValidCellStream()</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00193">m_cellStream</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01658">UpdateLinks()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l02289">xms::XmUGrid::ValidCellStream()</a>.</p>
 
 </div>
 </div>
@@ -2565,9 +3039,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>whether the point was successfully set </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00234">234</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00255">255</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">GetPointCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00578">IsCellValidWithPointChange()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00171">m_points</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00323">GetPointCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00657">IsCellValidWithPointChange()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l00192">m_points</a>.</p>
 
 </div>
 </div>
@@ -2601,9 +3075,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00212">212</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00233">233</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00171">m_points</a>.</p>
+<p>References <a class="el" href="_xm_u_grid_8cpp_source.html#l00192">m_points</a>.</p>
 
 </div>
 </div>
@@ -2629,9 +3103,9 @@ Additional Inherited Members</h2></td></tr>
 <p>UGrid cell stream. </p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="classxms_1_1_xm_u_grid_impl.html#a207213ebc3c71b3b616d153985e10a29" title="[snip_test_SetCellStream] ">SetCellStream</a>, <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a01973db2557667f57acd11fc1c5af393" title="Get cell stream vector for the entire UGrid. ">GetCellStream</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00172">172</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00193">193</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00432">GetCellStream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00381">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01799">GetNumberOfItemsForCell()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00472">GetSingleCellStream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">SetCellStream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01534">UpdateCellLinks()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01580">UpdatePointLinks()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00501">GetCellStream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00450">GetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01933">GetNumberOfItemsForCell()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00541">GetSingleCellStream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l00519">SetCellStream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01666">UpdateCellLinks()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01712">UpdatePointLinks()</a>.</p>
 
 </div>
 </div>
@@ -2654,9 +3128,9 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Indexes for each point in array of points cells </p>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00176">176</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00197">197</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">GetPointCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01580">UpdatePointLinks()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00336">GetPointCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01712">UpdatePointLinks()</a>.</p>
 
 </div>
 </div>
@@ -2679,9 +3153,9 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Array of points cells (goes from pointIdx to list of cells) </p>
 
-<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00174">174</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l00195">195</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00302">GetPointCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01580">UpdatePointLinks()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l00336">GetPointCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01712">UpdatePointLinks()</a>.</p>
 
 </div>
 </div>
@@ -2694,7 +3168,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacexms.html">xms</a></li><li class="navelem"><a class="el" href="classxms_1_1_xm_u_grid_impl.html">XmUGridImpl</a></li>
-    <li class="footer">Generated on Tue Jul 31 2018 21:48:12 for xmsgrid by
+    <li class="footer">Generated on Wed Aug 1 2018 22:30:43 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
