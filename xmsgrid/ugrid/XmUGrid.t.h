@@ -60,6 +60,13 @@ public:
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests
 
+std::string TestFilesPath();
+
+#endif
+
+namespace xms
+{
+
 BSHP<xms::XmUGrid> TEST_XmUGrid1Left90Tri();
 BSHP<xms::XmUGrid> TEST_XmUGridSimpleQuad();
 BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();
@@ -82,6 +89,5 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
                                                 const int a_lays,
                                                 const xms::Pt3d& a_origin);
 BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid();
-std::string TestFilesPath();
 
-#endif
+} // namespace xms

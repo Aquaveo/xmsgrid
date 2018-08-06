@@ -2398,16 +2398,6 @@ bool XmUGrid::ValidCellStream(const VecInt& a_cellStream)
 
   return true;
 } // XmUGrid::ValidCellStream
-
-} // namespace xms
-
-#ifdef CXX_TEST
-//------------------------------------------------------------------------------
-// Unit Tests
-//------------------------------------------------------------------------------
-using namespace xms;
-#include <xmsgrid/ugrid/XmUGrid.t.h>
-
 //------------------------------------------------------------------------------
 /// \brief Builds a 1 cell (left 90 degree triangle) 2D XmUGrid for testing.
 /// \code
@@ -2781,6 +2771,16 @@ BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
 
   return XmUGrid::New(ugridPoints, ugridCell);
 } // TEST_XmUBuild3DChevronUgrid
+
+} // namespace xms
+
+#ifdef CXX_TEST
+//------------------------------------------------------------------------------
+// Unit Tests
+//------------------------------------------------------------------------------
+using namespace xms;
+#include <xmsgrid/ugrid/XmUGrid.t.h>
+
 //------------------------------------------------------------------------------
 /// \brief Path to test files.
 /// \return Returns path to test files.
