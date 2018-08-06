@@ -277,7 +277,7 @@ Example - Get the Cells that Share the Same Point or Points</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ae950f2efb2ef0e1d655bf12ed1803f83">XmUGridUnitTests::testPointFunctions</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -346,7 +346,7 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#aa04937d86269192d53cf353366f6fdd5">XmUGridUnitTests::testCellFunctions</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -382,7 +382,7 @@ Example - Get a Single Cellstream for One Cell</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a161f884b0ca131ac8c9a689a0413b1e5">XmUGridUnitTests::testGetCellStreamFunctions</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -414,7 +414,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">  <span class="comment">//     |  2  |  3  |</span></div>
 <div class="line">  <span class="comment">//     6-----7-----8</span></div>
 <div class="line"></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -439,7 +439,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">  retrievedCells.clear();</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// 2D Shapes</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid2d = <a class="code" href="_xm_u_grid_8cpp.html#aae054eb972140e14bf5c8bd873c8b282">TEST_XmUGrid2dLinear</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid2d = <a class="code" href="namespacexms.html#a8260f0723d0bdca40b077369e5321ac8">TEST_XmUGrid2dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid2d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -466,7 +466,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">  TS_ASSERT_EQUALS(expectedCells, retrievedCells);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// 3D Shapes</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="_xm_u_grid_8cpp.html#adae3b643305100b325b7fd7ee3b42e50">TEST_XmUGrid3dLinear</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="namespacexms.html#af931fa91f04abddf2d9469ef64ecfa70">TEST_XmUGrid3dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid3d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -501,7 +501,7 @@ Example - Get a Plan View Polygon</h2>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144">XmUGridUnitTests::testGetPlanViewPolygon</a>()</div>
 <div class="line">{</div>
 <div class="line">  <span class="comment">// 2d</span></div>
-<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid2d = <a class="code" href="_xm_u_grid_8cpp.html#aae054eb972140e14bf5c8bd873c8b282">TEST_XmUGrid2dLinear</a>();</div>
+<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid2d = <a class="code" href="namespacexms.html#a8260f0723d0bdca40b077369e5321ac8">TEST_XmUGrid2dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!grid2d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -530,7 +530,7 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// 3d</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="_xm_u_grid_8cpp.html#adae3b643305100b325b7fd7ee3b42e50">TEST_XmUGrid3dLinear</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="namespacexms.html#af931fa91f04abddf2d9469ef64ecfa70">TEST_XmUGrid3dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid3d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -549,7 +549,7 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">    TS_ASSERT_EQUALS(expectedPolygons[i], viewPolygon);</div>
 <div class="line">  }</div>
 <div class="line"></div>
-<div class="line">  BSHP&lt;xms::XmUGrid&gt; chevronUgrid = <a class="code" href="_xm_u_grid_8cpp.html#ab1a6ab331c942a001ff9b1ec8547f0fc">TEST_XmUBuild3DChevronUgrid</a>();</div>
+<div class="line">  BSHP&lt;xms::XmUGrid&gt; chevronUgrid = <a class="code" href="namespacexms.html#a18cc668860be57dfc3d4800446ab6dfb">TEST_XmUBuild3DChevronUgrid</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!chevronUgrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -581,7 +581,7 @@ Example - Get Cell Edge from Edge Index</h2>
 <div class="line">      edge19(5, 9);                                                             <span class="comment">// Line</span></div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// 2D Shapes</span></div>
-<div class="line">    BSHP&lt;XmUGrid&gt; ugrid2d = <a class="code" href="_xm_u_grid_8cpp.html#aae054eb972140e14bf5c8bd873c8b282">TEST_XmUGrid2dLinear</a>();</div>
+<div class="line">    BSHP&lt;XmUGrid&gt; ugrid2d = <a class="code" href="namespacexms.html#a8260f0723d0bdca40b077369e5321ac8">TEST_XmUGrid2dLinear</a>();</div>
 <div class="line">    <span class="keywordflow">if</span> (!ugrid2d)</div>
 <div class="line">    {</div>
 <div class="line">      TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -624,7 +624,7 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line">  <span class="comment">//     3-----4-----5</span></div>
 <div class="line">  <span class="comment">//     |  2  |  3  |</span></div>
 <div class="line">  <span class="comment">//     6-----7-----8</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -670,7 +670,7 @@ Example Get Edges Associated with a Point</h2>
 <div class="line">  <span class="comment">//     |  2  |  3  |</span></div>
 <div class="line">  <span class="comment">//     6-----7-----8</span></div>
 <div class="line"></div>
-<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!grid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -738,7 +738,7 @@ Example Get Edges Associated with a Cell</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030">XmUGridUnitTests::testGetEdgesOfCell</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="_xm_u_grid_8cpp.html#a1f7881528f1497337689118149933f6b">TEST_XmUGridSimpleQuad</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -757,7 +757,7 @@ Example Get Edges Associated with a Cell</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Aug 1 2018 22:30:43 for xmsgrid by
+    <li class="footer">Generated on Mon Aug 6 2018 21:25:10 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
