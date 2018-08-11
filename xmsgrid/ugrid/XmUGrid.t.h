@@ -63,31 +63,3 @@ public:
 std::string TestFilesPath();
 
 #endif
-
-namespace xms
-{
-
-BSHP<xms::XmUGrid> TEST_XmUGrid1Left90Tri();
-BSHP<xms::XmUGrid> TEST_XmUGridSimpleQuad();
-BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();
-BSHP<xms::XmUGrid> TEST_XmUGrid3dLinear();
-BSHP<xms::XmUGrid> TEST_XmUGridHexagonalPolyhedron();
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols);
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows,
-                                          const int a_cols,
-                                          const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows, const int a_cols, const int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows,
-                                              const int a_cols,
-                                              const int a_lays,
-                                              const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
-                                                const int a_cols,
-                                                const int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
-                                                const int a_cols,
-                                                const int a_lays,
-                                                const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid();
-
-} // namespace xms

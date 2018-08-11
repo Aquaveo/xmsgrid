@@ -233,10 +233,10 @@ double cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
 /// \return true if the line segments intersect
 //------------------------------------------------------------------------------
 bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
-  const std::pair<Pt3d, Pt3d>& a_segment2)
+                         const std::pair<Pt3d, Pt3d>& a_segment2)
 {
   return DoLineSegmentsCross(a_segment1.first, a_segment1.second, a_segment2.first,
-    a_segment2.second);
+                             a_segment2.second);
 } // DoLineSegmentsCross
 
 //------------------------------------------------------------------------------
@@ -248,14 +248,14 @@ bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
 /// \return true if the line segments cross
 //------------------------------------------------------------------------------
 bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
-  const Pt3d& a_segment1Point2,
-  const Pt3d& a_segment2Point1,
-  const Pt3d& a_segment2Point2)
+                         const Pt3d& a_segment1Point2,
+                         const Pt3d& a_segment2Point1,
+                         const Pt3d& a_segment2Point2)
 {
   // Boundary case checks
   // Any of the points from line segment 1 are the same as any points from line segment 2
   if ((a_segment1Point1 == a_segment2Point1 || a_segment1Point1 == a_segment2Point2) &&
-    (a_segment1Point2 == a_segment2Point1 || a_segment1Point2 == a_segment2Point2))
+      (a_segment1Point2 == a_segment2Point1 || a_segment1Point2 == a_segment2Point2))
     return true;
 
   // The segments AB and CD intersect if and only if both of the following are true:

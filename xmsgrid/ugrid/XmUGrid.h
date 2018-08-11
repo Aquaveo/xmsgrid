@@ -239,11 +239,13 @@ BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols);
 BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows,
                                           const int a_cols,
                                           const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows, const int a_cols, const int a_lays);
 BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows,
-                                              const int a_cols,
-                                              const int a_lays,
-                                              const xms::Pt3d& a_origin);
+                                                const int a_cols,
+                                                const int a_lays);
+BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows,
+                                                const int a_cols,
+                                                const int a_lays,
+                                                const xms::Pt3d& a_origin);
 BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
                                                 const int a_cols,
                                                 const int a_lays);
