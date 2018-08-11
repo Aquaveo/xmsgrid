@@ -7,11 +7,11 @@
 
 var indexSectionsWithContent =
 {
-  0: "23cdgimnpstuvx~",
+  0: "23cdmnptuvx~",
   1: "tx",
   2: "px",
   3: "ux",
-  4: "cdginstuvx~",
+  4: "cdntvx~",
   5: "m",
   6: "x",
   7: "23u"

@@ -178,7 +178,7 @@ Example - Defining Ugrid Cells</h2>
 <div class="line">                            (<span class="keywordtype">int</span>)XMU_PYRAMID, 5, 5, 6, 11, 10, 20};</div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New_With_Data_3d"></a>
 Example - Creating a New 3D UGrid With Data</h2>
-<p>This example shows how to create a new 3D UGrid with the overloaded New function which directly sets the data as it constructs the grid, using the static function <a class="el" href="classxms_1_1_xm_u_grid.html#ad95e11b54ca04baa73571cc4f939a27d" title="Create a new XmUGrid. ">xms::XmUGrid::New(const VecPt3d&amp; a_points, const VecInt&amp; a_cellStream)</a>. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af" title="[snip_test_UGrid_Streams] ">XmUGridUnitTests::testGetSetPoint</a>.</p>
+<p>This example shows how to create a new 3D UGrid with the overloaded New function which directly sets the data as it constructs the grid, using the static function <a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502" title="Create a new XmUGrid. ">xms::XmUGrid::New(const VecPt3d&amp; a_points, const VecInt&amp; a_cellStream)</a>. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af" title="[snip_test_UGrid_Streams] ">XmUGridUnitTests::testGetSetPoint</a>.</p>
 <div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
 <div class="line">                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};</div>
 <div class="line"></div>
@@ -188,13 +188,13 @@ Example - Creating a New 3D UGrid With Data</h2>
 <div class="line">  BSHP&lt;XmUGrid&gt; ugrid = XmUGrid::New(points, cellStream);</div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New3d"></a>
 Example - Creating a New 3D UGrid</h2>
-<p>This example shows how to create a new 3D UGrid. XmUGrid is an abstract class that cannot be instantiated. The static function <a class="el" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798" title="Create a new XmUGrid. ">xms::XmUGrid::New()</a> is the only method to obtain a Boost Shared Pointer to an instance of XmUGrid. Points and Cellstream may be passed to New to initialize the UGrid with data but this is not required. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa" title="Test XmUGrid point and cell streams. ">XmUGridUnitTests::testUGridStreams</a>.</p>
+<p>This example shows how to create a new 3D UGrid. <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a> is an abstract class that cannot be instantiated. The static function <a class="el" href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe" title="Create a new XmUGrid. ">xms::XmUGrid::New()</a> is the only method to obtain a Boost Shared Pointer to an instance of <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a>. Points and Cellstream may be passed to New to initialize the UGrid with data but this is not required. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa" title="Test XmUGrid point and cell streams. ">XmUGridUnitTests::testUGridStreams</a>.</p>
 <h2><a class="anchor" id="Example_SetPoints3d"></a>
 Example - Setting the UGrid Points</h2>
-<p>This example shows how to set all of the UGrid points using <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a3dd17d1fd619346f4d0e90a34ae94cf9" title="Set UGrid points. ">xms::XmUGridImpl::SetPoints</a>. The Ugrid points cannot be added or removed individually, though they can be edited individually. The SetPoints function takes one argument, a vector of 3D points. It is reccomended that each point is unique to avoid unexpected behavior. Functionality is shared between 2d and 3d UGrids. The testing code for this example is the same as used for creating a new UGrid, <a class="el" href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa" title="Test XmUGrid point and cell streams. ">XmUGridUnitTests::testUGridStreams</a>.</p>
+<p>This example shows how to set all of the UGrid points using xms::XmUGridImpl::SetPoints. The Ugrid points cannot be added or removed individually, though they can be edited individually. The SetPoints function takes one argument, a vector of 3D points. It is reccomended that each point is unique to avoid unexpected behavior. Functionality is shared between 2d and 3d UGrids. The testing code for this example is the same as used for creating a new UGrid, <a class="el" href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa" title="Test XmUGrid point and cell streams. ">XmUGridUnitTests::testUGridStreams</a>.</p>
 <h2><a class="anchor" id="Example_SetCellStream3d"></a>
 Example - Setting the UGrid Cell Stream</h2>
-<p>This example shows how to set the entire UGrid Cellstream using <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a207213ebc3c71b3b616d153985e10a29" title="[snip_test_SetCellStream] ">xms::XmUGridImpl::SetCellStream</a>. Cellstreams are formatted as a stream of integers starting with the cell type as described by the enumeration XmUGridCellType, then the number of points in the cell, followed by a series of indices to points. The SetCellStream function takes one argument, a vector of integers formatted as previously described. Functionality is shared between 2d and 3d UGrids. The testing code for this example is the same as used for creating a new UGrid, <a class="el" href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa" title="Test XmUGrid point and cell streams. ">XmUGridUnitTests::testUGridStreams</a>.</p>
+<p>This example shows how to set the entire UGrid Cellstream using xms::XmUGridImpl::SetCellStream. Cellstreams are formatted as a stream of integers starting with the cell type as described by the enumeration XmUGridCellType, then the number of points in the cell, followed by a series of indices to points. The SetCellStream function takes one argument, a vector of integers formatted as previously described. Functionality is shared between 2d and 3d UGrids. The testing code for this example is the same as used for creating a new UGrid, <a class="el" href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa" title="Test XmUGrid point and cell streams. ">XmUGridUnitTests::testUGridStreams</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa">XmUGridUnitTests::testUGridStreams</a>()</div>
@@ -247,14 +247,14 @@ Example - Setting the UGrid Cell Stream</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testUGridStreams</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_ValidatingCellStream3d"></a>
 Example - Validating the Cellstream</h2>
-<p>This example shows how to validate whether a given Cellstream is valid as previously defined. The <a class="el" href="classxms_1_1_xm_u_grid.html#addf4c365d29c55d7624100b35c7bf223" title="Check a cell stream to make sure it&#39;s valid. Compares cell type against expected number of points...">xms::XmUGridImpl::ValidCellStream</a> checks whether all cell types and point counts within the cellstream match up, but does not check for orientation or valid point positions. This function should not be relied on to catch all errors, but can be a basic check before setting the cellstream. The function takes one arguement, a cellstream containing one or more cells. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::SetCellStream.</p>
+<p>This example shows how to validate whether a given Cellstream is valid as previously defined. The xms::XmUGridImpl::ValidCellStream checks whether all cell types and point counts within the cellstream match up, but does not check for orientation or valid point positions. This function should not be relied on to catch all errors, but can be a basic check before setting the cellstream. The function takes one arguement, a cellstream containing one or more cells. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::SetCellStream.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">bool</span> XmUGridImpl::SetCellStream(<span class="keyword">const</span> VecInt&amp; a_cellStream)</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (ValidCellStream(a_cellStream))</div>
 <div class="line">  {</div>
-<div class="line">    m_cellStream = a_cellStream;</div>
+<div class="line">    <a class="code" href="_xm_u_grid_8cpp.html#ab2822cb721f3eb9978217e5073796621">m_cellStream</a> = a_cellStream;</div>
 <div class="line">    UpdateLinks();</div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line">  }</div>
@@ -266,28 +266,28 @@ Example - Validating the Cellstream</h2>
 <div class="line">} <span class="comment">// XmUGridImpl::SetCellStream</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetNumberOfPoints3d"></a>
 Example - Get Number Of Points</h2>
-<p>This example shows how to return the number of points contained in a UGrid. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a7d11b54530e3925943587e1f4480355b" title="Get the number of points. ">xms::XmUGridImpl::GetNumberOfPoints</a> function returns the number of points in the UGrid. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to return the number of points contained in a UGrid. The xms::XmUGridImpl::GetNumberOfPoints function returns the number of points in the UGrid. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <h2><a class="anchor" id="Example_GetPoints3d"></a>
 Example - Get Points</h2>
-<p>This example shows how to get all points contained within the XmUGrid. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a033f6aaa6e64b716bfa334148198630c" title="Get vector of UGrid points. ">xms::XmUGridImpl::GetPoints</a> function returns a vector of Pt3d's. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to get all points contained within the <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a>. The xms::XmUGridImpl::GetPoints function returns a vector of Pt3d's. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <h2><a class="anchor" id="Example_GetPoint3d"></a>
 Example - Get Point</h2>
-<p>This example shows how to get a specific point given a point index. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ac3354503ac19b717b8619391b0a3eb01" title="Get the point. ">xms::XmUGridImpl::GetPoint</a> function returns the Pt3d of the point at the specified index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to get a specific point given a point index. The xms::XmUGridImpl::GetPoint function returns the Pt3d of the point at the specified index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <h2><a class="anchor" id="Example_SetPoint3d"></a>
 Example - Set Point</h2>
-<p>This example shows how to set a specific point given a point index. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#aeb29c91957f552beae6f922d963070b6" title="Set the point. ">xms::XmUGridImpl::SetPoint</a> function takes a point index and a Pt3d as arguements and returns whether the operation was succesful. The function may fail and return false if the change would cause any edges to cross. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to set a specific point given a point index. The xms::XmUGridImpl::SetPoint function takes a point index and a Pt3d as arguements and returns whether the operation was succesful. The function may fail and return false if the change would cause any edges to cross. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <h2><a class="anchor" id="Example_GetPointsFromPointIdxs3d"></a>
 Example - Get Points from Point Indices</h2>
-<p>This example shows how to convert a vector of point indices into a vector of Pt3d's. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5033536262ea9abed24cca4da985aa60" title="Convert a vector of point indices into a vector of point 3d. ">xms::XmUGridImpl::GetPointsFromPointIdxs</a> function takes a vector of Point Indices as an arguement and returns a vector of corresponding Pt3d's as a result. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to convert a vector of point indices into a vector of Pt3d's. The xms::XmUGridImpl::GetPointsFromPointIdxs function takes a vector of Point Indices as an arguement and returns a vector of corresponding Pt3d's as a result. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <h2><a class="anchor" id="Example_GetExtents3d"></a>
 Example - Get Extents of UGrid</h2>
-<p>This example shows how to get the extents of a UGrid. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a110228f473bdce917fdae9edfd3ea970" title="Get extents of all points in UGrid. ">xms::XmUGridImpl::GetExtents</a> function takes two 3D points as arguements describing the minimum and maximum extent that the points of the UGrid cover. These arguments will be set by the funtion. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to get the extents of a UGrid. The xms::XmUGridImpl::GetExtents function takes two 3D points as arguements describing the minimum and maximum extent that the points of the UGrid cover. These arguments will be set by the funtion. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <h2><a class="anchor" id="Example_GetPointCells3d"></a>
 Example - Get Cells Associated with a Point</h2>
-<p>This example shows how to the cells associated with a single point. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5914a901abb898e83ec0dbb5e466ef2d" title="Get the cells that are associated with the specified point. ">xms::XmUGridImpl::GetPointCells</a> function takes one point index as an arguement and returns a vector of point indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to the cells associated with a single point. The xms::XmUGridImpl::GetPointCells function takes one point index as an arguement and returns a vector of point indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <h2><a class="anchor" id="Example_GetCommonCells3d"></a>
 Example - Get the Cells that Share the Same Point or Points</h2>
-<p>This example shows how to the cells that share the same point or points. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5a1c0c6182486cdc3af32029df1997ea" title="Gets the common cells from a vector of points. ">xms::XmUGridImpl::GetCommonCells</a> function takes a vector of point indices as an arguement and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
+<p>This example shows how to the cells that share the same point or points. The xms::XmUGridImpl::GetCommonCells function takes a vector of point indices as an arguement and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestPointFunctions.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ae950f2efb2ef0e1d655bf12ed1803f83">XmUGridUnitTests::testPointFunctions</a>()</div>
@@ -347,16 +347,16 @@ Example - Get the Cells that Share the Same Point or Points</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testPointFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetPointsOfCell3d"></a>
 Example - Get the Points of a Cell</h2>
-<p>This example shows how to get the points of a cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a33e622b0d2bae98669f462ad43518235" title="Get the points of a cell (including polyhedron) ">xms::XmUGridImpl::GetPointsOfCell</a> function takes one cell index and returns a vector of point indices. There is also an overloaded function that will take the vector of point indices as an argument passed by reference which returns whether the operation was successful. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
+<p>This example shows how to get the points of a cell. The xms::XmUGridImpl::GetPointsOfCell function takes one cell index and returns a vector of point indices. There is also an overloaded function that will take the vector of point indices as an argument passed by reference which returns whether the operation was successful. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
 <h2><a class="anchor" id="Example_GetCellType3d"></a>
 Example - Get the Type of a Cell</h2>
-<p>This example shows how to get the type of a cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a36d0b59da6296f1e990583cad17c86f5" title="Get the number of cells. ">xms::XmUGridImpl::GetCellType</a> function takes one cell index and returns the cell type. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
+<p>This example shows how to get the type of a cell. The xms::XmUGridImpl::GetCellType function takes one cell index and returns the cell type. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
 <h2><a class="anchor" id="Example_GetDimensionCount3d"></a>
 Example - Get the Count of the Dimensions of Cells used in a UGrid</h2>
-<p>This example shows how to get the count of the dimensions of cells used in a UGrid. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a3a1f3e0d8166e40b1f23cfe20827c2b0" title="Count all number of the cells with each dimenion (0, 1, 2, 3) ">xms::XmUGridImpl::GetDimensionCount</a> function returns a vector with the number of cells with zero dimensions in the zero index, number of cells with one dimension in the first index, number of cells with two dimensions in the second index, and the number of cells with three dimensions in the third index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
+<p>This example shows how to get the count of the dimensions of cells used in a UGrid. The xms::XmUGridImpl::GetDimensionCount function returns a vector with the number of cells with zero dimensions in the zero index, number of cells with one dimension in the first index, number of cells with two dimensions in the second index, and the number of cells with three dimensions in the third index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
 <h2><a class="anchor" id="Example_GetCellDimension3d"></a>
 Example - Get the Dimension of a Cell</h2>
-<p>This example shows how to get the dimension of a cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a672fe28101f211d9291001e0ce6a5318" title="Get the dimension of the specified cell. ">xms::XmUGridImpl::GetCellDimension</a> function takes one cell index and returns the cell dimension as an integer value. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
+<p>This example shows how to get the dimension of a cell. The xms::XmUGridImpl::GetCellDimension function takes one cell index and returns the cell dimension as an integer value. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::TestCellFunctions.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#aa04937d86269192d53cf353366f6fdd5">XmUGridUnitTests::testCellFunctions</a>()</div>
@@ -389,10 +389,10 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testCellFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetCellStream3d"></a>
 Example - Get the Cellstream of the UGrid</h2>
-<p>This example shows how to get the entire cellstream of the UGrid. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a01973db2557667f57acd11fc1c5af393" title="Get cell stream vector for the entire UGrid. ">xms::XmUGridImpl::GetCellStream</a> function returns a vector of integers that is the cell stream. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#a161f884b0ca131ac8c9a689a0413b1e5" title="Test various cell functions. ">XmUGridUnitTests::testGetCellStreamFunctions</a>.</p>
+<p>This example shows how to get the entire cellstream of the UGrid. The xms::XmUGridImpl::GetCellStream function returns a vector of integers that is the cell stream. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#a161f884b0ca131ac8c9a689a0413b1e5" title="Test various cell functions. ">XmUGridUnitTests::testGetCellStreamFunctions</a>.</p>
 <h2><a class="anchor" id="Example_GetSingleCellStream3d"></a>
 Example - Get a Single Cellstream for One Cell</h2>
-<p>This example shows how to get a single cellstream for one cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a0e5b02d9ed300c32ca8ca9fab9e2538f" title="[snip_test_SetCellStream] ">xms::XmUGridImpl::GetSingleCellStream</a> function takes a cell index and a vector of integers that is the cell stream for the specified cell passed in by reference. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#a161f884b0ca131ac8c9a689a0413b1e5" title="Test various cell functions. ">XmUGridUnitTests::testGetCellStreamFunctions</a>.</p>
+<p>This example shows how to get a single cellstream for one cell. The xms::XmUGridImpl::GetSingleCellStream function takes a cell index and a vector of integers that is the cell stream for the specified cell passed in by reference. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#a161f884b0ca131ac8c9a689a0413b1e5" title="Test various cell functions. ">XmUGridUnitTests::testGetCellStreamFunctions</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a161f884b0ca131ac8c9a689a0413b1e5">XmUGridUnitTests::testGetCellStreamFunctions</a>()</div>
@@ -418,7 +418,7 @@ Example - Get a Single Cellstream for One Cell</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetCellStreamFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetCellNeighbors3d"></a>
 Example - Get the Cells that Neighbor a Given Cell</h2>
-<p>This example shows how to get the cells that neighbor a given cell. Cells are neighbors if they share at least one point. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a1d3d657289605c92c9060aa4caf82788" title="Get the cells neighboring a cell (cells associated with any of it&#39;s points) ">xms::XmUGridImpl::GetCellNeighbors</a> function takes a cell index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a10b3052cdef189ebcc6e28576a76dcfe" title="[snip_test_GetCellNeighbors] ">XmUGridUnitTests::testGetCellNeighbors</a>.</p>
+<p>This example shows how to get the cells that neighbor a given cell. Cells are neighbors if they share at least one point. The xms::XmUGridImpl::GetCellNeighbors function takes a cell index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a10b3052cdef189ebcc6e28576a76dcfe" title="[snip_test_GetCellNeighbors] ">XmUGridUnitTests::testGetCellNeighbors</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a10b3052cdef189ebcc6e28576a76dcfe">XmUGridUnitTests::testGetCellNeighbors</a>()</div>
@@ -510,7 +510,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetCellNeighbors</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetPlanViewPolygon3d"></a>
 Example - Get a Plan View Polygon</h2>
-<p>This example shows how to get a plan view polygon. This function first assumes that the shape is prismatic (or that the sides of the shape are vertical) and it gathers the points of the vertical sides. If this method fails, it builds a convex hull of the unique points of the shape. If the second method is employed, concave shapes will result in a convex polygon. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ac697de12080085c4390901b6886f3c34" title="Get a plan view polygon of a specified cell. ">xms::XmUGridImpl::GetPlanViewPolygon</a> function takes a cell index and a vector of Pt3d which is the points of the plan view polygon and returns whether the operation was succesful. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144" title="Test getting the plan view of a polygon. ">XmUGridUnitTests::testGetPlanViewPolygon</a>.</p>
+<p>This example shows how to get a plan view polygon. This function first assumes that the shape is prismatic (or that the sides of the shape are vertical) and it gathers the points of the vertical sides. If this method fails, it builds a convex hull of the unique points of the shape. If the second method is employed, concave shapes will result in a convex polygon. The xms::XmUGridImpl::GetPlanViewPolygon function takes a cell index and a vector of Pt3d which is the points of the plan view polygon and returns whether the operation was succesful. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144" title="Test getting the plan view of a polygon. ">XmUGridUnitTests::testGetPlanViewPolygon</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144">XmUGridUnitTests::testGetPlanViewPolygon</a>()</div>
@@ -578,32 +578,11 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetPlanViewPolygon</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetNumberOfCellEdges3d"></a>
 Example - Get Number of Cell Edges</h2>
-<p>This example shows how to get the number of cell edges in a cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5a61c779956a8fe779165f424e5f207f" title="Get the number of edges with specified cell. ">xms::XmUGridImpl::GetNumberOfCellEdges</a> function takes a cell index and returns the number of edges as an int. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ae97216226f2f4d5d684f86b0608d97c0" title="Test iterating through the edges of cells. ">XmUGridUnitTests::testGetCellEdgeFromEdgeIndex</a></p>
+<p>This example shows how to get the number of cell edges in a cell. The xms::XmUGridImpl::GetNumberOfCellEdges function takes a cell index and returns the number of edges as an int. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ae97216226f2f4d5d684f86b0608d97c0" title="Test iterating through the edges of cells. ">XmUGridUnitTests::testGetCellEdgeFromEdgeIndex</a></p>
 <h2><a class="anchor" id="Example_GetCellEdgeFromEdgeIndex3d"></a>
 Example - Get Cell Edge from Edge Index</h2>
-<p>This example shows how to get the cell edge from a given cell and edge index. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#af384b14abc004867fd83c648a409ba42" title="Get the points of a cell. ">xms::XmUGridImpl::GetCellEdgeFromEdgeIndex</a> function takes a cell index and an edge index and returns a pair of ints containing the point indices of the edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#ae97216226f2f4d5d684f86b0608d97c0" title="Test iterating through the edges of cells. ">XmUGridUnitTests::testGetCellEdgeFromEdgeIndex</a></p>
+<p>This example shows how to get the cell edge from a given cell and edge index. The xms::XmUGridImpl::GetCellEdgeFromEdgeIndex function takes a cell index and an edge index and returns a pair of ints containing the point indices of the edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#ae97216226f2f4d5d684f86b0608d97c0" title="Test iterating through the edges of cells. ">XmUGridUnitTests::testGetCellEdgeFromEdgeIndex</a></p>
 <div class="fragment"><div class="line">  {</div>
-<div class="line">    std::pair&lt;int, int&gt; edge0(0, 1),                                      <span class="comment">// XMU_TETRA</span></div>
-<div class="line">      edge1(1, 5), edge2(0, 5), edge3(0, 15), edge4(1, 15), edge5(5, 15), <span class="comment">// End of XMU_TETRA</span></div>
-<div class="line">      edge6(1, 2),                                                        <span class="comment">// XMU_VOXEL</span></div>
-<div class="line">      edge7(2, 7), edge8(6, 7), edge9(1, 6), edge10(16, 17), edge11(17, 22), edge12(21, 22),</div>
-<div class="line">      edge13(16, 21), edge14(1, 16), edge15(2, 17), edge16(7, 22),</div>
-<div class="line">      edge17(6, 21), <span class="comment">// End of XMU_VOXEL</span></div>
-<div class="line">      edge18(2, 3),  <span class="comment">// XMU_HEXAHEDRON</span></div>
-<div class="line">      edge19(3, 8), edge20(7, 8), edge21(2, 7), edge22(17, 18), edge23(18, 23), edge24(22, 23),</div>
-<div class="line">      edge25(17, 22), edge26(2, 17), edge27(3, 18), edge28(8, 23),</div>
-<div class="line">      edge29(7, 22), <span class="comment">// End of XMU_HEXAHEDRON</span></div>
-<div class="line">      edge30(8, 9),  <span class="comment">// XMU_POLYHEDRON</span></div>
-<div class="line">      edge31(8, 13), edge32(8, 23), edge33(9, 14), edge34(9, 24), edge35(13, 14), edge36(13, 28),</div>
-<div class="line">      edge37(14, 29), edge38(23, 24), edge39(23, 28), edge40(24, 29),</div>
-<div class="line">      edge41(28, 29), <span class="comment">// End of XMU_POLYHEDRON</span></div>
-<div class="line">      edge42(3, 4),   <span class="comment">// XMU_WEDGE</span></div>
-<div class="line">      edge43(4, 18), edge44(3, 18), edge45(8, 9), edge46(9, 23), edge47(8, 23), edge48(3, 8),</div>
-<div class="line">      edge49(4, 9), edge50(18, 23), <span class="comment">// End of XMU_WEDGE</span></div>
-<div class="line">      edge51(5, 6),                 <span class="comment">// XMU_PYRAMID</span></div>
-<div class="line">      edge52(6, 11), edge53(10, 11), edge54(5, 10), edge55(5, 20), edge56(6, 20), edge57(11, 20),</div>
-<div class="line">      edge58(10, 20); <span class="comment">// End of XMU_PYRAMID</span></div>
-<div class="line"></div>
 <div class="line">    <span class="comment">// 3D Shapes</span></div>
 <div class="line">    BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="namespacexms.html#af931fa91f04abddf2d9469ef64ecfa70">TEST_XmUGrid3dLinear</a>();</div>
 <div class="line">    <span class="keywordflow">if</span> (!ugrid3d)</div>
@@ -612,16 +591,17 @@ Example - Get Cell Edge from Edge Index</h2>
 <div class="line">      <span class="keywordflow">return</span>;</div>
 <div class="line">    }</div>
 <div class="line"></div>
-<div class="line">    std::vector&lt;std::vector&lt;std::pair&lt;int, int&gt;&gt;&gt; expectedCellsCellEdges;</div>
-<div class="line">    expectedCellsCellEdges = {</div>
-<div class="line">      {edge0, edge1, edge2, edge3, edge4, edge5},</div>
-<div class="line">      {edge6, edge7, edge8, edge9, edge10, edge11, edge12, edge13, edge14, edge15, edge16, edge17},</div>
-<div class="line">      {edge18, edge19, edge20, edge21, edge22, edge23, edge24, edge25, edge26, edge27, edge28,</div>
-<div class="line">       edge29},</div>
-<div class="line">      {edge30, edge31, edge32, edge33, edge34, edge35, edge36, edge37, edge38, edge39, edge40,</div>
-<div class="line">       edge41},</div>
-<div class="line">      {edge42, edge43, edge44, edge45, edge46, edge47, edge48, edge49, edge50},</div>
-<div class="line">      {edge51, edge52, edge53, edge54, edge55, edge56, edge57, edge58}};</div>
+<div class="line">    <span class="comment">// clang-format off</span></div>
+<div class="line">    std::vector&lt;std::vector&lt;std::pair&lt;int, int&gt;&gt;&gt; expectedCellsCellEdges =</div>
+<div class="line">    {</div>
+<div class="line">      {{0, 1}, {1, 5}, {5, 0}, {0, 15}, {1, 15}, {5, 15}}, <span class="comment">// XMU_TETRA</span></div>
+<div class="line">      {{1, 2}, {2, 7}, {7, 6}, {6, 1}, {16, 17}, {17, 22}, {22, 21}, {21, 16}, {1, 16}, {2, 17}, {7, 22}, {6, 21}}, <span class="comment">// XMU_VOXEL</span></div>
+<div class="line">      {{2, 3}, {3, 8}, {8, 7}, {7, 2}, {17, 18}, {18, 23}, {23, 22}, {22, 17}, {2, 17}, {3, 18}, {8, 23}, {7, 22}}, <span class="comment">// XMU_HEXAHEDRON</span></div>
+<div class="line">      {{8, 9}, {8, 13}, {8, 23}, {9, 14}, {9, 24}, {13, 14}, {13, 28}, {14, 29}, {23, 24}, {23, 28}, {24, 29}, {28, 29}}, <span class="comment">// XMU_POLYHEDRON</span></div>
+<div class="line">      {{3, 4}, {4, 18}, {18, 3}, {8, 9}, {9, 23}, {23, 8}, {3, 8}, {4, 9}, {18, 23}}, <span class="comment">// XMU_WEDGE</span></div>
+<div class="line">      {{5, 6}, {6, 11}, {11, 10}, {10, 5}, {5, 20}, {6, 20}, {11, 20}, {10, 20}} <span class="comment">// XMU_PYRAMID</span></div>
+<div class="line">    };</div>
+<div class="line">    <span class="comment">// clang-format on</span></div>
 <div class="line">    std::vector&lt;std::pair&lt;int, int&gt;&gt; cellEdges;</div>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid3d-&gt;GetNumberOfCells(); i++)</div>
 <div class="line">    {</div>
@@ -635,10 +615,10 @@ Example - Get Cell Edge from Edge Index</h2>
 <div class="line">  }</div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetAdjacentCells3d"></a>
 Example Get Adjacent Cells</h2>
-<p>This example shows how to get all cells which share the specified edge with a cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#aca7001e994cb008ff79ce51ab6dade80" title="Get the index of the adjacent cells (that shares the same cell edge) ">xms::XmUGridImpl::GetAdjacentCells</a> function takes a cell index and an edge index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#aed54639cef412b0227d0726bce50ea08" title="Test all get adjacent cell functions. ">XmUGridUnitTests::testGetAdjacentCellFunctions</a></p>
+<p>This example shows how to get all cells which share the specified edge with a cell. The xms::XmUGridImpl::GetAdjacentCells function takes a cell index and an edge index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#aed54639cef412b0227d0726bce50ea08" title="Test all get adjacent cell functions. ">XmUGridUnitTests::testGetAdjacentCellFunctions</a></p>
 <h2><a class="anchor" id="Example_GetAdjacentCellsFromAGivenEdge3d"></a>
 Example Get Adjacent Cells from Given Edge</h2>
-<p>This example shows how to get all cells which contain a given edge. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ac371852cdb7b830b52f29a8e9b63895d" title="Get the indices of the adjacent cells (that shares the same cell edge) ">xms::XmUGridImpl::GetAdjacentCellsFromGivenEdge</a> function takes two point indices describing an edge and returns a vector of cell indices. There is also an overload which takes a pair of point indices describing an edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#aed54639cef412b0227d0726bce50ea08" title="Test all get adjacent cell functions. ">XmUGridUnitTests::testGetAdjacentCellFunctions</a></p>
+<p>This example shows how to get all cells which contain a given edge. The xms::XmUGridImpl::GetAdjacentCellsFromGivenEdge function takes two point indices describing an edge and returns a vector of cell indices. There is also an overload which takes a pair of point indices describing an edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#aed54639cef412b0227d0726bce50ea08" title="Test all get adjacent cell functions. ">XmUGridUnitTests::testGetAdjacentCellFunctions</a></p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#aed54639cef412b0227d0726bce50ea08">XmUGridUnitTests::testGetAdjacentCellFunctions</a>()</div>
@@ -683,7 +663,7 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetAdjacentCellFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetEdgesFromPoint3d"></a>
 Example Get Edges Associated with a Point</h2>
-<p>This example shows how to get edges associated with a point. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5661f008bb6e01543cc80b8279f5be0b" title="Get the Edges associated with a point. ">xms::XmUGridImpl::GetEdgesFromPoint</a> function takes a point index, a vector of cell indices, and a vector of edge indices. The cell and edge indices will be set by the function. It will return whether it was successful. There are two overloads, the first takes a point index, a vector of cell indices, and a vector of edges defined as a pair of integers which are point indices. The second overload takes a point index, a vector of cell indices, and two vectors of edge point indexes. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ab6185927ee58d0fb24bc6ec8d20f36d5" title="Test retrieving Cell Face Neighbor. ">XmUGridUnitTests::testGetEdgesFromPoint</a></p>
+<p>This example shows how to get edges associated with a point. The xms::XmUGridImpl::GetEdgesFromPoint function takes a point index, a vector of cell indices, and a vector of edge indices. The cell and edge indices will be set by the function. It will return whether it was successful. There are two overloads, the first takes a point index, a vector of cell indices, and a vector of edges defined as a pair of integers which are point indices. The second overload takes a point index, a vector of cell indices, and two vectors of edge point indexes. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ab6185927ee58d0fb24bc6ec8d20f36d5" title="Test retrieving Cell Face Neighbor. ">XmUGridUnitTests::testGetEdgesFromPoint</a></p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ab6185927ee58d0fb24bc6ec8d20f36d5">XmUGridUnitTests::testGetEdgesFromPoint</a>()</div>
@@ -707,21 +687,21 @@ Example Get Edges Associated with a Point</h2>
 <div class="line">    {0, 3},       {2, 3, 0, 3}, {2, 3},       {0, 1, 0, 3}, {1, 2, 0, 1, 2, 3, 0, 3},</div>
 <div class="line">    {1, 2, 2, 3}, {0, 1},       {1, 2, 0, 1}, {1, 2}};</div>
 <div class="line">  std::vector&lt;std::vector&lt;std::pair&lt;int, int&gt;&gt;&gt; expectedEdges{</div>
-<div class="line">    {{0, 3}, {0, 1}},</div>
-<div class="line">    {{1, 4}, {0, 1}, {1, 4}, {1, 2}},</div>
-<div class="line">    {{2, 5}, {1, 2}},</div>
-<div class="line">    {{0, 3}, {3, 4}, {3, 6}, {3, 4}},</div>
-<div class="line">    {{3, 4}, {1, 4}, {1, 4}, {4, 5}, {4, 7}, {3, 4}, {4, 7}, {4, 5}},</div>
-<div class="line">    {{4, 5}, {2, 5}, {5, 8}, {4, 5}},</div>
+<div class="line">    {{0, 3}, {1, 0}},</div>
+<div class="line">    {{4, 1}, {1, 0}, {1, 4}, {2, 1}},</div>
+<div class="line">    {{5, 2}, {2, 1}},</div>
+<div class="line">    {{0, 3}, {3, 4}, {3, 6}, {4, 3}},</div>
+<div class="line">    {{3, 4}, {4, 1}, {1, 4}, {4, 5}, {7, 4}, {4, 3}, {4, 7}, {5, 4}},</div>
+<div class="line">    {{4, 5}, {5, 2}, {8, 5}, {5, 4}},</div>
 <div class="line">    {{3, 6}, {6, 7}},</div>
-<div class="line">    {{6, 7}, {4, 7}, {4, 7}, {7, 8}},</div>
-<div class="line">    {{7, 8}, {5, 8}}};</div>
+<div class="line">    {{6, 7}, {7, 4}, {4, 7}, {7, 8}},</div>
+<div class="line">    {{7, 8}, {8, 5}}};</div>
 <div class="line">  VecInt2d expectedEdgePoints1{</div>
-<div class="line">    {0, 0},       {1, 0, 1, 1}, {2, 1},       {0, 3, 3, 3}, {3, 1, 1, 4, 4, 3, 4, 4},</div>
-<div class="line">    {4, 2, 5, 4}, {3, 6},       {6, 4, 4, 7}, {7, 5}};</div>
+<div class="line">    {0, 1},       {4, 1, 1, 2}, {5, 2},       {0, 3, 3, 4}, {3, 4, 1, 4, 7, 4, 4, 5},</div>
+<div class="line">    {4, 5, 8, 5}, {3, 6},       {6, 7, 4, 7}, {7, 8}};</div>
 <div class="line">  VecInt2d expectedEdgePoints2{</div>
-<div class="line">    {3, 1},       {4, 1, 4, 2}, {5, 2},       {3, 4, 6, 4}, {4, 4, 4, 5, 7, 4, 7, 5},</div>
-<div class="line">    {5, 5, 8, 5}, {6, 7},       {7, 7, 7, 8}, {8, 8}};</div>
+<div class="line">    {3, 0},       {1, 0, 4, 1}, {2, 1},       {3, 4, 6, 3}, {4, 1, 4, 5, 4, 3, 7, 4},</div>
+<div class="line">    {5, 2, 5, 4}, {6, 7},       {7, 4, 7, 8}, {8, 5}};</div>
 <div class="line"></div>
 <div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges;</div>
 <div class="line">  VecInt cells;</div>
@@ -757,7 +737,7 @@ Example Get Edges Associated with a Point</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetEdgesFromPoint</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetEdgesOfCell3d"></a>
 Example Get Edges Associated with a Cell</h2>
-<p>This example shows how to get edges associated with a cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a8222666c6e8747a5f81f602ad87a7c44" title="Get the Edges of a cell. ">xms::XmUGridImpl::GetEdgesOfCell</a> function takes a cell index and returns a vector of pairs of integers which are point indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ab6185927ee58d0fb24bc6ec8d20f36d5" title="Test retrieving Cell Face Neighbor. ">XmUGridUnitTests::testGetEdgesFromPoint</a></p>
+<p>This example shows how to get edges associated with a cell. The xms::XmUGridImpl::GetEdgesOfCell function takes a cell index and returns a vector of pairs of integers which are point indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ab6185927ee58d0fb24bc6ec8d20f36d5" title="Test retrieving Cell Face Neighbor. ">XmUGridUnitTests::testGetEdgesFromPoint</a></p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030">XmUGridUnitTests::testGetEdgesOfCell</a>()</div>
@@ -771,13 +751,13 @@ Example Get Edges Associated with a Cell</h2>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetEdgesOfCell</span></div>
 <div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = ugrid-&gt;GetEdgesOfCell(0);</div>
-<div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; expectededges = {{0, 3}, {3, 4}, {1, 4}, {0, 1}};</div>
+<div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; expectededges = {{0, 3}, {3, 4}, {4, 1}, {1, 0}};</div>
 <div class="line">  TS_ASSERT_EQUALS(expectededges, edges);</div>
 <div class="line"></div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetEdgesOfCell</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetNumberOfFacesForCell"></a>
 Example Get Number of Faces for a Cell</h2>
-<p>This example shows how to get the number of faces that a cell has. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a43ecb6e3a520df054be4b4f9dfdaeac4" title="Get the number of cell faces for given cell. ">xms::XmUGridImpl::GetNumberOfCellFaces</a> function takes a cell index and returns the number of cell faces associated with it as an integer. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ac283bd38692be27a8563e21442ce5a7f" title="Test getting edges of single cells. ">XmUGridUnitTests::testGetNumberOfCellEdges</a></p>
+<p>This example shows how to get the number of faces that a cell has. The xms::XmUGridImpl::GetNumberOfCellFaces function takes a cell index and returns the number of cell faces associated with it as an integer. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ac283bd38692be27a8563e21442ce5a7f" title="Test getting edges of single cells. ">XmUGridUnitTests::testGetNumberOfCellEdges</a></p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a0b7654d480a614b3c72111a747fbe81a">XmUGridUnitTests::testGetNumberOfCellFaces</a>()</div>
@@ -816,10 +796,10 @@ Example Get Number of Faces for a Cell</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetNumberOfCellFaces</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetCellFace"></a>
 Example Get Cell Face</h2>
-<p>This example shows how to get a cell face. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a2559e30a768709cf32b41bc8eb315d48" title="Get the cell face for given cell and face index. ">xms::XmUGridImpl::GetCellFace</a> function takes a cell index and a face index and returns a vector of point indices which define the face in counter-clockwise direction. The testing code for this example is shared with another example, <a class="el" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879" title="Test various get face functions. ">XmUGridUnitTests::testGetFaces</a>.</p>
+<p>This example shows how to get a cell face. The xms::XmUGridImpl::GetCellFace function takes a cell index and a face index and returns a vector of point indices which define the face in counter-clockwise direction. The testing code for this example is shared with another example, <a class="el" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879" title="Test various get face functions. ">XmUGridUnitTests::testGetFaces</a>.</p>
 <h2><a class="anchor" id="Example_GetFacesOfCell"></a>
 Example Get Faces of Cell</h2>
-<p>This example shows how to get all the faces of a cell. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a6a6bbe57df7df77b3be92ceaa4aa998a" title="Get the faces of a cell. ">xms::XmUGridImpl::GetFacesOfCell</a> function takes a cell index and returns a two dimensional vector of point indices which define the faces in counter-clockwise direction. The testing code for this example is shared with another example, <a class="el" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879" title="Test various get face functions. ">XmUGridUnitTests::testGetFaces</a>.</p>
+<p>This example shows how to get all the faces of a cell. The xms::XmUGridImpl::GetFacesOfCell function takes a cell index and returns a two dimensional vector of point indices which define the faces in counter-clockwise direction. The testing code for this example is shared with another example, <a class="el" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879" title="Test various get face functions. ">XmUGridUnitTests::testGetFaces</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ac8fa905af3b1c7f8c37e45a407a9d879">XmUGridUnitTests::testGetFaces</a>()</div>
@@ -895,7 +875,7 @@ Example Get Faces of Cell</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetFaces</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetFacesFromPoint"></a>
 Example GetFacesFromPoint</h2>
-<p>This example shows how to get all the faces associated with a point. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a9b9df42409864a7a30b099a2b18f8100" title="Get the cell face associated with a point. ">xms::XmUGridImpl::GetFacesFromPoint</a> function takes in a point index and a vector of integers which it will set with the cell indices and a vector of integers which it will set with the face indices. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a3bfd0a5f476433f5cf129ea8809b213b" title="Test retrieving Cell Faces From Point. ">XmUGridUnitTests::testGetFacesFromPoint</a></p>
+<p>This example shows how to get all the faces associated with a point. The xms::XmUGridImpl::GetFacesFromPoint function takes in a point index and a vector of integers which it will set with the cell indices and a vector of integers which it will set with the face indices. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a3bfd0a5f476433f5cf129ea8809b213b" title="Test retrieving Cell Faces From Point. ">XmUGridUnitTests::testGetFacesFromPoint</a></p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a3bfd0a5f476433f5cf129ea8809b213b">XmUGridUnitTests::testGetFacesFromPoint</a>()</div>
@@ -936,7 +916,7 @@ Example GetFacesFromPoint</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetFacesFromPoint</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetCellFaceNeighbor"></a>
 Example Get Cell Face Neighbor</h2>
-<p>This example shows how to get the cell, if any, which shares a face with a specified cell and face. The <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a3fb19dcb7956ef6be59d8945e9dab2fc" title="Get the cell face neighbors for given cell and face index. ">xms::XmUGridImpl::GetCellFaceNeighbor</a> function takes a cell index and a face index and return the cell index of the cell which shares the face, or negative 1 if there are none. There is an overload which takes a cell index, a face index, an integer which it will set to be the cell index if any of the neighboring cell, and an integer which it will set to be the face of the neighboring cell which it shares with the specified cell if any, and returns true if there is a cell with a shared face. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ab7b72fe22de02cf826a13b56cf0b5c1f" title="[snip_test_GetCellFaceNeighbor] ">XmUGridUnitTests::testGetCellFaceNeighbor</a>.</p>
+<p>This example shows how to get the cell, if any, which shares a face with a specified cell and face. The xms::XmUGridImpl::GetCellFaceNeighbor function takes a cell index and a face index and return the cell index of the cell which shares the face, or negative 1 if there are none. There is an overload which takes a cell index, a face index, an integer which it will set to be the cell index if any of the neighboring cell, and an integer which it will set to be the face of the neighboring cell which it shares with the specified cell if any, and returns true if there is a cell with a shared face. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#ab7b72fe22de02cf826a13b56cf0b5c1f" title="[snip_test_GetCellFaceNeighbor] ">XmUGridUnitTests::testGetCellFaceNeighbor</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ab7b72fe22de02cf826a13b56cf0b5c1f">XmUGridUnitTests::testGetCellFaceNeighbor</a>()</div>
@@ -1043,7 +1023,7 @@ Example Get Cell Face Neighbor</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Aug 6 2018 21:25:10 for xmsgrid by
+    <li class="footer">Generated on Sat Aug 11 2018 03:24:32 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

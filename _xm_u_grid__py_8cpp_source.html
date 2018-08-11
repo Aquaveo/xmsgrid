@@ -128,12 +128,12 @@ $(document).ready(function(){initNavTree('_xm_u_grid__py_8cpp_source.html','');}
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    py::class_&lt;xms::XmUGrid, boost::shared_ptr&lt;xms::XmUGrid&gt;&gt; xmUg(m, <span class="stringliteral">&quot;XmUGrid&quot;</span>);</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    xmUg</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        .def(py::init([]() {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keywordflow">return</span> boost::shared_ptr&lt;xms::XmUGrid&gt;(<a class="code" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">xms::XmUGrid::New</a>());</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            <span class="keywordflow">return</span> boost::shared_ptr&lt;xms::XmUGrid&gt;(<a class="code" href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe">xms::XmUGrid::New</a>());</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        }))</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        .def(py::init([](py::iterable pts, py::iterable cell_stream) {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            boost::shared_ptr&lt;xms::VecPt3d&gt; points = xms::VecPt3dFromPyIter(pts);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            boost::shared_ptr&lt;xms::VecInt&gt; cellStream = xms::VecIntFromPyIter(cell_stream);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">return</span> boost::shared_ptr&lt;xms::XmUGrid&gt;(<a class="code" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">xms::XmUGrid::New</a>(*points, *cellStream));</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">return</span> boost::shared_ptr&lt;xms::XmUGrid&gt;(<a class="code" href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe">xms::XmUGrid::New</a>(*points, *cellStream));</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }))</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="comment">// Point Functions</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        .def(<span class="stringliteral">&quot;get_number_of_points&quot;</span>, &amp;xms::XmUGrid::GetNumberOfPoints)</div>
@@ -317,15 +317,15 @@ $(document).ready(function(){initNavTree('_xm_u_grid__py_8cpp_source.html','');}
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        .export_values();</div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;}</div>
 <div class="ttc" id="_xm_u_grid_8h_html"><div class="ttname"><a href="_xm_u_grid_8h.html">XmUGrid.h</a></div><div class="ttdoc">Contains the XmUGrid Class and supporting data types. </div></div>
-<div class="ttc" id="classxms_1_1_xm_u_grid_html_a51464b4cc71bddbb97e9e8a6ff7fb798"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">xms::XmUGrid::New</a></div><div class="ttdeci">static BSHP&lt; XmUGrid &gt; New()</div><div class="ttdoc">Create a new XmUGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02253">XmUGrid.cpp:2253</a></div></div>
-<div class="ttc" id="classxms_1_1_xm_u_grid_html"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a></div><div class="ttdoc">Implementation for XmUGrid which provides geometry for an unstructured grid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8h_source.html#l00118">XmUGrid.h:118</a></div></div>
+<div class="ttc" id="classxms_1_1_xm_u_grid_html_ab8144c1fe7cb0f3da5d13db63f6937fe"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe">xms::XmUGrid::New</a></div><div class="ttdeci">static BSHP&lt; XmUGrid &gt; New()</div><div class="ttdoc">Create a new XmUGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02264">XmUGrid.cpp:2264</a></div></div>
+<div class="ttc" id="classxms_1_1_xm_u_grid_html"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a></div><div class="ttdoc">Geometry for an unstructured grid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8h_source.html#l00118">XmUGrid.h:118</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_ed63beb1e79dd2a15db8cfd74099fc48.html">python</a></li><li class="navelem"><a class="el" href="dir_df63a72722e2a18a23dc615b97003480.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_u_grid__py_8cpp.html">XmUGrid_py.cpp</a></li>
-    <li class="footer">Generated on Mon Aug 6 2018 21:25:09 for xmsgrid by
+    <li class="footer">Generated on Sat Aug 11 2018 03:24:32 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
