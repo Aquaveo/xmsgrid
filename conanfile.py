@@ -38,11 +38,6 @@ class XmsgridConan(ConanFile):
         self.options['xmscore'].pybind = self.options.pybind
         self.options['xmscore'].testing = self.options.testing
 
-        if s_compiler != "Visual Studio" and s_compiler != "apple-clang":
-            self.options['boost'].fPIC = True
-        elif s_compiler == "apple-clang":
-            self.options['boost'].fPIC = False
-
         if s_compiler == "apple-clang" and s_os == 'Linux':
             raise ConanException("Clang on Linux is not supported.")
 
@@ -65,7 +60,7 @@ class XmsgridConan(ConanFile):
             self.requires("pybind11/2.2.2@aquaveo/stable")
 
         # Use the dev version of XMSCore
-        self.requires("xmscore/[>=1.0.35]@aquaveo/stable")
+        self.requires("xmscore/[>=1.0.36]@aquaveo/stable")
 
     def build(self):
         cmake = CMake(self)
