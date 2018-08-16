@@ -302,7 +302,7 @@ VecPt3d XmUGridImpl::GetPointsFromPointIdxs(const VecInt& a_points) const
     point3d.push_back(GetPoint(a_points[i]));
   }
   return point3d;
-} // XmUGridImpl::SetPoint
+} // XmUGridImpl::GetPointsFromPointIdxs
 //------------------------------------------------------------------------------
 /// \brief Get extents of all points in UGrid
 /// \param[out] a_min: minimum extent of all points
@@ -641,7 +641,7 @@ void XmUGridImpl::GetCellNeighbors(const int a_cellIdx, VecInt& a_cellNeighbors)
       }
     }
   }
-}
+} // XmUGridImpl::GetCellNeighbors
 //------------------------------------------------------------------------------
 /// \brief Get a plan view polygon of a specified cell
 /// \param[in] a_cellIdx: the index of the cell
@@ -1957,7 +1957,7 @@ int XmUGridImpl::GetNumberOfItemsForCell(const int a_cellIdx) const
     int startIndex = m_cellIdxToStreamIdx[a_cellIdx];
     return m_cellStream[startIndex + 1];
   }
-} // XmUGridImpl::GetNumberOfPointsForCell
+} // XmUGridImpl::GetNumberOfItemsForCell
 //------------------------------------------------------------------------------
 /// \brief Internal function to get start of cell stream for an individual cell.
 ///        Returns nullptr and zero length for invalid cell index.
@@ -2037,13 +2037,12 @@ void XmUGridImpl::GetUniquePointsFromPolyhedronCellStream(const VecInt& a_cellSt
       }
     }
   }
-} // XmUGridImpl::GetNumberOfPolyhedronEdges
+} // XmUGridImpl::GetUniquePointsFromPolyhedronCellStream
 //------------------------------------------------------------------------------
-/// \brief Get the unique points in a flat set
+/// \brief Get the unique points for cell stream of a single polyhedron cell.
 /// \param[in] a_cellStream: a single cell stream that is a polyhedron type
 /// \param[out] a_cellPoints: the points of the cell
-/// \return the unique points of the polyhedron.  If the data is invalid an
-///      empty set will be returned
+/// \return false if invalid stream
 //------------------------------------------------------------------------------
 bool XmUGridImpl::GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_cellStream,
                                                                 VecInt& a_cellPoints)
@@ -2053,22 +2052,30 @@ bool XmUGridImpl::GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_
   {
     return false;
   }
-  if (a_cellStream[0] != XMU_POLYHEDRON)
+
+  auto currItem = a_cellStream.begin();
+  int cellType = *currItem++;
+  if (cellType != XMU_POLYHEDRON)
   {
     return false;
   }
-  int currIdx(1);
-  int numCellItems = a_cellStream[currIdx++];
-  VecInt cellPoints;
-  VecInt mask(a_cellStream.size(), -1); // Larger than it needs to be
-  GetUniquePointsFromPolyhedronCellStream(a_cellStream, numCellItems, currIdx, cellPoints, mask);
 
-  for (auto pt = cellPoints.begin(); pt != cellPoints.end(); ++pt)
+  int numFaces = *currItem++;
+  for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
   {
-    a_cellPoints.push_back(*pt);
+    int numFacePoints = *currItem++;
+    for (int ptIdx = 0; ptIdx < numFacePoints; ++ptIdx)
+    {
+      int pt = *currItem++;
+      if (std::find(a_cellPoints.begin(), a_cellPoints.end(), pt) == a_cellPoints.end())
+      {
+        a_cellPoints.push_back(pt);
+      }
+    }
   }
+
   return true;
-} // XmUGridImpl::GetNumberOfPolyhedronEdges
+} // XmUGridImpl::GetUniquePointsFromPolyhedronSingleCellStream
 //------------------------------------------------------------------------------
 /// \brief Get the unique edges in a flat set for a given polyhedron
 /// \param[in] a_start: the UGrid cell stream (integer pointer)
@@ -2106,7 +2113,7 @@ void XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream(
     }
     a_currIdx += numPoints;
   }
-} // XmUGridImpl::GetPlanViewPolygon2d
+} // XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream
 //------------------------------------------------------------------------------
 /// \brief Get a plan view polygon of a specified 2D cell
 /// \param[in] a_cellIdx: the index of the cell
@@ -2483,7 +2490,7 @@ BSHP<XmUGrid> TEST_XmUGrid2dLinear()
   return ugrid;
 } // TEST_XmUGrid2dLinear
 //------------------------------------------------------------------------------
-/// \brief Builds an XmUGrid with supported 1D and 2D linear cells for testing.
+/// \brief Builds an XmUGrid with supported 3D linear cells for testing.
 /// \return Returns the XmUGrid.
 //------------------------------------------------------------------------------
 BSHP<XmUGrid> TEST_XmUGrid3dLinear()
