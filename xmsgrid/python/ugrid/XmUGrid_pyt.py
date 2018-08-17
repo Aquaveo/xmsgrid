@@ -500,8 +500,8 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         xu3d = self.get_3d_linear_ugrid()
         expected_cell_edges = [
           [(0, 1), (1, 5), (5, 0), (0, 15), (1, 15), (5, 15)], # XMU_TETRA
-          [(1, 2), (2, 7), (7, 6), (6, 1), (16, 17), (17, 22), (22, 21), (21, 16), (1, 16), (2, 17), (7, 22), (6, 21)], # XMU_VOXEL
-          [(2, 3), (3, 8), (8, 7), (7, 2), (17, 18), (18, 23), (23, 22), (22, 17), (2, 17), (3, 18), (8, 23), (7, 22)], # XMU_HEXAHEDRON
+          [(1, 2), (2, 7), (6, 7), (1, 6), (16, 17), (17, 22), (21, 22), (16, 21), (1, 16), (2, 17), (6, 21), (7, 22)], # XMU_VOXEL
+          [(2, 3), (3, 8), (7, 8), (2, 7), (17, 18), (18, 23), (22, 23), (17, 22), (2, 17), (3, 18), (7, 22), (8, 23)], # XMU_HEXAHEDRON
           [(8, 9), (8, 13), (8, 23), (9, 14), (9, 24), (13, 14), (13, 28), (14, 29), (23, 24), (23, 28), (24, 29), (28, 29)], # XMU_POLYHEDRON
           [(3, 4), (4, 18), (18, 3), (8, 9), (9, 23), (23, 8), (3, 8), (4, 9), (18, 23)], # XMU_WEDGE
           [(5, 6), (6, 11), (11, 10), (10, 5), (5, 20), (6, 20), (11, 20), (10, 20)] # XMU_PYRAMID
@@ -524,7 +524,6 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         expected_cells_from_edge = [(0, 1), (0, 2), (0,)]
         edges = [(1, 4), (3, 4), (0, 3)]
         for i in range(0, len(edges)):
-            print(xuquad.get_adjacent_cells_from_given_edge(edges[i]))
             self.assertEqual(expected_cells_from_edge[i], xuquad.get_adjacent_cells_from_given_edge(edges[i][0],edges[i][1]))
         self.assertEqual(expected_cells_from_edge[0],
                          xuquad.get_adjacent_cells_from_given_edge(edges[0][0], edges[1][1]))
@@ -584,24 +583,24 @@ class TestXmUGridPointFunctions(unittest.TestCase):
 
         xu3d = self.get_3d_linear_ugrid()
         expected_cell_faces = [  # Tetra
-            (0, 5, 1),
             (0, 1, 15),
             (1, 5, 15),
             (5, 0, 15),
+            (0, 5, 1),
             # Voxel
+            (1, 16, 21, 6),
+            (2, 7, 22, 17),
+            (1, 2, 17, 16),
+            (6, 21, 22, 7),
             (1, 6, 7, 2),
             (16, 17, 22, 21),
-            (1, 2, 17, 16),
-            (2, 7, 22, 17),
-            (7, 6, 21, 22),
-            (6, 1, 16, 21),
             # Hexahedron
+            (2, 17, 22, 7),
+            (3, 8, 23, 18),
+            (2, 3, 18, 17),
+            (7, 22, 23, 8),
             (2, 7, 8, 3),
             (17, 18, 23, 22),
-            (2, 3, 18, 17),
-            (3, 8, 23, 18),
-            (8, 7, 22, 23),
-            (7, 2, 17, 22),
             # Polyhedron
             (8, 9, 14, 13),
             (8, 9, 24, 23),
@@ -630,24 +629,24 @@ class TestXmUGridPointFunctions(unittest.TestCase):
     def test_get_faces_of_cell(self):
         xu3d = self.get_3d_linear_ugrid()
         expected_cell_faces = [  # Tetra
-            (0, 5, 1),
             (0, 1, 15),
             (1, 5, 15),
             (5, 0, 15),
+            (0, 5, 1),
             # Voxel
+            (1, 16, 21, 6),
+            (2, 7, 22, 17),
+            (1, 2, 17, 16),
+            (6, 21, 22, 7),
             (1, 6, 7, 2),
             (16, 17, 22, 21),
-            (1, 2, 17, 16),
-            (2, 7, 22, 17),
-            (7, 6, 21, 22),
-            (6, 1, 16, 21),
             # Hexahedron
+            (2, 17, 22, 7),
+            (3, 8, 23, 18),
+            (2, 3, 18, 17),
+            (7, 22, 23, 8),
             (2, 7, 8, 3),
             (17, 18, 23, 22),
-            (2, 3, 18, 17),
-            (3, 8, 23, 18),
-            (8, 7, 22, 23),
-            (7, 2, 17, 22),
             # Polyhedron
             (8, 9, 14, 13),
             (8, 9, 24, 23),
@@ -680,8 +679,8 @@ class TestXmUGridPointFunctions(unittest.TestCase):
             (0, 0, 0), (0, 0, 0), (0, 0, 0, 1, 1, 1), (0, 0, 0, 1, 1, 1), (1, 1, 1), (1, 1, 1),
             (0, 0, 0), (0, 0, 0), (0, 0, 0, 1, 1, 1), (0, 0, 0, 1, 1, 1), (1, 1, 1), (1, 1, 1)]
         expected_faces = [
-            (0, 2, 5), (0, 4, 5), (0, 2, 3, 0, 2, 5), (0, 3, 4, 0, 4, 5), (0, 2, 3), (0, 3, 4),
-            (1, 2, 5), (1, 4, 5), (1, 2, 3, 1, 2, 5), (1, 3, 4, 1, 4, 5), (1, 2, 3), (1, 3, 4)]
+            (0, 2, 4), (0, 3, 4), (1, 2, 4, 0, 2, 4), (1, 3, 4, 0, 3, 4), (1, 2, 4), (1, 3, 4),
+            (0, 2, 5), (0, 3, 5), (1, 2, 5, 0, 2, 5), (1, 3, 5, 0, 3, 5), (1, 2, 5), (1, 3, 5)]
         result = xuhex.get_faces_from_point(-1)
         self.assertEqual(result[0], False)
         self.assertEqual(result[1], ())
@@ -698,7 +697,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
 
     def test_get_cell_face_neighbor(self):
         xuhex = self.get_hexahedron_ugrid(3, 2, 2, (0, 0, 0))
-        expected_neighbor = [-1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 0]
+        expected_neighbor = [-1, 1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1]
         self.assertEqual(-1, xuhex.get_cell_face_neighbor(-1, 0))
         self.assertEqual(-1, xuhex.get_cell_face_neighbor(0, -1))
         curr_id = 0
@@ -711,9 +710,9 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertEqual(-1, xuhex.get_cell_face_neighbor(0,xuhex.get_number_of_cells()))
 
         xuhex = self.get_hexahedron_ugrid(3, 3, 3, (0, 0, 0))
-        expected_neighbor = [-1, 4, -1, 2, 1, -1, -1, 5, 0, 3, -1, -1, -1, 6, -1, -1,
-                             3, 0, -1, 7, 2, -1, -1, 1, 0, -1, -1, 6, 5, -1, 1, -1,
-                             4, 7, -1, -1, 2, -1, -1, -1, 7, 4, 3, -1, 6, -1, -1, 5]
+        expected_neighbor = [-1, 2, -1, 1, -1, 4, -1, 3, 0, -1, -1, 5, 0, -1, -1, 3, -1, 6, 1, -1, 2, -1,
+                             -1, 7, -1, 6, -1, 5, 0, -1, -1, 7, 4, -1, 1, -1, 4, -1, -1, 7, 2, -1, 5, -1,
+                             6, -1, 3, -1]
         curr_id = 0
         for i in range(0, xuhex.get_number_of_cells()):
             for j in range(0, xuhex.get_number_of_cell_faces(i)):

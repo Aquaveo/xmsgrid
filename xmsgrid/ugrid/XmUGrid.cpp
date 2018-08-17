@@ -44,6 +44,9 @@ namespace xms
 
 namespace
 {
+typedef std::pair<int, int> Edge;
+typedef std::vector<Edge> VecEdge;
+
 //----- Class / Function definitions -------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 /// Implementation for XmUGrid
@@ -173,7 +176,7 @@ private:
   static bool GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_cellStream,
                                                             VecInt& a_cellPoints);
   static void GetUniqueEdgesFromPolyhedronCellStream(
-    const int** a_start,
+    const int* a_start,
     int& a_length,
     boost::container::flat_set<std::pair<int, int>>& a_cellEdges,
     int& a_currIdx);
@@ -212,6 +215,246 @@ bool iEdgesEquivalent(const std::pair<int, int>& a_edge1, const std::pair<int, i
                     (a_edge1.first == a_edge2.second && a_edge1.second == a_edge2.first);
   return equivalent;
 } // iEdgesEquivalent
+//------------------------------------------------------------------------------
+/// \brief Get the offset for each edge for a given cell type.
+/// \param[in] a_cellType The cell type to get the table for.
+/// \return A const reference to the cell type's table.
+//------------------------------------------------------------------------------
+const VecEdge& iGetEdgeOffsetTable(int a_cellType)
+{
+  static const VecEdge fg_empty;
+  static const VecEdge fg_line = {{0, 1}};
+  static const VecEdge fg_triangle = {{0, 1}, {1, 2}, {2, 0}};
+  static const VecEdge fg_pixel = {{0, 1}, {1, 3}, {3, 2}, {2, 0}};
+  static const VecEdge fg_quad = {{0, 1}, {1, 2}, {2, 3}, {3, 0}};
+  static const VecEdge fg_tetra = {{0, 1}, {1, 2}, {2, 0}, {0, 3}, {1, 3}, {2, 3}};
+  static const VecEdge fg_wedge = {{0, 1}, {1, 2}, {2, 0}, {3, 4}, {4, 5},
+                                   {5, 3}, {0, 3}, {1, 4}, {2, 5}};
+  static const VecEdge fg_voxel = {{0, 1}, {1, 3}, {2, 3}, {0, 2}, {4, 5}, {5, 7},
+                                   {6, 7}, {4, 6}, {0, 4}, {1, 5}, {2, 6}, {3, 7}};
+  static const VecEdge fg_hexahedron = {{0, 1}, {1, 2}, {3, 2}, {0, 3}, {4, 5}, {5, 6},
+                                        {7, 6}, {4, 7}, {0, 4}, {1, 5}, {3, 7}, {2, 6}};
+  static const VecEdge fg_pyramid = {{0, 1}, {1, 2}, {2, 3}, {3, 0},
+                                     {0, 4}, {1, 4}, {2, 4}, {3, 4}};
+  static const VecEdge fg_pentagonalPrism = {{0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 0},
+                                             {5, 6}, {6, 7}, {7, 8}, {8, 9}, {9, 5},
+                                             {0, 5}, {1, 6}, {2, 7}, {3, 8}, {4, 9}};
+  static const VecEdge fg_hexagonalPrism = {{0, 1}, {1, 2}, {2, 3}, {3, 4},  {4, 5},   {5, 0},
+                                            {6, 7}, {7, 8}, {8, 9}, {9, 10}, {10, 11}, {11, 6},
+                                            {0, 6}, {1, 7}, {2, 8}, {3, 9},  {4, 10},  {5, 11}};
+
+  switch (a_cellType)
+  {
+  // invalid
+  case XMU_INVALID_CELL_TYPE:
+    return fg_empty;
+    break;
+
+  // 0D
+  case XMU_EMPTY_CELL:
+  case XMU_VERTEX:
+  case XMU_POLY_VERTEX:
+  case XMU_CONVEX_POINT_SET: // Special class of cells formed by convex group of
+                             // points
+    return fg_empty;
+    break;
+
+  // 1D
+  case XMU_LINE:
+    return fg_line;
+    break;
+
+  // 2D
+  case XMU_TRIANGLE:
+    return fg_triangle;
+    break;
+  case XMU_PIXEL:
+    return fg_pixel;
+    break;
+  case XMU_QUAD:
+    return fg_quad;
+    break;
+
+  case XMU_POLYGON:
+    // should be using cell stream
+    XM_ASSERT(0);
+    return fg_empty;
+    break;
+
+  // 2D Not yet supported
+  case XMU_QUADRATIC_EDGE:
+  case XMU_PARAMETRIC_CURVE:
+  case XMU_HIGHER_ORDER_EDGE:
+  case XMU_CUBIC_LINE: // Cubic, isoparametric cell
+  case XMU_TRIANGLE_STRIP:
+  case XMU_QUADRATIC_TRIANGLE:
+  case XMU_BIQUADRATIC_TRIANGLE:
+  case XMU_HIGHER_ORDER_TRIANGLE:
+  case XMU_HIGHER_ORDER_POLYGON:
+  case XMU_QUADRATIC_POLYGON:
+  case XMU_PARAMETRIC_SURFACE:
+  case XMU_PARAMETRIC_TRI_SURFACE:
+  case XMU_PARAMETRIC_QUAD_SURFACE:
+    XM_ASSERT(0);
+    return fg_empty;
+    break;
+
+  // 3D dimensions
+  case XMU_TETRA:
+    return fg_tetra;
+    break;
+  case XMU_WEDGE:
+    return fg_wedge;
+    break;
+  case XMU_VOXEL:
+    return fg_voxel;
+    break;
+  case XMU_HEXAHEDRON:
+    return fg_hexahedron;
+    break;
+  case XMU_PYRAMID:
+    return fg_pyramid;
+    break;
+  case XMU_PENTAGONAL_PRISM:
+    return fg_pentagonalPrism;
+    break;
+  case XMU_HEXAGONAL_PRISM:
+    return fg_hexagonalPrism;
+    break;
+  case XMU_POLYHEDRON:
+    // should be using cell stream
+    XM_ASSERT(0);
+    return fg_empty;
+    break;
+
+  // 3D Not yet supported
+  case XMU_QUADRATIC_TETRA:
+  case XMU_HIGHER_ORDER_TETRAHEDRON:
+  case XMU_QUADRATIC_WEDGE:
+  case XMU_QUADRATIC_LINEAR_WEDGE:
+  case XMU_BIQUADRATIC_QUADRATIC_WEDGE:
+  case XMU_HIGHER_ORDER_WEDGE:
+  case XMU_QUADRATIC_HEXAHEDRON:
+  case XMU_TRIQUADRATIC_HEXAHEDRON:
+  case XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON:
+  case XMU_HIGHER_ORDER_HEXAHEDRON:
+  case XMU_QUADRATIC_PYRAMID:
+  case XMU_HIGHER_ORDER_PYRAMID:
+  case XMU_PARAMETRIC_TETRA_REGION:
+  case XMU_PARAMETRIC_HEX_REGION:
+    XM_ASSERT(0);
+    return fg_empty;
+    break;
+  }
+
+  XM_ASSERT(0);
+  return fg_empty;
+} // iGetEdgeOffsetTable
+//------------------------------------------------------------------------------
+/// \brief Get the offset for each face for a given cell type.
+/// \param[in] a_cellType The cell type to get the table for.
+/// \return A const reference to the cell type's table.
+//------------------------------------------------------------------------------
+const VecInt2d& iGetFaceOffsetTable(int a_cellType)
+{
+  static const VecInt2d fg_empty;
+  static const VecInt2d fg_tetra = {{0, 1, 3}, {1, 2, 3}, {2, 0, 3}, {0, 2, 1}};
+  static const VecInt2d fg_wedge = {{0, 1, 2}, {3, 5, 4}, {0, 3, 4, 1}, {1, 4, 5, 2}, {2, 5, 3, 0}};
+  static const VecInt2d fg_voxel = {{0, 4, 6, 2}, {1, 3, 7, 5}, {0, 1, 5, 4},
+                                    {2, 6, 7, 3}, {0, 2, 3, 1}, {4, 5, 7, 6}};
+  static const VecInt2d fg_hexahedron = {{0, 4, 7, 3}, {1, 2, 6, 5}, {0, 1, 5, 4},
+                                         {3, 7, 6, 2}, {0, 3, 2, 1}, {4, 5, 6, 7}};
+  static const VecInt2d fg_pyramid = {{0, 3, 2, 1}, {0, 1, 4}, {1, 2, 4}, {2, 3, 4}, {3, 0, 4}};
+  static const VecInt2d fg_pentagonalPrism = {{0, 4, 3, 2, 1}, {5, 6, 7, 8, 9}, {0, 1, 6, 5},
+                                              {1, 2, 7, 6},    {2, 3, 8, 7},    {3, 4, 9, 8},
+                                              {4, 0, 5, 9}};
+  static const VecInt2d fg_hexagonalPrism = {
+    {0, 5, 4, 3, 2, 1}, {6, 7, 8, 9, 10, 11}, {0, 1, 7, 6},   {1, 2, 8, 7},
+    {2, 3, 9, 8},       {3, 4, 10, 9},        {4, 5, 11, 10}, {5, 0, 6, 11}};
+
+  switch (a_cellType)
+  {
+  // invalid
+  // 0D
+  // 1D
+  case XMU_INVALID_CELL_TYPE:
+  case XMU_EMPTY_CELL:
+  case XMU_VERTEX:
+  case XMU_POLY_VERTEX:
+  case XMU_CONVEX_POINT_SET: // Special class of cells formed by convex group of
+                             // points
+  case XMU_LINE:
+  case XMU_TRIANGLE:
+  case XMU_PIXEL:
+  case XMU_QUAD:
+  case XMU_POLYGON:
+  case XMU_QUADRATIC_EDGE:
+  case XMU_PARAMETRIC_CURVE:
+  case XMU_HIGHER_ORDER_EDGE:
+  case XMU_CUBIC_LINE: // Cubic, isoparametric cell
+  case XMU_TRIANGLE_STRIP:
+  case XMU_QUADRATIC_TRIANGLE:
+  case XMU_BIQUADRATIC_TRIANGLE:
+  case XMU_HIGHER_ORDER_TRIANGLE:
+  case XMU_HIGHER_ORDER_POLYGON:
+  case XMU_QUADRATIC_POLYGON:
+  case XMU_PARAMETRIC_SURFACE:
+  case XMU_PARAMETRIC_TRI_SURFACE:
+  case XMU_PARAMETRIC_QUAD_SURFACE:
+    return fg_empty;
+    break;
+
+  // 3D dimensions
+  case XMU_TETRA:
+    return fg_tetra;
+    break;
+  case XMU_WEDGE:
+    return fg_wedge;
+    break;
+  case XMU_VOXEL:
+    return fg_voxel;
+    break;
+  case XMU_HEXAHEDRON:
+    return fg_hexahedron;
+    break;
+  case XMU_PYRAMID:
+    return fg_pyramid;
+    break;
+  case XMU_PENTAGONAL_PRISM:
+    return fg_pentagonalPrism;
+    break;
+  case XMU_HEXAGONAL_PRISM:
+    return fg_hexagonalPrism;
+    break;
+  case XMU_POLYHEDRON:
+    // should be using cell stream
+    XM_ASSERT(0);
+    return fg_empty;
+    break;
+
+  // 3D Not yet supported
+  case XMU_QUADRATIC_TETRA:
+  case XMU_HIGHER_ORDER_TETRAHEDRON:
+  case XMU_QUADRATIC_WEDGE:
+  case XMU_QUADRATIC_LINEAR_WEDGE:
+  case XMU_BIQUADRATIC_QUADRATIC_WEDGE:
+  case XMU_HIGHER_ORDER_WEDGE:
+  case XMU_QUADRATIC_HEXAHEDRON:
+  case XMU_TRIQUADRATIC_HEXAHEDRON:
+  case XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON:
+  case XMU_HIGHER_ORDER_HEXAHEDRON:
+  case XMU_QUADRATIC_PYRAMID:
+  case XMU_HIGHER_ORDER_PYRAMID:
+  case XMU_PARAMETRIC_TETRA_REGION:
+  case XMU_PARAMETRIC_HEX_REGION:
+    XM_ASSERT(0);
+    return fg_empty;
+    break;
+  }
+
+  XM_ASSERT(0);
+  return fg_empty;
+} // iGetFaceOffsetTable
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
 /// \brief Implementation for XmUGrid which provides geometry for an
@@ -761,7 +1004,7 @@ bool XmUGridImpl::DoEdgesCrossWithPointChange(const int a_changedPtIdx,
 } // XmUGridImpl::DoEdgesCrossWithPointChange
 // Edges
 //------------------------------------------------------------------------------
-/// \brief Get the number of edges with specified cell
+/// \brief Get the number of edges for a cell.
 /// \param[in] a_cellIdx: the index of the cell
 /// \return the count of cell edges
 //------------------------------------------------------------------------------
@@ -775,107 +1018,28 @@ int XmUGridImpl::GetNumberOfCellEdges(const int a_cellIdx) const
     return -1;
     break;
 
-  // 0D
-  case XMU_EMPTY_CELL:
-  case XMU_VERTEX:
-  case XMU_POLY_VERTEX:
-  case XMU_CONVEX_POINT_SET: // Special class of cells formed by convex group of
-                             // points
-    return 0;
-    break;
-
-  // 1D
-  case XMU_LINE:
-    return 1;
-    break;
   case XMU_POLY_LINE:
     return GetNumberOfItemsForCell(a_cellIdx) - 1;
     break;
 
-  case XMU_QUADRATIC_EDGE:
-  case XMU_PARAMETRIC_CURVE:
-  case XMU_HIGHER_ORDER_EDGE:
-  case XMU_CUBIC_LINE: // Cubic, isoparametric cell
-    return 0;
-    break;
-
-  case XMU_TRIANGLE:
-  case XMU_TRIANGLE_STRIP:
-  case XMU_QUADRATIC_TRIANGLE:
-  case XMU_BIQUADRATIC_TRIANGLE:
-  case XMU_HIGHER_ORDER_TRIANGLE:
-    return 3;
-    break;
-
-  case XMU_PIXEL:
-  case XMU_QUAD:
-  case XMU_QUADRATIC_QUAD:
-  case XMU_BIQUADRATIC_QUAD:
-  case XMU_QUADRATIC_LINEAR_QUAD:
-  case XMU_HIGHER_ORDER_QUAD:
-    return 4;
-    break;
-
   case XMU_POLYGON:
-  case XMU_HIGHER_ORDER_POLYGON:
     return GetNumberOfItemsForCell(a_cellIdx);
-    break;
-  case XMU_QUADRATIC_POLYGON:
-    return -1; // Not yet supported
-    break;
-
-  case XMU_PARAMETRIC_SURFACE:
-  case XMU_PARAMETRIC_TRI_SURFACE:
-  case XMU_PARAMETRIC_QUAD_SURFACE:
-    return -1; // Not yet supported
-    break;
-
-  // 3D dimensions
-  case XMU_TETRA:
-  case XMU_QUADRATIC_TETRA:
-  case XMU_HIGHER_ORDER_TETRAHEDRON:
-    return 6;
-    break;
-
-  case XMU_WEDGE:
-  case XMU_QUADRATIC_WEDGE:
-  case XMU_QUADRATIC_LINEAR_WEDGE:
-  case XMU_BIQUADRATIC_QUADRATIC_WEDGE:
-  case XMU_HIGHER_ORDER_WEDGE:
-    return 9;
-    break;
-
-  case XMU_VOXEL:
-  case XMU_HEXAHEDRON:
-  case XMU_QUADRATIC_HEXAHEDRON:
-  case XMU_TRIQUADRATIC_HEXAHEDRON:
-  case XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON:
-  case XMU_HIGHER_ORDER_HEXAHEDRON:
-    return 12;
-    break;
-
-  case XMU_PYRAMID:
-  case XMU_QUADRATIC_PYRAMID:
-  case XMU_HIGHER_ORDER_PYRAMID:
-    return 8;
-    break;
-
-  case XMU_PENTAGONAL_PRISM:
-    return 15;
-    break;
-  case XMU_HEXAGONAL_PRISM:
-    return 18;
     break;
 
   case XMU_POLYHEDRON:
     return GetNumberOfPolyhedronEdges(a_cellIdx);
     break;
 
-  case XMU_PARAMETRIC_TETRA_REGION:
-  case XMU_PARAMETRIC_HEX_REGION:
-    return -1; // Not yet supported
+  default:
+  {
+    const VecEdge& edgeTable = iGetEdgeOffsetTable(cellType);
+    if (!edgeTable.empty())
+      return (int)edgeTable.size();
     break;
   }
+  }
+
+  XM_ASSERT(0);
   return -1;
 } // XmUGridImpl::GetNumberOfCellEdges
 //------------------------------------------------------------------------------
@@ -888,184 +1052,56 @@ std::pair<int, int> XmUGridImpl::GetCellEdgeFromEdgeIndex(const int a_cellIdx,
                                                           const int a_edgeIdx) const
 {
   std::pair<int, int> edge;
-  if (a_edgeIdx < 0 || a_edgeIdx > GetNumberOfCellEdges(a_cellIdx))
+  if (a_edgeIdx < 0)
     return edge;
-  VecInt cellStream;
-  if (GetSingleCellStream(a_cellIdx, cellStream))
+
+  const int* cellStream = nullptr;
+  int streamLength;
+  GetSingleCellStream(a_cellIdx, &cellStream, streamLength);
+  if (cellStream)
   {
-    if (cellStream.size() < 4)
+    if (streamLength < 4)
       return edge;
 
-    int numPointsInAFace(-1);
-    switch (cellStream[0])
+    int cellType = cellStream[0];
+    switch (cellType)
     {
-    // 2D
-    case XMU_PIXEL:
-    {
-      // Swap point 2 & 3 (+2 for celltype and num points)
-      int itemp = cellStream[4];
-      cellStream[4] = cellStream[5];
-      cellStream[5] = itemp;
-    }
-    case XMU_LINE:
     case XMU_POLY_LINE:
-    case XMU_TRIANGLE:
     case XMU_POLYGON:
-    case XMU_QUAD:
-      // This method does not work for XMU_TRIANGLE_STRIP, XMU_PIXEL, or 3D Shapes!!
-      if (cellStream[1] > a_edgeIdx + 1)
-      {
-        edge.first = cellStream[2 + a_edgeIdx];  // +2 for celltype and num points
-        edge.second = cellStream[3 + a_edgeIdx]; // Next point
-      }
-      else if ((cellStream[1] == a_edgeIdx + 1) && (cellStream[0] != XMU_POLY_LINE))
-      {
-        edge.first = cellStream[2 + a_edgeIdx]; // 2 + edgeIdx (get the final point)
-        edge.second = cellStream[2];            // Get the first point
-      }
-      break;
-    // 3D
-    case XMU_VOXEL:
     {
-      // Swap point 2 & 3, 6 & 7
-      int itemp = cellStream[4];
-      cellStream[4] = cellStream[5];
-      cellStream[5] = itemp;
-      itemp = cellStream[8];
-      cellStream[8] = cellStream[9];
-      cellStream[9] = itemp;
+      int numPoints = cellStream[1];
+      const int* cellPoints = cellStream + 2;
+      int idx1 = cellPoints[a_edgeIdx];
+      int idx2 = cellPoints[(a_edgeIdx + 1) % numPoints];
+      edge = std::pair<int, int>(idx1, idx2);
+      break;
     }
-    case XMU_HEXAHEDRON:
-      numPointsInAFace = 4;
-    case XMU_WEDGE:
-      if (numPointsInAFace < 0)
-      {
-        numPointsInAFace = 3;
-      }
-      // First Face
-      if (numPointsInAFace > a_edgeIdx + 1)
-      {
-        edge.first = cellStream[2 + a_edgeIdx];  // 2 for celltype and
-        edge.second = cellStream[3 + a_edgeIdx]; // Next point
-      }
-      else if (numPointsInAFace == a_edgeIdx + 1)
-      {
-        edge.first = cellStream[2 + a_edgeIdx]; // 2 + edgeIdx (get the final point)
-        edge.second = cellStream[2];            // Get the first point
-      }
-      // Second Face
-      else if (numPointsInAFace * 2 > a_edgeIdx + 1)
-      {
-        edge.first = cellStream[2 + a_edgeIdx];  // 2 + edgeIdx (get the final point)
-        edge.second = cellStream[3 + a_edgeIdx]; // Get the first point
-      }
-      else if (numPointsInAFace * 2 == a_edgeIdx + 1)
-      {
-        edge.first = cellStream[2 + a_edgeIdx];         // 2 + edgeIdx (get the final point)
-        edge.second = cellStream[2 + numPointsInAFace]; // Get the first point
-      }
-      // Edges between First and Second Faces
-      else
-      {
-        edge.first = cellStream[2 + a_edgeIdx - cellStream[1]]; // point in First Face
-        edge.second =
-          cellStream[2 + a_edgeIdx - numPointsInAFace]; // corresponding point in Second Face
-      }
-      break;
-    case XMU_PYRAMID:
-      numPointsInAFace = 4;
-    case XMU_TETRA:
-      if (numPointsInAFace < 0)
-      {
-        numPointsInAFace = 3;
-      }
-      // First Face
-      if (numPointsInAFace > a_edgeIdx + 1)
-      {
-        edge.first = cellStream[2 + a_edgeIdx];  // 2 for celltype and
-        edge.second = cellStream[3 + a_edgeIdx]; // Next point
-      }
-      else if (numPointsInAFace == a_edgeIdx + 1)
-      {
-        edge.first = cellStream[2 + a_edgeIdx]; // 2 + edgeIdx (get the final point)
-        edge.second = cellStream[2];            // Get the first point
-      }
-      // edges along point
-      else
-      {
-        edge.first = cellStream[2 + a_edgeIdx - numPointsInAFace]; // point in First Face
-        edge.second = cellStream[2 + numPointsInAFace];            // point at point of pyramid
-      }
-      break;
 
     case XMU_POLYHEDRON:
     {
       boost::container::flat_set<std::pair<int, int>> cellEdges;
       int currIdx = 2;
+      GetUniqueEdgesFromPolyhedronCellStream(cellStream, streamLength, cellEdges, currIdx);
 
-      const int* start = nullptr;
-      int length((int)cellStream.size());
-      start = &cellStream[0];
-      GetUniqueEdgesFromPolyhedronCellStream(&start, length, cellEdges, currIdx);
-
-      edge = *(cellEdges.begin() + a_edgeIdx);
-    }
-    break;
-
-    case XMU_EMPTY_CELL:
-    case XMU_VERTEX:
-    case XMU_POLY_VERTEX:
-    case XMU_INVALID_CELL_TYPE:
-    default:
-      // Do nothing!
+      if (a_edgeIdx < (int)cellEdges.size())
+        edge = *(cellEdges.begin() + a_edgeIdx);
       break;
     }
-// Not supported
-#if 0
-    XMU_PENTAGONAL_PRISM = 15,
-    XMU_HEXAGONAL_PRISM = 16,
 
-    // Quadratic, isoparametric cells
-    XMU_QUADRATIC_EDGE = 21,
-    XMU_QUADRATIC_TRIANGLE = 22,
-    XMU_QUADRATIC_QUAD = 23,
-    XMU_QUADRATIC_POLYGON = 36,
-    XMU_QUADRATIC_TETRA = 24,
-    XMU_QUADRATIC_HEXAHEDRON = 25,
-    XMU_QUADRATIC_WEDGE = 26,
-    XMU_QUADRATIC_PYRAMID = 27,
-    XMU_BIQUADRATIC_QUAD = 28,
-    XMU_TRIQUADRATIC_HEXAHEDRON = 29,
-    XMU_QUADRATIC_LINEAR_QUAD = 30,
-    XMU_QUADRATIC_LINEAR_WEDGE = 31,
-    XMU_BIQUADRATIC_QUADRATIC_WEDGE = 32,
-    XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON = 33,
-    XMU_BIQUADRATIC_TRIANGLE = 34,
-
-    // Cubic, isoparametric cell
-    XMU_CUBIC_LINE = 35,
-
-    // Special class of cells formed by convex group of points
-    XMU_CONVEX_POINT_SET = 41,
-
-    // Higher order cells in parametric form
-    XMU_PARAMETRIC_CURVE = 51,
-    XMU_PARAMETRIC_SURFACE = 52,
-    XMU_PARAMETRIC_TRI_SURFACE = 53,
-    XMU_PARAMETRIC_QUAD_SURFACE = 54,
-    XMU_PARAMETRIC_TETRA_REGION = 55,
-    XMU_PARAMETRIC_HEX_REGION = 56,
-
-    // Higher order cells
-    XMU_HIGHER_ORDER_EDGE = 60,
-    XMU_HIGHER_ORDER_TRIANGLE = 61,
-    XMU_HIGHER_ORDER_QUAD = 62,
-    XMU_HIGHER_ORDER_POLYGON = 63,
-    XMU_HIGHER_ORDER_TETRAHEDRON = 64,
-    XMU_HIGHER_ORDER_WEDGE = 65,
-    XMU_HIGHER_ORDER_PYRAMID = 66,
-    XMU_HIGHER_ORDER_HEXAHEDRON = 67,
-#endif
+    default:
+    {
+      const VecEdge& edgeTable = iGetEdgeOffsetTable(cellType);
+      if (a_edgeIdx < (int)edgeTable.size())
+      {
+        const std::pair<int, int>& edgeOffset = edgeTable[a_edgeIdx];
+        const int* cellPoints = cellStream + 2;
+        int idx1 = cellPoints[edgeOffset.first];
+        int idx2 = cellPoints[edgeOffset.second];
+        edge = std::pair<int, int>(idx1, idx2);
+      }
+      break;
+    }
+    }
   }
 
   return edge;
@@ -1292,102 +1328,25 @@ bool XmUGridImpl::GetEdgesFromPoint(const int a_pointId,
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
 {
+  if (a_cellIdx < 0 || a_cellIdx >= GetNumberOfCells())
+    return -1;
+
   int cellType(GetCellType(a_cellIdx));
   switch (cellType)
   {
-  // invalid
-  case XMU_INVALID_CELL_TYPE:
-    return -1;
-    break;
-
-  // 0D
-  case XMU_EMPTY_CELL:
-  case XMU_VERTEX:
-  case XMU_POLY_VERTEX:
-  case XMU_CONVEX_POINT_SET: // Special class of cells formed by convex group of
-                             // points
-    return 0;
-    break;
-
-  // 1D
-  case XMU_LINE:
-  case XMU_POLY_LINE:
-
-  case XMU_QUADRATIC_EDGE:
-  case XMU_PARAMETRIC_CURVE:
-  case XMU_HIGHER_ORDER_EDGE:
-  case XMU_CUBIC_LINE: // Cubic, isoparametric cell
-    return 0;
-    break;
-
-  // 2D
-  case XMU_TRIANGLE:
-  case XMU_TRIANGLE_STRIP:
-  case XMU_QUADRATIC_TRIANGLE:
-  case XMU_BIQUADRATIC_TRIANGLE:
-  case XMU_HIGHER_ORDER_TRIANGLE:
-  case XMU_PIXEL:
-  case XMU_QUAD:
-  case XMU_QUADRATIC_QUAD:
-  case XMU_BIQUADRATIC_QUAD:
-  case XMU_QUADRATIC_LINEAR_QUAD:
-  case XMU_HIGHER_ORDER_QUAD:
-  case XMU_POLYGON:
-  case XMU_HIGHER_ORDER_POLYGON:
-  case XMU_QUADRATIC_POLYGON:
-  case XMU_PARAMETRIC_SURFACE:
-  case XMU_PARAMETRIC_TRI_SURFACE:
-  case XMU_PARAMETRIC_QUAD_SURFACE:
-    return 0;
-    break;
-
-  // 3D dimensions
-  case XMU_TETRA:
-  case XMU_QUADRATIC_TETRA:
-  case XMU_HIGHER_ORDER_TETRAHEDRON:
-    return 4;
-    break;
-
-  case XMU_WEDGE:
-  case XMU_QUADRATIC_WEDGE:
-  case XMU_QUADRATIC_LINEAR_WEDGE:
-  case XMU_BIQUADRATIC_QUADRATIC_WEDGE:
-  case XMU_HIGHER_ORDER_WEDGE:
-    return 5;
-    break;
-
-  case XMU_VOXEL:
-  case XMU_HEXAHEDRON:
-  case XMU_QUADRATIC_HEXAHEDRON:
-  case XMU_TRIQUADRATIC_HEXAHEDRON:
-  case XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON:
-  case XMU_HIGHER_ORDER_HEXAHEDRON:
-    return 6;
-    break;
-
-  case XMU_PYRAMID:
-  case XMU_QUADRATIC_PYRAMID:
-  case XMU_HIGHER_ORDER_PYRAMID:
-    return 5;
-    break;
-
-  case XMU_PENTAGONAL_PRISM:
-    return 7;
-    break;
-  case XMU_HEXAGONAL_PRISM:
-    return 8;
-    break;
-
   case XMU_POLYHEDRON:
     return GetNumberOfItemsForCell(a_cellIdx);
     break;
 
-  case XMU_PARAMETRIC_TETRA_REGION:
-  case XMU_PARAMETRIC_HEX_REGION:
-    return -1; // Not yet supported
+  default:
+  {
+    const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
+    return (int)faceTable.size();
     break;
   }
-  return -1;
+  }
+
+  return 0;
 } // XmUGridImpl::GetNumberOfCellFaces
 //------------------------------------------------------------------------------
 /// \brief Get the cell face for given cell and face index.
@@ -1411,122 +1370,54 @@ VecInt XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx) const
 void XmUGridImpl::GetCellFace(const int a_cellIdx, const int a_faceIdx, VecInt& a_facePtIdxs) const
 {
   a_facePtIdxs.clear();
-  int numFaces = GetNumberOfCellFaces(a_cellIdx);
-  if ((numFaces < 1) || (a_faceIdx < 0))
+  if (a_faceIdx < 0)
   {
     return;
   }
-  if (numFaces == 1)
+
+  const int* cellStream = nullptr;
+  int streamLength;
+  GetSingleCellStream(a_cellIdx, &cellStream, streamLength);
+  if (!cellStream)
+    return;
+
+  int cellType = *cellStream++;
+  switch (cellType)
   {
-    GetPointsOfCell(a_cellIdx, a_facePtIdxs);
-  }
-  else
+  case XMU_POLYHEDRON:
   {
-    VecInt cellStream;
-    if (GetSingleCellStream(a_cellIdx, cellStream))
+    int numFaces = *cellStream++;
+    for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
     {
-      if (cellStream.size() < 4)
-        return;
-
-      int numPointsInAFace(-1);
-      switch (cellStream[0])
+      int numFacePoints = *cellStream++;
+      if (faceIdx == a_faceIdx)
       {
-      case XMU_VOXEL:
-      {
-        // Swap point 2 & 3, 6 & 7
-        int itemp = cellStream[4];
-        cellStream[4] = cellStream[5];
-        cellStream[5] = itemp;
-        itemp = cellStream[8];
-        cellStream[8] = cellStream[9];
-        cellStream[9] = itemp;
+        a_facePtIdxs.assign(cellStream, cellStream + numFacePoints);
+        break;
       }
-      case XMU_HEXAHEDRON:
-        numPointsInAFace = 4;
-      case XMU_WEDGE:
-        if (numPointsInAFace < 0)
-        {
-          numPointsInAFace = 3;
-        }
-        // First & Second Face
-        if (a_faceIdx <= 1) // numPointsInAFace > a_edgeIdx + 1)
-        {
-          a_facePtIdxs.assign(cellStream.begin() + (2 + numPointsInAFace * a_faceIdx),
-                              cellStream.begin() + (2 + numPointsInAFace * (a_faceIdx + 1)));
-          if (a_faceIdx == 0)
-            std::reverse(a_facePtIdxs.begin() + 1, a_facePtIdxs.end());
-        }
-        // Edges between First and Second Faces
-        else
-        {
-          a_facePtIdxs.push_back(
-            cellStream[a_faceIdx]); // point in First Face (FaceIndex starts at 2)
-          a_facePtIdxs.push_back(
-            cellStream[2 + ((a_faceIdx - 1) % numPointsInAFace)]); // 2nd point in First Face
-          a_facePtIdxs.push_back(
-            cellStream[2 + numPointsInAFace +
-                       ((a_faceIdx - 1) % numPointsInAFace)]); // corresponding point in Second Face
-          a_facePtIdxs.push_back(
-            cellStream[a_faceIdx + numPointsInAFace]); // 2nd point corresponding
-                                                       // point in Second Face
-        }
-        if (cellStream[0] == XMU_WEDGE)
-          std::reverse(a_facePtIdxs.begin() + 1, a_facePtIdxs.end());
-        break;
+      cellStream += numFacePoints;
+    }
+  }
+  break;
 
-      case XMU_PYRAMID:
-        numPointsInAFace = 4;
-      case XMU_TETRA:
-        if (numPointsInAFace < 0)
-        {
-          numPointsInAFace = 3;
-        }
-        // First Face
-        if (a_faceIdx < 1)
-        {
-          a_facePtIdxs.assign(cellStream.begin() + (2),
-                              cellStream.begin() + (2 + numPointsInAFace));
-          std::reverse(a_facePtIdxs.begin() + 1, a_facePtIdxs.end());
-        }
-        // edges along point
-        else
-        {
-          a_facePtIdxs.push_back(
-            cellStream[1 + a_faceIdx]); // point in First Face (FaceIndex starts at 1)
-          a_facePtIdxs.push_back(cellStream[2 + a_faceIdx % numPointsInAFace]); // point in First
-                                                                                // Face (FaceIndex
-                                                                                // starts at 1)
-          a_facePtIdxs.push_back(
-            cellStream[2 + numPointsInAFace]); // point in First Face (FaceIndex starts at 2)
-        }
-        break;
-
-      case XMU_POLYHEDRON:
+  default:
+  {
+    const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
+    if (a_faceIdx < (int)faceTable.size())
+    {
+      if (cellStream)
       {
-        int currIdx = 1;
-        int numFaces = cellStream[currIdx++];
-        for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+        const int* cellPoints = ++cellStream;
+        const VecInt& faceOffsets = faceTable[a_faceIdx];
+        for (auto offset : faceOffsets)
         {
-          int numFacePoints = cellStream[currIdx++];
-          if (faceIdx == a_faceIdx)
-          {
-            a_facePtIdxs.assign(cellStream.begin() + (currIdx),
-                                cellStream.begin() + (currIdx + numFacePoints));
-          }
-          currIdx += numFacePoints;
+          int idx = cellPoints[offset];
+          a_facePtIdxs.push_back(idx);
         }
-      }
-      break;
-
-      case XMU_EMPTY_CELL:
-      case XMU_VERTEX:
-      case XMU_POLY_VERTEX:
-      case XMU_INVALID_CELL_TYPE:
-      default:
-        // Do nothing!
-        break;
       }
     }
+  }
+  break;
   }
 } // XmUGridImpl::GetCellFace
 //------------------------------------------------------------------------------
@@ -1997,7 +1888,7 @@ int XmUGridImpl::GetNumberOfPolyhedronEdges(const int a_cellIdx) const
     int currItem = 2;
     while (currItem < streamLength)
     {
-      GetUniqueEdgesFromPolyhedronCellStream(&cellStream, streamLength, edges, currItem);
+      GetUniqueEdgesFromPolyhedronCellStream(cellStream, streamLength, edges, currItem);
     }
     return (int)edges.size();
   }
@@ -2088,23 +1979,23 @@ bool XmUGridImpl::GetUniquePointsFromPolyhedronSingleCellStream(const VecInt& a_
 ///      needs to be efficient!
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream(
-  const int** a_start,
+  const int* a_start,
   int& a_length,
   boost::container::flat_set<std::pair<int, int>>& a_cellEdges,
   int& a_currIdx)
 {
-  int numFaces = (*a_start)[1];
+  int numFaces = a_start[1];
   for (int i(0); i < numFaces; i++)
   {
-    int numPoints = (*a_start)[a_currIdx++];
+    int numPoints = a_start[a_currIdx++];
     for (int pointIdx = 0; pointIdx < numPoints; ++pointIdx)
     {
       int pt1Idx = pointIdx;
       int pt2Idx = (pointIdx + 1) % numPoints;
       // The % operator will reset the index back 0 so the final loop will
       // provide the last and first point
-      int pt1 = (*a_start)[a_currIdx + pt1Idx];
-      int pt2 = (*a_start)[a_currIdx + pt2Idx];
+      int pt1 = a_start[a_currIdx + pt1Idx];
+      int pt2 = a_start[a_currIdx + pt2Idx];
       // We want unique edges, so we add the lower point index first
       if (pt1 < pt2)
         a_cellEdges.insert(std::pair<int, int>(pt1, pt2));
@@ -3427,8 +3318,8 @@ void XmUGridUnitTests::testGetCellEdgeFromEdgeIndex()
     std::vector<std::vector<std::pair<int, int>>> expectedCellsCellEdges =
     {
       {{0, 1}, {1, 5}, {5, 0}, {0, 15}, {1, 15}, {5, 15}}, // XMU_TETRA
-      {{1, 2}, {2, 7}, {7, 6}, {6, 1}, {16, 17}, {17, 22}, {22, 21}, {21, 16}, {1, 16}, {2, 17}, {7, 22}, {6, 21}}, // XMU_VOXEL
-      {{2, 3}, {3, 8}, {8, 7}, {7, 2}, {17, 18}, {18, 23}, {23, 22}, {22, 17}, {2, 17}, {3, 18}, {8, 23}, {7, 22}}, // XMU_HEXAHEDRON
+      {{1, 2}, {2, 7}, {6, 7}, {1, 6}, {16, 17}, {17, 22}, {21, 22}, {16, 21}, {1, 16}, {2, 17}, {6, 21}, {7, 22}}, // XMU_VOXEL
+      {{2, 3}, {3, 8}, {7, 8}, {2, 7}, {17, 18}, {18, 23}, {22, 23}, {17, 22}, {2, 17}, {3, 18}, {7, 22}, {8, 23}}, // XMU_HEXAHEDRON
       {{8, 9}, {8, 13}, {8, 23}, {9, 14}, {9, 24}, {13, 14}, {13, 28}, {14, 29}, {23, 24}, {23, 28}, {24, 29}, {28, 29}}, // XMU_POLYHEDRON
       {{3, 4}, {4, 18}, {18, 3}, {8, 9}, {9, 23}, {23, 8}, {3, 8}, {4, 9}, {18, 23}}, // XMU_WEDGE
       {{5, 6}, {6, 11}, {11, 10}, {10, 5}, {5, 20}, {6, 20}, {11, 20}, {10, 20}} // XMU_PYRAMID
@@ -3658,7 +3549,7 @@ void XmUGridUnitTests::testGetAdjacentCell()
   }
   expectedCells = {{5, 6, 21},   {6, 10, 26},  {6, 7, 23},   {2, 6, 18},
                    {21, 37, 38}, {26, 38, 42}, {23, 38, 39}, {18, 34, 38},
-                   {17, 18, 21}, {21, 25, 26}, {26, 23, 27}, {18, 23, 19}};
+                   {17, 18, 21}, {21, 25, 26}, {18, 23, 19}, {26, 23, 27}};
 
   for (int i(0); i < hexUgrid->GetNumberOfCellEdges(22); i++)
   {
@@ -3758,24 +3649,24 @@ void XmUGridUnitTests::testGetCellFace()
   }
 
   expectedCellFaces = {// Tetra
-                       {0, 5, 1},
                        {0, 1, 15},
                        {1, 5, 15},
                        {5, 0, 15},
+                       {0, 5, 1},
                        // Voxel
+                       {1, 16, 21, 6},
+                       {2, 7, 22, 17},
+                       {1, 2, 17, 16},
+                       {6, 21, 22, 7},
                        {1, 6, 7, 2},
                        {16, 17, 22, 21},
-                       {1, 2, 17, 16},
-                       {2, 7, 22, 17},
-                       {7, 6, 21, 22},
-                       {6, 1, 16, 21},
                        // Hexahedron
+                       {2, 17, 22, 7},
+                       {3, 8, 23, 18},
+                       {2, 3, 18, 17},
+                       {7, 22, 23, 8},
                        {2, 7, 8, 3},
                        {17, 18, 23, 22},
-                       {2, 3, 18, 17},
-                       {3, 8, 23, 18},
-                       {8, 7, 22, 23},
-                       {7, 2, 17, 22},
                        // Polyhedron
                        {8, 9, 14, 13},
                        {8, 9, 24, 23},
@@ -3823,34 +3714,37 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
     return;
   }
 
-  VecInt expectedNeighbor{-1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 0};
-  VecInt expectedFace{-1, -1, -1, 5, -1, -1, -1, -1, -1, -1, -1, 3};
-  int currId(0);
-  int neighborCell;
+  // clang-format off
+  VecInt expectedNeighbor = {-1, 1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1};
+  VecInt expectedFace =     {-1, 0, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1};
+  // clang-format on
 
-  neighborCell = grid->GetCellFaceNeighbor(-1, 0);
-  TS_ASSERT_EQUALS(-1, neighborCell);
-  neighborCell = grid->GetCellFaceNeighbor(0, -1);
-  TS_ASSERT_EQUALS(-1, neighborCell);
+  int expectedIdx = 0;
+  int neighborCellIdx;
 
-  for (int i(0); i < grid->GetNumberOfCells(); i++)
+  neighborCellIdx = grid->GetCellFaceNeighbor(-1, 0);
+  TS_ASSERT_EQUALS(-1, neighborCellIdx);
+  neighborCellIdx = grid->GetCellFaceNeighbor(0, -1);
+  TS_ASSERT_EQUALS(-1, neighborCellIdx);
+
+  for (int cellIdx = 0; cellIdx < grid->GetNumberOfCells(); cellIdx++)
   {
-    for (int j(0); j < grid->GetNumberOfCellFaces(i); j++, currId++)
+    for (int faceIdx = 0; faceIdx < grid->GetNumberOfCellFaces(cellIdx); faceIdx++, expectedIdx++)
     {
       // Check first function
-      neighborCell = grid->GetCellFaceNeighbor(i, j);
-      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+      neighborCellIdx = grid->GetCellFaceNeighbor(cellIdx, faceIdx);
+      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);
 
       // Check overload function
-      int faceIndex(-1);
-      grid->GetCellFaceNeighbor(i, j, neighborCell, faceIndex);
-      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
-      TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);
+      int neighborFaceIdx = -1;
+      grid->GetCellFaceNeighbor(cellIdx, faceIdx, neighborCellIdx, neighborFaceIdx);
+      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);
+      TS_ASSERT_EQUALS(expectedFace[expectedIdx], neighborFaceIdx);
 
       // Check that faces are the same
-      VecInt expectedFacePt = grid->GetCellFace(i, j);
+      VecInt expectedFacePt = grid->GetCellFace(cellIdx, faceIdx);
       std::sort(expectedFacePt.begin(), expectedFacePt.end());
-      VecInt neighborFacePt = grid->GetCellFace(neighborCell, faceIndex);
+      VecInt neighborFacePt = grid->GetCellFace(neighborCellIdx, neighborFaceIdx);
       std::sort(neighborFacePt.begin(), neighborFacePt.end());
       if (!expectedFacePt.empty() && !neighborFacePt.empty())
       {
@@ -3858,10 +3752,10 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
       }
     }
   }
-  neighborCell = grid->GetCellFaceNeighbor(grid->GetNumberOfCells(), 0);
-  TS_ASSERT_EQUALS(-1, neighborCell);
-  neighborCell = grid->GetCellFaceNeighbor(0, grid->GetNumberOfCells());
-  TS_ASSERT_EQUALS(-1, neighborCell);
+  neighborCellIdx = grid->GetCellFaceNeighbor(grid->GetNumberOfCells(), 0);
+  TS_ASSERT_EQUALS(-1, neighborCellIdx);
+  neighborCellIdx = grid->GetCellFaceNeighbor(0, grid->GetNumberOfCells());
+  TS_ASSERT_EQUALS(-1, neighborCellIdx);
 
   rows = 3;
   cols = 3;
@@ -3874,31 +3768,37 @@ void XmUGridUnitTests::testGetCellFaceNeighbor()
   }
 
   expectedNeighbor.clear();
-  expectedNeighbor = {-1, 4, -1, 2,  1, -1, -1, 5,  0, 3,  -1, -1, -1, 6,  -1, -1,
-                      3,  0, -1, 7,  2, -1, -1, 1,  0, -1, -1, 6,  5,  -1, 1,  -1,
-                      4,  7, -1, -1, 2, -1, -1, -1, 7, 4,  3,  -1, 6,  -1, -1, 5};
-  expectedFace = {-1, 0, -1, 5,  2, -1, -1, 0,  4, 5,  -1, -1, -1, 0,  -1, -1,
-                  2,  3, -1, 0,  4, -1, -1, 3,  1, -1, -1, 5,  2,  -1, 1,  -1,
-                  4,  5, -1, -1, 1, -1, -1, -1, 2, 3,  1,  -1, 4,  -1, -1, 3};
-  currId = 0;
-  for (int i(0); i < grid->GetNumberOfCells(); i++)
+  // clang-format off
+  expectedNeighbor = {-1, 2, -1, 1, -1, 4, -1, 3, 0, -1, -1, 5, 0, -1, -1, 3, -1, 6, 1, -1, 2, -1,
+                      -1, 7, -1, 6, -1, 5, 0, -1, -1, 7, 4, -1, 1, -1, 4, -1, -1, 7, 2, -1, 5, -1,
+                      6, -1, 3, -1};
+  expectedFace =     {-1, 0, -1, 2, -1, 4, -1, 0, 3, -1, -1, 4, 1, -1, -1, 2, -1, 4, 1, -1, 3, -1,
+                      -1, 4, -1, 0, -1, 2, 5, -1, -1, 0, 3, -1, 5, -1, 1, -1, -1, 2, 5, -1, 1, -1,
+                      3, -1, 5, -1};
+  // clang-format on
+
+  expectedIdx = 0;
+  for (int cellIdx = 0; cellIdx < grid->GetNumberOfCells(); ++cellIdx)
   {
-    for (int j(0); j < grid->GetNumberOfCellFaces(i); j++, currId++)
+    for (int faceIdx = 0; faceIdx < grid->GetNumberOfCellFaces(cellIdx); faceIdx++, expectedIdx++)
     {
       // Check first function
-      neighborCell = grid->GetCellFaceNeighbor(i, j);
-      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
+      neighborCellIdx = grid->GetCellFaceNeighbor(cellIdx, faceIdx);
+      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);
 
       // Check overload function
-      int faceIndex(-1);
-      grid->GetCellFaceNeighbor(i, j, neighborCell, faceIndex);
-      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);
-      TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);
+      int neighborFaceIdx = -1;
+      grid->GetCellFaceNeighbor(cellIdx, faceIdx, neighborCellIdx, neighborFaceIdx);
+      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);
+      TS_ASSERT_EQUALS(expectedFace[expectedIdx], neighborFaceIdx);
+
+      expectedNeighbor.push_back(neighborCellIdx);
+      expectedFace.push_back(neighborFaceIdx);
 
       // Check that faces are the same
-      VecInt expectedFacePt = grid->GetCellFace(i, j);
+      VecInt expectedFacePt = grid->GetCellFace(cellIdx, faceIdx);
       std::sort(expectedFacePt.begin(), expectedFacePt.end());
-      VecInt neighborFacePt = grid->GetCellFace(neighborCell, faceIndex);
+      VecInt neighborFacePt = grid->GetCellFace(neighborCellIdx, neighborFaceIdx);
       std::sort(neighborFacePt.begin(), neighborFacePt.end());
       if (!expectedFacePt.empty() && !neighborFacePt.empty())
       {
@@ -4000,23 +3900,25 @@ void XmUGridUnitTests::testGetFacesFromPoint()
     return;
   }
   VecInt empty;
-  VecInt2d expectedCell{
+  VecInt2d expectedCell = {
     {0, 0, 0}, {0, 0, 0}, {0, 0, 0, 1, 1, 1}, {0, 0, 0, 1, 1, 1}, {1, 1, 1}, {1, 1, 1},
     {0, 0, 0}, {0, 0, 0}, {0, 0, 0, 1, 1, 1}, {0, 0, 0, 1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
-  VecInt2d expectedFaces{
-    {0, 2, 5}, {0, 4, 5}, {0, 2, 3, 0, 2, 5}, {0, 3, 4, 0, 4, 5}, {0, 2, 3}, {0, 3, 4},
-    {1, 2, 5}, {1, 4, 5}, {1, 2, 3, 1, 2, 5}, {1, 3, 4, 1, 4, 5}, {1, 2, 3}, {1, 3, 4}};
+  VecInt2d expectedFaces = {
+    {0, 2, 4}, {0, 3, 4}, {1, 2, 4, 0, 2, 4}, {1, 3, 4, 0, 3, 4}, {1, 2, 4}, {1, 3, 4},
+    {0, 2, 5}, {0, 3, 5}, {1, 2, 5, 0, 2, 5}, {1, 3, 5, 0, 3, 5}, {1, 2, 5}, {1, 3, 5}};
   VecInt cells, faces;
-  int currId(0);
+  int expectedIdx = 0;
   TS_ASSERT(!grid->GetFacesFromPoint(-1, cells, faces));
   TS_ASSERT_EQUALS(empty, cells);
   TS_ASSERT_EQUALS(empty, faces);
-  for (int i(0); i < grid->GetNumberOfPoints(); i++, currId++)
+  for (int pointIdx = 0; pointIdx < grid->GetNumberOfPoints(); pointIdx++, expectedIdx++)
   {
     // Check first function
-    grid->GetFacesFromPoint(i, cells, faces);
-    TS_ASSERT_EQUALS(expectedCell[currId], cells);
-    TS_ASSERT_EQUALS(expectedFaces[currId], faces);
+    grid->GetFacesFromPoint(pointIdx, cells, faces);
+    TS_ASSERT_EQUALS(expectedCell[expectedIdx], cells);
+    TS_ASSERT_EQUALS(expectedFaces[expectedIdx], faces);
+    expectedCell.push_back(cells);
+    expectedFaces.push_back(faces);
   }
   TS_ASSERT(!grid->GetFacesFromPoint(grid->GetNumberOfPoints(), cells, faces));
   TS_ASSERT_EQUALS(empty, cells);
@@ -4328,24 +4230,24 @@ void XmUGridUnitTests::testGetFaces()
 
   VecInt cellFace;
   VecInt2d expectedCellFaces = {// Tetra
-                                {0, 5, 1},
                                 {0, 1, 15},
                                 {1, 5, 15},
                                 {5, 0, 15},
+                                {0, 5, 1},
                                 // Voxel
+                                {1, 16, 21, 6},
+                                {2, 7, 22, 17},
+                                {1, 2, 17, 16},
+                                {6, 21, 22, 7},
                                 {1, 6, 7, 2},
                                 {16, 17, 22, 21},
-                                {1, 2, 17, 16},
-                                {2, 7, 22, 17},
-                                {7, 6, 21, 22},
-                                {6, 1, 16, 21},
                                 // Hexahedron
+                                {2, 17, 22, 7},
+                                {3, 8, 23, 18},
+                                {2, 3, 18, 17},
+                                {7, 22, 23, 8},
                                 {2, 7, 8, 3},
                                 {17, 18, 23, 22},
-                                {2, 3, 18, 17},
-                                {3, 8, 23, 18},
-                                {8, 7, 22, 23},
-                                {7, 2, 17, 22},
                                 // Polyhedron
                                 {8, 9, 14, 13},
                                 {8, 9, 24, 23},
@@ -4365,25 +4267,25 @@ void XmUGridUnitTests::testGetFaces()
                                 {6, 11, 20},
                                 {11, 10, 20},
                                 {10, 5, 20}};
-  int currId(0);
+  int expectedIdx = 0;
   for (int i(0); i < ugrid3d->GetNumberOfCells(); i++)
   {
-    for (int j(0); j < ugrid3d->GetNumberOfCellFaces(i); j++, currId++)
+    for (int j(0); j < ugrid3d->GetNumberOfCellFaces(i); j++, expectedIdx++)
     {
       cellFace = ugrid3d->GetCellFace(i, j);
-      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFace);
+      TS_ASSERT_EQUALS(expectedCellFaces[expectedIdx], cellFace);
     }
   }
   // Tetra
   VecInt2d cellFaces;
-  currId = 0;
+  expectedIdx = 0;
   for (int i(0); i < ugrid3d->GetNumberOfCells(); i++)
   {
     cellFaces = ugrid3d->GetFacesOfCell(i);
     TS_ASSERT_EQUALS(cellFaces.size(), ugrid3d->GetNumberOfCellFaces(i));
-    for (int j(0); j < ugrid3d->GetNumberOfCellFaces(i); j++, currId++)
+    for (int j(0); j < ugrid3d->GetNumberOfCellFaces(i); j++, expectedIdx++)
     {
-      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFaces[j]);
+      TS_ASSERT_EQUALS(expectedCellFaces[expectedIdx], cellFaces[j]);
     }
   }
 } // XmUGridUnitTests::testGetFaces
