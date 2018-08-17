@@ -204,9 +204,12 @@ public:
   virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const = 0;
   virtual void GetEdgesOfCell(const int a_cellIdx,
                               std::vector<std::pair<int, int>>& a_edges) const = 0;
+  virtual void GetPointIdxsAttachedByEdge(int a_pointIdx, VecInt& a_edgePoints) const = 0;
+  virtual void GetPointsAttachedByEdge(int a_pointIdx, VecPt3d& a_edgePoints) const = 0;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
+  virtual int GetNumberOfFacePoints(const int a_cellIdx, const int a_faceIdx) const = 0;
 
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
   virtual void GetCellFace(const int a_cellIdx,

@@ -136,9 +136,12 @@ public:
   virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const override;
   virtual void GetEdgesOfCell(const int a_cellIdx,
                               std::vector<std::pair<int, int>>& a_edges) const override;
+  virtual void GetPointIdxsAttachedByEdge(int a_pointIdx, VecInt& a_edgePoints) const override;
+  virtual void GetPointsAttachedByEdge(int a_pointIdx, VecPt3d& a_edgePoints) const override;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const override;
+  virtual int GetNumberOfFacePoints(const int a_cellIdx, const int a_faceIdx) const override;
 
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const override;
   virtual void GetCellFace(const int a_cellIdx,
@@ -201,6 +204,7 @@ private:
                                    const std::vector<std::pair<int, int>>& a_edges) const;
   void GetExtentsFromPoints(const VecPt3d& a_points, Pt3d &a_min, Pt3d &a_max) const;
   bool GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_segments) const; // plan view
+  void GetUnique3dPlanViewPoints(int a_cellIdx, SetPt3d& a_uniqueSidePts) const; // plan view
 
   VecPt3d m_points;                 ///< UGrid points
   VecInt m_cellStream;              ///< UGrid cell stream. @see SetCellStream, GetCellStream
@@ -792,6 +796,19 @@ void iMergeSegmentsToPoly(const VecPt3d& segments, VecPt3d& polygon)
   }
 } // iMergeSegmentsToPoly
 
+//------------------------------------------------------------------------------
+///  \brief Get unique plan view points for a 2D cell given cellIdx.
+//------------------------------------------------------------------------------
+void iGetUnique2dPlanViewPoints(const XmUGridImpl& ugridGeom, int cellIdx, SetPt3d& uniqueSidePts)
+{
+  uniqueSidePts.clear();
+
+  VecPt3d cellPts;
+  ugridGeom.GetPointsOfCell(cellIdx, cellPts);
+  uniqueSidePts.insert(cellPts.begin(), cellPts.end());
+} // iGetUnique2dPlanViewPoints
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
 /// \brief Implementation for XmUGrid which provides geometry for an
@@ -907,11 +924,11 @@ void XmUGridImpl::GetPlanViewPoints(int a_cellIdx,VecPt3d& a_planViewPts) const
   SetPt3d uniqueSidePts;
   if (GetCellDimension(a_cellIdx) == 3)
   {
-    //GetPlanViewPolygon3d(a_cellIdx, uniqueSidePts);
+    GetUnique3dPlanViewPoints(a_cellIdx, uniqueSidePts);
   }
   else
   {
-    //iGetUnique2dPlanViewPoints(*this, a_cellIdx, uniqueSidePts);
+    iGetUnique2dPlanViewPoints(*this, a_cellIdx, uniqueSidePts);
   }
   a_planViewPts.assign(uniqueSidePts.begin(), uniqueSidePts.end());
 } // XmUGridImpl::GetPlanViewPoints
@@ -1682,6 +1699,44 @@ void XmUGridImpl::GetEdgesOfCell(const int a_cellIdx,
 } // XmUGridImpl::GetEdgesOfCell
 
 //------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetPointIdxsAttachedByEdge(int a_pointIdx,VecInt& a_edgePoints) const
+{
+  a_edgePoints.clear();
+  VecInt associatedCells = GetPointCells(a_pointIdx);
+  if (associatedCells.size() == 0)
+  {
+    return;
+  }
+  for (int i = 0; i < associatedCells.size(); ++i)
+  {
+    for (int j = 0; j < GetNumberOfCellEdges(associatedCells[i]); ++j)
+    {
+      std::pair<int, int> temp = GetCellEdgeFromEdgeIndex(associatedCells[i], j);
+      if (temp.first == a_pointIdx)
+      {
+        a_edgePoints.push_back(temp.second);
+      }
+      else if (temp.second == a_pointIdx)
+      {
+        a_edgePoints.push_back(temp.first);
+      }
+    }
+  }
+} // XmUGridImpl::GetPointIdxsAttachedByEdge
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetPointsAttachedByEdge(int a_pointIdx,VecPt3d& a_edgePoints) const
+{
+  VecInt edgePtIdxs;
+  GetPointIdxsAttachedByEdge(a_pointIdx, edgePtIdxs);
+  a_edgePoints = GetPointsFromPointIdxs(edgePtIdxs);
+} // XmUGridImpl::GetPointsAttachedByEdge
+
+//------------------------------------------------------------------------------
 /// \brief Get the Edges associated with a point
 /// \param[in] a_pointId: the point
 /// \param[in] a_cellIdxs: the cells to whom the edges belong
@@ -1758,6 +1813,57 @@ int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
 
   return 0;
 } // XmUGridImpl::GetNumberOfCellFaces
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+int XmUGridImpl::GetNumberOfFacePoints(const int a_cellIdx,const int a_faceIdx) const
+{
+  if (a_cellIdx < 0 || a_cellIdx >= GetNumberOfCells())
+  {
+    return -1;
+  }
+
+  int cellType(GetCellType(a_cellIdx));
+  switch (cellType)
+  {
+  case XMU_POLYHEDRON:
+  {
+    const int* cellStream;
+    int length;
+    GetSingleCellStream(a_cellIdx, &cellStream, length);
+    if (cellStream != nullptr)
+    {
+      auto currItem = cellStream;
+      int cellType = *currItem++;
+      int numFaces = *currItem++;
+      for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+      {
+        int numFacePoints = *currItem++;
+        if (a_faceIdx == faceIdx)
+        {
+          return numFacePoints;
+        }
+        currItem += numFacePoints;
+      }
+    }
+    break;
+  }
+
+  default:
+  {
+    const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
+    if (a_faceIdx >= 0 && a_faceIdx < faceTable.size())
+    {
+      return (int)faceTable[a_faceIdx].size();
+    }
+    break;
+  }
+  }
+
+  return 0;
+} // XmUGridImpl::GetNumberOfFacePoints
+
 //------------------------------------------------------------------------------
 /// \brief Get the cell face for given cell and face index.
 /// \param[in] a_cellIdx: the index of the cell
@@ -2615,6 +2721,28 @@ bool XmUGridImpl::GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_seg
   iGetFacePointSegments(*this, facePts, column2End, column1Begin, a_segments);
   return true;
 } // XmUGridImpl::GetFaceXySegments
+
+//------------------------------------------------------------------------------
+///  \brief Get unique plan view points for a 3D cell given cellIdx.
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetUnique3dPlanViewPoints(int a_cellIdx, SetPt3d& a_uniqueSidePts) const
+{
+  a_uniqueSidePts.clear();
+
+  VecInt facePts;
+  for (int faceIdx = 0; faceIdx < GetNumberOfCellFaces(a_cellIdx); ++faceIdx)
+  {
+    GetCellFace(a_cellIdx, faceIdx, facePts);
+    if (IsFaceSide(facePts))
+    {
+      for (size_t facePtIdx = 0; facePtIdx < facePts.size(); ++facePtIdx)
+      {
+        int facePtId = facePts[facePtIdx];
+        a_uniqueSidePts.insert(GetXYPoint(facePtId));
+      }
+    }
+  }
+} // XmUGridImpl::GetUnique3dPlanViewPoints
 
 } // namespace
 ////////////////////////////////////////////////////////////////////////////////
