@@ -388,6 +388,7 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
   case XMU_PIXEL:
   case XMU_QUAD:
   case XMU_POLYGON:
+  case XMU_POLY_LINE:
   case XMU_QUADRATIC_EDGE:
   case XMU_PARAMETRIC_CURVE:
   case XMU_HIGHER_ORDER_EDGE:
