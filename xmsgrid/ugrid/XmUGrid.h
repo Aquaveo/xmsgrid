@@ -136,7 +136,9 @@ public:
   virtual Pt3d GetPoint(const int a_pointIdx) const = 0;
   virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) = 0;
 
+  virtual Pt3d GetXYPoint(const int a_pointIdx) const = 0;
   virtual VecPt3d GetPointsFromPointIdxs(const VecInt& a_points) const = 0;
+  virtual void GetPlanViewPoints(int a_cellIdx, VecPt3d& a_planViewPts) const = 0;
 
   virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
 
@@ -155,10 +157,13 @@ public:
   virtual VecInt GetPointsOfCell(const int a_cellIdx) const = 0;
   virtual bool GetPointsOfCell(const int a_cellIdx,
                                VecInt& a_cellPoints) const = 0; // Point indexes of a cell
+  virtual void GetPointsOfCell(const int a_cellIdx,
+                               VecPt3d& a_cellPoints) const = 0; // Point locations of a cell
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
   virtual int GetCellDimension(const int a_cellIdx) const = 0;
+  virtual void GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const = 0;
 
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
@@ -167,6 +172,7 @@ public:
   virtual VecInt GetCellNeighbors(const int a_cellIdx) const = 0;
   virtual void GetCellNeighbors(const int a_cellIdx, VecInt& a_cellNeighbors) const = 0;
   virtual bool GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const = 0;
+  virtual bool GetCentroid(int a_cellIdx, Pt3d& a_centroid) const = 0;
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;

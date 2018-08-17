@@ -22,6 +22,7 @@
 #include <xmscore/misc/XmConst.h>
 #include <xmscore/misc/XmError.h>
 #include <xmscore/misc/XmLog.h>
+#include <xmscore/stl/set.h>
 
 // 6. Non-shared code headers
 #include <xmsgrid/ugrid/XmConvexHull.h>
@@ -65,7 +66,9 @@ public:
   virtual Pt3d GetPoint(const int a_pointIdx) const override;
   virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) override;
 
+  virtual Pt3d GetXYPoint(const int a_pointIdx) const override;
   virtual VecPt3d GetPointsFromPointIdxs(const VecInt& a_points) const override;
+  virtual void GetPlanViewPoints(int a_cellIdx, VecPt3d& a_planViewPts) const override;
 
   virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const override;
 
@@ -86,10 +89,12 @@ public:
 
   virtual VecInt GetPointsOfCell(const int a_cellIdx) const override;
   virtual bool GetPointsOfCell(const int a_cellIdx, VecInt& a_cellPoints) const override;
+  virtual void GetPointsOfCell(const int a_cellIdx, VecPt3d& a_cellPoints) const override;
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const override;
   virtual std::vector<int> GetDimensionCount() const override;
   virtual int GetCellDimension(const int a_cellIdx) const override;
+  virtual void GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const override;
 
   virtual const VecInt& GetCellStream() const override;
   virtual bool SetCellStream(const VecInt& a_cellStream) override;
@@ -98,6 +103,7 @@ public:
   virtual VecInt GetCellNeighbors(const int a_cellIdx) const override;
   virtual void GetCellNeighbors(const int a_cellIdx, VecInt& a_cellNeighbors) const override;
   virtual bool GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const override;
+  virtual bool GetCentroid(int a_cellIdx, Pt3d& a_centroid) const override;
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const override;
@@ -184,8 +190,8 @@ private:
   bool GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const;
   bool GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) const;
 
-  bool IsFaceSide(const VecInt& a_facePts) const;
-  bool GetCellXySegments(int cellIdx, VecPt3d& segments) const;
+  bool IsFaceSide(const VecInt& a_facePts) const; // plan view
+  bool GetCellXySegments(int cellIdx, VecPt3d& segments) const; // plan view
   bool IsCellValidWithPointChange(const int a_cellIdx,
                                   const int a_changedPtIdx,
                                   const Pt3d& a_newPosition) const;
@@ -193,6 +199,8 @@ private:
   bool DoEdgesCrossWithPointChange(const int a_changedPtIdx,
                                    const Pt3d& a_newPosition,
                                    const std::vector<std::pair<int, int>>& a_edges) const;
+  void GetExtentsFromPoints(const VecPt3d& a_points, Pt3d &a_min, Pt3d &a_max) const;
+  bool GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_segments) const; // plan view
 
   VecPt3d m_points;                 ///< UGrid points
   VecInt m_cellStream;              ///< UGrid cell stream. @see SetCellStream, GetCellStream
@@ -456,6 +464,334 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
   XM_ASSERT(0);
   return fg_empty;
 } // iGetFaceOffsetTable
+
+
+
+//////////// plan view
+//------------------------------------------------------------------------------
+/// \brief Get next column of points with equal x/y values for side face.
+//------------------------------------------------------------------------------
+bool iGetNextFaceColumn(const XmUGridImpl& ugridGeom,
+                        const VecInt& facePoints,
+                        size_t starti,
+                        size_t& columnBegin,
+                        size_t& columnEnd)
+{
+  size_t facePointsSize = facePoints.size();
+
+  // find next start of column of points (matching x/y values)
+  Pt3d lastPt = ugridGeom.GetXYPoint(facePoints[starti]);
+  size_t lasti = starti;
+  size_t i = (starti + 1) % facePointsSize;
+  Pt3d pt;
+  bool found = false;
+  while (!found && i != starti)
+  {
+    pt = ugridGeom.GetXYPoint(facePoints[i]);
+    if (pt == lastPt)
+    {
+      columnBegin = lasti;
+      found = true;
+    }
+    lastPt = pt;
+    lasti = i;
+    i = (i + 1) % facePointsSize;
+  }
+
+  if (!found)
+  {
+    // should have found first pair of points with matching x/y values
+    return false;
+  }
+
+  // find end of column of points
+  found = false;
+  while (!found && i != columnBegin)
+  {
+    pt = ugridGeom.GetXYPoint(facePoints[i]);
+    if (pt != lastPt)
+    {
+      columnEnd = lasti;
+      found = true;
+    }
+    else
+    {
+      lastPt = pt;
+      lasti = i;
+      i = (i + 1) % facePointsSize;
+    }
+  }
+
+  if (!found)
+  {
+    // should have found end of points with matching x/y values
+    return false;
+  }
+
+  return true;
+} // iGetNextFaceColumn
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void iGetFacePointSegments(const XmUGridImpl& ugridGeom,
+                           const VecInt& facePts,
+                           size_t columnBegin,
+                           size_t columnEnd,
+                           VecPt3d& segments)
+{
+  size_t i = columnBegin;
+  while (i != columnEnd)
+  {
+    Pt3d p = ugridGeom.GetXYPoint(facePts[i]);
+    segments.push_back(p);
+    if (i != columnBegin)
+      segments.push_back(p);
+    i = (i + 1) % facePts.size();
+  }
+  segments.push_back(ugridGeom.GetXYPoint(facePts[i]));
+} // iGetFacePointSegments
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool iPointInSegmentBounds(const Pt3d& point, const Pt3d first, const Pt3d& second)
+{
+  bool inBounds = point.x >= std::min(first.x, second.x) &&
+                  point.y >= std::min(first.y, second.y) &&
+                  point.x <= std::max(first.x, second.x) && point.y <= std::max(first.y, second.y);
+  return inBounds;
+} // iPointInSegmentBounds
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+template <typename T>
+std::vector<T> iGetUniquePoints(const std::vector<T>& segments)
+{
+  std::vector<T> points = segments;
+  std::sort(points.begin(), points.end());
+  auto pIt = std::unique(points.begin(), points.end());
+  points.resize(pIt - points.begin());
+  return points;
+} // iGetUniquePoints
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+template <typename T>
+void iBuildPolygon(std::vector<std::pair<T, T>>& segs, std::vector<T>& polygon)
+{
+  xms::VecChar placed(segs.size(), false);
+  polygon.push_back(segs[0].first);
+  polygon.push_back(segs[0].second);
+  placed[0] = true;
+  for (size_t i = 1; i != segs.size(); ++i)
+  {
+    T& toMatch = polygon.back();
+    for (size_t j = 1; j != segs.size(); ++j)
+    {
+      if (!placed[j])
+      {
+        if (segs[j].first == toMatch)
+        {
+          polygon.push_back(segs[j].second);
+          placed[j] = true;
+        }
+        else if (segs[j].second == toMatch)
+        {
+          polygon.push_back(segs[j].first);
+          placed[j] = true;
+        }
+      }
+    }
+  }
+} // iBuildPolygon
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+template <typename T>
+std::vector<std::pair<T, T>> iGetUniqueSegments(const std::vector<T>& segments)
+{
+  std::vector<std::pair<T, T>> segs;
+  for (size_t i = 0; i < segments.size(); i += 2)
+  {
+    T a = segments[i];
+    T b = segments[i + 1];
+    if (a < b)
+      segs.push_back(std::pair<T, T>(a, b));
+    else
+      segs.push_back(std::pair<T, T>(b, a));
+  }
+  std::sort(segs.begin(), segs.end());
+  auto segIt = std::unique(segs.begin(), segs.end());
+  segs.resize(segIt - segs.begin());
+  return segs;
+} // iGetUniqueSegments
+//------------------------------------------------------------------------------
+/// \brief  Returns true if the points are equal to within gmXyTol().
+/// \param x1: x of point 1.
+/// \param y1: y of point 1.
+/// \param x2: x of point 2.
+/// \param y2: y of point 2.
+/// \param tolerance: tolerance.
+/// \return true if equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXY(double x1, double y1, double x2, double y2, double tolerance)
+{
+  double dx = fabs(x1 - x2);
+  double dy = fabs(y1 - y2);
+  if (dx > tolerance || dy > tolerance)
+    return false;
+  else if (sqrt(dx * dx + dy * dy) <= tolerance)
+    return true;
+  else
+    return false;
+} // gmEqualPointsXY
+//------------------------------------------------------------------------------
+/// \brief   Determines if a point (x,y) is on the line defined by p1 and
+///          p2. Assumes p1 and p2 aren't the same.
+/// \param p1: first location defining a line
+/// \param p2: second location defining a line
+/// \param x: x coord of point to test
+/// \param y: y coord of point to test
+/// \param tol: tolerance for geometric comparison
+/// \return  Returns true if the Point is on the line passing through p1 and p2
+///          within the tolerance passed.
+/// \note: you should always be careful to consider the case when p1 and
+///          p2 are very close to each other but not to x,y.  in that case this
+///          test will almost always fail because it will be more susceptible to
+///          roundoff error.  if you need to know if three points are colinear
+///          you should use the gmColinear function.
+//------------------------------------------------------------------------------
+bool gmOnLineWithTol(const Pt3d& p1,
+                     const Pt3d& p2,
+                     const double x,
+                     const double y,
+                     const double tol)
+{
+  // compute vector components
+  double dx = p2.x - p1.x;
+  double dy = p2.y - p1.y;
+  double mag = sqrt((dx*dx) + (dy*dy));
+  // check for extremely small segment
+  if (mag <= tol)
+    return gmEqualPointsXY(p1.x, p1.y, x, y, 1.0e-7);
+  else
+  {
+    double a = -dy / mag;
+    double b = dx / mag;
+    double c = -a * p2.x - b * p2.y;
+    // compute distance from line to (x,y)
+    double d = a * x + b * y + c;
+    return fabs(d) <= tol;
+  }
+} // gmOnLineWithTol
+//------------------------------------------------------------------------------
+/// \brief   Compute 2d planview projection of area of polygon.
+/// \param pts: locations defining the polygon
+/// \param npoints: number of pts
+/// \return Area of the polygon.
+///
+/// CCW = positive area, CW = negative. Don't repeat the last point.
+//------------------------------------------------------------------------------
+double gmPolygonArea(const Pt3d* pts, size_t npoints)
+{
+  size_t id;
+  double area = 0.0;
+
+  if (npoints < 3)
+    return area;
+
+  /* original method with precision errors
+  for (id = 0; id < npoints; id++)
+  {
+    if (id != (npoints - 1))
+    {
+      area += (pts[id].x * pts[id + 1].y);
+      area -= (pts[id].y * pts[id + 1].x);
+    }
+    else
+    {
+      area += (pts[id].x * pts[0].y);
+      area -= (pts[id].y * pts[0].x);
+    }
+  }
+  area /= 2.0;
+  */
+
+  // AKZ 2/15/2018
+  // I changed the implementation to translate the polygon
+  //   so that the first point is at the origin
+  // Reduces round off error due to large coordinates
+  // Reduces the number of computations because the first and last
+  //   computations in the loop would be 0.0
+  VecDbl x, y;
+  double x0 = pts[0].x;
+  double y0 = pts[0].y;
+  for (id = 1; id < npoints; id++)
+  {
+    x.push_back((pts[id].x - x0));
+    y.push_back((pts[id].y - y0));
+  }
+  for (id = 0; id < npoints - 2; id++)
+  {
+    area += (x[id] * y[id + 1]);
+    area -= (y[id] * x[id + 1]);
+  }
+  area /= 2.0;
+
+  return (area);
+} // gmPolygonArea
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void iMergeSegmentsToPoly(const VecPt3d& segments, VecPt3d& polygon)
+{
+  if (segments.empty())
+    return;
+
+  VecPt3d points = iGetUniquePoints(segments);
+  std::vector<std::pair<Pt3d, Pt3d>> segs = iGetUniqueSegments(segments);
+
+  // if any point is on any other segment split up the segment
+  for (auto pIt = points.begin(); pIt != points.end(); ++pIt)
+  {
+    size_t segsSize = segs.size();
+    for (size_t i = 0; i < segsSize; ++i)
+    {
+      Pt3d pt1 = segs[i].first;
+      Pt3d pt2 = segs[i].second;
+      if (*pIt != pt1 && *pIt != pt2 && iPointInSegmentBounds(*pIt, pt1, pt2))
+      {
+        Pt3d diff = pt1 - pt2;
+        double distance = std::max(fabs(diff.x), fabs(diff.y));
+        double tolerance = distance / 1.0e6;
+        if (gmOnLineWithTol(pt1, pt2, pIt->x, pIt->y, tolerance))
+        {
+          segs.push_back(std::pair<Pt3d, Pt3d>(*pIt, pt2));
+          segs[i].second = *pIt;
+        }
+      }
+    }
+  }
+  std::sort(segs.begin(), segs.end());
+  auto segIt = std::unique(segs.begin(), segs.end());
+  segs.resize(segIt - segs.begin());
+
+  iBuildPolygon(segs, polygon);
+
+  if (polygon.size() > 3 && polygon.front() == polygon.back())
+  {
+    polygon.pop_back();
+    double area = gmPolygonArea(&polygon[0], (int)polygon.size());
+    if (area < 0)
+      std::reverse(polygon.begin(), polygon.end());
+  }
+  else
+  {
+    XM_ASSERT(0);
+    polygon.clear();
+  }
+} // iMergeSegmentsToPoly
+
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
 /// \brief Implementation for XmUGrid which provides geometry for an
@@ -533,6 +869,19 @@ bool XmUGridImpl::SetPoint(const int a_pointIdx, const Pt3d& a_point)
   }
   return false;
 } // XmUGridImpl::SetPoint
+
+//------------------------------------------------------------------------------
+/// \brief Get the X, Y location of a point.
+/// \param[in] a_pointIdx The index of the point.
+/// \return The location of the point with Z set to 0.0.
+//------------------------------------------------------------------------------
+Pt3d XmUGridImpl::GetXYPoint(const int a_pointIdx) const
+{
+  Pt3d pt = GetPoint(a_pointIdx);
+  pt.z = 0.0;
+  return pt;
+} // XmUGridImpl::GetXYPoint
+
 //------------------------------------------------------------------------------
 /// \brief Convert a vector of point indices into a vector of point 3d
 /// \param[in] a_points: a vector of point indices
@@ -547,6 +896,26 @@ VecPt3d XmUGridImpl::GetPointsFromPointIdxs(const VecInt& a_points) const
   }
   return point3d;
 } // XmUGridImpl::GetPointsFromPointIdxs
+
+//------------------------------------------------------------------------------
+/// \brief
+/// \param[in] a_cellIdx
+/// \param[out] a_planViewPts
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetPlanViewPoints(int a_cellIdx,VecPt3d& a_planViewPts) const
+{
+  SetPt3d uniqueSidePts;
+  if (GetCellDimension(a_cellIdx) == 3)
+  {
+    //GetPlanViewPolygon3d(a_cellIdx, uniqueSidePts);
+  }
+  else
+  {
+    //iGetUnique2dPlanViewPoints(*this, a_cellIdx, uniqueSidePts);
+  }
+  a_planViewPts.assign(uniqueSidePts.begin(), uniqueSidePts.end());
+} // XmUGridImpl::GetPlanViewPoints
+
 //------------------------------------------------------------------------------
 /// \brief Get extents of all points in UGrid
 /// \param[out] a_min: minimum extent of all points
@@ -554,25 +923,9 @@ VecPt3d XmUGridImpl::GetPointsFromPointIdxs(const VecInt& a_points) const
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetExtents(Pt3d& a_min, Pt3d& a_max) const
 {
-  a_min.x = a_min.y = a_min.z = xms::XM_DBL_HIGHEST;
-  a_max.x = a_max.y = a_max.z = xms::XM_DBL_LOWEST;
-  for (int i(0); i < m_points.size(); i++)
-  {
-    if (m_points[i].x < a_min.x)
-      a_min.x = m_points[i].x;
-    if (m_points[i].y < a_min.y)
-      a_min.y = m_points[i].y;
-    if (m_points[i].z < a_min.z)
-      a_min.z = m_points[i].z;
-
-    if (m_points[i].x > a_max.x)
-      a_max.x = m_points[i].x;
-    if (m_points[i].y > a_max.y)
-      a_max.y = m_points[i].y;
-    if (m_points[i].z > a_max.z)
-      a_max.z = m_points[i].z;
-  }
+  GetExtentsFromPoints(m_points,a_min,a_max);
 } // XmUGridImpl::GetExtents
+
 //------------------------------------------------------------------------------
 /// \brief Get the cells that are associated with the specified point
 /// \param[in] a_pointIdx: the index of the point
@@ -698,7 +1051,52 @@ VecInt XmUGridImpl::GetPointsOfCell(const int a_cellIdx) const
   VecInt pointsOfCell;
   GetPointsOfCell(a_cellIdx, pointsOfCell);
   return pointsOfCell;
-} // XmUGridImpl::GetNumberOfCells
+} // XmUGridImpl::GetPointsOfCell
+
+//------------------------------------------------------------------------------
+/// \brief Get the points of a cell.
+/// \param[in] a_cellIdx: the index of the cell
+/// \param[out] a_cellPoints: the points of the cell
+/// \return if the cell index is valid
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetPointsOfCell(const int a_cellIdx, VecInt& a_cellPoints) const
+{
+  a_cellPoints.clear();
+  VecInt cellStream;
+  if (GetSingleCellStream(a_cellIdx, cellStream))
+  {
+    XM_ENSURE_TRUE_NO_ASSERT(!cellStream.empty(), false);
+    int cellType = cellStream[0];
+    if (cellType == XMU_POLYHEDRON)
+    {
+      GetUniquePointsFromPolyhedronSingleCellStream(cellStream, a_cellPoints);
+      return true;
+    }
+    else if (cellType == XMU_PIXEL)
+    {
+      a_cellPoints.push_back(cellStream[2]);
+      a_cellPoints.push_back(cellStream[3]);
+      a_cellPoints.push_back(cellStream[5]);
+      a_cellPoints.push_back(cellStream[4]);
+      return true;
+    }
+    else
+    {
+      a_cellPoints.assign(cellStream.begin() + 2, cellStream.end());
+      return true;
+    }
+  }
+  return false;
+} // XmUGridImpl::GetPointsOfCell
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetPointsOfCell(const int a_cellIdx,VecPt3d& a_cellPoints) const
+{
+  VecInt ptIdxs = GetPointsOfCell(a_cellIdx);
+  a_cellPoints = GetPointsFromPointIdxs(ptIdxs);
+} // XmUGridImpl::GetPointsOfCell
 
 //------------------------------------------------------------------------------
 /// \brief Get the number of cells.
@@ -752,6 +1150,17 @@ int XmUGridImpl::GetCellDimension(const int a_cellIdx) const
 {
   return DimensionFromCellType(GetCellType(a_cellIdx));
 } // XmUGridImpl::GetCellDimension
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const
+{
+  VecPt3d pts;
+  GetPointsOfCell(a_cellIdx, pts);
+  GetExtentsFromPoints(pts, a_min, a_max);
+} // XmUGridImpl::GetCellExtents
+
 //------------------------------------------------------------------------------
 /// \brief Get cell stream vector for the entire UGrid.
 /// \return constant reference to the cell stream vector
@@ -807,41 +1216,7 @@ bool XmUGridImpl::GetSingleCellStream(const int a_cellIdx, VecInt& a_cellStream)
   a_cellStream.assign(m_cellStream.begin() + startIndex, m_cellStream.begin() + endIndex);
   return true;
 } // XmUGridImpl::GetSingleCellStream
-//------------------------------------------------------------------------------
-/// \brief Get the points of a cell.
-/// \param[in] a_cellIdx: the index of the cell
-/// \param[out] a_cellPoints: the points of the cell
-/// \return if the cell index is valid
-//------------------------------------------------------------------------------
-bool XmUGridImpl::GetPointsOfCell(const int a_cellIdx, VecInt& a_cellPoints) const
-{
-  a_cellPoints.clear();
-  VecInt cellStream;
-  if (GetSingleCellStream(a_cellIdx, cellStream))
-  {
-    XM_ENSURE_TRUE_NO_ASSERT(!cellStream.empty(), false);
-    int cellType = cellStream[0];
-    if (cellType == XMU_POLYHEDRON)
-    {
-      GetUniquePointsFromPolyhedronSingleCellStream(cellStream, a_cellPoints);
-      return true;
-    }
-    else if (cellType == XMU_PIXEL)
-    {
-      a_cellPoints.push_back(cellStream[2]);
-      a_cellPoints.push_back(cellStream[3]);
-      a_cellPoints.push_back(cellStream[5]);
-      a_cellPoints.push_back(cellStream[4]);
-      return true;
-    }
-    else
-    {
-      a_cellPoints.assign(cellStream.begin() + 2, cellStream.end());
-      return true;
-    }
-  }
-  return false;
-} // XmUGridImpl::GetPointsOfCell
+
 //------------------------------------------------------------------------------
 /// \brief Get the cells neighboring a cell (cells associated with any of it's points)
 /// \param[in] a_cellIdx: the index of the cell
@@ -888,9 +1263,9 @@ void XmUGridImpl::GetCellNeighbors(const int a_cellIdx, VecInt& a_cellNeighbors)
 } // XmUGridImpl::GetCellNeighbors
 //------------------------------------------------------------------------------
 /// \brief Get a plan view polygon of a specified cell
-/// \param[in] a_cellIdx: the index of the cell
-/// \param[out] a_polygon: vector of Pt3d that is the plan view polygon
-/// \return whether the operation was successful
+/// \param[in] a_cellIdx The index of the cell.
+/// \param[out] a_polygon Vector of Pt3d that is the plan view polygon.
+/// \return False if the cell index does not exist or if the cell is not 2 or 3 dimensional.
 //------------------------------------------------------------------------------
 bool XmUGridImpl::GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const
 {
@@ -905,6 +1280,40 @@ bool XmUGridImpl::GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const
   else
     return false;
 } // XmUGridImpl::GetPlanViewPolygon
+
+//------------------------------------------------------------------------------
+/// \brief Get the centroid location of a cell.
+/// \param[in] a_cellIdx The index of the cell.
+/// \param[out] a_centroid The location of the cell centroid.
+/// \return False if the cell index does not exist.
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetCentroid(int a_cellIdx, Pt3d& a_centroid) const
+{
+  VecPt3d pts;
+  bool retVal = true;
+  Pt3d centroid= Pt3d(0.0, 0.0, 0.0);
+  if (GetPlanViewPolygon(a_cellIdx, pts))
+  {
+#pragma message("TODO: move polygon centroid calculation to someplace visisble to here")
+  }
+  else if (a_cellIdx < 0 || a_cellIdx >= GetNumberOfCells())
+  {
+    retVal = false;
+  }
+  else
+  {
+    VecPt3d pts;
+    GetPointsOfCell(a_cellIdx, pts);
+    for (Pt3d& pt : pts)
+    {
+      centroid += pt;
+    }
+    centroid /= (double)pts.size();
+  }
+  a_centroid = centroid;
+  return retVal;
+} // XmUGridImpl::GetCentroid
+
 //------------------------------------------------------------------------------
 /// \brief Determine whether a cell is valid after a point is moved.
 /// \param[in] a_cellIdx: the index of the cell
@@ -2014,8 +2423,7 @@ void XmUGridImpl::GetUniqueEdgesFromPolyhedronCellStream(
 //------------------------------------------------------------------------------
 bool XmUGridImpl::GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const
 {
-  VecInt pointIndices = GetPointsOfCell(a_cellIdx);
-  a_polygon = GetPointsFromPointIdxs(pointIndices);
+  GetPointsOfCell(a_cellIdx, a_polygon);
   if (a_polygon.size() > 0)
   {
     return true;
@@ -2034,7 +2442,7 @@ bool XmUGridImpl::GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) const
   if (GetCellXySegments(a_cellIdx, segments))
   {
     // Prismatic cell
-    a_polygon = segments;
+    iMergeSegmentsToPoly(segments, a_polygon);
     return true;
   }
   else
@@ -2083,73 +2491,130 @@ bool XmUGridImpl::IsFaceSide(const VecInt& a_facePts) const
 //------------------------------------------------------------------------------
 bool XmUGridImpl::GetCellXySegments(int a_cellIdx, VecPt3d& a_segments) const
 {
-  int numFaces(GetNumberOfCellFaces(a_cellIdx));
-  if (numFaces <= 0)
-    return false;
+  //int numFaces(GetNumberOfCellFaces(a_cellIdx));
+  //if (numFaces <= 0)
+  //  return false;
 
-  a_segments.clear();
-  VecPt3d2d segment2d;
-  segment2d.resize(numFaces);
+  //a_segments.clear();
+  //VecPt3d2d segment2d;
+  //segment2d.resize(numFaces);
+  //for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+  //{
+  //  // Gather only side faces (faces that have duplicate XY values)
+  //  VecInt facePoints = GetCellFace(a_cellIdx, faceIdx);
+  //  if (IsFaceSide(facePoints))
+  //  {
+  //    // Gather the unique points of each face
+  //    for (int i(0); i < facePoints.size(); i++)
+  //    {
+  //      Pt3d curPoint = GetPoint(facePoints[i]);
+  //      curPoint.z = 0.0; // clear the z-values (in our copy)
+  //      // See if we have added this point to our vector previously
+  //      if (a_segments.empty())
+  //      {
+  //        segment2d[i].push_back(curPoint);
+  //      }
+  //      if (std::find(segment2d[i].begin(), segment2d[i].end(), curPoint) == segment2d[i].end())
+  //      {
+  //        segment2d[i].push_back(curPoint);
+  //      }
+  //    }
+  //  }
+  //}
+  //// stitch together faces into one polygon
+  //// Need at least 3 side faces to make a polygon
+  //if (segment2d.size() < 3 || segment2d[0].size() < 2)
+  //  return false;
+  //Pt3d lastPoint = segment2d[0][1];
+  //a_segments.push_back(segment2d[0][0]);
+  //a_segments.push_back(segment2d[0][1]);
+  //while (lastPoint != a_segments[0])
+  //{
+  //  int faceId;
+  //  bool found = false;
+  //  for (faceId = 0; faceId < segment2d.size(); ++faceId)
+  //  {
+  //    if (segment2d[faceId].size() > 1 && segment2d[faceId][0] == lastPoint)
+  //    {
+  //      found = true;
+  //      break;
+  //    }
+  //  }
+  //  if (!found)
+  //    return false; // There is no connecting face.
+  //  for (int i = 1; i < segment2d[faceId].size(); ++i)
+  //  {
+  //    lastPoint = segment2d[faceId][i];
+  //    if (lastPoint == a_segments[0])
+  //      break;
+  //    a_segments.push_back(segment2d[faceId][i]);
+  //  }
+  //  segment2d[faceId].clear();
+  //}
+
+  //// Need 3 segments to make a polygon
+  //if (a_segments.size() <= 3)
+  //  return false;
+
+  //return true;
   for (int faceIdx = 0; faceIdx < GetNumberOfCellFaces(a_cellIdx); ++faceIdx)
   {
-    // Gather only side faces (faces that have duplicate XY values)
-    VecInt facePoints = GetCellFace(a_cellIdx, faceIdx);
-    if (IsFaceSide(facePoints))
+    VecInt ptIdxs = GetCellFace(a_cellIdx, faceIdx);
+    if (IsFaceSide(ptIdxs))
     {
-      // Gather the unique points of each face
-      for (int i(0); i < facePoints.size(); i++)
+      if (!GetFaceXySegments(a_cellIdx, faceIdx, a_segments))
       {
-        Pt3d curPoint = GetPoint(facePoints[i]);
-        curPoint.z = 0.0; // clear the z-values (in our copy)
-        // See if we have added this point to our vector previously
-        if (a_segments.empty())
-        {
-          segment2d[i].push_back(curPoint);
-        }
-        if (std::find(segment2d[i].begin(), segment2d[i].end(), curPoint) == segment2d[i].end())
-        {
-          segment2d[i].push_back(curPoint);
-        }
+        return false;
       }
     }
   }
-  // stitch together faces into one polygon
-  // Need at least 3 side faces to make a polygon
-  if (segment2d.size() < 3 || segment2d[0].size() < 2)
-    return false;
-  Pt3d lastPoint = segment2d[0][1];
-  a_segments.push_back(segment2d[0][0]);
-  a_segments.push_back(segment2d[0][1]);
-  while (lastPoint != a_segments[0])
-  {
-    int faceId;
-    bool found = false;
-    for (faceId = 0; faceId < segment2d.size(); ++faceId)
-    {
-      if (segment2d[faceId].size() > 1 && segment2d[faceId][0] == lastPoint)
-      {
-        found = true;
-        break;
-      }
-    }
-    if (!found)
-      return false; // There is no connecting face.
-    for (int i = 1; i < segment2d[faceId].size(); ++i)
-    {
-      lastPoint = segment2d[faceId][i];
-      if (lastPoint == a_segments[0])
-        break;
-      a_segments.push_back(segment2d[faceId][i]);
-    }
-    segment2d[faceId].clear();
-  }
-
-  // Need 3 segments to make a polygon
-  if (a_segments.size() <= 3)
-    return false;
-
   return true;
 } // XmUGridImpl::GetCellXySegments
+
+//------------------------------------------------------------------------------
+/// \brief Function to get the extents from a list of points. Will be removed after geometry library is built.
+/// \param[in] a_points The point locations to get the extents of.
+/// \param[out] a_min Minimum point location.
+/// \param[out] a_min Minimum point location.
+//------------------------------------------------------------------------------
+void XmUGridImpl::GetExtentsFromPoints(const VecPt3d& a_points, Pt3d &a_min,Pt3d &a_max) const
+{
+#pragma message("TODO: Remove this function after geometry library is built.")
+  a_min.x = a_min.y = a_min.z = xms::XM_DBL_HIGHEST;
+  a_max.x = a_max.y = a_max.z = xms::XM_DBL_LOWEST;
+  for (const Pt3d& pt : a_points)
+  {
+    a_min.x = std::min(pt.x,a_min.x);
+    a_min.y = std::min(pt.y,a_min.y);
+    a_min.z = std::min(pt.z,a_min.z);
+    a_max.x = std::max(pt.x,a_max.x);
+    a_max.y = std::max(pt.y,a_max.y);
+    a_max.z = std::max(pt.z,a_max.z);
+  }
+} // XmUGridImpl::GetExtentsFromPoints
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_segments) const
+{
+  VecInt facePts;
+  GetCellFace(a_cellIdx, a_faceIdx, facePts);
+  if (facePts.empty())
+    return false;
+
+  size_t column1Begin, column1End;
+  if (!iGetNextFaceColumn(*this, facePts, 0, column1Begin, column1End))
+    return false;
+
+  size_t column2Begin, column2End;
+  if (!iGetNextFaceColumn(*this, facePts, column1End, column2Begin, column2End))
+    return false;
+
+  iGetFacePointSegments(*this, facePts, column1End, column2Begin, a_segments);
+  iGetFacePointSegments(*this, facePts, column2End, column1Begin, a_segments);
+  return true;
+} // XmUGridImpl::GetFaceXySegments
 
 } // namespace
 ////////////////////////////////////////////////////////////////////////////////
@@ -2771,7 +3236,7 @@ void XmUGridUnitTests::testGetSetPoint()
   //     6----7----8
 
   //! [snip_test_NewOperator]
-  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
+  VecPt3d points = {{0, 10, 0}, {10, 10, 10}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
                     {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
 
   // Cell type (9), number of points (4), point numbers, counterclockwise
@@ -2785,6 +3250,7 @@ void XmUGridUnitTests::testGetSetPoint()
   {
     TS_ASSERT_EQUALS(points[i], ugrid->GetPoint(i));
   }
+  TS_ASSERT_EQUALS(Pt3d(10, 10, 0), ugrid->GetXYPoint(1));
   TS_ASSERT_EQUALS(Pt3d(), ugrid->GetPoint((int)points.size()));
 
   TS_ASSERT(!ugrid->SetPoint(-1, Pt3d()));
@@ -3969,9 +4435,9 @@ void XmUGridUnitTests::testGetPlanViewPolygon()
     return;
   }
   expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},
-                      {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},
-                      {{20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}},
-                      {{30, 10, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}},
+                      {{20, 0, 0}, {20, 10, 0}, {10, 10, 0}, {10, 0, 0}},
+                      {{30, 0, 0}, {30, 10, 0}, {20, 10, 0}, {20, 0, 0}},
+                      {{40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {30, 10, 0}},
                       {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {30, 10, 0}},
                       {{0, 10, 0}, {10, 10, 0}, {10, 20, 0}, {0, 20, 0}}};
 
