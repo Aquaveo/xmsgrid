@@ -164,7 +164,7 @@ Example - Defining Ugrid Cells</h2>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New_With_Data_2d"></a>
 Example - Creating a New 2D UGrid With Data</h2>
 <p>This example shows how to create a new 2D UGrid with the overloaded New function which directly sets the data as it constructs the grid, using the static function <a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502" title="Create a new XmUGrid. ">xms::XmUGrid::New(const VecPt3d&amp; a_points, const VecInt&amp; a_cellStream)</a>. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af" title="[snip_test_UGrid_Streams] ">XmUGridUnitTests::testGetSetPoint</a>.</p>
-<div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 10}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
+<div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
 <div class="line">                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Cell type (9), number of points (4), point numbers, counterclockwise</span></div>
@@ -537,9 +537,9 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line">  expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},</div>
-<div class="line">                      {{20, 0, 0}, {20, 10, 0}, {10, 10, 0}, {10, 0, 0}},</div>
-<div class="line">                      {{30, 0, 0}, {30, 10, 0}, {20, 10, 0}, {20, 0, 0}},</div>
-<div class="line">                      {{40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {30, 10, 0}},</div>
+<div class="line">                      {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},</div>
+<div class="line">                      {{20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}},</div>
+<div class="line">                      {{30, 10, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}},</div>
 <div class="line">                      {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {30, 10, 0}},</div>
 <div class="line">                      {{0, 10, 0}, {10, 10, 0}, {10, 20, 0}, {0, 20, 0}}};</div>
 <div class="line"></div>
@@ -753,7 +753,7 @@ Example Get Edges Associated with a Cell</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Aug 17 2018 23:18:12 for xmsgrid by
+    <li class="footer">Generated on Sun Aug 19 2018 19:14:24 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

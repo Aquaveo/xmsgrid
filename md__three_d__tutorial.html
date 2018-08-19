@@ -179,7 +179,7 @@ Example - Defining Ugrid Cells</h2>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New_With_Data_3d"></a>
 Example - Creating a New 3D UGrid With Data</h2>
 <p>This example shows how to create a new 3D UGrid with the overloaded New function which directly sets the data as it constructs the grid, using the static function <a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502" title="Create a new XmUGrid. ">xms::XmUGrid::New(const VecPt3d&amp; a_points, const VecInt&amp; a_cellStream)</a>. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af" title="[snip_test_UGrid_Streams] ">XmUGridUnitTests::testGetSetPoint</a>.</p>
-<div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 10}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
+<div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
 <div class="line">                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Cell type (9), number of points (4), point numbers, counterclockwise</span></div>
@@ -552,9 +552,9 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line">  expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},</div>
-<div class="line">                      {{20, 0, 0}, {20, 10, 0}, {10, 10, 0}, {10, 0, 0}},</div>
-<div class="line">                      {{30, 0, 0}, {30, 10, 0}, {20, 10, 0}, {20, 0, 0}},</div>
-<div class="line">                      {{40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {30, 10, 0}},</div>
+<div class="line">                      {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},</div>
+<div class="line">                      {{20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}},</div>
+<div class="line">                      {{30, 10, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}},</div>
 <div class="line">                      {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {30, 10, 0}},</div>
 <div class="line">                      {{0, 10, 0}, {10, 10, 0}, {10, 20, 0}, {0, 20, 0}}};</div>
 <div class="line"></div>
@@ -595,8 +595,8 @@ Example - Get Cell Edge from Edge Index</h2>
 <div class="line">    std::vector&lt;std::vector&lt;std::pair&lt;int, int&gt;&gt;&gt; expectedCellsCellEdges =</div>
 <div class="line">    {</div>
 <div class="line">      {{0, 1}, {1, 5}, {5, 0}, {0, 15}, {1, 15}, {5, 15}}, <span class="comment">// XMU_TETRA</span></div>
-<div class="line">      {{1, 2}, {2, 7}, {6, 7}, {1, 6}, {16, 17}, {17, 22}, {21, 22}, {16, 21}, {1, 16}, {2, 17}, {6, 21}, {7, 22}}, <span class="comment">// XMU_VOXEL</span></div>
-<div class="line">      {{2, 3}, {3, 8}, {7, 8}, {2, 7}, {17, 18}, {18, 23}, {22, 23}, {17, 22}, {2, 17}, {3, 18}, {7, 22}, {8, 23}}, <span class="comment">// XMU_HEXAHEDRON</span></div>
+<div class="line">      {{1, 2}, {2, 7}, {7, 6}, {6, 1}, {16, 17}, {17, 22}, {22, 21}, {21, 16}, {1, 16}, {2, 17}, {7, 22}, {6, 21}}, <span class="comment">// XMU_VOXEL</span></div>
+<div class="line">      {{2, 3}, {3, 8}, {8, 7}, {7, 2}, {17, 18}, {18, 23}, {23, 22}, {22, 17}, {2, 17}, {3, 18}, {8, 23}, {7, 22}}, <span class="comment">// XMU_HEXAHEDRON</span></div>
 <div class="line">      {{8, 9}, {8, 13}, {8, 23}, {9, 14}, {9, 24}, {13, 14}, {13, 28}, {14, 29}, {23, 24}, {23, 28}, {24, 29}, {28, 29}}, <span class="comment">// XMU_POLYHEDRON</span></div>
 <div class="line">      {{3, 4}, {4, 18}, {18, 3}, {8, 9}, {9, 23}, {23, 8}, {3, 8}, {4, 9}, {18, 23}}, <span class="comment">// XMU_WEDGE</span></div>
 <div class="line">      {{5, 6}, {6, 11}, {11, 10}, {10, 5}, {5, 20}, {6, 20}, {11, 20}, {10, 20}} <span class="comment">// XMU_PYRAMID</span></div>
@@ -814,24 +814,24 @@ Example Get Faces of Cell</h2>
 <div class="line"></div>
 <div class="line">  VecInt cellFace;</div>
 <div class="line">  VecInt2d expectedCellFaces = {<span class="comment">// Tetra</span></div>
+<div class="line">                                {0, 5, 1},</div>
 <div class="line">                                {0, 1, 15},</div>
 <div class="line">                                {1, 5, 15},</div>
 <div class="line">                                {5, 0, 15},</div>
-<div class="line">                                {0, 5, 1},</div>
 <div class="line">                                <span class="comment">// Voxel</span></div>
-<div class="line">                                {1, 16, 21, 6},</div>
-<div class="line">                                {2, 7, 22, 17},</div>
-<div class="line">                                {1, 2, 17, 16},</div>
-<div class="line">                                {6, 21, 22, 7},</div>
 <div class="line">                                {1, 6, 7, 2},</div>
 <div class="line">                                {16, 17, 22, 21},</div>
+<div class="line">                                {1, 2, 17, 16},</div>
+<div class="line">                                {2, 7, 22, 17},</div>
+<div class="line">                                {7, 6, 21, 22},</div>
+<div class="line">                                {6, 1, 16, 21},</div>
 <div class="line">                                <span class="comment">// Hexahedron</span></div>
-<div class="line">                                {2, 17, 22, 7},</div>
-<div class="line">                                {3, 8, 23, 18},</div>
-<div class="line">                                {2, 3, 18, 17},</div>
-<div class="line">                                {7, 22, 23, 8},</div>
 <div class="line">                                {2, 7, 8, 3},</div>
 <div class="line">                                {17, 18, 23, 22},</div>
+<div class="line">                                {2, 3, 18, 17},</div>
+<div class="line">                                {3, 8, 23, 18},</div>
+<div class="line">                                {8, 7, 22, 23},</div>
+<div class="line">                                {7, 2, 17, 22},</div>
 <div class="line">                                <span class="comment">// Polyhedron</span></div>
 <div class="line">                                {8, 9, 14, 13},</div>
 <div class="line">                                {8, 9, 24, 23},</div>
@@ -851,25 +851,25 @@ Example Get Faces of Cell</h2>
 <div class="line">                                {6, 11, 20},</div>
 <div class="line">                                {11, 10, 20},</div>
 <div class="line">                                {10, 5, 20}};</div>
-<div class="line">  <span class="keywordtype">int</span> expectedIdx = 0;</div>
+<div class="line">  <span class="keywordtype">int</span> currId(0);</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid3d-&gt;GetNumberOfCells(); i++)</div>
 <div class="line">  {</div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, expectedIdx++)</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
 <div class="line">    {</div>
 <div class="line">      cellFace = ugrid3d-&gt;GetCellFace(i, j);</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedCellFaces[expectedIdx], cellFace);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFace);</div>
 <div class="line">    }</div>
 <div class="line">  }</div>
 <div class="line">  <span class="comment">// Tetra</span></div>
 <div class="line">  VecInt2d cellFaces;</div>
-<div class="line">  expectedIdx = 0;</div>
+<div class="line">  currId = 0;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid3d-&gt;GetNumberOfCells(); i++)</div>
 <div class="line">  {</div>
 <div class="line">    cellFaces = ugrid3d-&gt;GetFacesOfCell(i);</div>
 <div class="line">    TS_ASSERT_EQUALS(cellFaces.size(), ugrid3d-&gt;GetNumberOfCellFaces(i));</div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, expectedIdx++)</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid3d-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
 <div class="line">    {</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedCellFaces[expectedIdx], cellFaces[j]);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedCellFaces[currId], cellFaces[j]);</div>
 <div class="line">    }</div>
 <div class="line">  }</div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetFaces</span></div>
@@ -892,25 +892,23 @@ Example GetFacesFromPoint</h2>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line">  VecInt empty;</div>
-<div class="line">  VecInt2d expectedCell = {</div>
+<div class="line">  VecInt2d expectedCell{</div>
 <div class="line">    {0, 0, 0}, {0, 0, 0}, {0, 0, 0, 1, 1, 1}, {0, 0, 0, 1, 1, 1}, {1, 1, 1}, {1, 1, 1},</div>
 <div class="line">    {0, 0, 0}, {0, 0, 0}, {0, 0, 0, 1, 1, 1}, {0, 0, 0, 1, 1, 1}, {1, 1, 1}, {1, 1, 1}};</div>
-<div class="line">  VecInt2d expectedFaces = {</div>
-<div class="line">    {0, 2, 4}, {0, 3, 4}, {1, 2, 4, 0, 2, 4}, {1, 3, 4, 0, 3, 4}, {1, 2, 4}, {1, 3, 4},</div>
-<div class="line">    {0, 2, 5}, {0, 3, 5}, {1, 2, 5, 0, 2, 5}, {1, 3, 5, 0, 3, 5}, {1, 2, 5}, {1, 3, 5}};</div>
+<div class="line">  VecInt2d expectedFaces{</div>
+<div class="line">    {0, 2, 5}, {0, 4, 5}, {0, 2, 3, 0, 2, 5}, {0, 3, 4, 0, 4, 5}, {0, 2, 3}, {0, 3, 4},</div>
+<div class="line">    {1, 2, 5}, {1, 4, 5}, {1, 2, 3, 1, 2, 5}, {1, 3, 4, 1, 4, 5}, {1, 2, 3}, {1, 3, 4}};</div>
 <div class="line">  VecInt cells, faces;</div>
-<div class="line">  <span class="keywordtype">int</span> expectedIdx = 0;</div>
+<div class="line">  <span class="keywordtype">int</span> currId(0);</div>
 <div class="line">  TS_ASSERT(!grid-&gt;GetFacesFromPoint(-1, cells, faces));</div>
 <div class="line">  TS_ASSERT_EQUALS(empty, cells);</div>
 <div class="line">  TS_ASSERT_EQUALS(empty, faces);</div>
-<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> pointIdx = 0; pointIdx &lt; grid-&gt;GetNumberOfPoints(); pointIdx++, expectedIdx++)</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; grid-&gt;GetNumberOfPoints(); i++, currId++)</div>
 <div class="line">  {</div>
 <div class="line">    <span class="comment">// Check first function</span></div>
-<div class="line">    grid-&gt;GetFacesFromPoint(pointIdx, cells, faces);</div>
-<div class="line">    TS_ASSERT_EQUALS(expectedCell[expectedIdx], cells);</div>
-<div class="line">    TS_ASSERT_EQUALS(expectedFaces[expectedIdx], faces);</div>
-<div class="line">    expectedCell.push_back(cells);</div>
-<div class="line">    expectedFaces.push_back(faces);</div>
+<div class="line">    grid-&gt;GetFacesFromPoint(i, cells, faces);</div>
+<div class="line">    TS_ASSERT_EQUALS(expectedCell[currId], cells);</div>
+<div class="line">    TS_ASSERT_EQUALS(expectedFaces[currId], faces);</div>
 <div class="line">  }</div>
 <div class="line">  TS_ASSERT(!grid-&gt;GetFacesFromPoint(grid-&gt;GetNumberOfPoints(), cells, faces));</div>
 <div class="line">  TS_ASSERT_EQUALS(empty, cells);</div>
@@ -935,37 +933,34 @@ Example Get Cell Face Neighbor</h2>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line"></div>
-<div class="line">  <span class="comment">// clang-format off</span></div>
-<div class="line">  VecInt expectedNeighbor = {-1, 1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1};</div>
-<div class="line">  VecInt expectedFace =     {-1, 0, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1};</div>
-<div class="line">  <span class="comment">// clang-format on</span></div>
+<div class="line">  VecInt expectedNeighbor{-1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 0};</div>
+<div class="line">  VecInt expectedFace{-1, -1, -1, 5, -1, -1, -1, -1, -1, -1, -1, 3};</div>
+<div class="line">  <span class="keywordtype">int</span> currId(0);</div>
+<div class="line">  <span class="keywordtype">int</span> neighborCell;</div>
 <div class="line"></div>
-<div class="line">  <span class="keywordtype">int</span> expectedIdx = 0;</div>
-<div class="line">  <span class="keywordtype">int</span> neighborCellIdx;</div>
+<div class="line">  neighborCell = grid-&gt;GetCellFaceNeighbor(-1, 0);</div>
+<div class="line">  TS_ASSERT_EQUALS(-1, neighborCell);</div>
+<div class="line">  neighborCell = grid-&gt;GetCellFaceNeighbor(0, -1);</div>
+<div class="line">  TS_ASSERT_EQUALS(-1, neighborCell);</div>
 <div class="line"></div>
-<div class="line">  neighborCellIdx = grid-&gt;GetCellFaceNeighbor(-1, 0);</div>
-<div class="line">  TS_ASSERT_EQUALS(-1, neighborCellIdx);</div>
-<div class="line">  neighborCellIdx = grid-&gt;GetCellFaceNeighbor(0, -1);</div>
-<div class="line">  TS_ASSERT_EQUALS(-1, neighborCellIdx);</div>
-<div class="line"></div>
-<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> cellIdx = 0; cellIdx &lt; grid-&gt;GetNumberOfCells(); cellIdx++)</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; grid-&gt;GetNumberOfCells(); i++)</div>
 <div class="line">  {</div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> faceIdx = 0; faceIdx &lt; grid-&gt;GetNumberOfCellFaces(cellIdx); faceIdx++, expectedIdx++)</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; grid-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
 <div class="line">    {</div>
 <div class="line">      <span class="comment">// Check first function</span></div>
-<div class="line">      neighborCellIdx = grid-&gt;GetCellFaceNeighbor(cellIdx, faceIdx);</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);</div>
+<div class="line">      neighborCell = grid-&gt;GetCellFaceNeighbor(i, j);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);</div>
 <div class="line"></div>
 <div class="line">      <span class="comment">// Check overload function</span></div>
-<div class="line">      <span class="keywordtype">int</span> neighborFaceIdx = -1;</div>
-<div class="line">      grid-&gt;GetCellFaceNeighbor(cellIdx, faceIdx, neighborCellIdx, neighborFaceIdx);</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedFace[expectedIdx], neighborFaceIdx);</div>
+<div class="line">      <span class="keywordtype">int</span> faceIndex(-1);</div>
+<div class="line">      grid-&gt;GetCellFaceNeighbor(i, j, neighborCell, faceIndex);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);</div>
 <div class="line"></div>
 <div class="line">      <span class="comment">// Check that faces are the same</span></div>
-<div class="line">      VecInt expectedFacePt = grid-&gt;GetCellFace(cellIdx, faceIdx);</div>
+<div class="line">      VecInt expectedFacePt = grid-&gt;GetCellFace(i, j);</div>
 <div class="line">      std::sort(expectedFacePt.begin(), expectedFacePt.end());</div>
-<div class="line">      VecInt neighborFacePt = grid-&gt;GetCellFace(neighborCellIdx, neighborFaceIdx);</div>
+<div class="line">      VecInt neighborFacePt = grid-&gt;GetCellFace(neighborCell, faceIndex);</div>
 <div class="line">      std::sort(neighborFacePt.begin(), neighborFacePt.end());</div>
 <div class="line">      <span class="keywordflow">if</span> (!expectedFacePt.empty() &amp;&amp; !neighborFacePt.empty())</div>
 <div class="line">      {</div>
@@ -973,10 +968,10 @@ Example Get Cell Face Neighbor</h2>
 <div class="line">      }</div>
 <div class="line">    }</div>
 <div class="line">  }</div>
-<div class="line">  neighborCellIdx = grid-&gt;GetCellFaceNeighbor(grid-&gt;GetNumberOfCells(), 0);</div>
-<div class="line">  TS_ASSERT_EQUALS(-1, neighborCellIdx);</div>
-<div class="line">  neighborCellIdx = grid-&gt;GetCellFaceNeighbor(0, grid-&gt;GetNumberOfCells());</div>
-<div class="line">  TS_ASSERT_EQUALS(-1, neighborCellIdx);</div>
+<div class="line">  neighborCell = grid-&gt;GetCellFaceNeighbor(grid-&gt;GetNumberOfCells(), 0);</div>
+<div class="line">  TS_ASSERT_EQUALS(-1, neighborCell);</div>
+<div class="line">  neighborCell = grid-&gt;GetCellFaceNeighbor(0, grid-&gt;GetNumberOfCells());</div>
+<div class="line">  TS_ASSERT_EQUALS(-1, neighborCell);</div>
 <div class="line"></div>
 <div class="line">  rows = 3;</div>
 <div class="line">  cols = 3;</div>
@@ -989,37 +984,31 @@ Example Get Cell Face Neighbor</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  expectedNeighbor.clear();</div>
-<div class="line">  <span class="comment">// clang-format off</span></div>
-<div class="line">  expectedNeighbor = {-1, 2, -1, 1, -1, 4, -1, 3, 0, -1, -1, 5, 0, -1, -1, 3, -1, 6, 1, -1, 2, -1,</div>
-<div class="line">                      -1, 7, -1, 6, -1, 5, 0, -1, -1, 7, 4, -1, 1, -1, 4, -1, -1, 7, 2, -1, 5, -1,</div>
-<div class="line">                      6, -1, 3, -1};</div>
-<div class="line">  expectedFace =     {-1, 0, -1, 2, -1, 4, -1, 0, 3, -1, -1, 4, 1, -1, -1, 2, -1, 4, 1, -1, 3, -1,</div>
-<div class="line">                      -1, 4, -1, 0, -1, 2, 5, -1, -1, 0, 3, -1, 5, -1, 1, -1, -1, 2, 5, -1, 1, -1,</div>
-<div class="line">                      3, -1, 5, -1};</div>
-<div class="line">  <span class="comment">// clang-format on</span></div>
-<div class="line"></div>
-<div class="line">  expectedIdx = 0;</div>
-<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> cellIdx = 0; cellIdx &lt; grid-&gt;GetNumberOfCells(); ++cellIdx)</div>
+<div class="line">  expectedNeighbor = {-1, 4, -1, 2,  1, -1, -1, 5,  0, 3,  -1, -1, -1, 6,  -1, -1,</div>
+<div class="line">                      3,  0, -1, 7,  2, -1, -1, 1,  0, -1, -1, 6,  5,  -1, 1,  -1,</div>
+<div class="line">                      4,  7, -1, -1, 2, -1, -1, -1, 7, 4,  3,  -1, 6,  -1, -1, 5};</div>
+<div class="line">  expectedFace = {-1, 0, -1, 5,  2, -1, -1, 0,  4, 5,  -1, -1, -1, 0,  -1, -1,</div>
+<div class="line">                  2,  3, -1, 0,  4, -1, -1, 3,  1, -1, -1, 5,  2,  -1, 1,  -1,</div>
+<div class="line">                  4,  5, -1, -1, 1, -1, -1, -1, 2, 3,  1,  -1, 4,  -1, -1, 3};</div>
+<div class="line">  currId = 0;</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; grid-&gt;GetNumberOfCells(); i++)</div>
 <div class="line">  {</div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> faceIdx = 0; faceIdx &lt; grid-&gt;GetNumberOfCellFaces(cellIdx); faceIdx++, expectedIdx++)</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; grid-&gt;GetNumberOfCellFaces(i); j++, currId++)</div>
 <div class="line">    {</div>
 <div class="line">      <span class="comment">// Check first function</span></div>
-<div class="line">      neighborCellIdx = grid-&gt;GetCellFaceNeighbor(cellIdx, faceIdx);</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);</div>
+<div class="line">      neighborCell = grid-&gt;GetCellFaceNeighbor(i, j);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);</div>
 <div class="line"></div>
 <div class="line">      <span class="comment">// Check overload function</span></div>
-<div class="line">      <span class="keywordtype">int</span> neighborFaceIdx = -1;</div>
-<div class="line">      grid-&gt;GetCellFaceNeighbor(cellIdx, faceIdx, neighborCellIdx, neighborFaceIdx);</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);</div>
-<div class="line">      TS_ASSERT_EQUALS(expectedFace[expectedIdx], neighborFaceIdx);</div>
-<div class="line"></div>
-<div class="line">      expectedNeighbor.push_back(neighborCellIdx);</div>
-<div class="line">      expectedFace.push_back(neighborFaceIdx);</div>
+<div class="line">      <span class="keywordtype">int</span> faceIndex(-1);</div>
+<div class="line">      grid-&gt;GetCellFaceNeighbor(i, j, neighborCell, faceIndex);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedNeighbor[currId], neighborCell);</div>
+<div class="line">      TS_ASSERT_EQUALS(expectedFace[currId], faceIndex);</div>
 <div class="line"></div>
 <div class="line">      <span class="comment">// Check that faces are the same</span></div>
-<div class="line">      VecInt expectedFacePt = grid-&gt;GetCellFace(cellIdx, faceIdx);</div>
+<div class="line">      VecInt expectedFacePt = grid-&gt;GetCellFace(i, j);</div>
 <div class="line">      std::sort(expectedFacePt.begin(), expectedFacePt.end());</div>
-<div class="line">      VecInt neighborFacePt = grid-&gt;GetCellFace(neighborCellIdx, neighborFaceIdx);</div>
+<div class="line">      VecInt neighborFacePt = grid-&gt;GetCellFace(neighborCell, faceIndex);</div>
 <div class="line">      std::sort(neighborFacePt.begin(), neighborFacePt.end());</div>
 <div class="line">      <span class="keywordflow">if</span> (!expectedFacePt.empty() &amp;&amp; !neighborFacePt.empty())</div>
 <div class="line">      {</div>
@@ -1034,7 +1023,7 @@ Example Get Cell Face Neighbor</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Aug 17 2018 23:18:12 for xmsgrid by
+    <li class="footer">Generated on Sun Aug 19 2018 19:14:24 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
