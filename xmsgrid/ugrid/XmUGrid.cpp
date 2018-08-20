@@ -12,6 +12,7 @@
 #include <xmsgrid/ugrid/XmUGrid.h>
 
 // 3. Standard library headers
+#include <cmath>
 #include <set>
 #include <unordered_set>
 
