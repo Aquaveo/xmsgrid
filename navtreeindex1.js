@@ -1,5 +1,9 @@
 var NAVTREEINDEX1 =
 {
+"functions.html":[5,2,0],
+"functions_func.html":[5,2,1],
+"globals.html":[6,1,0],
+"globals_func.html":[6,1,1],
 "globals_vars.html":[6,1,2],
 "hierarchy.html":[5,1],
 "index.html":[],

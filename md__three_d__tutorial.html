@@ -395,6 +395,11 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetCellDimension</span></div>
 <div class="line">  TS_ASSERT_EQUALS(2, ugrid-&gt;GetCellDimension(0));</div>
+<div class="line">  </div>
+<div class="line">  <span class="comment">// Test GetCentroid</span></div>
+<div class="line">  Pt3d centroid;</div>
+<div class="line">  TS_ASSERT(ugrid-&gt;GetCentroid(0, centroid));</div>
+<div class="line">  TS_ASSERT_EQUALS(Pt3d(5, 5, 0), centroid);</div>
 <div class="line"></div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testCellFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetCellStream3d"></a>
@@ -1044,7 +1049,7 @@ Example Get Cell Face Neighbor</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Aug 20 2018 21:08:23 for xmsgrid by
+    <li class="footer">Generated on Mon Aug 20 2018 23:09:17 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

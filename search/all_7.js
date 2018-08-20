@@ -1,5 +1,8 @@
 var searchData=
 [
+  ['test_5fcell_5ffunctions',['test_cell_functions',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html#a1bbe769c3f0d81270f54eeaf194195d2',1,'python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions']]],
+  ['test_5fget_5fnumber_5fof_5fface_5fpoints',['test_get_number_of_face_points',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html#a502fa4f01558211fdbf691199b8babf8',1,'python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions']]],
+  ['test_5fget_5fpoints_5fattached_5fby_5fedge',['test_get_points_attached_by_edge',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html#aaee35170e32f336faf2eb45e55f3c0b3',1,'python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions']]],
   ['test_5fxmubuild3dchevronugrid',['TEST_XmUBuild3DChevronUgrid',['../namespacexms.html#a18cc668860be57dfc3d4800446ab6dfb',1,'xms']]],
   ['test_5fxmubuildhexahedronugrid',['TEST_XmUBuildHexahedronUgrid',['../namespacexms.html#a0a50a2c6d678fa5e90212d03fecd3f44',1,'xms::TEST_XmUBuildHexahedronUgrid(const int a_rows, const int a_cols, const int a_lays)'],['../namespacexms.html#a9b7018697957bbe8aed198fe6cf69a07',1,'xms::TEST_XmUBuildHexahedronUgrid(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)']]],
   ['test_5fxmubuildpolyhedronugrid',['TEST_XmUBuildPolyhedronUgrid',['../namespacexms.html#a512cd32ebbe039154d962c0d47a6e4fc',1,'xms::TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays)'],['../namespacexms.html#a6b241889d06a379363e269e80a06ea1c',1,'xms::TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)']]],

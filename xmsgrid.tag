@@ -689,6 +689,27 @@
   <compound kind="class">
     <name>python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions</name>
     <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html</filename>
+    <member kind="function">
+      <type>def</type>
+      <name>test_cell_functions</name>
+      <anchorfile>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html</anchorfile>
+      <anchor>a1bbe769c3f0d81270f54eeaf194195d2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>def</type>
+      <name>test_get_points_attached_by_edge</name>
+      <anchorfile>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html</anchorfile>
+      <anchor>aaee35170e32f336faf2eb45e55f3c0b3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>def</type>
+      <name>test_get_number_of_face_points</name>
+      <anchorfile>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html</anchorfile>
+      <anchor>a502fa4f01558211fdbf691199b8babf8</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>python::ugrid::XmUGrid_pyt::TestXmUGridCellTypeEnum</name>
