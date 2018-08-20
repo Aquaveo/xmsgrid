@@ -138,7 +138,6 @@ public:
 
   virtual Pt3d GetXYPoint(const int a_pointIdx) const = 0;
   virtual VecPt3d GetPointsFromPointIdxs(const VecInt& a_points) const = 0;
-  virtual void GetPlanViewPoints(int a_cellIdx, VecPt3d& a_planViewPts) const = 0;
 
   virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
 
