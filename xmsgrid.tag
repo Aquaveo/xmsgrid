@@ -417,6 +417,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>testGetNumberOfFacePoints</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>ada0855469ef7e7a5321776f60af53600</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>testGetPointCellsSimple</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
       <anchor>ab50f5c7cf55771608109343a1bd3a9e6</anchor>
@@ -494,6 +501,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>testGetPointsAttachedByEdge</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>aeb8c4063cacb388295d72bf12711fc2d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>testGetFacesFromPoint</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
       <anchor>a3bfd0a5f476433f5cf129ea8809b213b</anchor>
@@ -504,6 +518,13 @@
       <name>testGetPlanViewPolygon</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
       <anchor>a9ea4bb73723dd9b65ad043e9bc4f4144</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testGetPlanViewPolygonMultiSideFace</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>af69608066255afd742fd8cab85d1e4d9</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">

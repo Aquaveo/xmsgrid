@@ -164,7 +164,7 @@ Example - Defining Ugrid Cells</h2>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New_With_Data_2d"></a>
 Example - Creating a New 2D UGrid With Data</h2>
 <p>This example shows how to create a new 2D UGrid with the overloaded New function which directly sets the data as it constructs the grid, using the static function <a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502" title="Create a new XmUGrid. ">xms::XmUGrid::New(const VecPt3d&amp; a_points, const VecInt&amp; a_cellStream)</a>. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af" title="[snip_test_UGrid_Streams] ">XmUGridUnitTests::testGetSetPoint</a>.</p>
-<div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
+<div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 10}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
 <div class="line">                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Cell type (9), number of points (4), point numbers, counterclockwise</span></div>
@@ -360,6 +360,16 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line">  <span class="comment">// Test overload</span></div>
 <div class="line">  ugrid-&gt;GetPointsOfCell(0, pointsOfCell);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedPoints, pointsOfCell);</div>
+<div class="line">  VecPt3d locations;</div>
+<div class="line">  ugrid-&gt;GetPointsOfCell(0, locations);</div>
+<div class="line">  VecPt3d expectedLocations = {{0, 10, 0}, {0, 0, 0}, {10, 0, 0}, {10, 10, 0}};</div>
+<div class="line">  TS_ASSERT_EQUALS(expectedLocations, locations);</div>
+<div class="line"></div>
+<div class="line">  <span class="comment">// Test GetCellExtents</span></div>
+<div class="line">  Pt3d min, max;</div>
+<div class="line">  ugrid-&gt;GetCellExtents(0, min, max);</div>
+<div class="line">  TS_ASSERT_EQUALS(Pt3d(0, 0, 0), min);</div>
+<div class="line">  TS_ASSERT_EQUALS(Pt3d(10, 10, 0), max);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetCellType</span></div>
 <div class="line">  TS_ASSERT_EQUALS(XMU_QUAD, ugrid-&gt;GetCellType(0));</div>
@@ -495,7 +505,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetCellNeighbors</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetPlanViewPolygon2d"></a>
 Example - Get a Plan View Polygon</h2>
-<p>This example shows how to get a plan view polygon. The xms::XmUGridImpl::GetPlanViewPolygon function takes a cell index and a vector of Pt3d which is the points of the 2D cell and returns whether the operation was succesful. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144" title="Test getting the plan view of a polygon. ">XmUGridUnitTests::testGetPlanViewPolygon</a>.</p>
+<p>This example shows how to get a plan view polygon. The xms::XmUGridImpl::GetPlanViewPolygon function takes a cell index and a vector of Pt3d which is the points of the 2D cell and returns whether the operation was succesful. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144" title="Test getting the plan view polygon of a cell. ">XmUGridUnitTests::testGetPlanViewPolygon</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144">XmUGridUnitTests::testGetPlanViewPolygon</a>()</div>
@@ -537,9 +547,9 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line">  expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},</div>
-<div class="line">                      {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},</div>
-<div class="line">                      {{20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}},</div>
-<div class="line">                      {{30, 10, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}},</div>
+<div class="line">                      {{20, 0, 0}, {20, 10, 0}, {10, 10, 0}, {10, 0, 0}},</div>
+<div class="line">                      {{30, 0, 0}, {30, 10, 0}, {20, 10, 0}, {20, 0, 0}},</div>
+<div class="line">                      {{40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {30, 10, 0}},</div>
 <div class="line">                      {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {30, 10, 0}},</div>
 <div class="line">                      {{0, 10, 0}, {10, 10, 0}, {10, 20, 0}, {0, 20, 0}}};</div>
 <div class="line"></div>
@@ -753,7 +763,7 @@ Example Get Edges Associated with a Cell</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Aug 19 2018 19:14:24 for xmsgrid by
+    <li class="footer">Generated on Mon Aug 20 2018 21:08:23 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
