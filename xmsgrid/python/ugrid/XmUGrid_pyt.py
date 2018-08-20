@@ -37,7 +37,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
                   (0, 20, 0), (10, 20, 0), (20, 20, 0), (30, 20, 0), (40, 20, 0),
                   (0, 0, 10), (10, 0, 10), (20, 0, 10), (30, 0, 10), (40, 0, 10),
                   (0, 10, 10), (10, 10, 10), (20, 10, 10), (30, 10, 10), (40, 10, 10),
-                  (0, 20, 10), (10, 20, 10), (20, 20, 10), (30, 20, 10), (40, 20, 10));
+                  (0, 20, 10), (10, 20, 10), (20, 20, 10), (30, 20, 10), (40, 20, 10))
         cells = (XmUGrid.xmugrid_celltype_enum.XMU_TETRA, 4, 0, 1, 5, 15,
                  XmUGrid.xmugrid_celltype_enum.XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
                  XmUGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
@@ -145,6 +145,19 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         p2 = xu.get_point(1)
         p3 = xu.get_point(2)
         p4 = xu.get_point(3)
+        self.assertEqual((0, 0, 0), p1)
+        self.assertEqual((20, 0, 0), p2)
+        self.assertEqual((0, 20, 0), p3)
+        self.assertEqual((0, 0, 0), p4)
+
+    def test_xmugrid_get_point_xy(self):
+        points = ((0, 0, 2), (20, 0, 1), (0, 20, 0))
+        cells = (5, 3, 0, 1, 2)
+        xu = XmUGrid(points, cells)
+        p1 = xu.get_point_xy(0)
+        p2 = xu.get_point_xy(1)
+        p3 = xu.get_point_xy(2)
+        p4 = xu.get_point_xy(3)
         self.assertEqual((0, 0, 0), p1)
         self.assertEqual((20, 0, 0), p2)
         self.assertEqual((0, 20, 0), p3)
@@ -364,6 +377,41 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertEqual(3, xu3d.get_cell_dimension(4))
         self.assertEqual(3, xu3d.get_cell_dimension(5))
 
+    def test_cell_functions(self):
+        """Test various cell functions"""
+        import numpy as np
+        ugrid = self.get_simple_quad_ugrid()
+
+        # Test get_points_of_cell
+        points_of_cell = ugrid.get_points_of_cell(0)
+        expected_points = (0, 3, 4, 1)
+        self.assertEqual(expected_points, points_of_cell)
+        # Test overload
+        points_of_cell = ugrid.get_points_of_cell(0)
+        self.assertEqual(expected_points, points_of_cell)
+        locations = ugrid.get_point_locations_of_cell(0)
+        expected_locations = np.array(((0, 10, 0), (0, 0, 0), (10, 0, 0), (10, 10, 0)))
+        np.testing.assert_array_equal(expected_locations, locations)
+
+        # Test get_cell_extents
+        extents = ugrid.get_cell_extents(0)
+        self.assertEqual((0, 0, 0), extents[0])
+        self.assertEqual((10, 10, 0), extents[1])
+
+        # Test get_cell_type
+        self.assertEqual(XmUGrid.xmugrid_celltype_enum.XMU_QUAD, ugrid.get_cell_type(0))
+
+        # Test get_dimension_count
+        expected_dimensions = (0, 0, 4, 0)
+        self.assertEqual(expected_dimensions, ugrid.get_dimension_count())
+
+        # Test get_cell_dimension
+        self.assertEqual(2, ugrid.get_cell_dimension(0))
+
+        # Test get_centroid
+        centroid = ugrid.get_centroid(0)
+        self.assertEqual((5, 5, 0), centroid)
+
     def test_get_cell_stream(self):
         import numpy as np
         xu = self.get_simple_quad_ugrid()
@@ -548,6 +596,35 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertEqual(result[1], ())
         self.assertEqual(result[2], ())
 
+    def test_get_points_attached_by_edge(self):
+        """Test get_point_idxs_attached_by_edge and get_point_locations_attached_by_edge."""
+        #     0-----1-----2
+        #     |  0  |  1  |
+        #     3-----4-----5
+        #     |  2  |  3  |
+        #     6-----7-----8
+        import numpy as np
+        grid = self.get_simple_quad_ugrid()
+        attached_idxs = grid.get_point_idxs_attached_by_edge(0)
+        expected_idxs = (1, 3)
+        self.assertEqual(expected_idxs, attached_idxs)
+        attached_idxs = grid.get_point_idxs_attached_by_edge(3)
+        expected_idxs = (0, 4, 6)
+        self.assertEqual(expected_idxs, attached_idxs)
+        attached_idxs = grid.get_point_idxs_attached_by_edge(4)
+        expected_idxs = (1, 3, 5, 7)
+        self.assertEqual(expected_idxs, attached_idxs)
+
+        attached_points = grid.get_point_locations_attached_by_edge(0)
+        expected_points = np.array(((10, 10, 0), (0, 0, 0)))
+        np.testing.assert_array_equal(expected_points, attached_points)
+        attached_points = grid.get_point_locations_attached_by_edge(3)
+        expected_points = ((0, 10, 0), (10, 0, 0), (0, -10, 0))
+        np.testing.assert_array_equal(expected_points, attached_points)
+        attached_points = grid.get_point_locations_attached_by_edge(4)
+        expected_points = ((10, 10, 0), (0, 0, 0), (20, 0, 0), (10, -10, 0))
+        np.testing.assert_array_equal(expected_points, attached_points)
+
     def test_get_edges_of_cell(self):
         xuquad = self.get_simple_quad_ugrid()
         expected_edges = ((0, 3), (3, 4), (4, 1), (1, 0))
@@ -571,6 +648,21 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertEqual(6, xu3d.get_number_of_cell_faces(3))
         self.assertEqual(5, xu3d.get_number_of_cell_faces(4))
         self.assertEqual(5, xu3d.get_number_of_cell_faces(5))
+
+    def test_get_number_of_face_points(self):
+        """Test getting the number of face points for a cell face."""
+        xu2d = self.get_2d_linear_ugrid()
+        # test 1D and 2D cells - should return 0 for valid cell index
+        self.assertEqual(-1, xu2d.get_number_of_face_points(-1, 0))
+        self.assertEqual(0, xu2d.get_number_of_face_points(1, 0))
+        self.assertEqual(-1, xu2d.get_number_of_face_points(xu2d.get_number_of_cells(), 0))
+
+        xu3d = self.get_3d_linear_ugrid()
+
+        self.assertEqual(-1, xu3d.get_number_of_face_points(-1, 0))
+        self.assertEqual(-1, xu3d.get_number_of_face_points(6, 0))
+        self.assertEqual(4, xu3d.get_number_of_face_points(1, 3))
+        self.assertEqual(4, xu3d.get_number_of_face_points(3, 2))
 
     def test_get_cell_face(self):
         xu2d = self.get_2d_linear_ugrid()

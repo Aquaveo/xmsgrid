@@ -1189,7 +1189,10 @@ int XmUGridImpl::GetCellDimension(const int a_cellIdx) const
 } // XmUGridImpl::GetCellDimension
 
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Get the extents of the given cell.
+/// \param[in] a_cellIdx The cell index to get the extents of.
+/// \param[out] a_min The minimum location.
+/// \param[out] a_max The maximum location.
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const
 {
@@ -1719,7 +1722,7 @@ void XmUGridImpl::GetEdgesOfCell(const int a_cellIdx,
 } // XmUGridImpl::GetEdgesOfCell
 
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Given a point gets point indexes attached to the point by an edge.
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetPointIdxsAttachedByEdge(int a_pointIdx,VecInt& a_edgePoints) const
 {
@@ -1840,7 +1843,10 @@ int XmUGridImpl::GetNumberOfCellFaces(const int a_cellIdx) const
 } // XmUGridImpl::GetNumberOfCellFaces
 
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Get the number of face points for a given cell and face.
+/// \param[in] a_cellIdx The cell
+/// \param[in] a_faceIdx The face
+/// \return The number of face points or -1 if invalid face or cell index.
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetNumberOfFacePoints(const int a_cellIdx,const int a_faceIdx) const
 {
@@ -4787,6 +4793,11 @@ void XmUGridUnitTests::testCellFunctions()
 
   // Test GetCellDimension
   TS_ASSERT_EQUALS(2, ugrid->GetCellDimension(0));
+  
+  // Test GetCentroid
+  Pt3d centroid;
+  TS_ASSERT(ugrid->GetCentroid(0, centroid));
+  TS_ASSERT_EQUALS(Pt3d(5, 5, 0), centroid);
 
 } // XmUGridUnitTests::testCellFunctions
 //! [snip_test_CellFunctions]

@@ -46,6 +46,9 @@ void initXmUGrid(py::module &m) {
             xms::Pt3d point = xms::Pt3dFromPyIter(pt);
             return self.SetPoint(pt_index, point);
         },"Set the point",py::arg("pt_index"),py::arg("pt"))
+        .def("get_point_xy", [](xms::XmUGrid &self, int pt_index) -> py::iterable {
+            return xms::PyIterFromPt3d(self.GetXYPoint(pt_index));
+        },"Get the X, Y location of a point.",py::arg("pt_index"))
         .def("get_points_from_point_idxs", [](xms::XmUGrid &self, py::iterable pt_idx) -> py::iterable {
             boost::shared_ptr<xms::VecInt> point_indexs = xms::VecIntFromPyIter(pt_idx);
             xms::VecPt3d points = self.GetPointsFromPointIdxs(*point_indexs);
@@ -67,7 +70,12 @@ void initXmUGrid(py::module &m) {
         .def("get_number_of_cells", &xms::XmUGrid::GetNumberOfCells)
         .def("get_points_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetPointsOfCell(cell_index));
-        },"Get the number of cells.")
+        },"Get the points of a cell.")
+        .def("get_point_locations_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            xms::VecPt3d locations;
+            self.GetPointsOfCell(cell_index, locations);
+            return xms::PyIterFromVecPt3d(locations);
+        },"Get the points of a cell.")
         .def("get_cell_type", &xms::XmUGrid::GetCellType,"Get the number of cells.")
         .def("get_dimension_count", [](xms::XmUGrid &self) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetDimensionCount());
@@ -75,6 +83,11 @@ void initXmUGrid(py::module &m) {
         .def("get_cell_dimension", &xms::XmUGrid::GetCellDimension,
             "Get the dimension of the specified cell.",py::arg("cell_idx")
         )
+        .def("get_cell_extents", [](xms::XmUGrid &self, int a_cellIdx) -> py::iterable {
+          xms::Pt3d min, max;
+          self.GetCellExtents(a_cellIdx, min, max);
+          return py::make_tuple(PyIterFromPt3d(min), PyIterFromPt3d(max));
+        }, "Get the extents of the given cell.", py::arg("cell_idx"))
         .def("get_cell_stream", [](xms::XmUGrid &self) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetCellStream());
         },"Get cell stream vector for the entire UGrid.")
@@ -95,11 +108,16 @@ void initXmUGrid(py::module &m) {
             bool ret_val = self.GetPlanViewPolygon(cell_index, polygon);
             return py::make_tuple(ret_val, xms::PyIterFromVecPt3d(polygon));
         },"Get a plan view polygon of a specified cell",py::arg("cell_index"))
+        .def("get_centroid", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
+            xms::Pt3d centroid;
+            bool ret_val = self.GetCentroid(cell_index, centroid);
+            return PyIterFromPt3d(centroid);
+        },"Get the centroid location of a cell.",py::arg("cell_index"))
 
       // Edges Functions
         .def("get_number_of_cell_edges", &xms::XmUGrid::GetNumberOfCellEdges,
-			"Get the number of edges with specified cell", py::arg("cell_index")
-		)
+      "Get the number of edges with specified cell", py::arg("cell_index")
+    )
         .def("get_cell_edge_from_edge_index", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
             return xms::PyIterFromIntPair(self.GetCellEdgeFromEdgeIndex(cell_index, edge_index));
         },"Get the points of a cell.",py::arg("cell_index"),py::arg("edge_index"))
@@ -107,8 +125,8 @@ void initXmUGrid(py::module &m) {
             return xms::PyIterFromVecInt(self.GetAdjacentCells(cell_index, edge_index));
         },"Get the index of the adjacent cells (that shares the same cell edge)",py::arg("cell_index"),py::arg("edge_index"))
         .def("get_2d_adjacent_cell", &xms::XmUGrid::Get2dAdjacentCell,
-			"Get the index of the adjacent cells (that shares the same cell edge)",py::arg("cell_index"),py::arg("edge_index")
-		)
+      "Get the index of the adjacent cells (that shares the same cell edge)",py::arg("cell_index"),py::arg("edge_index")
+    )
         .def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, int pt_index_1, int pt_index_2) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(pt_index_1, pt_index_2));
         },"Get the indices of the adjacent cells (that shares the same cell edge)",py::arg("pt_index_1"),py::arg("pt_index_2"))
@@ -119,15 +137,27 @@ void initXmUGrid(py::module &m) {
         .def("get_edges_from_point", [](xms::XmUGrid &self, int pt_id) -> py::iterable {
             xms::VecInt cell_idxs, edge_idxs;
             bool succeeded = self.GetEdgesFromPoint(pt_id, cell_idxs, edge_idxs);
-			return py::make_tuple(succeeded, xms::PyIterFromVecInt(cell_idxs),
-				xms::PyIterFromVecInt(edge_idxs));
+      return py::make_tuple(succeeded, xms::PyIterFromVecInt(cell_idxs),
+        xms::PyIterFromVecInt(edge_idxs));
         },"Get the Edges associated with a point.",py::arg("pt_id"))
         .def("get_edges_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
             return xms::PyIterFromVecIntPair(self.GetEdgesOfCell(cell_index));
         },"Get the Edges of a cell.",py::arg("cell_index"))
+        .def("get_point_idxs_attached_by_edge", [](xms::XmUGrid &self, int a_pointIndex) -> py::iterable {
+            xms::VecInt attachedIdxs;
+            self.GetPointIdxsAttachedByEdge(a_pointIndex, attachedIdxs);
+            return xms::PyIterFromVecInt(attachedIdxs);
+        },"Given a point gets point indexes attached to the point by an edge.",py::arg("point_index"))
+        .def("get_point_locations_attached_by_edge", [](xms::XmUGrid &self, int a_pointIndex) -> py::iterable {
+            xms::VecPt3d attachedPoints;
+            self.GetPointsAttachedByEdge(a_pointIndex, attachedPoints);
+            return xms::PyIterFromVecPt3d(attachedPoints);
+        },"Given a point gets point locations attached to the point by an edge.",py::arg("point_index"))
         // Face Functions
         .def("get_number_of_cell_faces", &xms::XmUGrid::GetNumberOfCellFaces,
-			"Get the number of cell faces for given cell.",py::arg("cell_index"))
+      "Get the number of cell faces for given cell.",py::arg("cell_index"))
+        .def("get_number_of_face_points", &xms::XmUGrid::GetNumberOfFacePoints,
+      "Get the number of face points for a given cell and face.",py::arg("cell_index"),py::arg("face_index"))
         .def("get_cell_face", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetCellFace(cell_idx, face_idx));
         },"Get the cell face for given cell and face index.",py::arg("cell_index"),py::arg("face_index"))
