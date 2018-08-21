@@ -47,12 +47,14 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsgrid_sources
+  xmsgrid/ugrid/XmEdge.cpp
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
   xmsgrid/ugrid/XmConvexHull.cpp
 )
 
 set(xmsgrid_headers
+  xmsgrid/ugrid/XmEdge.h
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
   xmsgrid/ugrid/XmConvexHull.h
@@ -77,6 +79,7 @@ if (BUILD_TESTING)
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources
+   xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
    xmsgrid/ugrid/XmConvexHull.t.h

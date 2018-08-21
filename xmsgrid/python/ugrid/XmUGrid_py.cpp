@@ -11,6 +11,7 @@
 #include <pybind11/numpy.h>
 #include <boost/shared_ptr.hpp>
 #include <xmscore/python/misc/PyUtils.h>
+#include <xmsgrid/ugrid/XmEdge.h>
 #include <xmsgrid/ugrid/XmUGrid.h>
 
 //----- Namespace declaration --------------------------------------------------
@@ -18,6 +19,52 @@ namespace py = pybind11;
 
 //----- Python Interface -------------------------------------------------------
 PYBIND11_DECLARE_HOLDER_TYPE(T, boost::shared_ptr<T>);
+
+namespace {
+
+//------------------------------------------------------------------------------
+/// \brief Create XmEdge from py::iterable
+/// \param[in] a_intpair py::iterable object that represents an XmEdge
+/// \return The edge.
+//------------------------------------------------------------------------------
+xms::XmEdge XmEdgeFromPyIter(const py::iterable& a_intpair)
+{
+    py::tuple pr = a_intpair.cast<py::tuple>();
+    if (py::len(pr) != 2) {
+        throw py::type_error("arg must be an 2-tuple");
+    } else {
+        xms::XmEdge ret(1, 1);//ret(pr[0].cast<int>, pr[1].cast<int>);
+        return ret;
+    }
+} // XmEdgeFromPyIter
+
+//------------------------------------------------------------------------------
+/// \brief Create py::iterable from XmEdge
+/// \param[in] a_edge An XmEdge that represents a py::iterable
+/// \return a py::iterable
+//------------------------------------------------------------------------------
+py::iterable PyIterFromXmEdge(const xms::XmEdge& a_edge)
+{
+  return py::make_tuple(a_edge.GetFirst(), a_edge.GetSecond());
+} // PyIterFromXmEdge
+
+
+//------------------------------------------------------------------------------
+/// \brief Create py::iterable from std::vector<std::pair<int, int>>
+/// \param[in] a_edge: std::vector<std::pair<int, int>> object that represents a py::iterable
+/// \return a py::iterable
+//------------------------------------------------------------------------------
+py::iterable PyIterFromVecXmEdge(const std::vector<xms::XmEdge>& a_edges)
+{
+  // NOTE: This is a copy operation
+  auto tuple_ret = py::tuple(a_edges.size());
+  for (size_t i = 0; i < tuple_ret.size(); ++i) {
+    tuple_ret[i] = PyIterFromXmEdge(a_edges.at(i));
+  }
+  return tuple_ret;
+} // PyIterFromVecXmEdge
+
+} // namespace {
 
 void initXmUGrid(py::module &m) {
     py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUg(m, "XmUGrid");
@@ -119,7 +166,7 @@ void initXmUGrid(py::module &m) {
       "Get the number of edges with specified cell", py::arg("cell_index")
     )
         .def("get_cell_edge_from_edge_index", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
-            return xms::PyIterFromIntPair(self.GetCellEdgeFromEdgeIndex(cell_index, edge_index));
+            return PyIterFromXmEdge(self.GetCellEdgeFromEdgeIndex(cell_index, edge_index));
         },"Get the points of a cell.",py::arg("cell_index"),py::arg("edge_index"))
         .def("get_adjacent_cells", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetAdjacentCells(cell_index, edge_index));
@@ -131,7 +178,7 @@ void initXmUGrid(py::module &m) {
             return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(pt_index_1, pt_index_2));
         },"Get the indices of the adjacent cells (that shares the same cell edge)",py::arg("pt_index_1"),py::arg("pt_index_2"))
         .def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, py::iterable edge) -> py::iterable {
-            std::pair<int, int> a_edge = xms::IntPairFromPyIter(edge);
+            xms::XmEdge a_edge = XmEdgeFromPyIter(edge);
             return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(a_edge));
         },"Get the index of the adjacent cells (that shares the same cell edge)",py::arg("edge"))
         .def("get_edges_from_point", [](xms::XmUGrid &self, int pt_id) -> py::iterable {
@@ -141,7 +188,7 @@ void initXmUGrid(py::module &m) {
         xms::PyIterFromVecInt(edge_idxs));
         },"Get the Edges associated with a point.",py::arg("pt_id"))
         .def("get_edges_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
-            return xms::PyIterFromVecIntPair(self.GetEdgesOfCell(cell_index));
+            return PyIterFromVecXmEdge(self.GetEdgesOfCell(cell_index));
         },"Get the Edges of a cell.",py::arg("cell_index"))
         .def("get_point_idxs_attached_by_edge", [](xms::XmUGrid &self, int a_pointIndex) -> py::iterable {
             xms::VecInt attachedIdxs;

@@ -27,6 +27,7 @@
 namespace xms
 {
 //----- Forward declarations ---------------------------------------------------
+class XmEdge;
 
 //----- Constants / Enumerations -----------------------------------------------
 
@@ -175,7 +176,7 @@ public:
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
-  virtual std::pair<int, int> GetCellEdgeFromEdgeIndex(const int a_cellIdx,
+  virtual XmEdge GetCellEdgeFromEdgeIndex(const int a_cellIdx,
                                                        const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
   virtual void GetAdjacentCells(const int a_cellIdx,
@@ -187,22 +188,22 @@ public:
   virtual void GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                              const int a_pointIdx2,
                                              VecInt& a_adjacentCellIdxs) const = 0;
-  virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
+  virtual VecInt GetAdjacentCellsFromGivenEdge(const XmEdge& a_edge) const = 0;
 
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgeIdxs) const = 0;
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
-                                 std::vector<std::pair<int, int>>& a_edges) const = 0;
+                                 std::vector<XmEdge>& a_edges) const = 0;
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgePoints1,
                                  VecInt& a_edgePoints2) const = 0;
 
-  virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const = 0;
+  virtual std::vector<XmEdge> GetEdgesOfCell(const int a_cellIdx) const = 0;
   virtual void GetEdgesOfCell(const int a_cellIdx,
-                              std::vector<std::pair<int, int>>& a_edges) const = 0;
+                              std::vector<XmEdge>& a_edges) const = 0;
   virtual void GetPointIdxsAttachedByEdge(int a_pointIdx, VecInt& a_edgePoints) const = 0;
   virtual void GetPointsAttachedByEdge(int a_pointIdx, VecPt3d& a_edgePoints) const = 0;
 
