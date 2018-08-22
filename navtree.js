@@ -121,7 +121,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"functions.html"
+"index.html#XmsgridFeatures"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

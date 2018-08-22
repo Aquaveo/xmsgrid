@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['test_5fcell_5ffunctions',['test_cell_functions',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html#a1bbe769c3f0d81270f54eeaf194195d2',1,'python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions']]],
-  ['test_5fget_5fnumber_5fof_5fface_5fpoints',['test_get_number_of_face_points',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html#a502fa4f01558211fdbf691199b8babf8',1,'python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions']]],
-  ['test_5fget_5fpoints_5fattached_5fby_5fedge',['test_get_points_attached_by_edge',['../classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html#aaee35170e32f336faf2eb45e55f3c0b3',1,'python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions']]],
   ['test_5fxmubuild3dchevronugrid',['TEST_XmUBuild3DChevronUgrid',['../namespacexms.html#a18cc668860be57dfc3d4800446ab6dfb',1,'xms']]],
   ['test_5fxmubuildhexahedronugrid',['TEST_XmUBuildHexahedronUgrid',['../namespacexms.html#a0a50a2c6d678fa5e90212d03fecd3f44',1,'xms::TEST_XmUBuildHexahedronUgrid(const int a_rows, const int a_cols, const int a_lays)'],['../namespacexms.html#a9b7018697957bbe8aed198fe6cf69a07',1,'xms::TEST_XmUBuildHexahedronUgrid(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)']]],
   ['test_5fxmubuildpolyhedronugrid',['TEST_XmUBuildPolyhedronUgrid',['../namespacexms.html#a512cd32ebbe039154d962c0d47a6e4fc',1,'xms::TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays)'],['../namespacexms.html#a6b241889d06a379363e269e80a06ea1c',1,'xms::TEST_XmUBuildPolyhedronUgrid(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)']]],
@@ -34,12 +31,9 @@ var searchData=
   ['testgetfacesfrompoint',['testGetFacesFromPoint',['../class_xm_u_grid_unit_tests.html#a3bfd0a5f476433f5cf129ea8809b213b',1,'XmUGridUnitTests']]],
   ['testgetnumberofcelledges',['testGetNumberOfCellEdges',['../class_xm_u_grid_unit_tests.html#ac283bd38692be27a8563e21442ce5a7f',1,'XmUGridUnitTests']]],
   ['testgetnumberofcellfaces',['testGetNumberOfCellFaces',['../class_xm_u_grid_unit_tests.html#a0b7654d480a614b3c72111a747fbe81a',1,'XmUGridUnitTests']]],
-  ['testgetnumberoffacepoints',['testGetNumberOfFacePoints',['../class_xm_u_grid_unit_tests.html#ada0855469ef7e7a5321776f60af53600',1,'XmUGridUnitTests']]],
   ['testgetplanviewpolygon',['testGetPlanViewPolygon',['../class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144',1,'XmUGridUnitTests']]],
-  ['testgetplanviewpolygonmultisideface',['testGetPlanViewPolygonMultiSideFace',['../class_xm_u_grid_unit_tests.html#af69608066255afd742fd8cab85d1e4d9',1,'XmUGridUnitTests']]],
   ['testgetpointcells',['testGetPointCells',['../class_xm_u_grid_unit_tests.html#a187f111d6cafc089a46c3f82d8d77bd4',1,'XmUGridUnitTests']]],
   ['testgetpointcellssimple',['testGetPointCellsSimple',['../class_xm_u_grid_unit_tests.html#ab50f5c7cf55771608109343a1bd3a9e6',1,'XmUGridUnitTests']]],
-  ['testgetpointsattachedbyedge',['testGetPointsAttachedByEdge',['../class_xm_u_grid_unit_tests.html#aeb8c4063cacb388295d72bf12711fc2d',1,'XmUGridUnitTests']]],
   ['testgetpointsofcell',['testGetPointsOfCell',['../class_xm_u_grid_unit_tests.html#aa23a5330e8dc3a8856f45b27f87f7c96',1,'XmUGridUnitTests']]],
   ['testgetsetpoint',['testGetSetPoint',['../class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af',1,'XmUGridUnitTests']]],
   ['testgetsinglecellstream',['testGetSingleCellStream',['../class_xm_u_grid_unit_tests.html#a956c11f1adbf6731ace66141e05a572c',1,'XmUGridUnitTests']]],
