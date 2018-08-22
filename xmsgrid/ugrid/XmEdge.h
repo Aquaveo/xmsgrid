@@ -11,13 +11,11 @@
 //----- Included files ---------------------------------------------------------
 
 // 3. Standard library headers
+#include <utility>
 
 // 4. External library headers
 
 // 5. Shared code headers
-#include <xmscore/misc/base_macros.h>
-#include <xmscore/misc/boost_defines.h>
-#include <xmscore/stl/vector.h>
 
 //----- Forward declarations ---------------------------------------------------
 

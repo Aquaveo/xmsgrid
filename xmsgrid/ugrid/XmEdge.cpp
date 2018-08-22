@@ -12,6 +12,7 @@
 #include <xmsgrid/ugrid/XmEdge.h>
 
 // 3. Standard library headers
+#include <algorithm>
 
 // 4. External library headers
 
