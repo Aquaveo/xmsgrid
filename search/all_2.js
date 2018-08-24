@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['convexhull',['ConvexHull',['../namespacexms.html#a1973dbb5cf1431334a569f565b1c7d13',1,'xms']]],
-  ['convexhullwithindices',['ConvexHullWithIndices',['../namespacexms.html#ac022fbaa831f7fc3362547238bad840a',1,'xms']]],
-  ['cross',['cross',['../namespacexms.html#a19d9cf623f58dfd2c0f07818b00c3ef0',1,'xms']]]
+  ['at',['at',['https://aquaveo.github.io/xmscore/classxms_1_1_pt2.html#a63496779ca70056e0d9e4820f7b5d57b',1,'xms::Pt2::at(unsigned int a) const '],['https://aquaveo.github.io/xmscore/classxms_1_1_pt2.html#a3fdc540f671924719dbce3bee0f15345',1,'xms::Pt2::at(unsigned int a)'],['https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a5a6aaef219de3d28c93d66994f99160f',1,'xms::Pt3::at(unsigned int a) const '],['https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#adc79fb88c6126b8c1d3477f851c49bfa',1,'xms::Pt3::at(unsigned int a)'],['https://aquaveo.github.io/xmscore/classxms_1_1_pt4.html#a2d9491da7438d1001a9bb46868bc601a',1,'xms::Pt4::at(unsigned int a) const '],['https://aquaveo.github.io/xmscore/classxms_1_1_pt4.html#abf51f7ef5e08f736dcba70693b6f4be6',1,'xms::Pt4::at(unsigned int a)']]]
 ];

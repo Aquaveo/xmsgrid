@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['xmugridcelltype',['XmUGridCellType',['../namespacexms.html#ac31bf74ccc479f6e1c2ae761d3d727a9',1,'xms']]],
-  ['xmugridfaceorientation',['XmUGridFaceOrientation',['../namespacexms.html#a136ad631d47aa5714f72cdc84fd8dca5',1,'xms']]]
+  ['messagetypeenum',['MessageTypeEnum',['https://aquaveo.github.io/xmscore/namespacexmlog.html#a7f66c92bb821241cbb29fb07d7bce588',1,'xmlog']]]
 ];

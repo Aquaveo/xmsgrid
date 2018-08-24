@@ -37,27 +37,11 @@
     <includes id="_xm_convex_hull_8h" name="XmConvexHull.h" local="no" imported="no">xmsgrid/ugrid/XmConvexHull.h</includes>
     <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
-    <namespace>xms</namespace>
-    <member kind="function">
-      <type>std::vector&lt; Pt3d &gt;</type>
-      <name>ConvexHull</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a1973dbb5cf1431334a569f565b1c7d13</anchor>
-      <arglist>(std::vector&lt; Pt3d &gt; a_points)</arglist>
-    </member>
-    <member kind="function">
-      <type>VecInt</type>
-      <name>ConvexHullWithIndices</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
-      <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>XmConvexHull.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_convex_hull_8h</filename>
-    <namespace>xms</namespace>
   </compound>
   <compound kind="file">
     <name>XmUGrid.cpp</name>
@@ -67,91 +51,6 @@
     <includes id="_xm_convex_hull_8h" name="XmConvexHull.h" local="no" imported="no">xmsgrid/ugrid/XmConvexHull.h</includes>
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
     <includes id="_xm_u_grid_8t_8h" name="XmUGrid.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.t.h</includes>
-    <namespace>xms</namespace>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGrid1Left90Tri</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>acf4c5713f23e0600ec26bb0294263068</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGridSimpleQuad</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a65e5eef7f0e8c64484b1aaa0924364b7</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGrid2dLinear</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a8260f0723d0bdca40b077369e5321ac8</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGrid3dLinear</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>af931fa91f04abddf2d9469ef64ecfa70</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGridHexagonalPolyhedron</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a15d3f924e7e8424b2c491ef2132b700c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildQuadUGrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a66cfca71e0f54169d0175e75a1da1b9f</anchor>
-      <arglist>(const int a_rows, const int a_cols)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildQuadUGrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ae795f753066bfd3749f441b965aba896</anchor>
-      <arglist>(const int a_rows, const int a_cols, const xms::Pt3d &amp;a_origin)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildHexahedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a0a50a2c6d678fa5e90212d03fecd3f44</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildHexahedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a9b7018697957bbe8aed198fe6cf69a07</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildPolyhedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a512cd32ebbe039154d962c0d47a6e4fc</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildPolyhedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a6b241889d06a379363e269e80a06ea1c</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuild3DChevronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a18cc668860be57dfc3d4800446ab6dfb</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="function">
       <type>std::string</type>
       <name>TestFilesPath</name>
@@ -165,28 +64,12 @@
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_8h</filename>
     <class kind="class">xms::XmUGrid</class>
-    <namespace>xms</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>XmUGridCellType</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ac31bf74ccc479f6e1c2ae761d3d727a9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>XmUGridFaceOrientation</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a136ad631d47aa5714f72cdc84fd8dca5</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>XmUGrid.t.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_8t_8h</filename>
     <class kind="class">XmUGridUnitTests</class>
-    <namespace>xms</namespace>
     <member kind="function">
       <type>std::string</type>
       <name>TestFilesPath</name>
@@ -203,48 +86,11 @@
     <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
     <includes id="_xm_u_grid_8t_8h" name="XmUGrid.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.t.h</includes>
     <includes id="_xm_u_grid_utils_8t_8h" name="XmUGridUtils.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.t.h</includes>
-    <namespace>xms</namespace>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>XmReadUGridFromAsciiFile</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a92b5c5c0a9e2455db6d671eb7134a76e</anchor>
-      <arglist>(const std::string &amp;a_filePath)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>XmWriteUGridToAsciiFile</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
-      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>cross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a19d9cf623f58dfd2c0f07818b00c3ef0</anchor>
-      <arglist>(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ae637b67d3f1510d9d944bbf58b357f96</anchor>
-      <arglist>(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a65c87e21852eec5a00868110b3cdc729</anchor>
-      <arglist>(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>XmUGridUtils.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_utils_8h</filename>
-    <namespace>xms</namespace>
   </compound>
   <compound kind="file">
     <name>XmUGridUtils.t.h</name>
@@ -680,158 +526,6 @@
   <compound kind="class">
     <name>python::ugrid::XmUGridUtils_pyt::TestXmUGridUtilFunctions</name>
     <filename>classpython_1_1ugrid_1_1_xm_u_grid_utils__pyt_1_1_test_xm_u_grid_util_functions.html</filename>
-  </compound>
-  <compound kind="namespace">
-    <name>xms</name>
-    <filename>namespacexms.html</filename>
-    <class kind="class">xms::XmUGrid</class>
-    <member kind="enumeration">
-      <type></type>
-      <name>XmUGridCellType</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ac31bf74ccc479f6e1c2ae761d3d727a9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>XmUGridFaceOrientation</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a136ad631d47aa5714f72cdc84fd8dca5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Pt3d &gt;</type>
-      <name>ConvexHull</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a1973dbb5cf1431334a569f565b1c7d13</anchor>
-      <arglist>(std::vector&lt; Pt3d &gt; a_points)</arglist>
-    </member>
-    <member kind="function">
-      <type>VecInt</type>
-      <name>ConvexHullWithIndices</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
-      <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGrid1Left90Tri</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>acf4c5713f23e0600ec26bb0294263068</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGridSimpleQuad</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a65e5eef7f0e8c64484b1aaa0924364b7</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGrid2dLinear</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a8260f0723d0bdca40b077369e5321ac8</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGrid3dLinear</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>af931fa91f04abddf2d9469ef64ecfa70</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>TEST_XmUGridHexagonalPolyhedron</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a15d3f924e7e8424b2c491ef2132b700c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildQuadUGrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a66cfca71e0f54169d0175e75a1da1b9f</anchor>
-      <arglist>(const int a_rows, const int a_cols)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildQuadUGrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ae795f753066bfd3749f441b965aba896</anchor>
-      <arglist>(const int a_rows, const int a_cols, const xms::Pt3d &amp;a_origin)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildHexahedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a0a50a2c6d678fa5e90212d03fecd3f44</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildHexahedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a9b7018697957bbe8aed198fe6cf69a07</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildPolyhedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a512cd32ebbe039154d962c0d47a6e4fc</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuildPolyhedronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a6b241889d06a379363e269e80a06ea1c</anchor>
-      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; xms::XmUGrid &gt;</type>
-      <name>TEST_XmUBuild3DChevronUgrid</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a18cc668860be57dfc3d4800446ab6dfb</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
-      <name>XmReadUGridFromAsciiFile</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a92b5c5c0a9e2455db6d671eb7134a76e</anchor>
-      <arglist>(const std::string &amp;a_filePath)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>XmWriteUGridToAsciiFile</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
-      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>cross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a19d9cf623f58dfd2c0f07818b00c3ef0</anchor>
-      <arglist>(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ae637b67d3f1510d9d944bbf58b357f96</anchor>
-      <arglist>(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a65c87e21852eec5a00868110b3cdc729</anchor>
-      <arglist>(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)</arglist>
-    </member>
   </compound>
   <compound kind="class">
     <name>xms::XmUGrid</name>

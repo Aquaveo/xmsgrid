@@ -1,6 +1,7 @@
 var annotated =
 [
     [ "python", null, [
+      [ "misc", null, null ],
       [ "ugrid", null, [
         [ "XmUGrid_pyt", "namespacepython_1_1ugrid_1_1_xm_u_grid__pyt.html", "namespacepython_1_1ugrid_1_1_xm_u_grid__pyt" ],
         [ "XmUGridUtils_pyt", null, [
@@ -8,7 +9,9 @@ var annotated =
         ] ]
       ] ]
     ] ],
-    [ "xms", "namespacexms.html", "namespacexms" ],
+    [ "xms", null, [
+      [ "XmUGrid", "classxms_1_1_xm_u_grid.html", "classxms_1_1_xm_u_grid" ]
+    ] ],
     [ "XmUGrid", "class_xm_u_grid.html", null ],
     [ "XmUGridConvexHullTests", "class_xm_u_grid_convex_hull_tests.html", "class_xm_u_grid_convex_hull_tests" ],
     [ "XmUGridTests", "class_xm_u_grid_tests.html", null ],
