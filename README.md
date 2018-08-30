@@ -13,38 +13,7 @@ In order to build this library, you must first have a few things installed.
 
 Building
 --------
-Once you have cloned the repository, navigate to the `build` directory. All
-of the following commands will be run from that directory unless otherwise 
-noted.
-
-1. Get External Libraries
-```
-    conan install .. 
-```
-
-2. Configure CMake
-```
-    cmake ..
-```
-
-3. Build 
-```
-    make
-```
-
-For Windows:
-
-1. Get External Libraries
-```
-    conan install -pr ..\dev\xmsprofile_debug ..
-``` 
-
-2. Configure CMake
-```
-    cmake .. -G "Visual Studio 12 2013 Win64" -DXMS_BUILD=TRUE -DBUILD_TESTING=TRUE
-```
-
-3. Build - Build from generated solution file.
+See xmscore build [instructions](https://github.com/Aquaveo/xmscore/wiki/Building-Libraries).
 
 Documentation
 -------------
