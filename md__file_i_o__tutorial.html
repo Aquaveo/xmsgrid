@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('md__file_i_o__tutorial.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -117,23 +117,23 @@ Introduction</h2>
 <p>The purpose of this tutorial is to provide explanation on how to use File IO with xmsgrid. The <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a> class does not have file IO members. Functions are available in the files named XmUGridUtils to provide File IO.</p>
 <h2><a class="anchor" id="Example_XmWriteUGridFromAsciiFile"></a>
 Example - Writing UGrid data to ASCII file format</h2>
-<p>This example shows how to write an exisiting UGrid to an ASCII file using function <a class="el" href="namespacexms.html#aad684d8d566604305a00cc4d875dd51e" title="Write an XmUGrid to an ASCII file. ">xms::XmWriteUGridToAsciiFile()</a>. This function takes a <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a> and filename with path. The testing code for this example is <a class="el" href="class_xm_u_grid_utils_tests.html#a3fae7052c1ceee482e3453f7c45247f8" title="[snip_test_WriteReadAscii] ">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii</a>.</p>
+<p>This example shows how to write an exisiting UGrid to an ASCII file using function xms::XmWriteUGridToAsciiFile(). This function takes a <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a> and filename with path. The testing code for this example is <a class="el" href="class_xm_u_grid_utils_tests.html#a3fae7052c1ceee482e3453f7c45247f8" title="[snip_test_WriteReadAscii] ">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii</a>.</p>
 <h2><a class="anchor" id="Example_XmReadUGridFromAsciiFile"></a>
 Example - Reading a UGrid from ASCII file format</h2>
-<p>This example shows how to read a UGrid from an ASCII file using function <a class="el" href="namespacexms.html#a92b5c5c0a9e2455db6d671eb7134a76e" title="Read XmUGrid from an ASCII file. ">xms::XmReadUGridFromAsciiFile</a>. This function takes a filename with path and returns an <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a>. The testing code for this example is <a class="el" href="class_xm_u_grid_utils_tests.html#a3fae7052c1ceee482e3453f7c45247f8" title="[snip_test_WriteReadAscii] ">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii</a>.</p>
+<p>This example shows how to read a UGrid from an ASCII file using function xms::XmReadUGridFromAsciiFile. This function takes a filename with path and returns an <a class="el" href="class_xm_u_grid.html" title="Implementation for XmUGrid which provides geometry for an unstructured grid. ">XmUGrid</a>. The testing code for this example is <a class="el" href="class_xm_u_grid_utils_tests.html#a3fae7052c1ceee482e3453f7c45247f8" title="[snip_test_WriteReadAscii] ">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_utils_tests.html#a3fae7052c1ceee482e3453f7c45247f8">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugridBase = <a class="code" href="namespacexms.html#af931fa91f04abddf2d9469ef64ecfa70">TEST_XmUGrid3dLinear</a>();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugridBase = TEST_XmUGrid3dLinear();</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// write</span></div>
 <div class="line">  std::string outFileName(<a class="code" href="_xm_u_grid_8cpp.html#a5077e9a31a7514c737aec71ff1732e1c">TestFilesPath</a>() + <span class="stringliteral">&quot;3d_grid_linear.xmugrid&quot;</span>);</div>
-<div class="line">  <a class="code" href="namespacexms.html#aad684d8d566604305a00cc4d875dd51e">XmWriteUGridToAsciiFile</a>(ugridBase, outFileName);</div>
+<div class="line">  XmWriteUGridToAsciiFile(ugridBase, outFileName);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// read</span></div>
 <div class="line">  std::string input(<a class="code" href="_xm_u_grid_8cpp.html#a5077e9a31a7514c737aec71ff1732e1c">TestFilesPath</a>() + <span class="stringliteral">&quot;3d_grid_linear.xmugrid&quot;</span>);</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugridOut = <a class="code" href="namespacexms.html#a92b5c5c0a9e2455db6d671eb7134a76e">XmReadUGridFromAsciiFile</a>(input);</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugridOut = XmReadUGridFromAsciiFile(input);</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugridOut)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to read ugrid.&quot;</span>);</div>
@@ -149,7 +149,7 @@ Example - Reading a UGrid from ASCII file format</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Aug 30 2018 22:50:07 for xmsgrid by
+    <li class="footer">Generated on Thu Aug 30 2018 23:34:13 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
