@@ -1,8 +1,4 @@
 var searchData=
 [
-  ['caarraysizehelper',['caArraySizeHelper',['https://aquaveo.github.io/xmscore/namespacexms.html#a7872de9419f714a93ed1c4ce76d35a6c',1,'xms']]],
-  ['clamp',['Clamp',['https://aquaveo.github.io/xmscore/namespacexms.html#a2fd4ced1304195c63c72c132a2318891',1,'xms']]],
-  ['cleardefault',['ClearDefault',['https://aquaveo.github.io/xmscore/classxms_1_1_e_test_messaging_state.html#aade9d4c6d37ea3d95c689ae38a757ed8',1,'xms::ETestMessagingState']]],
-  ['copybshp',['CopyBSHP',['https://aquaveo.github.io/xmscore/namespacexms.html#a3d6d80550e13f3bd87b7d6680070ba39',1,'xms']]],
-  ['currentitem',['CurrentItem',['https://aquaveo.github.io/xmscore/classxms_1_1_progress.html#adec755bc0bd7e4d86a9b4ce62f520241',1,'xms::Progress']]]
+  ['new',['New',['../classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502',1,'xms::XmUGrid::New(const VecPt3d &amp;a_points, const VecInt &amp;a_cellStream)'],['../classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe',1,'xms::XmUGrid::New()']]]
 ];

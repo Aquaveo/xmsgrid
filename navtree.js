@@ -12,7 +12,6 @@ var NAVTREE =
       ] ],
       [ "\"xmsgrid\" Name ", "index.html#xmsgridName", null ]
     ] ],
-    [ "index", "https://aquaveo.github.io/xmscore/index.html", null ],
     [ "UGrid File IO Tutorial", "md__file_i_o__tutorial.html", [
       [ "UGrid File IO Tutorial", "md__file_i_o__tutorial.html#FileIO_Tutorial", [
         [ "Introduction", "md__file_i_o__tutorial.html#Intro_FileIO", null ],
@@ -93,7 +92,12 @@ var NAVTREE =
       ] ]
     ] ],
     [ "Namespaces", null, [
-      [ "Namespace List", "namespaces.html", "namespaces" ]
+      [ "Namespace List", "namespaces.html", "namespaces" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
+      ] ]
     ] ],
     [ "Classes", null, [
       [ "Class List", "annotated.html", "annotated" ],
@@ -117,7 +121,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"globals_vars.html"
+"index.html#XmsgridFeatures"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

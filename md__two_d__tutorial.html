@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('md__two_d__tutorial.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -144,13 +144,13 @@ Introduction</h2>
 <p>The purpose of this tutorial is to provide explanation on how to use xmsgrid to create two dimensional unstructured grids, or UGrids. A UGrid has points and cells defined using those points. There are many different kinds of cells available, but this tutorial will focus on the 2-dimensional cells, namely: triangle, polygon, pixel, quadrilateral.</p>
 <h2><a class="anchor" id="Example_DefiningA2dUGridCell"></a>
 Example - Defining Ugrid Cells</h2>
-<p>Supported 2D grid cells include: triangle (5), polygon (7), pixel (8), quad (9). A cell is defined with the number declaration of the shape (5, 7, 8, and 9 respectively as defined by the enumeration xms::XmUGridCellType), then the number of points, followed by the point indices. The cell definitions mirror VTK cell definitions which are available on page 9 of VTK File Formats for VTK version 4.2 at <a href="https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf">https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf</a>.</p>
+<p>Supported 2D grid cells include: triangle (5), polygon (7), pixel (8), quad (9). A cell is defined with the number declaration of the shape (5, 7, 8, and 9 respectively as defined by the enumeration <a class="el" href="namespacexms.html#ac31bf74ccc479f6e1c2ae761d3d727a9" title="Matches cell types from VTK (see vtkCellType.h) ">xms::XmUGridCellType</a>), then the number of points, followed by the point indices. The cell definitions mirror VTK cell definitions which are available on page 9 of VTK File Formats for VTK version 4.2 at <a href="https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf">https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf</a>.</p>
 <p>A triangle (5) has 3 points and the points are declared in a counter-clockwise direction. A cell stream example for a triangle is: 5, 3, 0, 1, 2.</p>
 <p>A polygon (7) does not a have a defined number of points, but the points are still declared in a counter-clockwise direction. A cell stream example for a polygon is: 7, 5, 0, 1, 2, 3, 4.</p>
 <p>A pixel (8) has 4 orthogonially defined points. For the direction and order of points, see the illustration in the VTK file Format pdf referenced above on page 9 for a VTK_PIXEL. A cell stream example for a pixel is: 8, 4, 0, 1, 2, 3.</p>
 <p>A quad (9) has 4 points declared in a counter-clockwise direction. A cell stream example for a quad is: 9, 4, 0, 1, 2, 3.</p>
 <p>The testing code for this example is XmUGridUnitTests::TEST_XmUGrid2dLinear. </p>
-<div class="fragment"><div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> points = { { 0, 0, 0 }, { 10, 0, 0 }, { 20, 0, 0 }, { 30, 0, 0 }, { 40, 0, 0 },</div>
+<div class="fragment"><div class="line">  VecPt3d points = { { 0, 0, 0 }, { 10, 0, 0 }, { 20, 0, 0 }, { 30, 0, 0 }, { 40, 0, 0 },</div>
 <div class="line">                    {0, 10, 0},  {10, 10, 0}, {20, 10, 0}, {40, 10, 0}, {0, 20, 0},</div>
 <div class="line">                    {10, 20, 0}, {20, 20, 0}, {30, 20, 0}, {40, 20, 0}};</div>
 <div class="line"></div>
@@ -164,11 +164,11 @@ Example - Defining Ugrid Cells</h2>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New_With_Data_2d"></a>
 Example - Creating a New 2D UGrid With Data</h2>
 <p>This example shows how to create a new 2D UGrid with the overloaded New function which directly sets the data as it constructs the grid, using the static function <a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502" title="Create a new XmUGrid. ">xms::XmUGrid::New(const VecPt3d&amp; a_points, const VecInt&amp; a_cellStream)</a>. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af" title="[snip_test_UGrid_Streams] ">XmUGridUnitTests::testGetSetPoint</a>.</p>
-<div class="fragment"><div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
+<div class="fragment"><div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
 <div class="line">                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Cell type (9), number of points (4), point numbers, counterclockwise</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> cellStream = {9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5};</div>
+<div class="line">  VecInt cellStream = {9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5};</div>
 <div class="line"></div>
 <div class="line">  BSHP&lt;XmUGrid&gt; ugrid = XmUGrid::New(points, cellStream);</div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New2d"></a>
@@ -186,10 +186,10 @@ Example - Setting the UGrid Cell Stream</h2>
 <div class="line">{</div>
 <div class="line">  <span class="comment">// test empty UGrid</span></div>
 <div class="line">  BSHP&lt;XmUGrid&gt; emptyUGrid = XmUGrid::New();</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> points = emptyUGrid-&gt;GetPoints();</div>
+<div class="line">  VecPt3d points = emptyUGrid-&gt;GetPoints();</div>
 <div class="line">  TS_ASSERT_EQUALS(0, points.size());</div>
 <div class="line"></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> cellStream = emptyUGrid-&gt;GetCellStream();</div>
+<div class="line">  VecInt cellStream = emptyUGrid-&gt;GetCellStream();</div>
 <div class="line">  TS_ASSERT(XmUGrid::ValidCellStream(cellStream));</div>
 <div class="line">  TS_ASSERT_EQUALS(0, cellStream.size());</div>
 <div class="line"></div>
@@ -210,11 +210,11 @@ Example - Setting the UGrid Cell Stream</h2>
 <div class="line">  cellStream = {9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5};</div>
 <div class="line"></div>
 <div class="line">  ugrid-&gt;SetPoints(points);</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> pointsOut = ugrid-&gt;GetPoints();</div>
+<div class="line">  VecPt3d pointsOut = ugrid-&gt;GetPoints();</div>
 <div class="line">  TS_ASSERT_EQUALS(points, pointsOut);</div>
 <div class="line"></div>
 <div class="line">  TS_ASSERT(ugrid-&gt;SetCellStream(cellStream));</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> cellStreamOut = ugrid-&gt;GetCellStream();</div>
+<div class="line">  VecInt cellStreamOut = ugrid-&gt;GetCellStream();</div>
 <div class="line">  TS_ASSERT_EQUALS(cellStream, cellStreamOut);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test invalid cell streams</span></div>
@@ -235,7 +235,7 @@ Example - Validating the Cellstream</h2>
 <p>This example shows how to validate whether a given Cellstream is valid as previously defined. The xms::XmUGridImpl::ValidCellStream checks whether all cell types and point counts within the cellstream match up, but does not check for orientation or valid point positions. This function should not be relied on to catch all errors, but can be a basic check before setting the cellstream. The function takes one arguement, a cellstream containing one or more cells. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::SetCellStream.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
-<div class="line"><span class="keywordtype">bool</span> XmUGridImpl::SetCellStream(<span class="keyword">const</span> <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&amp; a_cellStream)</div>
+<div class="line"><span class="keywordtype">bool</span> XmUGridImpl::SetCellStream(<span class="keyword">const</span> VecInt&amp; a_cellStream)</div>
 <div class="line">{</div>
 <div class="line">  <span class="keywordflow">if</span> (ValidCellStream(a_cellStream))</div>
 <div class="line">  {</div>
@@ -245,7 +245,7 @@ Example - Validating the Cellstream</h2>
 <div class="line">  }</div>
 <div class="line">  <span class="keywordflow">else</span></div>
 <div class="line">  {</div>
-<div class="line">    <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/_xm_log_8h.html#a2aa4d2a0a80e464d6acba7f32b13f978">XM_LOG</a>(<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexmlog.html#a7f66c92bb821241cbb29fb07d7bce588a6c90100ca9f6986351a3a437374735c1">xmlog::error</a>, <span class="stringliteral">&quot;Invalid cell stream data.&quot;</span>);</div>
+<div class="line">    XM_LOG(xmlog::error, <span class="stringliteral">&quot;Invalid cell stream data.&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line">  }</div>
 <div class="line">} <span class="comment">// XmUGridImpl::SetCellStream</span></div>
@@ -277,7 +277,7 @@ Example - Get the Cells that Share the Same Point or Points</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#ae950f2efb2ef0e1d655bf12ed1803f83">XmUGridUnitTests::testPointFunctions</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = TEST_XmUGridSimpleQuad();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -286,7 +286,7 @@ Example - Get the Cells that Share the Same Point or Points</h2>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetNumberOfPoints</span></div>
 <div class="line">  TS_ASSERT_EQUALS(ugrid-&gt;GetNumberOfPoints(), 9);</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
+<div class="line">  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
 <div class="line">                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetPoints</span></div>
@@ -297,36 +297,36 @@ Example - Get the Cells that Share the Same Point or Points</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test SetPoint &amp; GetPoint</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> invalid = {100, 100, 100};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> valid = {5, 5, 5};</div>
+<div class="line">  Pt3d invalid = {100, 100, 100};</div>
+<div class="line">  Pt3d valid = {5, 5, 5};</div>
 <div class="line">  TS_ASSERT(!ugrid-&gt;SetPoint(4, invalid));</div>
 <div class="line">  TS_ASSERT_EQUALS(points[4], ugrid-&gt;GetPoint(4));</div>
 <div class="line">  TS_ASSERT(ugrid-&gt;SetPoint(4, valid));</div>
 <div class="line">  TS_ASSERT_EQUALS(valid, ugrid-&gt;GetPoint(4));</div>
 <div class="line"></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> pointIndices = {0, 3, 6};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> expectedPoints = {{0, 10, 0}, {0, 0, 0}, {0, -10, 0}};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> pointsPt3d;</div>
+<div class="line">  VecInt pointIndices = {0, 3, 6};</div>
+<div class="line">  VecPt3d expectedPoints = {{0, 10, 0}, {0, 0, 0}, {0, -10, 0}};</div>
+<div class="line">  VecPt3d pointsPt3d;</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetPointsFromPointIdxs</span></div>
 <div class="line">  pointsPt3d = ugrid-&gt;GetPointsFromPointIdxs(pointIndices);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedPoints, pointsPt3d);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetExtents</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> min, max, expectedMin = {0, -10, 0}, expectedMax = {20, 10, 5};</div>
+<div class="line">  Pt3d min, max, expectedMin = {0, -10, 0}, expectedMax = {20, 10, 5};</div>
 <div class="line">  ugrid-&gt;GetExtents(min, max);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedMin, min);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedMax, max);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetPointCells</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> expectedCells = {0, 2};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> cellsAssociated = ugrid-&gt;GetPointCells(3);</div>
+<div class="line">  VecInt expectedCells = {0, 2};</div>
+<div class="line">  VecInt cellsAssociated = ugrid-&gt;GetPointCells(3);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedCells, cellsAssociated);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetCommonCells</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> expectedCommonCells = {0, 1};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> pointIndex = {1};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> commonCells = ugrid-&gt;GetCommonCells(pointIndex);</div>
+<div class="line">  VecInt expectedCommonCells = {0, 1};</div>
+<div class="line">  VecInt pointIndex = {1};</div>
+<div class="line">  VecInt commonCells = ugrid-&gt;GetCommonCells(pointIndex);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedCells, cellsAssociated);</div>
 <div class="line"></div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testPointFunctions</span></div>
@@ -346,7 +346,7 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#aa04937d86269192d53cf353366f6fdd5">XmUGridUnitTests::testCellFunctions</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = TEST_XmUGridSimpleQuad();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -354,8 +354,8 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetPointsOfCell</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> pointsOfCell = ugrid-&gt;GetPointsOfCell(0);</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> expectedPoints = {0, 3, 4, 1};</div>
+<div class="line">  VecInt pointsOfCell = ugrid-&gt;GetPointsOfCell(0);</div>
+<div class="line">  VecInt expectedPoints = {0, 3, 4, 1};</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedPoints, pointsOfCell);</div>
 <div class="line">  <span class="comment">// Test overload</span></div>
 <div class="line">  ugrid-&gt;GetPointsOfCell(0, pointsOfCell);</div>
@@ -365,7 +365,7 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line">  TS_ASSERT_EQUALS(XMU_QUAD, ugrid-&gt;GetCellType(0));</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetDimensionCount</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> expectedDimensions = {0, 0, 4, 0};</div>
+<div class="line">  VecInt expectedDimensions = {0, 0, 4, 0};</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedDimensions, ugrid-&gt;GetDimensionCount());</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetCellDimension</span></div>
@@ -382,7 +382,7 @@ Example - Get a Single Cellstream for One Cell</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a161f884b0ca131ac8c9a689a0413b1e5">XmUGridUnitTests::testGetCellStreamFunctions</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = TEST_XmUGridSimpleQuad();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -390,8 +390,8 @@ Example - Get a Single Cellstream for One Cell</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetCellStream</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> cellStream = ugrid-&gt;GetCellStream();</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> expectedCellStream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2,</div>
+<div class="line">  VecInt cellStream = ugrid-&gt;GetCellStream();</div>
+<div class="line">  VecInt expectedCellStream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2,</div>
 <div class="line">                               XMU_QUAD, 4, 3, 6, 7, 4, XMU_QUAD, 4, 4, 7, 8, 5};</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedCellStream, cellStream);</div>
 <div class="line"></div>
@@ -414,16 +414,16 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">  <span class="comment">//     |  2  |  3  |</span></div>
 <div class="line">  <span class="comment">//     6-----7-----8</span></div>
 <div class="line"></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = TEST_XmUGridSimpleQuad();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line"></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> expectedCells;</div>
+<div class="line">  VecInt expectedCells;</div>
 <div class="line"></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> retrievedCells;</div>
+<div class="line">  VecInt retrievedCells;</div>
 <div class="line">  retrievedCells = ugrid-&gt;GetCellNeighbors(-1);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedCells, retrievedCells);</div>
 <div class="line">  retrievedCells = ugrid-&gt;GetCellNeighbors(0);</div>
@@ -439,7 +439,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">  retrievedCells.clear();</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// 2D Shapes</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid2d = TEST_XmUGrid2dLinear();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid2d = <a class="code" href="namespacexms.html#a8260f0723d0bdca40b077369e5321ac8">TEST_XmUGrid2dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid2d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -466,7 +466,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">  TS_ASSERT_EQUALS(expectedCells, retrievedCells);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// 3D Shapes</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = TEST_XmUGrid3dLinear();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="namespacexms.html#af931fa91f04abddf2d9469ef64ecfa70">TEST_XmUGrid3dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid3d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -501,21 +501,21 @@ Example - Get a Plan View Polygon</h2>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144">XmUGridUnitTests::testGetPlanViewPolygon</a>()</div>
 <div class="line">{</div>
 <div class="line">  <span class="comment">// 2d</span></div>
-<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid2d = TEST_XmUGrid2dLinear();</div>
+<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid2d = <a class="code" href="namespacexms.html#a8260f0723d0bdca40b077369e5321ac8">TEST_XmUGrid2dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!grid2d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a1b0ce86e91b176c54f0f122476873c75">VecPt3d2d</a> expectedPolygons{</div>
+<div class="line">  VecPt3d2d expectedPolygons{</div>
 <div class="line">    {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}},</div>
 <div class="line">    {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},</div>
 <div class="line">    {{20, 0, 0}, {30, 0, 0}, {20, 10, 0}},</div>
 <div class="line">    {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {20, 10, 0}},</div>
 <div class="line">    {},</div>
 <div class="line">    {}};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> viewPolygon;</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> empty;</div>
+<div class="line">  VecPt3d viewPolygon;</div>
+<div class="line">  VecPt3d empty;</div>
 <div class="line">  <span class="comment">// Bounds testing</span></div>
 <div class="line">  TS_ASSERT(!grid2d-&gt;GetPlanViewPolygon(-1, viewPolygon));</div>
 <div class="line">  TS_ASSERT_EQUALS(empty, viewPolygon);</div>
@@ -530,7 +530,7 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// 3d</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = TEST_XmUGrid3dLinear();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid3d = <a class="code" href="namespacexms.html#af931fa91f04abddf2d9469ef64ecfa70">TEST_XmUGrid3dLinear</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid3d)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -549,7 +549,7 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">    TS_ASSERT_EQUALS(expectedPolygons[i], viewPolygon);</div>
 <div class="line">  }</div>
 <div class="line"></div>
-<div class="line">  BSHP&lt;xms::XmUGrid&gt; chevronUgrid = TEST_XmUBuild3DChevronUgrid();</div>
+<div class="line">  BSHP&lt;xms::XmUGrid&gt; chevronUgrid = <a class="code" href="namespacexms.html#a18cc668860be57dfc3d4800446ab6dfb">TEST_XmUBuild3DChevronUgrid</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!chevronUgrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -577,7 +577,7 @@ Example - Get Cell Edge from Edge Index</h2>
 <div class="line">    std::pair&lt;int, int&gt; edge19(5, 9);                  <span class="comment">// Line</span></div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// 2D Shapes</span></div>
-<div class="line">    BSHP&lt;XmUGrid&gt; ugrid2d = TEST_XmUGrid2dLinear();</div>
+<div class="line">    BSHP&lt;XmUGrid&gt; ugrid2d = <a class="code" href="namespacexms.html#a8260f0723d0bdca40b077369e5321ac8">TEST_XmUGrid2dLinear</a>();</div>
 <div class="line">    <span class="keywordflow">if</span> (!ugrid2d)</div>
 <div class="line">    {</div>
 <div class="line">      TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -620,7 +620,7 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line">  <span class="comment">//     3-----4-----5</span></div>
 <div class="line">  <span class="comment">//     |  2  |  3  |</span></div>
 <div class="line">  <span class="comment">//     6-----7-----8</span></div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = TEST_XmUGridSimpleQuad();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -628,10 +628,10 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Get Adjacent Cells from cell and edge</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedCells = {{}, {2}, {1}, {}};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> expected2dCells = {-1, 2, 1, -1};</div>
+<div class="line">  VecInt2d expectedCells = {{}, {2}, {1}, {}};</div>
+<div class="line">  VecInt expected2dCells = {-1, 2, 1, -1};</div>
 <div class="line">  <span class="keywordtype">int</span> adjacentCell;</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> adjacentCells;</div>
+<div class="line">  VecInt adjacentCells;</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid-&gt;GetNumberOfCellEdges(0); i++)</div>
 <div class="line">  {</div>
 <div class="line">    adjacentCells = ugrid-&gt;GetAdjacentCells(0, i);</div>
@@ -642,7 +642,7 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Get Adjacent cells from given Edge</span></div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedCellsFromEdge = {{0, 1}, {0, 2}, {0}};</div>
+<div class="line">  VecInt2d expectedCellsFromEdge = {{0, 1}, {0, 2}, {0}};</div>
 <div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = {{1, 4}, {3, 4}, {0, 3}};</div>
 <div class="line">  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(-1, -1);</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; edges.size(); i++)</div>
@@ -666,16 +666,16 @@ Example Get Edges Associated with a Point</h2>
 <div class="line">  <span class="comment">//     |  2  |  3  |</span></div>
 <div class="line">  <span class="comment">//     6-----7-----8</span></div>
 <div class="line"></div>
-<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid = TEST_XmUGridSimpleQuad();</div>
+<div class="line">  BSHP&lt;xms::XmUGrid&gt; grid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!grid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedCells{</div>
+<div class="line">  VecInt2d expectedCells{</div>
 <div class="line">    {0, 0},       {0, 0, 1, 1}, {1, 1},       {0, 0, 2, 2}, {0, 0, 1, 1, 2, 2, 3, 3},</div>
 <div class="line">    {1, 1, 3, 3}, {2, 2},       {2, 2, 3, 3}, {3, 3}};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedEdgeIdxs{</div>
+<div class="line">  VecInt2d expectedEdgeIdxs{</div>
 <div class="line">    {0, 3},       {2, 3, 0, 3}, {2, 3},       {0, 1, 0, 3}, {1, 2, 0, 1, 2, 3, 0, 3},</div>
 <div class="line">    {1, 2, 2, 3}, {0, 1},       {1, 2, 0, 1}, {1, 2}};</div>
 <div class="line">  std::vector&lt;std::vector&lt;std::pair&lt;int, int&gt;&gt;&gt; expectedEdges{</div>
@@ -688,19 +688,19 @@ Example Get Edges Associated with a Point</h2>
 <div class="line">    {{3, 6}, {6, 7}},</div>
 <div class="line">    {{6, 7}, {7, 4}, {4, 7}, {7, 8}},</div>
 <div class="line">    {{7, 8}, {8, 5}}};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedEdgePoints1{</div>
+<div class="line">  VecInt2d expectedEdgePoints1{</div>
 <div class="line">    {0, 1},       {4, 1, 1, 2}, {5, 2},       {0, 3, 3, 4}, {3, 4, 1, 4, 7, 4, 4, 5},</div>
 <div class="line">    {4, 5, 8, 5}, {3, 6},       {6, 7, 4, 7}, {7, 8}};</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedEdgePoints2{</div>
+<div class="line">  VecInt2d expectedEdgePoints2{</div>
 <div class="line">    {3, 0},       {1, 0, 4, 1}, {2, 1},       {3, 4, 6, 3}, {4, 1, 4, 5, 4, 3, 7, 4},</div>
 <div class="line">    {5, 2, 5, 4}, {6, 7},       {7, 4, 7, 8}, {8, 5}};</div>
 <div class="line"></div>
 <div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges;</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> cells;</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> edgeIdx;</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> edgePoints1;</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> edgePoints2;</div>
-<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> empty;</div>
+<div class="line">  VecInt cells;</div>
+<div class="line">  VecInt edgeIdx;</div>
+<div class="line">  VecInt edgePoints1;</div>
+<div class="line">  VecInt edgePoints2;</div>
+<div class="line">  VecInt empty;</div>
 <div class="line"></div>
 <div class="line">  TS_ASSERT(!grid-&gt;GetEdgesFromPoint(-1, cells, edgeIdx));</div>
 <div class="line">  TS_ASSERT_EQUALS(empty, cells);</div>
@@ -734,7 +734,7 @@ Example Get Edges Associated with a Cell</h2>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9fbe5c625e131c222db1d9a39db33030">XmUGridUnitTests::testGetEdgesOfCell</a>()</div>
 <div class="line">{</div>
-<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = TEST_XmUGridSimpleQuad();</div>
+<div class="line">  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="namespacexms.html#a65e5eef7f0e8c64484b1aaa0924364b7">TEST_XmUGridSimpleQuad</a>();</div>
 <div class="line">  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line">  {</div>
 <div class="line">    TS_FAIL(<span class="stringliteral">&quot;Unable to create UGrid.&quot;</span>);</div>
@@ -753,7 +753,7 @@ Example Get Edges Associated with a Cell</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Aug 24 2018 16:19:31 for xmsgrid by
+    <li class="footer">Generated on Thu Aug 30 2018 22:50:08 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

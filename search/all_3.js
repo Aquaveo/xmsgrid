@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['base_5fmacros_2eh',['base_macros.h',['https://aquaveo.github.io/xmscore/base__macros_8h.html',1,'']]],
-  ['beginoperationstring',['BeginOperationString',['https://aquaveo.github.io/xmscore/classxms_1_1_observer.html#a70a1cf0b6f4ab3bb533dda17767abf3f',1,'MockObserver::BeginOperationString()'],['https://aquaveo.github.io/xmscore/classxms_1_1_observer_1_1impl.html#a9117ce56380817da4d907c30ff229e9c',1,'xms::Observer::impl::BeginOperationString()']]],
-  ['boost_5fdefines_2eh',['boost_defines.h',['https://aquaveo.github.io/xmscore/boost__defines_8h.html',1,'']]],
-  ['boost_5flog_5finline_5fglobal_5flogger_5finit',['BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT',['https://aquaveo.github.io/xmscore/namespacexms.html#ab86edb3135a35aac19595535d700947d',1,'xms']]]
+  ['dolinesegmentscross',['DoLineSegmentsCross',['../namespacexms.html#ae637b67d3f1510d9d944bbf58b357f96',1,'xms::DoLineSegmentsCross(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)'],['../namespacexms.html#a65c87e21852eec5a00868110b3cdc729',1,'xms::DoLineSegmentsCross(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)']]]
 ];
