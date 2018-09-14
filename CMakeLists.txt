@@ -162,13 +162,11 @@ if(IS_PYTHON_BUILD)
       LINKER_LANGUAGE CXX
     )
 
-    execute_process(COMMAND python -c "import os; print('${PYTHON_SITE_PACKAGES}'.replace('${CONDA_PREFIX}' + os.sep, ''))" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_TRIMMED OUTPUT_STRIP_TRAILING_WHITESPACE)
-
     # Install recipe
     install(
       TARGETS xmsgrid_py
-      ARCHIVE DESTINATION ${PYTHON_SITE_PACKAGES_TRIMMED}
-      LIBRARY DESTINATION ${PYTHON_SITE_PACKAGES_TRIMMED}
+      ARCHIVE DESTINATION "site-packages"
+      LIBRARY DESTINATION "site-packages"
     )
 
 endif()
@@ -177,8 +175,8 @@ endif()
 # Install recipe
 install(
   TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION "lib"
+  LIBRARY DESTINATION "lib"
 )
 foreach (header IN LISTS xmsgrid_headers xmsgrid_py_headers)
   get_filename_component(subdir "${header}" DIRECTORY)
