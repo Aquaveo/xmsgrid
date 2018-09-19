@@ -95,13 +95,18 @@ class XmsgridConan(ConanFile):
                 print("***********(0.0)*************")
         elif self.options.pybind:
             with tools.pythonpath(self):
-                self.run('pip install --user numpy')
-                self.run('python -m unittest discover -v -p *_pyt.py -s ../xmsgrid/python', cwd="./lib")
+                if not self.settings.os == "Macos":
+                  self.run('pip install --user numpy')
+                else:
+                  self.run('pip install numpy')
+                self.run('python -m unittest discover -v -p *_pyt.py -s ../xmsinterp/python', cwd="./lib")
 
     def package(self):
         self.copy("*.h", dst="include/xmsgrid", src="xmsgrid")
         self.copy("*.lib", dst="lib", keep_path=False)
         self.copy("*.pyd", dst="site-packages", keep_path=False)
+        self.copy("*_py.*.so", dst="site-packages", keep_path=False)
+        self.copy("*_py.so", dst="site-packages", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.dylib*", dst="lib", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
