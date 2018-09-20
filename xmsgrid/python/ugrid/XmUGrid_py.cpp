@@ -139,7 +139,7 @@ void initXmUGrid(py::module &m) {
         Args:
             pt_idx (int): Index of the specified point 
         Returns:
-            iter: Indexes of all associated cells
+            iterable: Indexes of all associated cells
     )pydoc";
     xmUg.def("get_point_cells", [](xms::XmUGrid &self, int pt_idx) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetPointCells(pt_idx));
@@ -153,7 +153,7 @@ void initXmUGrid(py::module &m) {
         Args:
             pts (iterable): indexes of points
         Returns:
-            iter: Indexes of all common cells
+            iterable: Indexes of all common cells
     )pydoc";
     xmUg.def("get_common_cells", [](xms::XmUGrid &self, py::iterable pts) -> py::iterable {
             boost::shared_ptr<xms::VecInt> points = xms::VecIntFromPyIter(pts);
@@ -181,7 +181,7 @@ void initXmUGrid(py::module &m) {
             cell_index (int): The index of the specified cell
 
         Returns:
-            iter: The indices of the points associated with the cell
+            iterable: The indices of the points associated with the cell
     )pydoc";
     xmUg.def("get_points_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetPointsOfCell(cell_index));
@@ -207,7 +207,7 @@ void initXmUGrid(py::module &m) {
         Count all number of the cells with each dimenion (0, 1, 2, 3)
 
         Returns:
-            iter: The counts of the number of cells with each dimension.
+            iterable: The counts of the number of cells with each dimension.
     )pydoc";
     xmUg.def("get_dimension_count", [](xms::XmUGrid &self) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetDimensionCount());
@@ -234,7 +234,7 @@ void initXmUGrid(py::module &m) {
         Get cell stream vector for the entire UGrid.
 
         Returns:
-            iter: The cellstream of the ugrid
+            iterable: The cellstream of the ugrid
     )pydoc";
     xmUg.def("get_cell_stream", [](xms::XmUGrid &self) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetCellStream());
@@ -246,7 +246,7 @@ void initXmUGrid(py::module &m) {
         Set the ugrid cells for the entire UGrid using a cell stream.
 
         Args:
-            cell_stream (iter): the cell stream to set
+            cell_stream (iterable): the cell stream to set
 
         Returns:
             bool: Whether the operation succeeded
@@ -265,7 +265,7 @@ void initXmUGrid(py::module &m) {
             cell_index (int): the index of the specified cell
 
         Returns:
-            iter: The cellstream for the specified point
+            iterable: The cellstream for the specified point
     )pydoc";
     xmUg.def("get_single_cell_stream", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
             xms::VecInt cellStream;
@@ -282,7 +282,7 @@ void initXmUGrid(py::module &m) {
             cell_index (int): the index of the specified cell
 
         Returns:
-            iter: The cells neighboring the given cell
+            iterable: The cells neighboring the given cell
     )pydoc";
     xmUg.def("get_cell_neighbors", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetCellNeighbors(cell_index));
@@ -333,7 +333,7 @@ void initXmUGrid(py::module &m) {
             edge_index (int): the index of the desired edge
 
         Returns:
-            iter: The specified edge
+            iterable: The specified edge
     )pydoc";
     xmUg.def("get_cell_edge_from_edge_index", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
             return xms::PyIterFromIntPair(self.GetCellEdgeFromEdgeIndex(cell_index, edge_index));
@@ -349,7 +349,7 @@ void initXmUGrid(py::module &m) {
             edge_index (int): the index of the shared edge
 
         Returns:
-            iter: Indices of all cells that share the edge
+            iterable: Indices of all cells that share the edge
     )pydoc";
     xmUg.def("get_adjacent_cells", [](xms::XmUGrid &self, int cell_index, int edge_index) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetAdjacentCells(cell_index, edge_index));
@@ -381,7 +381,7 @@ void initXmUGrid(py::module &m) {
             pt_index_2 (int): the index of the second point of the edge
 
         Returns:
-            iter: All cells adjacent to the specified edge
+            iterable: All cells adjacent to the specified edge
     )pydoc";
     xmUg.def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, int pt_index_1, int pt_index_2) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetAdjacentCellsFromGivenEdge(pt_index_1, pt_index_2));
@@ -393,10 +393,10 @@ void initXmUGrid(py::module &m) {
         Get the indices of the adjacent cells (that shares the same cell edge)
 
         Args:
-            edge (iter): the edge
+            edge (iterable): the edge
 
         Returns:
-            iter: All cells adjacent to the specified edge
+            iterable: All cells adjacent to the specified edge
     )pydoc";
     xmUg.def("get_adjacent_cells_from_given_edge", [](xms::XmUGrid &self, py::iterable edge) -> py::iterable {
             std::pair<int, int> a_edge = xms::IntPairFromPyIter(edge);
@@ -431,7 +431,7 @@ void initXmUGrid(py::module &m) {
             cell_index (int): the index of the specified cell
 
         Returns:
-            iter: all edges associated with the specified cell
+            iterable: all edges associated with the specified cell
     )pydoc";
     xmUg.def("get_edges_of_cell", [](xms::XmUGrid &self, int cell_index) -> py::iterable {
             return xms::PyIterFromVecIntPair(self.GetEdgesOfCell(cell_index));
@@ -464,7 +464,7 @@ void initXmUGrid(py::module &m) {
             face_index (int): The index of the specified face
 
         Returns:
-            iter: the indices of the points composing the face
+            iterable: the indices of the points composing the face
     )pydoc";
     xmUg.def("get_cell_face", [](xms::XmUGrid &self, int cell_idx, int face_idx) -> py::iterable {
             return xms::PyIterFromVecInt(self.GetCellFace(cell_idx, face_idx));
@@ -479,7 +479,7 @@ void initXmUGrid(py::module &m) {
             cell_index (int): The index of the specified cell
 
         Returns:
-            iter: The indices of the faces of the cell
+            iterable: The indices of the faces of the cell
     )pydoc";
     xmUg.def("get_faces_of_cell", [](xms::XmUGrid &self, int cell_idx) -> py::iterable {
             return xms::PyIterFromVecInt2d(self.GetFacesOfCell(cell_idx));
