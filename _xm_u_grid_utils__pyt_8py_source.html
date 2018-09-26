@@ -145,9 +145,9 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__pyt_8py_source.html'
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        xu3d = self.<a class="code" href="classpython_1_1ugrid_1_1_xm_u_grid_utils__pyt_1_1_test_xm_u_grid_util_functions.html#ad467e82e800118e00e391405f0f62571">get_3d_linear_ugrid</a>()</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="comment"># write</span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        out_file_name = <span class="stringliteral">&quot;PLACEHOLDER FOR TEST FILES PATH&quot;</span> + <span class="stringliteral">&quot;3d_grid_linear.xmugrid&quot;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        XmUGridUtils.xm_write_ugrid_to_ascii_file(xu3d, out_file_name)</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        XmUGridUtils.write_ugrid_to_ascii_file(xu3d, out_file_name)</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="comment"># read</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        xu_read = XmUGridUtils.xm_read_ugrid_from_ascii_file(out_file_name)</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        xu_read = XmUGridUtils.read_ugrid_from_ascii_file(out_file_name)</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        np.testing.assert_array_equal(xu3d.get_points(), xu_read.get_points())</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        np.testing.assert_array_equal(xu3d.get_cell_stream(), xu3d.get_cell_stream())</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
@@ -206,7 +206,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__pyt_8py_source.html'
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_ed63beb1e79dd2a15db8cfd74099fc48.html">python</a></li><li class="navelem"><a class="el" href="dir_df63a72722e2a18a23dc615b97003480.html">ugrid</a></li><li class="navelem"><b>XmUGridUtils_pyt.py</b></li>
-    <li class="footer">Generated on Thu Sep 20 2018 18:27:08 for xmsgrid by
+    <li class="footer">Generated on Wed Sep 26 2018 17:55:02 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

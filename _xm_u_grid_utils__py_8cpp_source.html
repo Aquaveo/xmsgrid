@@ -128,9 +128,9 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__py_8cpp_source.html'
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keywordtype">void</span> initXmUGridUtils(py::module &amp;m) {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  py::module modXmUGridUtils = m.def_submodule(<span class="stringliteral">&quot;XmUGridUtils&quot;</span>);</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="comment">// ---------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// function: xm_read_ugrid_from_ascii_file</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="comment">// function: read_ugrid_from_ascii_file</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="comment">// --------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* xm_read_ugrid_from_ascii_file_doc = R<span class="stringliteral">&quot;pydoc(</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* read_ugrid_from_ascii_file_doc = R<span class="stringliteral">&quot;pydoc(</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="stringliteral">    Read XmUGrid from an ASCII file.</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="stringliteral"></span></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="stringliteral">    Args: </span></div>
@@ -139,20 +139,20 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__py_8cpp_source.html'
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="stringliteral">    Returns:</span></div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="stringliteral">        XmUGrid: The generated XmUGrid</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="stringliteral">  )pydoc&quot;;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="stringliteral">  modXmUGridUtils.def(</span><span class="stringliteral">&quot;xm_read_ugrid_from_ascii_file&quot;</span>, &amp;xms::XmReadUGridFromAsciiFile,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        xm_read_ugrid_from_ascii_file_doc,py::arg(<span class="stringliteral">&quot;file_path&quot;</span>));</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="stringliteral">  modXmUGridUtils.def(</span><span class="stringliteral">&quot;read_ugrid_from_ascii_file&quot;</span>, &amp;xms::XmReadUGridFromAsciiFile,</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        read_ugrid_from_ascii_file_doc,py::arg(<span class="stringliteral">&quot;file_path&quot;</span>));</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// ---------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="comment">// function: xm_write_ugrid_to_ascii_file</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="comment">// function: write_ugrid_to_ascii_file</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="comment">// --------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* xm_write_ugrid_to_ascii_file_doc = R<span class="stringliteral">&quot;pydoc(</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="stringliteral">    Read XmUGrid from an ASCII file.</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* write_ugrid_to_ascii_file_doc = R<span class="stringliteral">&quot;pydoc(</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="stringliteral">    Write XmUGrid to an ASCII file.</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="stringliteral"></span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="stringliteral">    Args: </span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="stringliteral">        ugrid (XmUGrid): XmUGrid to write to file</span></div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="stringliteral">        file_path (str): Path of the ascii file to be created</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="stringliteral">  )pydoc&quot;;</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="stringliteral">  modXmUGridUtils.def(</span><span class="stringliteral">&quot;xm_write_ugrid_to_ascii_file&quot;</span>, &amp;xms::XmWriteUGridToAsciiFile,</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        xm_write_ugrid_to_ascii_file_doc,py::arg(<span class="stringliteral">&quot;ugrid&quot;</span>),py::arg(<span class="stringliteral">&quot;file_path&quot;</span>));</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="stringliteral">  modXmUGridUtils.def(</span><span class="stringliteral">&quot;write_ugrid_to_ascii_file&quot;</span>, &amp;xms::XmWriteUGridToAsciiFile,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        write_ugrid_to_ascii_file_doc,py::arg(<span class="stringliteral">&quot;ugrid&quot;</span>),py::arg(<span class="stringliteral">&quot;file_path&quot;</span>));</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="comment">// ---------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="comment">// function: cross</span></div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="comment">// --------------------------------------------------------------------------- </span></div>
@@ -210,7 +210,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils__py_8cpp_source.html'
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_ed63beb1e79dd2a15db8cfd74099fc48.html">python</a></li><li class="navelem"><a class="el" href="dir_df63a72722e2a18a23dc615b97003480.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_u_grid_utils__py_8cpp.html">XmUGridUtils_py.cpp</a></li>
-    <li class="footer">Generated on Thu Sep 20 2018 18:27:08 for xmsgrid by
+    <li class="footer">Generated on Wed Sep 26 2018 17:55:02 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
