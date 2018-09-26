@@ -23,9 +23,9 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, boost::shared_ptr<T>);
 void initXmUGridUtils(py::module &m) {
   py::module modXmUGridUtils = m.def_submodule("XmUGridUtils");
   // ---------------------------------------------------------------------------
-  // function: xm_read_ugrid_from_ascii_file
+  // function: read_ugrid_from_ascii_file
   // --------------------------------------------------------------------------- 
-  const char* xm_read_ugrid_from_ascii_file_doc = R"pydoc(
+  const char* read_ugrid_from_ascii_file_doc = R"pydoc(
     Read XmUGrid from an ASCII file.
 
     Args: 
@@ -34,20 +34,20 @@ void initXmUGridUtils(py::module &m) {
     Returns:
         XmUGrid: The generated XmUGrid
   )pydoc";
-  modXmUGridUtils.def("xm_read_ugrid_from_ascii_file", &xms::XmReadUGridFromAsciiFile,
-        xm_read_ugrid_from_ascii_file_doc,py::arg("file_path"));
+  modXmUGridUtils.def("read_ugrid_from_ascii_file", &xms::XmReadUGridFromAsciiFile,
+        read_ugrid_from_ascii_file_doc,py::arg("file_path"));
   // ---------------------------------------------------------------------------
-  // function: xm_write_ugrid_to_ascii_file
+  // function: write_ugrid_to_ascii_file
   // --------------------------------------------------------------------------- 
-  const char* xm_write_ugrid_to_ascii_file_doc = R"pydoc(
-    Read XmUGrid from an ASCII file.
+  const char* write_ugrid_to_ascii_file_doc = R"pydoc(
+    Write XmUGrid to an ASCII file.
 
     Args: 
         ugrid (XmUGrid): XmUGrid to write to file
         file_path (str): Path of the ascii file to be created
   )pydoc";
-  modXmUGridUtils.def("xm_write_ugrid_to_ascii_file", &xms::XmWriteUGridToAsciiFile,
-        xm_write_ugrid_to_ascii_file_doc,py::arg("ugrid"),py::arg("file_path"));
+  modXmUGridUtils.def("write_ugrid_to_ascii_file", &xms::XmWriteUGridToAsciiFile,
+        write_ugrid_to_ascii_file_doc,py::arg("ugrid"),py::arg("file_path"));
   // ---------------------------------------------------------------------------
   // function: cross
   // --------------------------------------------------------------------------- 
