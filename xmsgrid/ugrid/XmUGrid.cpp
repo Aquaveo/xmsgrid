@@ -1712,6 +1712,8 @@ void XmUGridImpl::GetEdgesOfCell(const int a_cellIdx,
 
 //------------------------------------------------------------------------------
 /// \brief Given a point gets point indexes attached to the point by an edge.
+/// \param[in] a_pointIdx The point to get adjacent points from.
+/// \param[out] a_edgePoints The indices of the adjacent points.
 //------------------------------------------------------------------------------
 void XmUGridImpl::GetPointIdxsAttachedByEdge(int a_pointIdx,VecInt& a_edgePoints) const
 {

@@ -44,19 +44,19 @@ namespace xms
 /// \brief Default constructor.
 //------------------------------------------------------------------------------
 XmEdge::XmEdge()
-: m_idx1(0)
-, m_idx2(0)
+: m_pt1(0)
+, m_pt2(0)
 {
 } // XmEdge::XmEdge
 //------------------------------------------------------------------------------
 /// \brief Constructor
-/// \param[in] a_idx1 The first index.
-/// \param[in] a_idx2 The second index.
+/// \param[in] a_pt1 The first index.
+/// \param[in] a_pt2 The second index.
 /// \param[in] a_sorted If true set the first index to be the minimum index.
 //------------------------------------------------------------------------------
-XmEdge::XmEdge(int a_idx1, int a_idx2, bool a_sorted /* =false */)
-: m_idx1(a_idx1)
-, m_idx2(a_idx2)
+XmEdge::XmEdge(int a_pt1, int a_pt2, bool a_sorted /* =false */)
+: m_pt1(a_pt1)
+, m_pt2(a_pt2)
 {
   if (a_sorted)
     SortIndexes();
@@ -66,21 +66,22 @@ XmEdge::XmEdge(int a_idx1, int a_idx2, bool a_sorted /* =false */)
 /// \param[in] a_edge The edge as an int pair.
 //------------------------------------------------------------------------------
 XmEdge::XmEdge(const std::pair<int, int>& a_edge)
-: m_idx1(a_edge.first)
-, m_idx2(a_edge.second)
+: m_pt1(a_edge.first)
+, m_pt2(a_edge.second)
 {
 } // XmEdge::XmEdge
 //------------------------------------------------------------------------------
 /// \brief Less than operator by first index then second.
 /// \param[in] a_rhs The edge to compare against.
+/// \return true if this edge is less than a_rhs.
 //------------------------------------------------------------------------------
 bool XmEdge::operator<(const XmEdge& a_rhs) const
 {
-  if (m_idx1 < a_rhs.m_idx1)
+  if (m_pt1 < a_rhs.m_pt1)
     return true;
-  else if (m_idx1 > a_rhs.m_idx1)
+  else if (m_pt1 > a_rhs.m_pt1)
     return false;
-  else if (m_idx2 < a_rhs.m_idx2)
+  else if (m_pt2 < a_rhs.m_pt2)
     return true;
   else
     return false;
@@ -88,10 +89,11 @@ bool XmEdge::operator<(const XmEdge& a_rhs) const
 //------------------------------------------------------------------------------
 /// \brief Equals operator.
 /// \param[in] a_rhs The edge to compare against.
+/// \return true if edges are equal.
 //------------------------------------------------------------------------------
 bool XmEdge::operator==(const XmEdge& a_rhs) const
 {
-  return m_idx1 == a_rhs.m_idx1 && m_idx2 == a_rhs.m_idx2;
+  return m_pt1 == a_rhs.m_pt1 && m_pt2 == a_rhs.m_pt2;
 } // XmEdge::operator==
 //------------------------------------------------------------------------------
 /// \brief Get the first index.
@@ -99,15 +101,15 @@ bool XmEdge::operator==(const XmEdge& a_rhs) const
 //------------------------------------------------------------------------------
 int XmEdge::GetFirst() const
 {
-  return m_idx1;
+  return m_pt1;
 } // XmEdge::GetFirst
 //------------------------------------------------------------------------------
 /// \brief Set the first index.
-/// \param[in] a_idx The first index.
+/// \param[in] a_pt1 The first index.
 //------------------------------------------------------------------------------
-void XmEdge::SetFirst(int a_idx)
+void XmEdge::SetFirst(int a_pt1)
 {
-  m_idx1 = a_idx;
+  m_pt1 = a_pt1;
 } // XmEdge::SetFirst
 //------------------------------------------------------------------------------
 /// \brief Get the second index.
@@ -115,15 +117,15 @@ void XmEdge::SetFirst(int a_idx)
 //------------------------------------------------------------------------------
 int XmEdge::GetSecond() const
 {
-  return m_idx2;
+  return m_pt2;
 } // XmEdge::GetSecond
 //------------------------------------------------------------------------------
 /// \brief Set the second index.
-/// \param[in] a_idx The second index.
+/// \param[in] a_pt2 The second index.
 //------------------------------------------------------------------------------
-void XmEdge::SetSecond(int a_idx)
+void XmEdge::SetSecond(int a_pt2)
 {
-  m_idx2 = a_idx;
+  m_pt2 = a_pt2;
 } // XmEdge::SetSecond
 //------------------------------------------------------------------------------
 /// \brief Test if edge is the same ignoring direction.
@@ -132,10 +134,10 @@ void XmEdge::SetSecond(int a_idx)
 //------------------------------------------------------------------------------
 bool XmEdge::IsEquivalent(const XmEdge& a_edge) const
 {
-  int lhsIdx1 = std::min(m_idx1, m_idx2);
-  int lhsIdx2 = std::max(m_idx1, m_idx2);
-  int rhsIdx1 = std::min(a_edge.m_idx1, a_edge.m_idx2);
-  int rhsIdx2 = std::max(a_edge.m_idx1, a_edge.m_idx2);
+  int lhsIdx1 = std::min(m_pt1, m_pt2);
+  int lhsIdx2 = std::max(m_pt1, m_pt2);
+  int rhsIdx1 = std::min(a_edge.m_pt1, a_edge.m_pt2);
+  int rhsIdx2 = std::max(a_edge.m_pt1, a_edge.m_pt2);
   return lhsIdx1 == rhsIdx1 && lhsIdx2 == rhsIdx2;
 } // XmEdge::IsEquivalent
 //------------------------------------------------------------------------------
@@ -143,8 +145,8 @@ bool XmEdge::IsEquivalent(const XmEdge& a_edge) const
 //------------------------------------------------------------------------------
 void XmEdge::SortIndexes()
 {
-  if (m_idx1 > m_idx2)
-    std::swap(m_idx1, m_idx2);
+  if (m_pt1 > m_pt2)
+    std::swap(m_pt1, m_pt2);
 } // XmEdge::SortIndexes
 
 } // namespace xms
@@ -156,8 +158,12 @@ void XmEdge::SortIndexes()
 using namespace xms;
 #include <xmsgrid/ugrid/XmEdge.t.h>
 
+////////////////////////////////////////////////////////////////////////////////
+/// \class XmEdgeUnitTests
+/// \brief Test XmEdge class.
+////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Test XmEdge less than operator.
 //------------------------------------------------------------------------------
 void XmEdgeUnitTests::testLessThanOperator()
 {
@@ -170,7 +176,7 @@ void XmEdgeUnitTests::testLessThanOperator()
   TS_ASSERT(!(edge2 < edge1));
 } // XmEdgeUnitTests::testLessThanOperator
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Test XmEdge equals operator.
 //------------------------------------------------------------------------------
 void XmEdgeUnitTests::testEqualsOperator()
 {
@@ -184,7 +190,7 @@ void XmEdgeUnitTests::testEqualsOperator()
   TS_ASSERT(!(edge2 == edge1));
 } // XmEdgeUnitTests::testEqualsOperator
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Test XmEdge::IsEquivalent.
 //------------------------------------------------------------------------------
 void XmEdgeUnitTests::testIsEquivalent()
 {

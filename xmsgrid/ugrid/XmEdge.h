@@ -35,22 +35,22 @@ class XmEdge
 {
 public:
   XmEdge();
-  XmEdge(int a_idx1, int a_idx2, bool a_sorted = false);
+  XmEdge(int a_pt1, int a_pt2, bool a_sorted = false);
   XmEdge(const std::pair<int, int>& a_edge);
 
   bool operator<(const XmEdge& a_rhs) const;
   bool operator==(const XmEdge& a_rhs) const;
 
   int GetFirst() const;
-  void SetFirst(int a_idx);
+  void SetFirst(int a_pt1);
   int GetSecond() const;
-  void SetSecond(int a_idx);
+  void SetSecond(int a_pt2);
   bool IsEquivalent(const XmEdge& a_edge) const;
   void SortIndexes();
 
 private:
-  int m_idx1;
-  int m_idx2;
+  int m_pt1; ///< First point on the edge.
+  int m_pt2; ///< Second point on the edge.
 };
 
 //----- Function prototypes ----------------------------------------------------
