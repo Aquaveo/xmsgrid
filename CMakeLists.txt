@@ -38,6 +38,38 @@ else() # If we are not using conda, we are using conan
   set(EXT_LIBS ${CONAN_LIBS})
 endif(IS_CONDA_BUILD)
 
+if(IS_PYTHON_BUILD)
+      # linux and mac builds for conan (on TRAVISCI) use a docker that has python
+    # 2.7 as system python. We do not have control over that docker image so we
+    # can't change this and it is fine for building conan packages and checking
+    # that we don't have errors in the python wrapping. We have conda recipes
+    # for building python packages that target other versions of python.
+    find_package(PythonLibs ${PYTHON_TARGET_VERSION} EXACT REQUIRED)
+    
+    message("PYTHON_INCLUDE: ${PYTHON_INCLUDE_DIRS}")
+    message("PYTHON_LIBS: ${PYTHON_LIBRARIES}")
+
+    # Pybind11 module
+    if(IS_CONDA_BUILD)
+        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Targets.cmake")
+        include("${CONDA_PREFIX}/share/cmake/pybind11/FindPythonLibsNew.cmake")
+        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Config.cmake")
+        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11ConfigVersion.cmake")
+        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Tools.cmake")
+
+    else()
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Targets.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/FindPythonLibsNew.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Config.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11ConfigVersion.cmake")
+        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Tools.cmake")
+    endif()
+
+    list(APPEND EXT_INCLUDE_DIRS
+      ${PYTHON_INCLUDE_DIRS}
+    )
+endif()
+
 message("External Include Dirs: ${EXT_INCLUDE_DIRS}")
 message("External Lib Dirs: ${EXT_LIB_DIRS}")
 message("Extneral Libs: ${EXT_LIBS}")
@@ -122,39 +154,13 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(IS_PYTHON_BUILD)
-      # linux and mac builds for conan (on TRAVISCI) use a docker that has python
-    # 2.7 as system python. We do not have control over that docker image so we
-    # can't change this and it is fine for building conan packages and checking
-    # that we don't have errors in the python wrapping. We have conda recipes
-    # for building python packages that target other versions of python.
-    find_package(PythonLibs ${PYTHON_TARGET_VERSION} EXACT REQUIRED)
-    
-    message("PYTHON_INCLUDE: ${PYTHON_INCLUDE_DIRS}")
-    message("PYTHON_LIBS: ${PYTHON_LIBRARIES}")
-
-    # Pybind11 module
-    if(IS_CONDA_BUILD)
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Targets.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/FindPythonLibsNew.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Config.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11ConfigVersion.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Tools.cmake")
-
-    else()
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Targets.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/FindPythonLibsNew.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Config.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11ConfigVersion.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Tools.cmake")
-    endif()
-
     pybind11_add_module(xmsgrid_py
       ${xmsgrid_py} ${xmsgrid_py_headers}
     )
     target_include_directories(xmsgrid_py
         PRIVATE
           ${EXT_LIBS}
-          PYTHON_INCLUDE_DIRS
+          ${PYTHON_INCLUDE_DIRS}
     )
     target_link_libraries(xmsgrid_py
       PRIVATE
@@ -165,13 +171,11 @@ if(IS_PYTHON_BUILD)
       LINKER_LANGUAGE CXX
     )
 
-    execute_process(COMMAND python -c "import os; print('${PYTHON_SITE_PACKAGES}'.replace('${CONDA_PREFIX}' + os.sep, ''))" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_TRIMMED OUTPUT_STRIP_TRAILING_WHITESPACE)
-
     # Install recipe
     install(
       TARGETS xmsgrid_py
-      ARCHIVE DESTINATION ${PYTHON_SITE_PACKAGES_TRIMMED}
-      LIBRARY DESTINATION ${PYTHON_SITE_PACKAGES_TRIMMED}
+      ARCHIVE DESTINATION "site-packages"
+      LIBRARY DESTINATION "site-packages"
     )
 
 endif()
@@ -180,8 +184,8 @@ endif()
 # Install recipe
 install(
   TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION "lib"
+  LIBRARY DESTINATION "lib"
 )
 foreach (header IN LISTS xmsgrid_headers xmsgrid_py_headers)
   get_filename_component(subdir "${header}" DIRECTORY)
