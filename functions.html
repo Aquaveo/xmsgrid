@@ -47,7 +47,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -79,11 +78,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li class="current"><a href="functions.html"><span>All</span></a></li>
       <li><a href="functions_func.html"><span>Functions</span></a></li>
+      <li><a href="functions_vars.html"><span>Variables</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
     <ul class="tablist">
+      <li><a href="#index_g"><span>g</span></a></li>
+      <li><a href="#index_i"><span>i</span></a></li>
+      <li><a href="#index_m"><span>m</span></a></li>
       <li><a href="#index_n"><span>n</span></a></li>
+      <li><a href="#index_o"><span>o</span></a></li>
+      <li><a href="#index_s"><span>s</span></a></li>
       <li><a href="#index_t"><span>t</span></a></li>
       <li><a href="#index_v"><span>v</span></a></li>
       <li><a href="#index_x"><span>x</span></a></li>
@@ -122,9 +127,59 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <div class="contents">
 <div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
 
+<h3><a class="anchor" id="index_g"></a>- g -</h3><ul>
+<li>GetFirst()
+: <a class="el" href="classxms_1_1_xm_edge.html#a23474ae81c4408e3f065af722a5945a1">xms::XmEdge</a>
+</li>
+<li>GetSecond()
+: <a class="el" href="classxms_1_1_xm_edge.html#ab938320f970a16e293f5c37b17c2e880">xms::XmEdge</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_i"></a>- i -</h3><ul>
+<li>IsEquivalent()
+: <a class="el" href="classxms_1_1_xm_edge.html#a44683a69af80791a58559c7ed7f4bc3f">xms::XmEdge</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_m"></a>- m -</h3><ul>
+<li>m_pt1
+: <a class="el" href="classxms_1_1_xm_edge.html#a339473fd1bb3227edc863900adc59b14">xms::XmEdge</a>
+</li>
+<li>m_pt2
+: <a class="el" href="classxms_1_1_xm_edge.html#a6614bd4c9e7f9547a9cf916d979a9686">xms::XmEdge</a>
+</li>
+</ul>
+
+
 <h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
 <li>New()
 : <a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502">xms::XmUGrid</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_o"></a>- o -</h3><ul>
+<li>operator&lt;()
+: <a class="el" href="classxms_1_1_xm_edge.html#a660f0d35d12b6cb28feff8aa1056151d">xms::XmEdge</a>
+</li>
+<li>operator==()
+: <a class="el" href="classxms_1_1_xm_edge.html#a5d8b3baad0e89fd53f9e81d553932c17">xms::XmEdge</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
+<li>SetFirst()
+: <a class="el" href="classxms_1_1_xm_edge.html#ae2f5a7f6121e0c00cffea8d1bf0a60b4">xms::XmEdge</a>
+</li>
+<li>SetSecond()
+: <a class="el" href="classxms_1_1_xm_edge.html#a716212978dff3a81a74e03c46229e269">xms::XmEdge</a>
+</li>
+<li>SortIndexes()
+: <a class="el" href="classxms_1_1_xm_edge.html#a4d8007a8537dbebf557b5f90b9c928ec">xms::XmEdge</a>
 </li>
 </ul>
 
@@ -138,6 +193,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 </li>
 <li>testDoLineSegmentsCross()
 : <a class="el" href="class_xm_u_grid_utils_tests.html#abdb6587684de536f93a0905e482d089e">XmUGridUtilsTests</a>
+</li>
+<li>testEqualsOperator()
+: <a class="el" href="class_xm_edge_unit_tests.html#aa339f25fa5dfbeb817a4c6d6023f5be7">XmEdgeUnitTests</a>
 </li>
 <li>testGetAdjacentCell()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#ad1668ba70a8c5e40716a6c5623f77487">XmUGridUnitTests</a>
@@ -193,14 +251,23 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>testGetNumberOfCellFaces()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#a0b7654d480a614b3c72111a747fbe81a">XmUGridUnitTests</a>
 </li>
+<li>testGetNumberOfFacePoints()
+: <a class="el" href="class_xm_u_grid_unit_tests.html#ada0855469ef7e7a5321776f60af53600">XmUGridUnitTests</a>
+</li>
 <li>testGetPlanViewPolygon()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144">XmUGridUnitTests</a>
+</li>
+<li>testGetPlanViewPolygonMultiSideFace()
+: <a class="el" href="class_xm_u_grid_unit_tests.html#af69608066255afd742fd8cab85d1e4d9">XmUGridUnitTests</a>
 </li>
 <li>testGetPointCells()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#a187f111d6cafc089a46c3f82d8d77bd4">XmUGridUnitTests</a>
 </li>
 <li>testGetPointCellsSimple()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#ab50f5c7cf55771608109343a1bd3a9e6">XmUGridUnitTests</a>
+</li>
+<li>testGetPointsAttachedByEdge()
+: <a class="el" href="class_xm_u_grid_unit_tests.html#aeb8c4063cacb388295d72bf12711fc2d">XmUGridUnitTests</a>
 </li>
 <li>testGetPointsOfCell()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#aa23a5330e8dc3a8856f45b27f87f7c96">XmUGridUnitTests</a>
@@ -214,8 +281,14 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>testIsCellValidWithPointChange()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#ac5a30921fdb122b8ef60fbd12365957e">XmUGridUnitTests</a>
 </li>
+<li>testIsEquivalent()
+: <a class="el" href="class_xm_edge_unit_tests.html#a692a8037d9755b7e5a6966f97c0cfd33">XmEdgeUnitTests</a>
+</li>
 <li>testLargeUGridLinkSpeed()
 : <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f">XmUGridUnitTests</a>
+</li>
+<li>testLessThanOperator()
+: <a class="el" href="class_xm_edge_unit_tests.html#ac7df1f4c361d336adb719160851f2004">XmEdgeUnitTests</a>
 </li>
 <li>testLinear2dWriteThenRead()
 : <a class="el" href="class_xm_u_grid_utils_tests.html#a227b7f77870cc134ba5f2f990c21394a">XmUGridUtilsTests</a>
@@ -270,6 +343,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 
 <h3><a class="anchor" id="index_x"></a>- x -</h3><ul>
+<li>XmEdge()
+: <a class="el" href="classxms_1_1_xm_edge.html#ac469ef46c007327f5e7ba35a386e238b">xms::XmEdge</a>
+</li>
 <li>XmUGrid()
 : <a class="el" href="classxms_1_1_xm_u_grid.html#ae30014ef614bff4158d0f1e79785162a">xms::XmUGrid</a>
 </li>
@@ -286,7 +362,7 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Sep 27 2018 22:46:15 for xmsgrid by
+    <li class="footer">Generated on Mon Oct 1 2018 18:53:32 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

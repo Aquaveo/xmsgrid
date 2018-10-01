@@ -92,15 +92,13 @@ var NAVTREE =
         [ "Example Get Edges Associated with a Cell", "md__two_d__tutorial.html#Example_GetEdgesOfCell2d", null ]
       ] ]
     ] ],
-    [ "Namespaces", null, [
-      [ "Namespace List", "namespaces.html", "namespaces" ]
-    ] ],
     [ "Classes", null, [
       [ "Class List", "annotated.html", "annotated" ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
     [ "Files", null, [
@@ -117,7 +115,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"globals_vars.html"
+"md__three_d__tutorial.html#Example_GetPlanViewPolygon3d"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -50,6 +50,5 @@ var searchData=
   ['pyiterfromvecpt3d2d',['PyIterFromVecPt3d2d',['https://aquaveo.github.io/xmscore/namespacexms.html#a3e5f96042bb96b842510d6199ce14b25',1,'xms']]],
   ['pyobserver',['PyObserver',['https://aquaveo.github.io/xmscore/class_py_observer.html',1,'']]],
   ['pyobserver_2eh',['PyObserver.h',['https://aquaveo.github.io/xmscore/_py_observer_8h.html',1,'']]],
-  ['pyutils_2eh',['PyUtils.h',['https://aquaveo.github.io/xmscore/_py_utils_8h.html',1,'']]],
-  ['xmugrid_5fpyt',['XmUGrid_pyt',['../namespacepython_1_1ugrid_1_1_xm_u_grid__pyt.html',1,'python::ugrid']]]
+  ['pyutils_2eh',['PyUtils.h',['https://aquaveo.github.io/xmscore/_py_utils_8h.html',1,'']]]
 ];

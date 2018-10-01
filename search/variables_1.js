@@ -17,6 +17,8 @@ var searchData=
   ['m_5fpoints',['m_points',['../_xm_u_grid_8cpp.html#aeacd1791f540e1036ebb08ce12527cc1',1,'XmUGrid.cpp']]],
   ['m_5fpointstocells',['m_pointsToCells',['../_xm_u_grid_8cpp.html#afa15716f111819d325a286496b762156',1,'XmUGrid.cpp']]],
   ['m_5fprog',['m_prog',['https://aquaveo.github.io/xmscore/class_mock_mesher.html#ad20d9d1963a422214083cc34ab511fe6',1,'MockMesher']]],
+  ['m_5fpt1',['m_pt1',['../classxms_1_1_xm_edge.html#a339473fd1bb3227edc863900adc59b14',1,'xms::XmEdge']]],
+  ['m_5fpt2',['m_pt2',['../classxms_1_1_xm_edge.html#a6614bd4c9e7f9547a9cf916d979a9686',1,'xms::XmEdge']]],
   ['m_5fremainingseconds',['m_remainingSeconds',['https://aquaveo.github.io/xmscore/class_mock_observer.html#aae5ef68dd0fb8afc8c298328a79ec4ae',1,'MockObserver']]],
   ['m_5fskippingmessages',['m_skippingMessages',['https://aquaveo.github.io/xmscore/classxms_1_1_e_test_messaging_state.html#abfa35b994a6cee56d26b28ce9d98e4b0',1,'xms::ETestMessagingState']]],
   ['m_5fstackedmessages',['m_stackedMessages',['https://aquaveo.github.io/xmscore/structxms_1_1_xm_log_1_1_impl.html#afac679dd307a287bc958e5716947d079',1,'xms::XmLog::Impl']]],

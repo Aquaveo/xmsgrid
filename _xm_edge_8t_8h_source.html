@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>xmsgrid: /home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/XmConvexHull.t.h Source File</title>
+<title>xmsgrid: /home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/XmEdge.t.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,7 +85,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('_xm_convex_hull_8t_8h_source.html','');});
+$(document).ready(function(){initNavTree('_xm_edge_8t_8h_source.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('_xm_convex_hull_8t_8h_source.html','')
 
 <div class="header">
   <div class="headertitle">
-<div class="title">XmConvexHull.t.h</div>  </div>
+<div class="title">XmEdge.t.h</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
@@ -119,36 +119,34 @@ $(document).ready(function(){initNavTree('_xm_convex_hull_8t_8h_source.html','')
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;cxxtest/TestSuite.h&gt;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">// 5. Shared Headers</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/base__macros_8h.html">xmscore/misc/base_macros.h</a>&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html">xmscore/misc/boost_defines.h</a>&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/pt_8h.html">xmscore/points/pt.h</a>&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">// 6. Non-shared Headers</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span>xms</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">class </span><a class="code" href="class_xm_u_grid.html">XmUGrid</a>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;}</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="class_xm_u_grid_convex_hull_tests.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_xm_u_grid_convex_hull_tests.html">XmUGridConvexHullTests</a> : <span class="keyword">public</span> CxxTest::TestSuite</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_convex_hull_tests.html#a9932d57a000ebc02420243211c67858c">testConvexHull</a>();</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;}; <span class="comment">// XmUGridConvexHullTests</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="pt_8h_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/pt_8h.html">pt.h</a></div></div>
-<div class="ttc" id="class_xm_u_grid_convex_hull_tests_html_a9932d57a000ebc02420243211c67858c"><div class="ttname"><a href="class_xm_u_grid_convex_hull_tests.html#a9932d57a000ebc02420243211c67858c">XmUGridConvexHullTests::testConvexHull</a></div><div class="ttdeci">void testConvexHull()</div><div class="ttdoc">Test building a convex hull. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_convex_hull_8cpp_source.html#l00125">XmConvexHull.cpp:125</a></div></div>
-<div class="ttc" id="boost__defines_8h_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/boost__defines_8h.html">boost_defines.h</a></div></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">// 6. Non-shared Headers</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>xms</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">class </span><a class="code" href="class_xm_u_grid.html">XmUGrid</a>;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;}</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="class_xm_edge_unit_tests.html">   26</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_xm_edge_unit_tests.html">XmEdgeUnitTests</a> : <span class="keyword">public</span> CxxTest::TestSuite</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_xm_edge_unit_tests.html#ac7df1f4c361d336adb719160851f2004">testLessThanOperator</a>();</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_xm_edge_unit_tests.html#aa339f25fa5dfbeb817a4c6d6023f5be7">testEqualsOperator</a>();</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="class_xm_edge_unit_tests.html#a692a8037d9755b7e5a6966f97c0cfd33">testIsEquivalent</a>();</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;}; <span class="comment">// XmEdgeUnitTests</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="class_xm_edge_unit_tests_html_a692a8037d9755b7e5a6966f97c0cfd33"><div class="ttname"><a href="class_xm_edge_unit_tests.html#a692a8037d9755b7e5a6966f97c0cfd33">XmEdgeUnitTests::testIsEquivalent</a></div><div class="ttdeci">void testIsEquivalent()</div><div class="ttdoc">Test XmEdge::IsEquivalent. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_edge_8cpp_source.html#l00195">XmEdge.cpp:195</a></div></div>
 <div class="ttc" id="class_xm_u_grid_html"><div class="ttname"><a href="class_xm_u_grid.html">XmUGrid</a></div><div class="ttdoc">Implementation for XmUGrid which provides geometry for an unstructured grid. </div></div>
-<div class="ttc" id="class_xm_u_grid_convex_hull_tests_html"><div class="ttname"><a href="class_xm_u_grid_convex_hull_tests.html">XmUGridConvexHullTests</a></div><div class="ttdoc">Tests for ConvexHull functions. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_convex_hull_8t_8h_source.html#l00030">XmConvexHull.t.h:30</a></div></div>
-<div class="ttc" id="base__macros_8h_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/base__macros_8h.html">base_macros.h</a></div></div>
+<div class="ttc" id="class_xm_edge_unit_tests_html_aa339f25fa5dfbeb817a4c6d6023f5be7"><div class="ttname"><a href="class_xm_edge_unit_tests.html#aa339f25fa5dfbeb817a4c6d6023f5be7">XmEdgeUnitTests::testEqualsOperator</a></div><div class="ttdeci">void testEqualsOperator()</div><div class="ttdoc">Test XmEdge equals operator. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_edge_8cpp_source.html#l00181">XmEdge.cpp:181</a></div></div>
+<div class="ttc" id="class_xm_edge_unit_tests_html"><div class="ttname"><a href="class_xm_edge_unit_tests.html">XmEdgeUnitTests</a></div><div class="ttdoc">Test XmEdge class. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_edge_8t_8h_source.html#l00026">XmEdge.t.h:26</a></div></div>
+<div class="ttc" id="class_xm_edge_unit_tests_html_ac7df1f4c361d336adb719160851f2004"><div class="ttname"><a href="class_xm_edge_unit_tests.html#ac7df1f4c361d336adb719160851f2004">XmEdgeUnitTests::testLessThanOperator</a></div><div class="ttdeci">void testLessThanOperator()</div><div class="ttdoc">Test XmEdge less than operator. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_edge_8cpp_source.html#l00168">XmEdge.cpp:168</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_a4f80c8107f4df91c21d011369fb1e1d.html">ugrid</a></li><li class="navelem"><b>XmConvexHull.t.h</b></li>
+    <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_a4f80c8107f4df91c21d011369fb1e1d.html">ugrid</a></li><li class="navelem"><b>XmEdge.t.h</b></li>
     <li class="footer">Generated on Mon Oct 1 2018 18:53:31 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>

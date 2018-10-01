@@ -1,36 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
   <compound kind="file">
-    <name>ugrid_py.cpp</name>
-    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid/</path>
-    <filename>ugrid__py_8cpp</filename>
-    <includes id="ugrid__py_8h" name="ugrid_py.h" local="no" imported="no">xmsgrid/python/ugrid/ugrid_py.h</includes>
-  </compound>
-  <compound kind="file">
-    <name>ugrid_py.h</name>
-    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid/</path>
-    <filename>ugrid__py_8h</filename>
-  </compound>
-  <compound kind="file">
-    <name>XmUGrid_py.cpp</name>
-    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid/</path>
-    <filename>_xm_u_grid__py_8cpp</filename>
-    <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
-  </compound>
-  <compound kind="file">
-    <name>XmUGridUtils_py.cpp</name>
-    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid/</path>
-    <filename>_xm_u_grid_utils__py_8cpp</filename>
-    <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
-    <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
-  </compound>
-  <compound kind="file">
-    <name>xmsgrid_py.cpp</name>
-    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/</path>
-    <filename>xmsgrid__py_8cpp</filename>
-    <includes id="ugrid__py_8h" name="ugrid_py.h" local="no" imported="no">xmsgrid/python/ugrid/ugrid_py.h</includes>
-  </compound>
-  <compound kind="file">
     <name>XmConvexHull.cpp</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_convex_hull_8cpp</filename>
@@ -42,6 +12,11 @@
     <name>XmConvexHull.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_convex_hull_8h</filename>
+  </compound>
+  <compound kind="file">
+    <name>XmEdge.cpp</name>
+    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
+    <filename>_xm_edge_8cpp</filename>
   </compound>
   <compound kind="file">
     <name>XmUGrid.cpp</name>
@@ -184,6 +159,31 @@
     <docanchor file="md__two_d__tutorial" title="Example Get Edges Associated with a Cell">Example_GetEdgesOfCell2d</docanchor>
   </compound>
   <compound kind="class">
+    <name>XmEdgeUnitTests</name>
+    <filename>class_xm_edge_unit_tests.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>testLessThanOperator</name>
+      <anchorfile>class_xm_edge_unit_tests.html</anchorfile>
+      <anchor>ac7df1f4c361d336adb719160851f2004</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testEqualsOperator</name>
+      <anchorfile>class_xm_edge_unit_tests.html</anchorfile>
+      <anchor>aa339f25fa5dfbeb817a4c6d6023f5be7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testIsEquivalent</name>
+      <anchorfile>class_xm_edge_unit_tests.html</anchorfile>
+      <anchor>a692a8037d9755b7e5a6966f97c0cfd33</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>XmUGrid</name>
     <filename>class_xm_u_grid.html</filename>
   </compound>
@@ -259,6 +259,13 @@
       <name>testGetNumberOfCellFaces</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
       <anchor>a0b7654d480a614b3c72111a747fbe81a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testGetNumberOfFacePoints</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>ada0855469ef7e7a5321776f60af53600</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -340,6 +347,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>testGetPointsAttachedByEdge</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>aeb8c4063cacb388295d72bf12711fc2d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>testGetFacesFromPoint</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
       <anchor>a3bfd0a5f476433f5cf129ea8809b213b</anchor>
@@ -350,6 +364,13 @@
       <name>testGetPlanViewPolygon</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
       <anchor>a9ea4bb73723dd9b65ad043e9bc4f4144</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testGetPlanViewPolygonMultiSideFace</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>af69608066255afd742fd8cab85d1e4d9</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -504,28 +525,100 @@
       <arglist>()</arglist>
     </member>
   </compound>
-  <compound kind="namespace">
-    <name>python::ugrid::XmUGrid_pyt</name>
-    <filename>namespacepython_1_1ugrid_1_1_xm_u_grid__pyt.html</filename>
-    <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions</class>
-    <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridCellTypeEnum</class>
-    <class kind="class">python::ugrid::XmUGrid_pyt::TestXmUGridFaceOrientationEnum</class>
-  </compound>
   <compound kind="class">
-    <name>python::ugrid::XmUGrid_pyt::TestXmUGridPointFunctions</name>
-    <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_point_functions.html</filename>
-  </compound>
-  <compound kind="class">
-    <name>python::ugrid::XmUGrid_pyt::TestXmUGridCellTypeEnum</name>
-    <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_cell_type_enum.html</filename>
-  </compound>
-  <compound kind="class">
-    <name>python::ugrid::XmUGrid_pyt::TestXmUGridFaceOrientationEnum</name>
-    <filename>classpython_1_1ugrid_1_1_xm_u_grid__pyt_1_1_test_xm_u_grid_face_orientation_enum.html</filename>
-  </compound>
-  <compound kind="class">
-    <name>python::ugrid::XmUGridUtils_pyt::TestXmUGridUtilFunctions</name>
-    <filename>classpython_1_1ugrid_1_1_xm_u_grid_utils__pyt_1_1_test_xm_u_grid_util_functions.html</filename>
+    <name>xms::XmEdge</name>
+    <filename>classxms_1_1_xm_edge.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>XmEdge</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>ac469ef46c007327f5e7ba35a386e238b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>XmEdge</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a448df3ee696594baa8f89e8019d0c8d9</anchor>
+      <arglist>(int a_pt1, int a_pt2, bool a_sorted=false)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>XmEdge</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a4a07febba9a95f90eeb614cdfbac5b77</anchor>
+      <arglist>(const std::pair&lt; int, int &gt; &amp;a_edge)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator&lt;</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a660f0d35d12b6cb28feff8aa1056151d</anchor>
+      <arglist>(const XmEdge &amp;a_rhs) const </arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator==</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a5d8b3baad0e89fd53f9e81d553932c17</anchor>
+      <arglist>(const XmEdge &amp;a_rhs) const </arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>GetFirst</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a23474ae81c4408e3f065af722a5945a1</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetFirst</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>ae2f5a7f6121e0c00cffea8d1bf0a60b4</anchor>
+      <arglist>(int a_pt1)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>GetSecond</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>ab938320f970a16e293f5c37b17c2e880</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetSecond</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a716212978dff3a81a74e03c46229e269</anchor>
+      <arglist>(int a_pt2)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsEquivalent</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a44683a69af80791a58559c7ed7f4bc3f</anchor>
+      <arglist>(const XmEdge &amp;a_edge) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SortIndexes</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a4d8007a8537dbebf557b5f90b9c928ec</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>int</type>
+      <name>m_pt1</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a339473fd1bb3227edc863900adc59b14</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>int</type>
+      <name>m_pt2</name>
+      <anchorfile>classxms_1_1_xm_edge.html</anchorfile>
+      <anchor>a6614bd4c9e7f9547a9cf916d979a9686</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>xms::XmUGrid</name>
@@ -567,20 +660,15 @@
     </member>
   </compound>
   <compound kind="dir">
-    <name>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python</name>
-    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/</path>
-    <filename>dir_ed63beb1e79dd2a15db8cfd74099fc48.html</filename>
-    <dir>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid</dir>
-    <file>__init__.py</file>
-    <file>xmsgrid_py.cpp</file>
-  </compound>
-  <compound kind="dir">
     <name>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>dir_a4f80c8107f4df91c21d011369fb1e1d.html</filename>
     <file>XmConvexHull.cpp</file>
     <file>XmConvexHull.h</file>
     <file>XmConvexHull.t.h</file>
+    <file>XmEdge.cpp</file>
+    <file>XmEdge.h</file>
+    <file>XmEdge.t.h</file>
     <file>XmUGrid.cpp</file>
     <file>XmUGrid.h</file>
     <file>XmUGrid.t.h</file>
@@ -589,22 +677,9 @@
     <file>XmUGridUtils.t.h</file>
   </compound>
   <compound kind="dir">
-    <name>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid</name>
-    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python/ugrid/</path>
-    <filename>dir_df63a72722e2a18a23dc615b97003480.html</filename>
-    <file>__init__.py</file>
-    <file>ugrid_py.cpp</file>
-    <file>ugrid_py.h</file>
-    <file>XmUGrid_py.cpp</file>
-    <file>XmUGrid_pyt.py</file>
-    <file>XmUGridUtils_py.cpp</file>
-    <file>XmUGridUtils_pyt.py</file>
-  </compound>
-  <compound kind="dir">
     <name>/home/travis/build/Aquaveo/xmsgrid/xmsgrid</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/</path>
     <filename>dir_063f5bb27051e7adf91034aa3d93de96.html</filename>
-    <dir>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/python</dir>
     <dir>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid</dir>
   </compound>
   <compound kind="page">

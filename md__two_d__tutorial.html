@@ -47,7 +47,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li class="current"><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -164,7 +163,7 @@ Example - Defining Ugrid Cells</h2>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_New_With_Data_2d"></a>
 Example - Creating a New 2D UGrid With Data</h2>
 <p>This example shows how to create a new 2D UGrid with the overloaded New function which directly sets the data as it constructs the grid, using the static function <a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502" title="Create a new XmUGrid. ">xms::XmUGrid::New(const VecPt3d&amp; a_points, const VecInt&amp; a_cellStream)</a>. Functionality is shared between 2d and 3d UGrids. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af" title="[snip_test_UGrid_Streams] ">XmUGridUnitTests::testGetSetPoint</a>.</p>
-<div class="fragment"><div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
+<div class="fragment"><div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> points = {{0, 10, 0}, {10, 10, 10}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},</div>
 <div class="line">                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Cell type (9), number of points (4), point numbers, counterclockwise</span></div>
@@ -360,6 +359,16 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line">  <span class="comment">// Test overload</span></div>
 <div class="line">  ugrid-&gt;GetPointsOfCell(0, pointsOfCell);</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedPoints, pointsOfCell);</div>
+<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> locations;</div>
+<div class="line">  ugrid-&gt;GetPointsOfCell(0, locations);</div>
+<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> expectedLocations = {{0, 10, 0}, {0, 0, 0}, {10, 0, 0}, {10, 10, 0}};</div>
+<div class="line">  TS_ASSERT_EQUALS(expectedLocations, locations);</div>
+<div class="line"></div>
+<div class="line">  <span class="comment">// Test GetCellExtents</span></div>
+<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> min, max;</div>
+<div class="line">  ugrid-&gt;GetCellExtents(0, min, max);</div>
+<div class="line">  TS_ASSERT_EQUALS(<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a>(0, 0, 0), min);</div>
+<div class="line">  TS_ASSERT_EQUALS(<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a>(10, 10, 0), max);</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetCellType</span></div>
 <div class="line">  TS_ASSERT_EQUALS(XMU_QUAD, ugrid-&gt;GetCellType(0));</div>
@@ -370,6 +379,11 @@ Example - Get the Dimension of a Cell</h2>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetCellDimension</span></div>
 <div class="line">  TS_ASSERT_EQUALS(2, ugrid-&gt;GetCellDimension(0));</div>
+<div class="line">  </div>
+<div class="line">  <span class="comment">// Test GetCentroid</span></div>
+<div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> centroid;</div>
+<div class="line">  TS_ASSERT(ugrid-&gt;GetCentroid(0, centroid));</div>
+<div class="line">  TS_ASSERT_EQUALS(<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a>(5, 5, 0), centroid);</div>
 <div class="line"></div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testCellFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetCellStream2d"></a>
@@ -495,7 +509,7 @@ Example - Get the Cells that Neighbor a Given Cell</h2>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetCellNeighbors</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetPlanViewPolygon2d"></a>
 Example - Get a Plan View Polygon</h2>
-<p>This example shows how to get a plan view polygon. The xms::XmUGridImpl::GetPlanViewPolygon function takes a cell index and a vector of Pt3d which is the points of the 2D cell and returns whether the operation was succesful. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144" title="Test getting the plan view of a polygon. ">XmUGridUnitTests::testGetPlanViewPolygon</a>.</p>
+<p>This example shows how to get a plan view polygon. The xms::XmUGridImpl::GetPlanViewPolygon function takes a cell index and a vector of Pt3d which is the points of the 2D cell and returns whether the operation was succesful. The testing code for this example is <a class="el" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144" title="Test getting the plan view polygon of a cell. ">XmUGridUnitTests::testGetPlanViewPolygon</a>.</p>
 <div class="fragment"><div class="line"><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_unit_tests.html#a9ea4bb73723dd9b65ad043e9bc4f4144">XmUGridUnitTests::testGetPlanViewPolygon</a>()</div>
@@ -537,9 +551,9 @@ Example - Get a Plan View Polygon</h2>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line">  expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},</div>
-<div class="line">                      {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},</div>
-<div class="line">                      {{20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}},</div>
-<div class="line">                      {{30, 10, 0}, {40, 10, 0}, {40, 20, 0}, {30, 20, 0}},</div>
+<div class="line">                      {{20, 0, 0}, {20, 10, 0}, {10, 10, 0}, {10, 0, 0}},</div>
+<div class="line">                      {{30, 0, 0}, {30, 10, 0}, {20, 10, 0}, {20, 0, 0}},</div>
+<div class="line">                      {{40, 10, 0}, {40, 20, 0}, {30, 20, 0}, {30, 10, 0}},</div>
 <div class="line">                      {{30, 0, 0}, {40, 0, 0}, {40, 10, 0}, {30, 10, 0}},</div>
 <div class="line">                      {{0, 10, 0}, {10, 10, 0}, {10, 20, 0}, {0, 20, 0}}};</div>
 <div class="line"></div>
@@ -568,13 +582,13 @@ Example - Get Number of Cell Edges</h2>
 Example - Get Cell Edge from Edge Index</h2>
 <p>This example shows how to get the cell edge from a given cell and edge index. The xms::XmUGridImpl::GetCellEdgeFromEdgeIndex function takes a cell index and an edge index and returns a pair of ints containing the point indices of the edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, <a class="el" href="class_xm_u_grid_unit_tests.html#ae97216226f2f4d5d684f86b0608d97c0" title="Test iterating through the edges of cells. ">XmUGridUnitTests::testGetCellEdgeFromEdgeIndex</a></p>
 <div class="fragment"><div class="line">  {</div>
-<div class="line">    std::pair&lt;int, int&gt; edge0(0, 1), edge1(1, 6), edge2(6, 5), edge3(5, 0); <span class="comment">// Quad</span></div>
-<div class="line">    std::pair&lt;int, int&gt; edge4(1, 2), edge5(2, 7), edge6(7, 6), edge7(6, 1); <span class="comment">// Pixel</span></div>
-<div class="line">    std::pair&lt;int, int&gt; edge8(2, 3), edge9(3, 7), edge10(7, 2);             <span class="comment">// Triangle</span></div>
-<div class="line">    std::pair&lt;int, int&gt; edge11(3, 4), edge12(4, 8), edge13(8, 13), edge14(13, 12), edge15(12, 7),</div>
+<div class="line">    XmEdge edge0(0, 1), edge1(1, 6), edge2(6, 5), edge3(5, 0); <span class="comment">// Quad</span></div>
+<div class="line">    XmEdge edge4(1, 2), edge5(2, 7), edge6(7, 6), edge7(6, 1); <span class="comment">// Pixel</span></div>
+<div class="line">    XmEdge edge8(2, 3), edge9(3, 7), edge10(7, 2);             <span class="comment">// Triangle</span></div>
+<div class="line">    XmEdge edge11(3, 4), edge12(4, 8), edge13(8, 13), edge14(13, 12), edge15(12, 7),</div>
 <div class="line">      edge16(7, 3);                                    <span class="comment">// Polygon</span></div>
-<div class="line">    std::pair&lt;int, int&gt; edge17(7, 11), edge18(11, 10); <span class="comment">// PolyLine</span></div>
-<div class="line">    std::pair&lt;int, int&gt; edge19(5, 9);                  <span class="comment">// Line</span></div>
+<div class="line">    XmEdge edge17(7, 11), edge18(11, 10); <span class="comment">// PolyLine</span></div>
+<div class="line">    XmEdge edge19(5, 9);                  <span class="comment">// Line</span></div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// 2D Shapes</span></div>
 <div class="line">    BSHP&lt;XmUGrid&gt; ugrid2d = TEST_XmUGrid2dLinear();</div>
@@ -584,14 +598,14 @@ Example - Get Cell Edge from Edge Index</h2>
 <div class="line">      <span class="keywordflow">return</span>;</div>
 <div class="line">    }</div>
 <div class="line"></div>
-<div class="line">    std::vector&lt;std::vector&lt;std::pair&lt;int, int&gt;&gt;&gt; expectedCellsCellEdges;</div>
+<div class="line">    std::vector&lt;std::vector&lt;XmEdge&gt;&gt; expectedCellsCellEdges;</div>
 <div class="line">    expectedCellsCellEdges = {{edge0, edge1, edge2, edge3},</div>
 <div class="line">                              {edge4, edge5, edge6, edge7},</div>
 <div class="line">                              {edge8, edge9, edge10},</div>
 <div class="line">                              {edge11, edge12, edge13, edge14, edge15, edge16},</div>
 <div class="line">                              {edge17, edge18},</div>
 <div class="line">                              {edge19}};</div>
-<div class="line">    std::vector&lt;std::pair&lt;int, int&gt;&gt; cellEdges;</div>
+<div class="line">    std::vector&lt;XmEdge&gt; cellEdges;</div>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; ugrid2d-&gt;GetNumberOfCells(); i++)</div>
 <div class="line">    {</div>
 <div class="line">      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j(0); j &lt; ugrid2d-&gt;GetNumberOfCellEdges(i); j++)</div>
@@ -643,14 +657,14 @@ Example Get Adjacent Cells from Given Edge</h2>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Get Adjacent cells from given Edge</span></div>
 <div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedCellsFromEdge = {{0, 1}, {0, 2}, {0}};</div>
-<div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = {{1, 4}, {3, 4}, {0, 3}};</div>
+<div class="line">  std::vector&lt;XmEdge&gt; edges = {{1, 4}, {3, 4}, {0, 3}};</div>
 <div class="line">  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(-1, -1);</div>
 <div class="line">  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i(0); i &lt; edges.size(); i++)</div>
 <div class="line">  {</div>
 <div class="line">    adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[i]);</div>
 <div class="line">    TS_ASSERT_EQUALS(expectedCellsFromEdge[i], adjacentCells);</div>
 <div class="line">  }</div>
-<div class="line">  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[0].first, edges[1].second);</div>
+<div class="line">  adjacentCells = ugrid-&gt;GetAdjacentCellsFromGivenEdge(edges[0].GetFirst(), edges[1].GetSecond());</div>
 <div class="line">  TS_ASSERT_EQUALS(expectedCellsFromEdge[0], adjacentCells);</div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetAdjacentCellFunctions</span></div>
 </div><!-- fragment --> <h2><a class="anchor" id="Example_GetEdgesFromPoint2d"></a>
@@ -678,7 +692,7 @@ Example Get Edges Associated with a Point</h2>
 <div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> expectedEdgeIdxs{</div>
 <div class="line">    {0, 3},       {2, 3, 0, 3}, {2, 3},       {0, 1, 0, 3}, {1, 2, 0, 1, 2, 3, 0, 3},</div>
 <div class="line">    {1, 2, 2, 3}, {0, 1},       {1, 2, 0, 1}, {1, 2}};</div>
-<div class="line">  std::vector&lt;std::vector&lt;std::pair&lt;int, int&gt;&gt;&gt; expectedEdges{</div>
+<div class="line">  std::vector&lt;std::vector&lt;XmEdge&gt;&gt; expectedEdges{</div>
 <div class="line">    {{0, 3}, {1, 0}},</div>
 <div class="line">    {{4, 1}, {1, 0}, {1, 4}, {2, 1}},</div>
 <div class="line">    {{5, 2}, {2, 1}},</div>
@@ -695,7 +709,7 @@ Example Get Edges Associated with a Point</h2>
 <div class="line">    {3, 0},       {1, 0, 4, 1}, {2, 1},       {3, 4, 6, 3}, {4, 1, 4, 5, 4, 3, 7, 4},</div>
 <div class="line">    {5, 2, 5, 4}, {6, 7},       {7, 4, 7, 8}, {8, 5}};</div>
 <div class="line"></div>
-<div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges;</div>
+<div class="line">  std::vector&lt;XmEdge&gt; edges;</div>
 <div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> cells;</div>
 <div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> edgeIdx;</div>
 <div class="line">  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> edgePoints1;</div>
@@ -742,8 +756,8 @@ Example Get Edges Associated with a Cell</h2>
 <div class="line">  }</div>
 <div class="line"></div>
 <div class="line">  <span class="comment">// Test GetEdgesOfCell</span></div>
-<div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; edges = ugrid-&gt;GetEdgesOfCell(0);</div>
-<div class="line">  std::vector&lt;std::pair&lt;int, int&gt;&gt; expectededges = {{0, 3}, {3, 4}, {4, 1}, {1, 0}};</div>
+<div class="line">  std::vector&lt;XmEdge&gt; edges = ugrid-&gt;GetEdgesOfCell(0);</div>
+<div class="line">  std::vector&lt;XmEdge&gt; expectededges = {{0, 3}, {3, 4}, {4, 1}, {1, 0}};</div>
 <div class="line">  TS_ASSERT_EQUALS(expectededges, edges);</div>
 <div class="line"></div>
 <div class="line">} <span class="comment">// XmUGridUnitTests::testGetEdgesOfCell</span></div>
@@ -753,7 +767,7 @@ Example Get Edges Associated with a Cell</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Sep 27 2018 22:46:15 for xmsgrid by
+    <li class="footer">Generated on Mon Oct 1 2018 18:53:32 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
