@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file XmUGrid.h
+/// \file
 /// \brief Contains the XmUGrid Class and supporting data types.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under the xmsng
@@ -27,6 +27,7 @@
 namespace xms
 {
 //----- Forward declarations ---------------------------------------------------
+class XmEdge;
 
 //----- Constants / Enumerations -----------------------------------------------
 
@@ -136,6 +137,7 @@ public:
   virtual Pt3d GetPoint(const int a_pointIdx) const = 0;
   virtual bool SetPoint(const int a_pointIdx, const Pt3d& a_point) = 0;
 
+  virtual Pt3d GetXYPoint(const int a_pointIdx) const = 0;
   virtual VecPt3d GetPointsFromPointIdxs(const VecInt& a_points) const = 0;
 
   virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
@@ -155,10 +157,13 @@ public:
   virtual VecInt GetPointsOfCell(const int a_cellIdx) const = 0;
   virtual bool GetPointsOfCell(const int a_cellIdx,
                                VecInt& a_cellPoints) const = 0; // Point indexes of a cell
+  virtual void GetPointsOfCell(const int a_cellIdx,
+                               VecPt3d& a_cellPoints) const = 0; // Point locations of a cell
 
   virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
   virtual std::vector<int> GetDimensionCount() const = 0;
   virtual int GetCellDimension(const int a_cellIdx) const = 0;
+  virtual void GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const = 0;
 
   virtual const VecInt& GetCellStream() const = 0;
   virtual bool SetCellStream(const VecInt& a_cellStream) = 0;
@@ -167,10 +172,11 @@ public:
   virtual VecInt GetCellNeighbors(const int a_cellIdx) const = 0;
   virtual void GetCellNeighbors(const int a_cellIdx, VecInt& a_cellNeighbors) const = 0;
   virtual bool GetPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const = 0;
+  virtual bool GetCentroid(int a_cellIdx, Pt3d& a_centroid) const = 0;
 
   // Edges
   virtual int GetNumberOfCellEdges(const int a_cellIdx) const = 0;
-  virtual std::pair<int, int> GetCellEdgeFromEdgeIndex(const int a_cellIdx,
+  virtual XmEdge GetCellEdgeFromEdgeIndex(const int a_cellIdx,
                                                        const int a_edgeIdx) const = 0;
   virtual VecInt GetAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
   virtual void GetAdjacentCells(const int a_cellIdx,
@@ -182,25 +188,28 @@ public:
   virtual void GetAdjacentCellsFromGivenEdge(const int a_pointIdx1,
                                              const int a_pointIdx2,
                                              VecInt& a_adjacentCellIdxs) const = 0;
-  virtual VecInt GetAdjacentCellsFromGivenEdge(const std::pair<int, int> a_edge) const = 0;
+  virtual VecInt GetAdjacentCellsFromGivenEdge(const XmEdge& a_edge) const = 0;
 
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgeIdxs) const = 0;
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
-                                 std::vector<std::pair<int, int>>& a_edges) const = 0;
+                                 std::vector<XmEdge>& a_edges) const = 0;
   virtual bool GetEdgesFromPoint(const int a_pointId,
                                  VecInt& a_cellIdxs,
                                  VecInt& a_edgePoints1,
                                  VecInt& a_edgePoints2) const = 0;
 
-  virtual std::vector<std::pair<int, int>> GetEdgesOfCell(const int a_cellIdx) const = 0;
+  virtual std::vector<XmEdge> GetEdgesOfCell(const int a_cellIdx) const = 0;
   virtual void GetEdgesOfCell(const int a_cellIdx,
-                              std::vector<std::pair<int, int>>& a_edges) const = 0;
+                              std::vector<XmEdge>& a_edges) const = 0;
+  virtual void GetPointIdxsAttachedByEdge(int a_pointIdx, VecInt& a_edgePoints) const = 0;
+  virtual void GetPointsAttachedByEdge(int a_pointIdx, VecPt3d& a_edgePoints) const = 0;
 
   // Faces
   virtual int GetNumberOfCellFaces(const int a_cellIdx) const = 0;
+  virtual int GetNumberOfFacePoints(const int a_cellIdx, const int a_faceIdx) const = 0;
 
   virtual VecInt GetCellFace(const int a_cellIdx, const int a_faceIdx) const = 0;
   virtual void GetCellFace(const int a_cellIdx,

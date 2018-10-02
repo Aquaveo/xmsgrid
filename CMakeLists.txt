@@ -9,14 +9,14 @@ else()
   set(CMAKE_POSITION_INDEPENDENT_CODE True)
 endif()
 
+project(xmsgrid C CXX)
+
 set(BUILD_TESTING NO CACHE BOOL "Enable/Disable testing")
 set(IS_CONDA_BUILD NO CACHE BOOL "Set this if you want to make a conda package.")
 set(PYTHON_TARGET_VERSION 3.6 CACHE STRING "Version of python to link to for python wrapping.")
 set(CONDA_PREFIX "" CACHE PATH "Path to the conda environment used to build.")
 set(IS_PYTHON_BUILD NO CACHE BOOL "Set this if you want to build the python bindings.")
-set(XMSGRID_TEST_PATH "../../test_files/" CACHE PATH "Path to test files for testing")
-
-project(xmsgrid C CXX)
+set(XMSGRID_TEST_PATH ${PROJECT_SOURCE_DIR}/test_files/ CACHE PATH "Path to test files for testing")
 
 if(WIN32)
     if(XMS_BUILD)
@@ -80,12 +80,14 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsgrid_sources
+  xmsgrid/ugrid/XmEdge.cpp
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
   xmsgrid/ugrid/XmConvexHull.cpp
 )
 
 set(xmsgrid_headers
+  xmsgrid/ugrid/XmEdge.h
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
   xmsgrid/ugrid/XmConvexHull.h
@@ -110,6 +112,7 @@ if (BUILD_TESTING)
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources
+   xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
    xmsgrid/ugrid/XmConvexHull.t.h
