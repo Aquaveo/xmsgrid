@@ -1,5 +1,7 @@
 var NAVTREEINDEX1 =
 {
+"md__three_d__tutorial.html#Example_GetNumberOfFacesForCell":[3,0,29],
+"md__three_d__tutorial.html#Example_GetNumberOfPoints3d":[3,0,7],
 "md__three_d__tutorial.html#Example_GetPlanViewPolygon3d":[3,0,22],
 "md__three_d__tutorial.html#Example_GetPoint3d":[3,0,9],
 "md__three_d__tutorial.html#Example_GetPointCells3d":[3,0,13],

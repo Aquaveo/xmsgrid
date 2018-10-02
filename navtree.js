@@ -115,7 +115,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"md__three_d__tutorial.html#Example_GetPlanViewPolygon3d"
+"md__three_d__tutorial.html#Example_GetNumberOfFacesForCell"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

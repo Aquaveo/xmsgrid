@@ -14,7 +14,9 @@ var NAVTREEINDEX0 =
 "_xm_convex_hull_8t_8h_source.html":[6,0,0,0,2],
 "_xm_edge_8cpp.html":[6,0,0,0,3],
 "_xm_edge_8cpp_source.html":[6,0,0,0,3],
+"_xm_edge_8h.html":[6,0,0,0,4],
 "_xm_edge_8h_source.html":[6,0,0,0,4],
+"_xm_edge_8t_8h.html":[6,0,0,0,5],
 "_xm_edge_8t_8h_source.html":[6,0,0,0,5],
 "_xm_u_grid_8cpp.html":[6,0,0,0,6],
 "_xm_u_grid_8cpp.html#a0a50a2c6d678fa5e90212d03fecd3f44":[6,0,0,0,6,1],
@@ -213,8 +215,8 @@ var NAVTREEINDEX0 =
 "globals_func.html":[6,1,1],
 "globals_vars.html":[6,1,2],
 "hierarchy.html":[5,1],
-"index.html":[],
 "index.html":[1],
+"index.html":[],
 "index.html#XmsgridFeatures":[0,2],
 "index.html#XmsgridInterfacePattern":[0,4,1],
 "index.html#XmsgridLicense":[0,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX0 =
 "md__three_d__tutorial.html#Example_GetExtents3d":[3,0,12],
 "md__three_d__tutorial.html#Example_GetFacesFromPoint":[3,0,32],
 "md__three_d__tutorial.html#Example_GetFacesOfCell":[3,0,31],
-"md__three_d__tutorial.html#Example_GetNumberOfCellEdges3d":[3,0,23],
-"md__three_d__tutorial.html#Example_GetNumberOfFacesForCell":[3,0,29],
-"md__three_d__tutorial.html#Example_GetNumberOfPoints3d":[3,0,7]
+"md__three_d__tutorial.html#Example_GetNumberOfCellEdges3d":[3,0,23]
 };

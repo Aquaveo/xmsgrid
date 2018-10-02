@@ -17,12 +17,27 @@
     <name>XmEdge.cpp</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_edge_8cpp</filename>
+    <includes id="_xm_edge_8h" name="XmEdge.h" local="no" imported="no">xmsgrid/ugrid/XmEdge.h</includes>
+    <includes id="_xm_edge_8t_8h" name="XmEdge.t.h" local="no" imported="no">xmsgrid/ugrid/XmEdge.t.h</includes>
+  </compound>
+  <compound kind="file">
+    <name>XmEdge.h</name>
+    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
+    <filename>_xm_edge_8h</filename>
+    <class kind="class">xms::XmEdge</class>
+  </compound>
+  <compound kind="file">
+    <name>XmEdge.t.h</name>
+    <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
+    <filename>_xm_edge_8t_8h</filename>
+    <class kind="class">XmEdgeUnitTests</class>
   </compound>
   <compound kind="file">
     <name>XmUGrid.cpp</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_8cpp</filename>
     <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
+    <includes id="_xm_edge_8h" name="XmEdge.h" local="no" imported="no">xmsgrid/ugrid/XmEdge.h</includes>
     <includes id="_xm_convex_hull_8h" name="XmConvexHull.h" local="no" imported="no">xmsgrid/ugrid/XmConvexHull.h</includes>
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
     <includes id="_xm_u_grid_8t_8h" name="XmUGrid.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.t.h</includes>
