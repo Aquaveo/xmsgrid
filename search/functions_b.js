@@ -1,5 +1,13 @@
 var searchData=
 [
+  ['pointadjacentcells',['PointAdjacentCells',['../classxms_1_1_xm_u_grid.html#ab8f8b630c0045955f93c02c7d4ce67e3',1,'xms::XmUGrid::PointAdjacentCells(const int a_pointIdx) const =0'],['../classxms_1_1_xm_u_grid.html#afee64b8e1a8b32f5e613aedf3b85b2f4',1,'xms::XmUGrid::PointAdjacentCells(const int a_pointIdx, VecInt &amp;a_adjacentCells) const =0']]],
+  ['pointadjacentlocations',['PointAdjacentLocations',['../classxms_1_1_xm_u_grid.html#a2787d93f5992033ab88735210f106737',1,'xms::XmUGrid']]],
+  ['pointadjacentpoints',['PointAdjacentPoints',['../classxms_1_1_xm_u_grid.html#a387a78237c295fa3b3bcae9a476338ab',1,'xms::XmUGrid']]],
+  ['pointcount',['PointCount',['../classxms_1_1_xm_u_grid.html#a079d0f44930c597b1ebe45786f8ff000',1,'xms::XmUGrid']]],
+  ['pointlocation',['PointLocation',['../classxms_1_1_xm_u_grid.html#a9a0cf0b228de233370f4d54fd23950fe',1,'xms::XmUGrid']]],
+  ['pointsadjacentcells',['PointsAdjacentCells',['../classxms_1_1_xm_u_grid.html#a5bdf8dd8b524dc322390f89a4c401f3b',1,'xms::XmUGrid::PointsAdjacentCells(const VecInt &amp;a_points) const =0'],['../classxms_1_1_xm_u_grid.html#a890556aa13687a49e945d5bf64fb8de2',1,'xms::XmUGrid::PointsAdjacentCells(const VecInt &amp;a_pointIdxs, VecInt &amp;a_adjacentCellIdxs) const =0'],['../classxms_1_1_xm_u_grid.html#a0bfbfad1a053e7e7f768a9e883571383',1,'xms::XmUGrid::PointsAdjacentCells(const int a_pointIdx1, const int a_pointIdx2, VecInt &amp;a_adjacentCellIdxs) const =0']]],
+  ['pointslocations',['PointsLocations',['../classxms_1_1_xm_u_grid.html#a29dec21a3196cff364d22c23b1dbb575',1,'xms::XmUGrid']]],
+  ['pointxy0',['PointXy0',['../classxms_1_1_xm_u_grid.html#a3fd548fc9b48c44815dbe24a7fea1020',1,'xms::XmUGrid']]],
   ['pretendmeshing',['PretendMeshing',['https://aquaveo.github.io/xmscore/class_mock_mesher.html#af90fd308a879f30505a9e7a7cae521bf',1,'MockMesher']]],
   ['progress',['Progress',['https://aquaveo.github.io/xmscore/classxms_1_1_progress.html#a62ad7fd24eecd4b556a21c8923f41b81',1,'xms::Progress']]],
   ['progressstatus',['ProgressStatus',['https://aquaveo.github.io/xmscore/classxms_1_1_observer.html#ac53cde5a326843717b57e49767ff5be4',1,'MockObserver::ProgressStatus()'],['https://aquaveo.github.io/xmscore/classxms_1_1_progress.html#ad9b48819d490b81c76a3ac0b2f8e8c3d',1,'xms::Progress::ProgressStatus()']]],

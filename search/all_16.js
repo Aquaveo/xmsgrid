@@ -26,8 +26,6 @@ var searchData=
   ['xmedge',['XmEdge',['../classxms_1_1_xm_edge.html#ac469ef46c007327f5e7ba35a386e238b',1,'xms::XmEdge::XmEdge()'],['../classxms_1_1_xm_edge.html#a448df3ee696594baa8f89e8019d0c8d9',1,'xms::XmEdge::XmEdge(int a_pt1, int a_pt2, bool a_sorted=false)'],['../classxms_1_1_xm_edge.html#a4a07febba9a95f90eeb614cdfbac5b77',1,'xms::XmEdge::XmEdge(const std::pair&lt; int, int &gt; &amp;a_edge)']]],
   ['xmedge',['XmEdge',['../classxms_1_1_xm_edge.html',1,'xms']]],
   ['xmedge_2ecpp',['XmEdge.cpp',['../_xm_edge_8cpp.html',1,'']]],
-  ['xmedge_2eh',['XmEdge.h',['../_xm_edge_8h.html',1,'']]],
-  ['xmedge_2et_2eh',['XmEdge.t.h',['../_xm_edge_8t_8h.html',1,'']]],
   ['xmedgeunittests',['XmEdgeUnitTests',['../class_xm_edge_unit_tests.html',1,'']]],
   ['xmerror_2ecpp',['XmError.cpp',['https://aquaveo.github.io/xmscore/_xm_error_8cpp.html',1,'']]],
   ['xmerror_2eh',['XmError.h',['https://aquaveo.github.io/xmscore/_xm_error_8h.html',1,'']]],

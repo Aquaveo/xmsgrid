@@ -139,8 +139,8 @@ Example - Reading a UGrid from ASCII file format</h2>
 <div class="line">    <span class="keywordflow">return</span>;</div>
 <div class="line">  }</div>
 <div class="line"></div>
-<div class="line">  TS_ASSERT_EQUALS(ugridBase-&gt;GetPoints(), ugridOut-&gt;GetPoints());</div>
-<div class="line">  TS_ASSERT_EQUALS(ugridBase-&gt;GetCellStream(), ugridOut-&gt;GetCellStream());</div>
+<div class="line">  TS_ASSERT_EQUALS(ugridBase-&gt;Locations(), ugridOut-&gt;Locations());</div>
+<div class="line">  TS_ASSERT_EQUALS(ugridBase-&gt;Cellstream(), ugridOut-&gt;Cellstream());</div>
 <div class="line">} <span class="comment">// XmUGridUtilsTests::testWriteThenReadUGridFile</span></div>
 </div><!-- fragment --><p>  </p>
 </div></div><!-- contents -->
@@ -148,7 +148,7 @@ Example - Reading a UGrid from ASCII file format</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 2 2018 20:35:43 for xmsgrid by
+    <li class="footer">Generated on Tue Oct 2 2018 23:15:59 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>
