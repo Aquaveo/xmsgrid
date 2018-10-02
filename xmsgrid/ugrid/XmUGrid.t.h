@@ -37,6 +37,7 @@ public:
   void testGetExtents();
   void testGetNumberOfCellEdges();
   void testGetNumberOfCellFaces();
+  void testGetNumberOfFacePoints();
   void testGetPointCellsSimple();
   void testGetPointCells();
   void testGetPointsOfCell();
@@ -48,8 +49,10 @@ public:
   void testGetCellFace();
   void testGetCellFaceNeighbor();
   void testGetEdgesFromPoint();
+  void testGetPointsAttachedByEdge();
   void testGetFacesFromPoint();
   void testGetPlanViewPolygon();
+  void testGetPlanViewPolygonMultiSideFace();
   void testIsCellValidWithPointChange();
   void testPointFunctions();
   void testCellFunctions();
