@@ -38,8 +38,8 @@ class TestXmUGridUtilFunctions(unittest.TestCase):
         XmUGridUtils.write_ugrid_to_ascii_file(xu3d, out_file_name)
         # read
         xu_read = XmUGridUtils.read_ugrid_from_ascii_file(out_file_name)
-        np.testing.assert_array_equal(xu3d.get_points(), xu_read.get_points())
-        np.testing.assert_array_equal(xu3d.get_cell_stream(), xu3d.get_cell_stream())
+        np.testing.assert_array_equal(xu3d.locations(), xu_read.locations())
+        np.testing.assert_array_equal(xu3d.cellstream(), xu3d.cellstream())
 
     def test_cross(self):
         self.assertEqual(XmUGridUtils.cross((0, 0, 0), (5, 5, 0), (3, 4, 0)), 5)

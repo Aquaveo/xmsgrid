@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file
+/// \file XmUGrid.h
 /// \brief Contains the XmUGrid Class and supporting data types.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under the xmsng
@@ -36,7 +36,7 @@ class XmEdge
 public:
   XmEdge();
   XmEdge(int a_pt1, int a_pt2, bool a_sorted = false);
-  XmEdge(const std::pair<int, int>& a_edge);
+  explicit XmEdge(const std::pair<int, int>& a_edge);
 
   bool operator<(const XmEdge& a_rhs) const;
   bool operator==(const XmEdge& a_rhs) const;
@@ -54,6 +54,5 @@ private:
 };
 
 //----- Function prototypes ----------------------------------------------------
-
 
 } // namespace xms
