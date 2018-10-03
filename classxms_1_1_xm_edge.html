@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('classxms_1_1_xm_edge.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>Two integer values representing an edge of an <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>. By default has a direction. Can be sorted to have minimum index first.  
+<p>Two integer values representing an edge of an <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>. By default has a direction. Can be sorted to have minimum index first.  
  <a href="classxms_1_1_xm_edge.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -166,7 +166,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="separator:a6614bd4c9e7f9547a9cf916d979a9686"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Two integer values representing an edge of an <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>. By default has a direction. Can be sorted to have minimum index first. </p>
+<div class="textblock"><p>Two integer values representing an edge of an <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>. By default has a direction. Can be sorted to have minimum index first. </p>
 
 <p>Definition at line <a class="el" href="_xm_edge_8h_source.html#l00034">34</a> of file <a class="el" href="_xm_edge_8h_source.html">XmEdge.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -219,6 +219,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <a class="anchor" id="a4a07febba9a95f90eeb614cdfbac5b77"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">xms::XmEdge::XmEdge </td>
@@ -228,6 +231,11 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Constructor. </p>
@@ -263,6 +271,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 <p>References <a class="el" href="_xm_edge_8h_source.html#l00052">m_pt1</a>.</p>
 
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01510">xms::XmUGridImpl::CellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01644">xms::XmUGridImpl::EdgeAdjacentCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01691">xms::XmUGridImpl::PointAdjacentPoints()</a>.</p>
+
 </div>
 </div>
 <a class="anchor" id="ab938320f970a16e293f5c37b17c2e880"></a>
@@ -284,6 +294,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <p>Definition at line <a class="el" href="_xm_edge_8cpp_source.html#l00118">118</a> of file <a class="el" href="_xm_edge_8cpp_source.html">XmEdge.cpp</a>.</p>
 
 <p>References <a class="el" href="_xm_edge_8h_source.html#l00053">m_pt2</a>.</p>
+
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01510">xms::XmUGridImpl::CellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01644">xms::XmUGridImpl::EdgeAdjacentCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01691">xms::XmUGridImpl::PointAdjacentPoints()</a>.</p>
 
 </div>
 </div>
@@ -314,7 +326,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 <p>References <a class="el" href="_xm_edge_8h_source.html#l00052">m_pt1</a>, and <a class="el" href="_xm_edge_8h_source.html#l00053">m_pt2</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_edge_8cpp_source.html#l00195">XmEdgeUnitTests::testIsEquivalent()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01586">xms::XmUGridImpl::CellEdgeAdjacentCells()</a>, and <a class="el" href="_xm_edge_8cpp_source.html#l00195">XmEdgeUnitTests::testIsEquivalent()</a>.</p>
 
 </div>
 </div>
@@ -442,7 +454,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacexms.html">xms</a></li><li class="navelem"><a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a></li>
-    <li class="footer">Generated on Wed Oct 3 2018 04:42:23 for xmsgrid by
+    <li class="footer">Generated on Wed Oct 3 2018 19:48:56 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

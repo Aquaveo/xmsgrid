@@ -155,7 +155,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  a_outStream &lt;&lt; <span class="stringliteral">&quot;ASCII XmUGrid Version 1.0\n&quot;</span>;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="comment">// number of points</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">const</span> <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a>&amp; points = a_ugrid-&gt;GetPoints();</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">const</span> <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a>&amp; points = a_ugrid-&gt;Locations();</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  a_outStream &lt;&lt; <span class="stringliteral">&quot;NUM_POINTS &quot;</span> &lt;&lt; points.size() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="comment">// points</span></div>
@@ -166,16 +166,16 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="comment">// number of cell stream items</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">const</span> <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&amp; cellStream = a_ugrid-&gt;GetCellStream();</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keywordtype">int</span> cellStreamSize = (int)cellStream.size();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  a_outStream &lt;&lt; <span class="stringliteral">&quot;NUM_CELL_ITEMS &quot;</span> &lt;&lt; cellStreamSize &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">const</span> <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&amp; cellstream = a_ugrid-&gt;Cellstream();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keywordtype">int</span> cellstreamSize = (int)cellstream.size();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  a_outStream &lt;&lt; <span class="stringliteral">&quot;NUM_CELL_ITEMS &quot;</span> &lt;&lt; cellstreamSize &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="comment">// cells</span></div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keywordtype">int</span> currIdx = 0;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordflow">while</span> (currIdx &lt; cellStreamSize)</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordflow">while</span> (currIdx &lt; cellstreamSize)</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">int</span> cellType = cellStream[currIdx++];</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">int</span> numItems = cellStream[currIdx++];</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">int</span> cellType = cellstream[currIdx++];</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">int</span> numItems = cellstream[currIdx++];</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    a_outStream &lt;&lt; <span class="stringliteral">&quot;  CELL &quot;</span> &lt;&lt; cellType;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">if</span> (cellType == -1)</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    {</div>
@@ -187,11 +187,11 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      a_outStream &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; numFaces;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> faceIdx = 0; faceIdx &lt; numFaces; ++faceIdx)</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        numItems = cellStream[currIdx++];</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        numItems = cellstream[currIdx++];</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        a_outStream &lt;&lt; <span class="stringliteral">&quot;\n    &quot;</span> &lt;&lt; numItems;</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> itemIdx = 0; itemIdx &lt; numItems; ++itemIdx)</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;          a_outStream &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; cellStream[currIdx++];</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;          a_outStream &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; cellstream[currIdx++];</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      }</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
@@ -200,7 +200,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      a_outStream &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; numItems;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> itemIdx = 0; itemIdx &lt; numItems; ++itemIdx)</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        a_outStream &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; cellStream[currIdx++];</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        a_outStream &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; cellstream[currIdx++];</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      }</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    a_outStream &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
@@ -286,7 +286,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    }</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  }</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe">XmUGrid::New</a>(points, cells);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">XmUGrid::New</a>(points, cells);</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <span class="keywordflow">return</span> ugrid;</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;} <span class="comment">// iReadUGridFromAsciiFile</span></div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;</div>
@@ -469,7 +469,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00399"></a><span class="lineno"><a class="line" href="class_xm_u_grid_utils_tests.html#ae129def9be2e32d8c6d83d78c9c37ae7">  399</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="class_xm_u_grid_utils_tests.html#ae129def9be2e32d8c6d83d78c9c37ae7">XmUGridUtilsTests::testWriteEmptyUGrid</a>()</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;{</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe">XmUGrid::New</a>();</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  BSHP&lt;XmUGrid&gt; ugrid = <a class="code" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">XmUGrid::New</a>();</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  std::ostringstream output;</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  iWriteUGridToAsciiFile(ugrid, output);</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;</div>
@@ -632,8 +632,8 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;  <span class="keywordflow">if</span> (!ugrid)</div>
 <div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;    TS_FAIL(<span class="stringliteral">&quot;Failed to read UGrid.&quot;</span>);</div>
 <div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;</div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;  TS_ASSERT(ugrid-&gt;GetPoints().empty());</div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;  TS_ASSERT(ugrid-&gt;GetCellStream().empty());</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;  TS_ASSERT(ugrid-&gt;Locations().empty());</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;  TS_ASSERT(ugrid-&gt;Cellstream().empty());</div>
 <div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;} <span class="comment">// XmUGridReaderTests::testReadEmptyUGridAsciiFile</span></div>
 <div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;<span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
@@ -655,8 +655,8 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;    TS_FAIL(<span class="stringliteral">&quot;Failed to read UGrid.&quot;</span>);</div>
 <div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;</div>
 <div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;  BSHP&lt;XmUGrid&gt; ugridBase = TEST_XmUGrid1Left90Tri();</div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetPoints(), ugrid-&gt;GetPoints());</div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetCellStream(), ugrid-&gt;GetCellStream());</div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Locations(), ugrid-&gt;Locations());</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Cellstream(), ugrid-&gt;Cellstream());</div>
 <div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;} <span class="comment">// XmUGridUtilsTests::testReadBasicUGrid</span></div>
 <div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;<span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
@@ -689,8 +689,8 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;    TS_FAIL(<span class="stringliteral">&quot;Failed to read UGrid.&quot;</span>);</div>
 <div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;</div>
 <div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;  BSHP&lt;XmUGrid&gt; ugridBase = TEST_XmUGridHexagonalPolyhedron();</div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetPoints(), ugrid-&gt;GetPoints());</div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetCellStream(), ugrid-&gt;GetCellStream());</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Locations(), ugrid-&gt;Locations());</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Cellstream(), ugrid-&gt;Cellstream());</div>
 <div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;} <span class="comment">// XmUGridUtilsTests::testReadPolyhedronUGrid</span></div>
 <div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;<span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
@@ -707,8 +707,8 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;  input.str(output.str());</div>
 <div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;  BSHP&lt;XmUGrid&gt; ugridOut = iReadUGridFromAsciiFile(input);</div>
 <div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetPoints(), ugridOut-&gt;GetPoints());</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetCellStream(), ugridOut-&gt;GetCellStream());</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Locations(), ugridOut-&gt;Locations());</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Cellstream(), ugridOut-&gt;Cellstream());</div>
 <div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;} <span class="comment">// XmUGridUtilsTests::testLinear2dWriteThenRead</span></div>
 <div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;<span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
@@ -725,8 +725,8 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;  input.str(output.str());</div>
 <div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;  BSHP&lt;XmUGrid&gt; ugridOut = iReadUGridFromAsciiFile(input);</div>
 <div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetPoints(), ugridOut-&gt;GetPoints());</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetCellStream(), ugridOut-&gt;GetCellStream());</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Locations(), ugridOut-&gt;Locations());</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Cellstream(), ugridOut-&gt;Cellstream());</div>
 <div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;} <span class="comment">// XmUGridUtilsTests::testLinear3dWriteThenRead</span></div>
 <div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;<span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
@@ -750,8 +750,8 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;  }</div>
 <div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;</div>
-<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetPoints(), ugridOut-&gt;GetPoints());</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetCellStream(), ugridOut-&gt;GetCellStream());</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Locations(), ugridOut-&gt;Locations());</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Cellstream(), ugridOut-&gt;Cellstream());</div>
 <div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;} <span class="comment">// XmUGridUtilsTests::testWriteThenReadUGridFile</span></div>
 <div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;<span class="comment"></span><span class="comment">//------------------------------------------------------------------------------</span></div>
@@ -772,15 +772,14 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160;    <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;  }</div>
 <div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;</div>
-<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetPoints(), ugridOut-&gt;GetPoints());</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;GetCellStream(), ugridOut-&gt;GetCellStream());</div>
+<div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Locations(), ugridOut-&gt;Locations());</div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;  TS_ASSERT_EQUALS(ugridBase-&gt;Cellstream(), ugridOut-&gt;Cellstream());</div>
 <div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;} <span class="comment">// XmUGridUtilsTests::testWriteThenReadUGridFile</span></div>
 <div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;<span class="comment"></span></div>
 <div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classxms_1_1_pt3_html_af018fc0ba7dcbb74142c9a3ddadf5610"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#af018fc0ba7dcbb74142c9a3ddadf5610">xms::Pt3::z</a></div><div class="ttdeci">T z</div></div>
 <div class="ttc" id="_xm_log_8h_html_a2aa4d2a0a80e464d6acba7f32b13f978"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/_xm_log_8h.html#a2aa4d2a0a80e464d6acba7f32b13f978">XM_LOG</a></div><div class="ttdeci">#define XM_LOG(A, B)</div></div>
 <div class="ttc" id="_xm_u_grid_8h_html"><div class="ttname"><a href="_xm_u_grid_8h.html">XmUGrid.h</a></div><div class="ttdoc">Contains the XmUGrid Class and supporting data types. </div></div>
-<div class="ttc" id="classxms_1_1_xm_u_grid_html_ab8144c1fe7cb0f3da5d13db63f6937fe"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe">xms::XmUGrid::New</a></div><div class="ttdeci">static BSHP&lt; XmUGrid &gt; New()</div><div class="ttdoc">Create a new XmUGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02694">XmUGrid.cpp:2694</a></div></div>
 <div class="ttc" id="class_xm_u_grid_utils_tests_html_abdb6587684de536f93a0905e482d089e"><div class="ttname"><a href="class_xm_u_grid_utils_tests.html#abdb6587684de536f93a0905e482d089e">XmUGridUtilsTests::testDoLineSegmentsCross</a></div><div class="ttdeci">void testDoLineSegmentsCross()</div><div class="ttdoc">Test determining if two lines intersect. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00297">XmUGridUtils.cpp:297</a></div></div>
 <div class="ttc" id="class_xm_u_grid_utils_tests_html_a227b7f77870cc134ba5f2f990c21394a"><div class="ttname"><a href="class_xm_u_grid_utils_tests.html#a227b7f77870cc134ba5f2f990c21394a">XmUGridUtilsTests::testLinear2dWriteThenRead</a></div><div class="ttdeci">void testLinear2dWriteThenRead()</div><div class="ttdoc">Test reading an ASCII file for a single triangle UGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00636">XmUGridUtils.cpp:636</a></div></div>
 <div class="ttc" id="classxms_1_1_pt3_html_a3870f08593cabc47fd5d213ea1c0898a"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a3870f08593cabc47fd5d213ea1c0898a">xms::Pt3::x</a></div><div class="ttdeci">T x</div></div>
@@ -789,6 +788,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="ttc" id="class_xm_u_grid_utils_tests_html_a9df062db461cc199119fbe4adedaa691"><div class="ttname"><a href="class_xm_u_grid_utils_tests.html#a9df062db461cc199119fbe4adedaa691">XmUGridUtilsTests::testWriteLinear2dCells</a></div><div class="ttdeci">void testWriteLinear2dCells()</div><div class="ttdoc">Test writing an ASCII file for UGrid with supported 1D and 2D linear cell types. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00466">XmUGridUtils.cpp:466</a></div></div>
 <div class="ttc" id="_xm_u_grid_utils_8h_html"><div class="ttname"><a href="_xm_u_grid_utils_8h.html">XmUGridUtils.h</a></div><div class="ttdoc">Contains IO functions as well as several utility functions for XmUGrid. </div></div>
 <div class="ttc" id="class_xm_u_grid_utils_tests_html_ae129def9be2e32d8c6d83d78c9c37ae7"><div class="ttname"><a href="class_xm_u_grid_utils_tests.html#ae129def9be2e32d8c6d83d78c9c37ae7">XmUGridUtilsTests::testWriteEmptyUGrid</a></div><div class="ttdeci">void testWriteEmptyUGrid()</div><div class="ttdoc">Test writing an ASCII file for an empty UGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00399">XmUGridUtils.cpp:399</a></div></div>
+<div class="ttc" id="classxms_1_1_xm_u_grid_html_a51464b4cc71bddbb97e9e8a6ff7fb798"><div class="ttname"><a href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">xms::XmUGrid::New</a></div><div class="ttdeci">static BSHP&lt; XmUGrid &gt; New()</div><div class="ttdoc">Create a new XmUGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l02647">XmUGrid.cpp:2647</a></div></div>
 <div class="ttc" id="class_xm_u_grid_utils_tests_html_a172a6cebc93b9994ecf18a3ba9bb132d"><div class="ttname"><a href="class_xm_u_grid_utils_tests.html#a172a6cebc93b9994ecf18a3ba9bb132d">XmUGridUtilsTests::testWriteBasicUGrid</a></div><div class="ttdeci">void testWriteBasicUGrid()</div><div class="ttdoc">Test writing an ASCII file for a single triangle UGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00414">XmUGridUtils.cpp:414</a></div></div>
 <div class="ttc" id="class_xm_u_grid_utils_tests_html_a629b501a387b6524a57d95a7045f1831"><div class="ttname"><a href="class_xm_u_grid_utils_tests.html#a629b501a387b6524a57d95a7045f1831">XmUGridUtilsTests::testWriteLinear3dCells</a></div><div class="ttdeci">void testWriteLinear3dCells()</div><div class="ttdoc">Test writing an ASCII file for UGrid with supported 1D and 2D linear cell types. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00502">XmUGridUtils.cpp:502</a></div></div>
 <div class="ttc" id="namespacexms_html_ad81e1ef6499bc0e65df973717a1e2fbb"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a></div><div class="ttdeci">std::vector&lt; int &gt; VecInt</div></div>
@@ -799,7 +799,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div class="ttc" id="classxms_1_1_pt3_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">xms::Pt3</a></div></div>
 <div class="ttc" id="_xm_u_grid_8t_8h_html"><div class="ttname"><a href="_xm_u_grid_8t_8h.html">XmUGrid.t.h</a></div></div>
 <div class="ttc" id="namespacexms_html_ac1a247a3a486723b3ce08d4e732845f3"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/namespacexms.html#ac1a247a3a486723b3ce08d4e732845f3">xms::STRstd</a></div><div class="ttdeci">std::string STRstd(double a_value, int a_n, int width, int flags)</div></div>
-<div class="ttc" id="_xm_u_grid_8cpp_html_a5077e9a31a7514c737aec71ff1732e1c"><div class="ttname"><a href="_xm_u_grid_8cpp.html#a5077e9a31a7514c737aec71ff1732e1c">TestFilesPath</a></div><div class="ttdeci">std::string TestFilesPath()</div><div class="ttdoc">Path to test files. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l03229">XmUGrid.cpp:3229</a></div></div>
+<div class="ttc" id="_xm_u_grid_8cpp_html_a5077e9a31a7514c737aec71ff1732e1c"><div class="ttname"><a href="_xm_u_grid_8cpp.html#a5077e9a31a7514c737aec71ff1732e1c">TestFilesPath</a></div><div class="ttdeci">std::string TestFilesPath()</div><div class="ttdoc">Path to test files. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_8cpp_source.html#l03182">XmUGrid.cpp:3182</a></div></div>
 <div class="ttc" id="vector_8h_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/vector_8h.html">vector.h</a></div></div>
 <div class="ttc" id="classxms_1_1_pt3_html_a218217ff3405493c7b6dce94935f1290"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a218217ff3405493c7b6dce94935f1290">xms::Pt3::y</a></div><div class="ttdeci">T y</div></div>
 <div class="ttc" id="class_xm_u_grid_utils_tests_html_a949bc5905ca9a311a092d2f374c5d5d0"><div class="ttname"><a href="class_xm_u_grid_utils_tests.html#a949bc5905ca9a311a092d2f374c5d5d0">XmUGridUtilsTests::testWritePolyhedronUGrid</a></div><div class="ttdeci">void testWritePolyhedronUGrid()</div><div class="ttdoc">Test writing an ASCII file for a single polyhedron UGrid. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_u_grid_utils_8cpp_source.html#l00434">XmUGridUtils.cpp:434</a></div></div>
@@ -814,7 +814,7 @@ $(document).ready(function(){initNavTree('_xm_u_grid_utils_8cpp_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_a4f80c8107f4df91c21d011369fb1e1d.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_u_grid_utils_8cpp.html">XmUGridUtils.cpp</a></li>
-    <li class="footer">Generated on Wed Oct 3 2018 04:42:22 for xmsgrid by
+    <li class="footer">Generated on Wed Oct 3 2018 19:48:56 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

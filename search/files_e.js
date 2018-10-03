@@ -4,7 +4,6 @@ var searchData=
   ['xmconvexhull_2ecpp',['XmConvexHull.cpp',['../_xm_convex_hull_8cpp.html',1,'']]],
   ['xmconvexhull_2eh',['XmConvexHull.h',['../_xm_convex_hull_8h.html',1,'']]],
   ['xmedge_2ecpp',['XmEdge.cpp',['../_xm_edge_8cpp.html',1,'']]],
-  ['xmedge_2eh',['XmEdge.h',['../_xm_edge_8h.html',1,'']]],
   ['xmedge_2et_2eh',['XmEdge.t.h',['../_xm_edge_8t_8h.html',1,'']]],
   ['xmerror_2ecpp',['XmError.cpp',['https://aquaveo.github.io/xmscore/_xm_error_8cpp.html',1,'']]],
   ['xmerror_2eh',['XmError.h',['https://aquaveo.github.io/xmscore/_xm_error_8h.html',1,'']]],

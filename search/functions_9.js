@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['new',['New',['../classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502',1,'xms::XmUGrid::New(const VecPt3d &amp;a_points, const VecInt &amp;a_cellStream)'],['../classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe',1,'xms::XmUGrid::New()']]]
+  ['new',['New',['../classxms_1_1_xm_u_grid.html#a45106b162bbdb8cfacb6a17e57d6b271',1,'xms::XmUGrid::New(const VecPt3d &amp;a_points, const VecInt &amp;a_cellstream)'],['../classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798',1,'xms::XmUGrid::New()']]]
 ];

@@ -7,5 +7,5 @@ var searchData=
   ['_7ept4',['~Pt4',['https://aquaveo.github.io/xmscore/classxms_1_1_pt4.html#a5cd39733ccb240f7c9c10f3569d2f2bd',1,'xms::Pt4']]],
   ['_7esttemp2digitexponents',['~StTemp2DigitExponents',['https://aquaveo.github.io/xmscore/classxms_1_1_st_temp2_digit_exponents.html#a6c3f0dc95e653a725b26cd5557497403',1,'xms::StTemp2DigitExponents']]],
   ['_7exmlog',['~XmLog',['https://aquaveo.github.io/xmscore/classxms_1_1_xm_log.html#acc5f8eee341aeac5b06dba422619e5d6',1,'xms::XmLog']]],
-  ['_7exmugrid',['~XmUGrid',['../classxms_1_1_xm_u_grid.html#a714342c17dc5bb731eb78edcad66336d',1,'xms::XmUGrid']]]
+  ['_7exmugrid',['~XmUGrid',['../classxms_1_1_xm_u_grid.html#a00ece5dcb23ebc06e2651f4a3f3695c4',1,'xms::XmUGrid']]]
 ];
