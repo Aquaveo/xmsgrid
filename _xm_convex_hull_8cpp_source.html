@@ -186,7 +186,7 @@ $(document).ready(function(){initNavTree('_xm_convex_hull_8cpp_source.html','');
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  std::vector&lt;Pt3d&gt; points3d(a_points.size());</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; a_points.size(); ++i)</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    points3d.push_back(a_ugrid-&gt;PointLocation(a_points[i]));</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    points3d.push_back(a_ugrid-&gt;GetPoint(a_points[i]));</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  }</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  std::vector&lt;Pt3d&gt; convexHull = ConvexHull(points3d);</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> returnPoints(convexHull.size());</div>
@@ -254,7 +254,7 @@ $(document).ready(function(){initNavTree('_xm_convex_hull_8cpp_source.html','');
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_a4f80c8107f4df91c21d011369fb1e1d.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_convex_hull_8cpp.html">XmConvexHull.cpp</a></li>
-    <li class="footer">Generated on Tue Oct 2 2018 23:15:59 for xmsgrid by
+    <li class="footer">Generated on Wed Oct 3 2018 04:42:22 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

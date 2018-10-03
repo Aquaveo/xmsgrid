@@ -6,7 +6,6 @@ var searchData=
   ['deq_5fpt2d',['DEQ_PT2D',['https://aquaveo.github.io/xmscore/namespacexms.html#ad17ebff442a5af50e93b027dc76fac07',1,'xms']]],
   ['deqpt2d',['DeqPt2d',['https://aquaveo.github.io/xmscore/namespacexms.html#ab075c6283191e8574d5b982e7a059e03',1,'xms']]],
   ['deque_2eh',['deque.h',['https://aquaveo.github.io/xmscore/deque_8h.html',1,'']]],
-  ['dimensioncounts',['DimensionCounts',['../classxms_1_1_xm_u_grid.html#ad75d18dc6b338aaec6871c3366e1822e',1,'xms::XmUGrid']]],
   ['do_5fgrouping',['do_grouping',['https://aquaveo.github.io/xmscore/classxms_1_1_st_comma_numpunct.html#aa2069686f9a15d91b346c3988be3a954',1,'xms::StCommaNumpunct']]],
   ['do_5fthousands_5fsep',['do_thousands_sep',['https://aquaveo.github.io/xmscore/classxms_1_1_st_comma_numpunct.html#a94e9b55f55470d2bb10f1451bff1d172',1,'xms::StCommaNumpunct']]],
   ['dynamicbitsetfrompyiter',['DynamicBitsetFromPyIter',['https://aquaveo.github.io/xmscore/namespacexms.html#a49bb2e3cc528e336292b521275482042',1,'xms']]],

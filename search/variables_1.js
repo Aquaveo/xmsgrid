@@ -2,7 +2,7 @@ var searchData=
 [
   ['m',['m',['https://aquaveo.github.io/xmscore/classxms_1_1_xm_log.html#abed3e6f252bd9d475e9c14c724f52ff3',1,'xms::XmLog']]],
   ['m_5fcellidxtostreamidx',['m_cellIdxToStreamIdx',['../_xm_u_grid_8cpp.html#aacfc7f788d6d3214fbe6cc26befb60dc',1,'XmUGrid.cpp']]],
-  ['m_5fcellstream',['m_cellstream',['../_xm_u_grid_8cpp.html#acc29ea851c0bb78ea206ce2cb2d0129e',1,'XmUGrid.cpp']]],
+  ['m_5fcellstream',['m_cellStream',['../_xm_u_grid_8cpp.html#ab2822cb721f3eb9978217e5073796621',1,'XmUGrid.cpp']]],
   ['m_5fdefaultretvalue',['m_defaultRetValue',['https://aquaveo.github.io/xmscore/classxms_1_1_e_test_messaging_state.html#a1a316eaebf330b2b8a055357a6dda843',1,'xms::ETestMessagingState']]],
   ['m_5fdefaultset',['m_defaultSet',['https://aquaveo.github.io/xmscore/classxms_1_1_e_test_messaging_state.html#a57c93fd4ad19f66cab6fe93169eb3df2',1,'xms::ETestMessagingState']]],
   ['m_5felapsedseconds',['m_elapsedSeconds',['https://aquaveo.github.io/xmscore/class_mock_observer.html#afc3ef4e691059d420277e39e669866c9',1,'MockObserver']]],
