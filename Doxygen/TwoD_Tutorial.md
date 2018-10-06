@@ -34,96 +34,93 @@ This example shows how to set all of the UGrid points using xms::XmUGrid::SetLoc
 ## Example - Setting the UGrid Cell Stream {#Example_SetCellstream2d}
 This example shows how to set the entire UGrid Cellstream using xms::XmUGrid::SetCellstream. Cellstreams are formatted as a stream of integers starting with the cell type as described by the enumeration XmUGridCellType, then the number of points in the cell, followed by a series of indices to points. The SetCellstream function takes one argument, a vector of integers formatted as previously described. Functionality is shared between 2d and 3d UGrids. The testing code for this example is the same as used for creating a new UGrid, XmUGridUnitTests::testUGridStreams.
 
+The xms::XmUGrid::IsValidCellstream function checks whether all cell types and point counts within the cellstream match up, but does not check for orientation or valid point positions. This function should not be relied on to catch all errors, but can be a basic check before setting the cellstream. The function takes one argument, a cellstream containing one or more cells. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::SetCellstream.
+
 \snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_UGrid_Streams
 
-## Example - Validating the Cellstream {#Example_IsValidCellstream}
-This example shows how to determine whether a given Cellstream is valid as previously defined. The xms::XmUGrid::IsValidCellstream checks whether all cell types and point counts within the cellstream match up, but does not check for orientation or valid point positions. This function should not be relied on to catch all errors, but can be a basic check before setting the cellstream. The function takes one argument, a cellstream containing one or more cells. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::SetCellstream.
+## Example - Get Number Of Points {#Example_GetPointCount}
+This example shows how to return the number of points contained in a UGrid. The xms::XmUGrid::GetPointCount function returns the number of points in the UGrid. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
-\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_SetCellstream
+## Example - Get Points (Locations) {#Example_GetLocations}
+This example shows how to get all points contained within the XmUGrid. The xms::XmUGrid::GetLocations function returns a vector of Pt3d's. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
-## Example - Get Number Of Points {#Example_PointCount}
-This example shows how to return the number of points contained in a UGrid. The xms::XmUGrid::PointCount function returns the number of points in the UGrid. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
-
-## Example - Get Points (Locations) {#Example_Locations}
-This example shows how to get all points contained within the XmUGrid. The xms::XmUGrid::Locations function returns a vector of Pt3d's. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
-
-## Example - Get Point Location {#Example_PointLocation}
-This example shows how to get a specific point given a point index. The xms::XmUGrid::PointLocation function returns the Pt3d of the point at the specified index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
+## Example - Get Point Location {#Example_GetPointLocation}
+This example shows how to get a specific point given a point index. The xms::XmUGrid::GetPointLocation function returns the Pt3d of the point at the specified index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
 ## Example - Set Point Location {#Example_SetLocation}
 This example shows how to set a specific point location given a point index. The xms::XmUGrid::SetLocation function takes a point index and a Pt3d as arguments and returns whether the operation was succesful. The function will fail and return false if the change would cause any edges to cross. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
-## Example - Get Locations of Many Points {#Example_PointsLocations}
-This example shows how to convert a vector of point indices into a vector of Pt3d's. The xms::XmUGrid::PointsLocations function takes a vector of Point Indices as an argument and returns a vector of corresponding Pt3d's as a result. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
+## Example - Get Locations of Many Points {#Example_GetPointsLocations}
+This example shows how to convert a vector of point indices into a vector of Pt3d's. The xms::XmUGrid::GetPointsLocations function takes a vector of Point Indices as an argument and returns a vector of corresponding Pt3d's as a result. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
-## Example - Get Extents of UGrid {#Example_Extents}
-This example shows how to get the extents of a UGrid. The xms::XmUGrid::Extents function takes two 3D points as arguments describing the minimum and maximum extent that the points of the UGrid cover. These arguments will be set by the funtion. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
+## Example - Get Extents of UGrid {#Example_GetExtents}
+This example shows how to get the extents of a UGrid. The xms::XmUGrid::GetExtents function takes two 3D points as arguments describing the minimum and maximum extent that the points of the UGrid cover. These arguments will be set by the funtion. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
-## Example - Get Cells Adjacent to a Point {#Example_PointAdjacentCells}
-This example shows how to the cells associated with a single point. The xms::XmUGrid::PointAdjacentCells function takes one point index as an argument and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
+## Example - Get Cells Adjacent to a Point {#Example_GetPointAdjacentCells}
+This example shows how to the cells associated with a single point. The xms::XmUGrid::GetPointAdjacentCells function takes one point index as an argument and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
-## Example - Get the Cells that Share All of Group of Points {#Example_PointsAdjacentCells}
-This example shows how to get the cells that share all of the same points or points. The xms::XmUGrid::PointsAdjacentCells function takes a vector of point indices as an argument and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
+## Example - Get the Cells that Share All of Group of Points {#Example_GetPointsAdjacentCells}
+This example shows how to get the cells that share all of the same points or points. The xms::XmUGrid::GetPointsAdjacentCells function takes a vector of point indices as an argument and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testPointFunctions.
 
 \snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_PointFunctions
 
-## Example - Get the Points (or their Locations) Adjacent to Point {#Example_PointAdjacentPoints}
-This example shows how to get the Points that are adjacent to a given point. The xms::XmUGrid::PointAdjacentPoints functions takes a point index as an argument and returns the indices of the adjacent Points.  The function xms::XmUGrid::PointAdjacentLocations returns instead the locations of the adjacent points.  The testing code for this example is in XmUGridUnitTests::testPointAdjacentPoints.
+## Example - Get the Points (or their Locations) Adjacent to Point {#Example_GetPointAdjacentPoints}
+This example shows how to get the Points that are adjacent to a given point. The xms::XmUGrid::GetPointAdjacentPoints functions takes a point index as an argument and returns the indices of the adjacent Points.  The function xms::XmUGrid::GetPointAdjacentLocations returns instead the locations of the adjacent points.  The testing code for this example is in XmUGridUnitTests::testGetPointAdjacentPoints.
 
-\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_PointAdjacentPoints
+\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_GetPointAdjacentPoints
 
-## Example - Get the Points or Locations of a Cell {#Example_CellPointsLocations}
-This example shows how to get the points of a cell. The xms::XmUGrid::CellPoints function takes one cell index and returns a vector of point indices. The xms::XmUGrid::CellLocations functions takes a cell index and returns a VecPt3d of the locations of those points.  Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
+## Example - Get the Points or Locations of a Cell {#Example_GetCellPointsLocations}
+This example shows how to get the points of a cell. The xms::XmUGrid::GetCellPoints function takes one cell index and returns a vector of point indices. The xms::XmUGrid::GetCellLocations functions takes a cell index and returns a VecPt3d of the locations of those points.  Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
 
-## Example - Get the Type of a Cell {#Example_CellType}
-This example shows how to get the type of a cell. The xms::XmUGrid::CellType function takes one cell index and returns the cell type. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
+## Example - Get the Type of a Cell {#Example_GetCellType}
+This example shows how to get the type of a cell. The xms::XmUGrid::GetCellType function takes one cell index and returns the cell type. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
 
-## Example - Get the Count of Cells in a UGrid of each of the possible Dimensions {#Example_DimensionCounts}
-This example shows how to get the count of the dimensions of cells used in a UGrid. The xms::XmUGrid::DimensionCounts function returns a vector with the number of cells with zero dimensions in the zero index, number of cells with one dimension in the first index, number of cells with two dimensions in the second index, and the number of cells with three dimensions in the third index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
+## Example - Get the Count of Cells in a UGrid of each of the possible Dimensions {#Example_GetDimensionCounts}
+This example shows how to get the count of the dimensions of cells used in a UGrid. The xms::XmUGrid::GetDimensionCounts function returns a vector with the number of cells with zero dimensions in the zero index, number of cells with one dimension in the first index, number of cells with two dimensions in the second index, and the number of cells with three dimensions in the third index. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
 
-## Example - Get the Dimension of a Cell {#Example_CellDimension}
-This example shows how to get the dimension of a cell. The xms::XmUGrid::CellDimension function takes one cell index and returns the cell dimension as an integer value. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
+## Example - Get the Dimension of a Cell {#Example_GetCellDimension}
+This example shows how to get the dimension of a cell. The xms::XmUGrid::GetCellDimension function takes one cell index and returns the cell dimension as an integer value. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellFunctions.
 
 \snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellFunctions
 
-## Example - Get the Cellstream of the UGrid {#Example_Cellstream}
-This example shows how to get the entire cellstream of the UGrid. The xms::XmUGrid::Cellstream function returns a vector of integers that is the cellstream. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellstreamFunctions.
+## Example - Get the Cellstream of the UGrid {#Example_GetCellstream}
+This example shows how to get the entire cellstream of the UGrid. The xms::XmUGrid::GetCellStream function returns a vector of integers that is the cellstream. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellstreamFunctions.
 
-## Example - Get a the Cellstream for Single Cell {#Example_CellCellstream}
-This example shows how to get the cellstream for one cell. The xms::XmUGrid::CellCellstream function takes a cell index and a vector of integers that is the cellstream for the specified cell passed in by reference. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellstreamFunctions.
+## Example - Get a the Cellstream for Single Cell {#Example_GetCellCellstream}
+This example shows how to get the cellstream for one cell. The xms::XmUGrid::GetCellCellstream function takes a cell index and a vector of integers that is the cellstream for the specified cell passed in by reference. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellstreamFunctions.
 
 \snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellstreamFunctions
 
-## Example - Get the Cells Adjacent to a Given Cell {#Example_CellAdjacentCells}
-This example shows how to get the cells adjacent to a given cell. Cells are adjacent if they share at least one point. The xms::XmUGrid::CellAdjacentCells function takes a cell index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::testCellAdjacentCells.
+## Example - Get the Cells Adjacent to a Given Cell {#Example_GetCellAdjacentCells}
+This example shows how to get the cells adjacent to a given cell. Cells are adjacent if they share at least one point. The xms::XmUGrid::GetCellAdjacentCells function takes a cell index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::testGetCellAdjacentCells.
 
-\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellAdjacentCells
+\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_GetCellAdjacentCells
 
-## Example - Get a Plan View Polygon {#Example_CellPlanViewPolygon}
-This example shows how to get a plan view polygon. The xms::XmUGrid::CellPlanViewPolygon function takes a cell index and a vector of Pt3d which is the points of the 2D cell and returns whether the operation was succesful. The testing code for this example is XmUGridUnitTests::testCellPlanViewPolygon.
+## Example - Get a Plan View Polygon {#Example_GetCellPlanViewPolygon}
+This example shows how to get a plan view polygon. The xms::XmUGrid::GetCellPlanViewPolygon function takes a cell index and a vector of Pt3d which is the points of the 2D cell and returns whether the operation was succesful. The testing code for this example is XmUGridUnitTests::testGetCellPlanViewPolygon.
 
-\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellPlanViewPolygon
+\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_GetCellPlanViewPolygon
 
-## Example - Get Number of Cell Edges {#Example_CellEdgeCount}
-This example shows how to get the number of cell edges in a cell. The xms::XmUGrid::CellEdgeCount function takes a cell index and returns the number of edges as an int. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
+## Example - Get Number of Cell Edges {#Example_GetCellEdgeCount}
+This example shows how to get the number of cell edges in a cell. The xms::XmUGrid::GetCellEdgeCount function takes a cell index and returns the number of edges as an int. Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
 
-## Example - Get Cell Edge from Edge Index {#Example_CellEdge}
-This example shows how to get the cell edge from a given cell and edge index. The xms::XmUGrid::CellEdge function takes a cell index and an edge index and returns a XmEdge containing the point indices of the edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
-
-\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellEdgeAdjacentCellFunctions
-
-## Example Get Cells Adjacent to an Edge of a Cell {#Example_CellEdgeAdjacentCells}
-This example shows how to get all cells which share the specified edge with a cell. The xms::XmUGrid::CellEdgeAdjacentCells function takes a cell index and an edge index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
-
-## Example 2D Get the Other Cell Adjacent to a particular Cell Edge{#Example_Cell2dEdgeAdjacentCell}
-This example shows how to get a 2D cell which is adjacent to another given 2D cell with a given edge index. The xms::XmUGrid::Cell2dEdgeAdjacentCell function takes a cell index and an edge index and returns a cell index, since no more than one cell may legally share an edge in this manner. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
-
-## Example Get Cells Adjacent to a Given Edge {#Example_EdgeAdjacentCells}
-This example shows how to get all cells which contain a given edge. The xms::XmUGrid::EdgeAdjacentCells function takes two point indices describing an edge and returns a vector of cell indices. There is also an overload which takes a pair of point indices describing an edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
+## Example - Get Cell Edge from Edge Index {#Example_GetCellEdge}
+This example shows how to get the cell edge from a given cell and edge index. The xms::XmUGrid::GetCellEdge function takes a cell index and an edge index and returns a XmEdge containing the point indices of the edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
 
 \snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellEdgeAdjacentCellFunctions
 
-## Example Get Edges of a Cell {#Example_CellEdges}
-This example shows how to get edges associated with a cell. The xms::XmUGrid::CellEdges function takes a cell index and returns a vector of XmEdge (each of which has a pair of integers which are point indices of the Edge). Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::testCellEdges
+## Example Get Cells Adjacent to an Edge of a Cell {#Example_GetCellEdgeAdjacentCells}
+This example shows how to get all cells which share the specified edge with a cell. The xms::XmUGrid::GetCellEdgeAdjacentCells function takes a cell index and an edge index and returns a vector of cell indices. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
+
+## Example 2D Get the Other Cell Adjacent to a particular Cell Edge{#Example_GetCell2dEdgeAdjacentCell}
+This example shows how to get a 2D cell which is adjacent to another given 2D cell with a given edge index. The xms::XmUGrid::GetCell2dEdgeAdjacentCell function takes a cell index and an edge index and returns a cell index, since no more than one cell may legally share an edge in this manner. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
+
+## Example Get Cells Adjacent to a Given Edge {#Example_GetEdgeAdjacentCells}
+This example shows how to get all cells which contain a given edge. The xms::XmUGrid::GetEdgeAdjacentCells function takes two point indices describing an edge and returns a vector of cell indices. There is also an overload which takes a pair of point indices describing an edge. Functionality is shared between 2d and 3d UGrids. The testing code for this example is shared with other examples, XmUGridUnitTests::testCellEdgeAdjacentCellFunctions
+
+\snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellEdgeAdjacentCellFunctions
+
+## Example Get Edges of a Cell {#Example_GetCellEdges}
+This example shows how to get edges associated with a cell. The xms::XmUGrid::GetCellEdges function takes a cell index and returns a vector of XmEdge (each of which has a pair of integers which are point indices of the Edge). Functionality is shared between 2d and 3d UGrids. The testing code for this example is XmUGridUnitTests::testCellEdges
 
 \snippet xmsgrid/ugrid/XmUGrid.cpp snip_test_CellEdges
