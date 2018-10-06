@@ -134,7 +134,7 @@ public:
 
   /// \brief Get vector of UGrid points.
   /// \return a vector of point locations
-  virtual const VecPt3d& Locations() const = 0;
+  virtual const VecPt3d& GetLocations() const = 0;
 
   /// \brief Set UGrid points.
   /// \param[in] a_locations vector of point locations
@@ -143,7 +143,7 @@ public:
   /// \brief Get the point
   /// \param[in] a_pointIdx the index of the point
   /// \return the point or an initialize point if the index is invalid
-  virtual Pt3d PointLocation(const int a_pointIdx) const = 0;
+  virtual Pt3d GetPointLocation(const int a_pointIdx) const = 0;
 
   /// \brief Set the point
   /// \param[in] a_pointIdx the index of the point
@@ -154,94 +154,95 @@ public:
   /// \brief Get the X, Y location of a point.
   /// \param[in] a_pointIdx The index of the point.
   /// \return The location of the point with Z set to 0.0.
-  virtual Pt3d PointXy0(const int a_pointIdx) const = 0;
+  virtual Pt3d GetPointXy0(const int a_pointIdx) const = 0;
 
   /// \brief Convert a vector of point indices into a vector of point 3d
   /// \param[in] a_points a vector of point indices
   /// \return vector of point 3d
-  virtual VecPt3d PointsLocations(const VecInt& a_points) const = 0;
+  virtual VecPt3d GetPointsLocations(const VecInt& a_points) const = 0;
 
   /// \brief Get extents of all points in UGrid
   /// \param[out] a_min minimum extent of all points
   /// \param[out] a_max maximum extent of all points
-  virtual void Extents(Pt3d& a_min, Pt3d& a_max) const = 0;
+  virtual void GetExtents(Pt3d& a_min, Pt3d& a_max) const = 0;
 
   /// \brief Get the cells that are associated with the specified point
   /// \param[in] a_pointIdx the index of the point
   /// \return a vector of the cell indices associated with this point
-  virtual VecInt PointAdjacentCells(const int a_pointIdx) const = 0;
+  virtual VecInt GetPointAdjacentCells(const int a_pointIdx) const = 0;
 
   /// \brief Get the cells that are associated with the specified point
   /// \param[in] a_pointIdx the index of the point
   /// \param[out] a_adjacentCells a vector of the adjacent cell indices
   /// \return a vector of the cell indices associated with this point
-  virtual void PointAdjacentCells(const int a_pointIdx, VecInt& a_adjacentCells) const = 0;
+  virtual void GetPointAdjacentCells(const int a_pointIdx, VecInt& a_adjacentCells) const = 0;
 
   /// \brief Gets the common cells from a vector of points
   /// \param[in] a_points a vector of unique points
   /// \return a vector of cell indices
-  virtual VecInt PointsAdjacentCells(const VecInt& a_points) const = 0;
+  virtual VecInt GetPointsAdjacentCells(const VecInt& a_points) const = 0;
 
   /// \brief Gets the cells adjacent to all of a vector of points.
   /// \param[in] a_pointIdxs an array of point indices
   /// \param[out] a_adjacentCellIdxs a vector of cell indices
-  virtual void PointsAdjacentCells(const VecInt& a_pointIdxs, VecInt& a_adjacentCellIdxs) const = 0;
+  virtual void GetPointsAdjacentCells(const VecInt& a_pointIdxs,
+                                      VecInt& a_adjacentCellIdxs) const = 0;
 
   /// \brief Gets the cells adjacent to both of the two points.
   /// \param[in] a_pointIdx1 first point index
   /// \param[in] a_pointIdx2 second point index
   /// \param[out] a_adjacentCellIdxs a vector of cell indices
-  virtual void PointsAdjacentCells(const int a_pointIdx1,
-                                   const int a_pointIdx2,
-                                   VecInt& a_adjacentCellIdxs) const = 0;
+  virtual void GetPointsAdjacentCells(const int a_pointIdx1,
+                                      const int a_pointIdx2,
+                                      VecInt& a_adjacentCellIdxs) const = 0;
 
   // Cells
 
   /// \brief Get the number of cells.
   /// \return the number of cells
-  virtual int CellCount() const = 0;
+  virtual int GetCellCount() const = 0;
 
   /// \brief Get the number of cell points (including polyhedron).
   /// \param[in] a_cellIdx the index of the cell
   /// \return a vector of point indices
-  virtual int CellPointCount(const int a_cellIdx) const = 0;
+  virtual int GetCellPointCount(const int a_cellIdx) const = 0;
 
   /// \brief Get the points of a cell (including polyhedron)
   /// \param[in] a_cellIdx the index of the cell
   /// \return a vector of point indices
-  virtual VecInt CellPoints(const int a_cellIdx) const = 0;
+  virtual VecInt GetCellPoints(const int a_cellIdx) const = 0;
 
   /// \brief Get the points of a cell.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[out] a_cellPoints the points of the cell
   /// \return if the cell index is valid
-  virtual bool CellPoints(const int a_cellIdx, VecInt& a_cellPoints) const = 0;
+  virtual bool GetCellPoints(const int a_cellIdx, VecInt& a_cellPoints) const = 0;
 
   /// \brief Get locations of cell points.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[out] a_cellLocations The locations of the cell points
-  virtual void CellLocations(const int a_cellIdx, VecPt3d& a_cellLocations) const = 0;
+  virtual void GetCellLocations(const int a_cellIdx, VecPt3d& a_cellLocations) const = 0;
 
   /// \brief Get the number of cells.
   /// \param[in] a_cellIdx the index of the cell
   /// \return the number of cells or -1 if invalid index
-  virtual XmUGridCellType CellType(const int a_cellIdx) const = 0;
+  virtual XmUGridCellType GetCellType(const int a_cellIdx) const = 0;
 
   /// \brief Count all number of the cells with each dimenion (0, 1, 2, 3)
   /// \return the count of dimensions of all of the cells of the ugrid
-  virtual std::vector<int> DimensionCounts() const = 0;
+  virtual std::vector<int> GetDimensionCounts() const = 0;
 
   /// \brief Get the dimension of the specified cell.
   /// \param[in] a_cellIdx the index of the cell
   /// \return the dimension of the cells or -1 if invalid index or invalid
   /// dimension
-  virtual int CellDimension(const int a_cellIdx) const = 0;
+  virtual int GetCellDimension(const int a_cellIdx) const = 0;
 
   /// \brief Get the extents of the given cell.
   /// \param[in] a_cellIdx The cell index to get the extents of.
   /// \param[out] a_min The minimum location.
   /// \param[out] a_max The maximum location.
-  virtual void CellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const = 0;
+  virtual void GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const = 0;
 
   /// \brief Get cell stream vector for the entire UGrid.
   /// A cellstream is defined as follows:
@@ -252,7 +253,7 @@ public:
   ///     Cell type (ElemTypeEnum), number of points, point numbers.  Zero-based, CCW,
   ///     bottom, then top. Not true for pixel or voxel.
   /// \return constant reference to the cell stream vector
-  virtual const VecInt& Cellstream() const = 0;
+  virtual const VecInt& GetCellStream() const = 0;
 
   /// \brief Set the ugrid cells for the entire UGrid using a cell stream.
   /// \param[in] a_cellstream The cellstream for the UGrid.
@@ -263,132 +264,132 @@ public:
   /// \brief Get cell stream vector for a single cell.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_cellstream The cellstream of the cell
-  /// @see Cellstream for more detail on cell stream definitions.
+  /// @see GetCellStream for more detail on cell stream definitions.
   /// \return whether it was successfull or not
-  virtual bool CellCellstream(const int a_cellIdx, VecInt& a_cellstream) const = 0;
+  virtual bool GetCellCellstream(const int a_cellIdx, VecInt& a_cellstream) const = 0;
 
   /// \brief Get the cells neighboring a cell (cells associated with any of it's points)
   /// \param[in] a_cellIdx the index of the cell
   /// \return vector of cell indices
-  virtual VecInt CellAdjacentCells(const int a_cellIdx) const = 0;
+  virtual VecInt GetCellAdjacentCells(const int a_cellIdx) const = 0;
 
   /// \brief Get the cells neighboring a cell (cells associated with any of it's points)
   /// \param[in] a_cellIdx the index of the cell
   /// \param[out] a_cellNeighbors vector of cell indices
-  virtual void CellAdjacentCells(const int a_cellIdx, VecInt& a_cellNeighbors) const = 0;
+  virtual void GetCellAdjacentCells(const int a_cellIdx, VecInt& a_cellNeighbors) const = 0;
 
   /// \brief Get a plan view polygon of a specified cell
   /// \param[in] a_cellIdx The index of the cell.
   /// \param[out] a_polygon Vector of Pt3d that is the plan view polygon.
   /// \return False if the cell index does not exist or if the cell is not 2 or 3
   /// dimensional.
-  virtual bool CellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const = 0;
+  virtual bool GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const = 0;
 
   /// \brief Get the centroid location of a cell.
   /// \param[in] a_cellIdx The index of the cell.
   /// \param[out] a_centroid The location of the cell centroid.
   /// \return False if the cell index does not exist.
-  virtual bool CellCentroid(int a_cellIdx, Pt3d& a_centroid) const = 0;
+  virtual bool GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const = 0;
 
   /// \brief Get the number of edges for a cell.
   /// \param[in] a_cellIdx the index of the cell
   /// \return the count of cell edges
-  virtual int CellEdgeCount(const int a_cellIdx) const = 0;
+  virtual int GetCellEdgeCount(const int a_cellIdx) const = 0;
 
   /// \brief Get the points of a cell.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_edgeIdx the index of the edge
   /// \return a standard pair of point indices (which is an edge)
-  virtual XmEdge CellEdge(const int a_cellIdx, const int a_edgeIdx) const = 0;
+  virtual XmEdge GetCellEdge(const int a_cellIdx, const int a_edgeIdx) const = 0;
 
   /// \brief Get the index of the adjacent cells (that shares the same cell edge)
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_edgeIdx the index of the edge
   /// \return a vector of cell indices of the adjacent cells
-  virtual VecInt CellEdgeAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
+  virtual VecInt GetCellEdgeAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const = 0;
 
   /// \brief Get the index of the adjacent cells (that shares the same cell edge)
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_edgeIdx the index of the edge
   /// \param[out] a_adjacentCellIdxs a vector of cell indices of the adjacent
   ///             cells
-  virtual void CellEdgeAdjacentCells(const int a_cellIdx,
-                                     const int a_edgeIdx,
-                                     VecInt& a_adjacentCellIdxs) const = 0;
+  virtual void GetCellEdgeAdjacentCells(const int a_cellIdx,
+                                        const int a_edgeIdx,
+                                        VecInt& a_adjacentCellIdxs) const = 0;
 
   /// \brief Get the index of the adjacent cells (that shares the same cell edge)
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_edgeIdx the index of the edge
   /// \return index of the adjacent cell (or -1 if none).
-  virtual int Cell2dEdgeAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const = 0;
+  virtual int GetCell2dEdgeAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const = 0;
 
   /// \brief Get the indices of the adjacent cells (that shares the same cell edge)
   /// \param[in] a_edge the edge (a pair of point indices)
   /// \param[out] a_adjacentCellIdxs a vector of cell indices of the adjacent cells
-  virtual void EdgeAdjacentCells(const XmEdge& a_edge, VecInt& a_adjacentCellIdxs) const = 0;
+  virtual void GetEdgeAdjacentCells(const XmEdge& a_edge, VecInt& a_adjacentCellIdxs) const = 0;
 
   /// \brief Get the index of the adjacent cells (that shares the same cell edge)
   /// \param[in] a_edge the edge (a pair of point indices)
   /// \return a vector of cell indices of the adjacent cells
-  virtual VecInt EdgeAdjacentCells(const XmEdge& a_edge) const = 0;
+  virtual VecInt GetEdgeAdjacentCells(const XmEdge& a_edge) const = 0;
 
   /// \brief Get the Edges of a cell.
   /// \param[in] a_cellIdx the cells to whom the edges belong
   /// \return a vector of edges
-  virtual std::vector<XmEdge> CellEdges(const int a_cellIdx) const = 0;
+  virtual std::vector<XmEdge> GetCellEdges(const int a_cellIdx) const = 0;
 
   /// \brief Get the Edges of a cell.
   /// \param[in] a_cellIdx the cells to whom the edges belong
   /// \param[out] a_edges a vector of edges
-  virtual void CellEdges(const int a_cellIdx, std::vector<XmEdge>& a_edges) const = 0;
+  virtual void GetCellEdges(const int a_cellIdx, std::vector<XmEdge>& a_edges) const = 0;
 
   /// \brief Given a point gets point indices attached to the point by an edge.
   /// \param[in] a_pointIdx The point to get adjacent points from.
   /// \param[out] a_edgePoints The indices of the adjacent points.
-  virtual void PointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const = 0;
+  virtual void GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const = 0;
 
   /// \brief Given a point gets point locations attached to the point by an edge.
   /// \param[in] a_pointIdx The point to get attached point from.
   /// \param[out] a_edgePoints A vector of points attached across edges.
-  virtual void PointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const = 0;
+  virtual void GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const = 0;
 
   // Faces
 
   /// \brief Get the number of cell faces for given cell.
   /// \param[in] a_cellIdx the index of the cell
   /// \return the count of cell faces
-  virtual int Cell3dFaceCount(const int a_cellIdx) const = 0;
+  virtual int GetCell3dFaceCount(const int a_cellIdx) const = 0;
   /// \brief Get the number of face points for a given cell and face.
   /// \param[in] a_cellIdx The cell
   /// \param[in] a_faceIdx The face
   /// \return The number of face points or -1 if invalid face or cell index.
-  virtual int Cell3dFacePointCount(const int a_cellIdx, const int a_faceIdx) const = 0;
+  virtual int GetCell3dFacePointCount(const int a_cellIdx, const int a_faceIdx) const = 0;
 
   /// \brief Get the cell face for given cell and face index.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_faceIdx the face index of the cell
   /// \return a vector of point indices for the face index of the cell
-  virtual VecInt Cell3dFacePoints(const int a_cellIdx, const int a_faceIdx) const = 0;
+  virtual VecInt GetCell3dFacePoints(const int a_cellIdx, const int a_faceIdx) const = 0;
 
   /// \brief Get the cell face for given cell and face index.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_faceIdx the face index of the cell
   /// \param[out] a_facePtIdxs a vector of point indices for the face
   /// \return a vector of point indices for the face index of the cell
-  virtual void Cell3dFacePoints(const int a_cellIdx,
-                                const int a_faceIdx,
-                                VecInt& a_facePtIdxs) const = 0;
+  virtual void GetCell3dFacePoints(const int a_cellIdx,
+                                   const int a_faceIdx,
+                                   VecInt& a_facePtIdxs) const = 0;
 
   /// \brief Get the faces of a cell.
   /// \param[in] a_cellIdx the cells to whom the faces belong
   /// \return a vector of faces, which is a vector of point indices
-  virtual VecInt2d Cell3dFacesPoints(const int a_cellIdx) const = 0;
+  virtual VecInt2d GetCell3dFacesPoints(const int a_cellIdx) const = 0;
 
   /// \brief Get the cell face neighbors for given cell and face index.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_faceIdx the face index of the cell
   /// \return a cell index of the neighbor
-  virtual int Cell3dFaceAdjacentCell(const int a_cellIdx, const int a_faceIdx) const = 0;
+  virtual int GetCell3dFaceAdjacentCell(const int a_cellIdx, const int a_faceIdx) const = 0;
 
   /// \brief Get the cell face neighbors for given cell and face index.
   /// \param[in] a_cellIdx the index of the cell
@@ -397,10 +398,10 @@ public:
   /// \param[in] a_neighborFace the face index of the neighboring cell adjacent
   ///      to the given face
   /// \return a cell index of the neighbor
-  virtual bool Cell3dFaceAdjacentCell(const int a_cellIdx,
-                                      const int a_faceIdx,
-                                      int& a_neighborCell,
-                                      int& a_neighborFace) const = 0;
+  virtual bool GetCell3dFaceAdjacentCell(const int a_cellIdx,
+                                         const int a_faceIdx,
+                                         int& a_neighborCell,
+                                         int& a_neighborFace) const = 0;
 
 private:
   /// \cond
