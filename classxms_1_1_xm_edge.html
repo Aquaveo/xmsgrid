@@ -47,6 +47,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -94,7 +95,7 @@ $(document).ready(function(){initNavTree('classxms_1_1_xm_edge.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -271,7 +272,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 <p>References <a class="el" href="_xm_edge_8h_source.html#l00052">m_pt1</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01510">xms::XmUGridImpl::CellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01644">xms::XmUGridImpl::EdgeAdjacentCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01691">xms::XmUGridImpl::PointAdjacentPoints()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01508">xms::XmUGridImpl::GetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01642">xms::XmUGridImpl::GetEdgeAdjacentCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01689">xms::XmUGridImpl::GetPointAdjacentPoints()</a>.</p>
 
 </div>
 </div>
@@ -295,7 +296,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 <p>References <a class="el" href="_xm_edge_8h_source.html#l00053">m_pt2</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01510">xms::XmUGridImpl::CellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01644">xms::XmUGridImpl::EdgeAdjacentCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01691">xms::XmUGridImpl::PointAdjacentPoints()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01508">xms::XmUGridImpl::GetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l01642">xms::XmUGridImpl::GetEdgeAdjacentCells()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l01689">xms::XmUGridImpl::GetPointAdjacentPoints()</a>.</p>
 
 </div>
 </div>
@@ -326,7 +327,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 <p>References <a class="el" href="_xm_edge_8h_source.html#l00052">m_pt1</a>, and <a class="el" href="_xm_edge_8h_source.html#l00053">m_pt2</a>.</p>
 
-<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01586">xms::XmUGridImpl::CellEdgeAdjacentCells()</a>, and <a class="el" href="_xm_edge_8cpp_source.html#l00195">XmEdgeUnitTests::testIsEquivalent()</a>.</p>
+<p>Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01584">xms::XmUGridImpl::GetCellEdgeAdjacentCells()</a>, and <a class="el" href="_xm_edge_8cpp_source.html#l00195">XmEdgeUnitTests::testIsEquivalent()</a>.</p>
 
 </div>
 </div>
@@ -454,7 +455,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacexms.html">xms</a></li><li class="navelem"><a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a></li>
-    <li class="footer">Generated on Wed Oct 3 2018 19:56:55 for xmsgrid by
+    <li class="footer">Generated on Sun Oct 7 2018 06:23:27 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

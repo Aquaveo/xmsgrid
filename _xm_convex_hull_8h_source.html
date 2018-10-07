@@ -47,6 +47,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -93,7 +94,7 @@ $(document).ready(function(){initNavTree('_xm_convex_hull_8h_source.html','');})
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -137,13 +138,15 @@ $(document).ready(function(){initNavTree('_xm_convex_hull_8h_source.html','');})
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">//----- Structs / Classes ------------------------------------------------------</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">//----- Function prototypes ----------------------------------------------------</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;std::vector&lt;Pt3d&gt; ConvexHull(std::vector&lt;Pt3d&gt; a_points);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> ConvexHullWithIndices(<span class="keyword">const</span> <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&amp; a_points, BSHP&lt;XmUGrid&gt; a_ugrid);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;std::vector&lt;Pt3d&gt; <a class="code" href="namespacexms.html#a1973dbb5cf1431334a569f565b1c7d13">ConvexHull</a>(std::vector&lt;Pt3d&gt; a_points);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> <a class="code" href="namespacexms.html#ac022fbaa831f7fc3362547238bad840a">ConvexHullWithIndices</a>(<span class="keyword">const</span> <a class="codeRef" doxygen="/home/travis/build/Aquaveo/xmsgrid/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore//" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&amp; a_points, BSHP&lt;XmUGrid&gt; a_ugrid);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;} <span class="comment">// namespace xms</span></div>
-<div class="ttc" id="namespacexms_html_ad81e1ef6499bc0e65df973717a1e2fbb"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/namespacexms.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a></div><div class="ttdeci">std::vector&lt; int &gt; VecInt</div></div>
+<div class="ttc" id="vector_8h_html_ad81e1ef6499bc0e65df973717a1e2fbb"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a></div><div class="ttdeci">std::vector&lt; int &gt; VecInt</div></div>
 <div class="ttc" id="boost__defines_8h_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/boost__defines_8h.html">boost_defines.h</a></div></div>
+<div class="ttc" id="namespacexms_html_a1973dbb5cf1431334a569f565b1c7d13"><div class="ttname"><a href="namespacexms.html#a1973dbb5cf1431334a569f565b1c7d13">xms::ConvexHull</a></div><div class="ttdeci">std::vector&lt; Pt3d &gt; ConvexHull(std::vector&lt; Pt3d &gt; a_points)</div><div class="ttdoc">Returns the convex hull of a set of points. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_convex_hull_8cpp_source.html#l00054">XmConvexHull.cpp:54</a></div></div>
 <div class="ttc" id="vector_8h_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/vector_8h.html">vector.h</a></div></div>
+<div class="ttc" id="namespacexms_html_ac022fbaa831f7fc3362547238bad840a"><div class="ttname"><a href="namespacexms.html#ac022fbaa831f7fc3362547238bad840a">xms::ConvexHullWithIndices</a></div><div class="ttdeci">VecInt ConvexHullWithIndices(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</div><div class="ttdoc">Returns the convex hull of a set of points. </div><div class="ttdef"><b>Definition:</b> <a href="_xm_convex_hull_8cpp_source.html#l00091">XmConvexHull.cpp:91</a></div></div>
 <div class="ttc" id="base__macros_8h_html"><div class="ttname"><a href="https://aquaveo.github.io/xmscore/base__macros_8h.html">base_macros.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -151,7 +154,7 @@ $(document).ready(function(){initNavTree('_xm_convex_hull_8h_source.html','');})
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_a4f80c8107f4df91c21d011369fb1e1d.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_convex_hull_8h.html">XmConvexHull.h</a></li>
-    <li class="footer">Generated on Wed Oct 3 2018 19:56:54 for xmsgrid by
+    <li class="footer">Generated on Sun Oct 7 2018 06:23:26 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

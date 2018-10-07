@@ -7,23 +7,41 @@
     <includes id="_xm_convex_hull_8h" name="XmConvexHull.h" local="no" imported="no">xmsgrid/ugrid/XmConvexHull.h</includes>
     <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
+    <namespace>xms</namespace>
+    <member kind="function">
+      <type>std::vector&lt; Pt3d &gt;</type>
+      <name>ConvexHull</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a1973dbb5cf1431334a569f565b1c7d13</anchor>
+      <arglist>(std::vector&lt; Pt3d &gt; a_points)</arglist>
+    </member>
+    <member kind="function">
+      <type>VecInt</type>
+      <name>ConvexHullWithIndices</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
+      <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>XmConvexHull.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_convex_hull_8h</filename>
+    <namespace>xms</namespace>
   </compound>
   <compound kind="file">
     <name>XmEdge.cpp</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_edge_8cpp</filename>
     <includes id="_xm_edge_8t_8h" name="XmEdge.t.h" local="no" imported="no">xmsgrid/ugrid/XmEdge.t.h</includes>
+    <namespace>xms</namespace>
   </compound>
   <compound kind="file">
     <name>XmEdge.t.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_edge_8t_8h</filename>
     <class kind="class">XmEdgeUnitTests</class>
+    <namespace>xms</namespace>
   </compound>
   <compound kind="file">
     <name>XmUGrid.cpp</name>
@@ -34,6 +52,98 @@
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
     <includes id="_xm_u_grid_8t_8h" name="XmUGrid.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.t.h</includes>
     <class kind="class">xms::XmUGridImpl</class>
+    <namespace>xms</namespace>
+    <member kind="typedef">
+      <type>std::vector&lt; XmEdge &gt;</type>
+      <name>VecEdge</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>acd21e8de7357a71eb268548c301c9f43</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGrid1Left90Tri</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>acf4c5713f23e0600ec26bb0294263068</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGridSimpleQuad</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a65e5eef7f0e8c64484b1aaa0924364b7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGrid2dLinear</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a8260f0723d0bdca40b077369e5321ac8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGrid3dLinear</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>af931fa91f04abddf2d9469ef64ecfa70</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGridHexagonalPolyhedron</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a15d3f924e7e8424b2c491ef2132b700c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildQuadUGrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a66cfca71e0f54169d0175e75a1da1b9f</anchor>
+      <arglist>(const int a_rows, const int a_cols)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildQuadUGrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ae795f753066bfd3749f441b965aba896</anchor>
+      <arglist>(const int a_rows, const int a_cols, const xms::Pt3d &amp;a_origin)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildHexahedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a0a50a2c6d678fa5e90212d03fecd3f44</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildHexahedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a9b7018697957bbe8aed198fe6cf69a07</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildPolyhedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a512cd32ebbe039154d962c0d47a6e4fc</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildPolyhedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a6b241889d06a379363e269e80a06ea1c</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuild3DChevronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a18cc668860be57dfc3d4800446ab6dfb</anchor>
+      <arglist>()</arglist>
+    </member>
     <member kind="function">
       <type>std::string</type>
       <name>TestFilesPath</name>
@@ -47,12 +157,28 @@
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_8h</filename>
     <class kind="class">xms::XmUGrid</class>
+    <namespace>xms</namespace>
+    <member kind="enumeration">
+      <type></type>
+      <name>XmUGridCellType</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ac31bf74ccc479f6e1c2ae761d3d727a9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>XmUGridFaceOrientation</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a136ad631d47aa5714f72cdc84fd8dca5</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>XmUGrid.t.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_8t_8h</filename>
     <class kind="class">XmUGridUnitTests</class>
+    <namespace>xms</namespace>
     <member kind="function">
       <type>std::string</type>
       <name>TestFilesPath</name>
@@ -69,11 +195,48 @@
     <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
     <includes id="_xm_u_grid_8t_8h" name="XmUGrid.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.t.h</includes>
     <includes id="_xm_u_grid_utils_8t_8h" name="XmUGridUtils.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.t.h</includes>
+    <namespace>xms</namespace>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>XmReadUGridFromAsciiFile</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a92b5c5c0a9e2455db6d671eb7134a76e</anchor>
+      <arglist>(const std::string &amp;a_filePath)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToAsciiFile</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
+      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>cross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a19d9cf623f58dfd2c0f07818b00c3ef0</anchor>
+      <arglist>(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ae637b67d3f1510d9d944bbf58b357f96</anchor>
+      <arglist>(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a65c87e21852eec5a00868110b3cdc729</anchor>
+      <arglist>(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>XmUGridUtils.h</name>
     <path>/home/travis/build/Aquaveo/xmsgrid/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_utils_8h</filename>
+    <namespace>xms</namespace>
   </compound>
   <compound kind="file">
     <name>XmUGridUtils.t.h</name>
@@ -101,30 +264,29 @@
     <docanchor file="md__three_d__tutorial" title="Example - Creating a New 3D UGrid">Example_New3d</docanchor>
     <docanchor file="md__three_d__tutorial" title="Example - Setting the UGrid Points">Example_SetPoints3d</docanchor>
     <docanchor file="md__three_d__tutorial" title="Example - Setting the UGrid Cell Stream">Example_SetCellstream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Validating the Cellstream">Example_ValidatingCellstream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Number Of Points">Example_PointCount3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Point Locations">Example_Locations3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get Number Of Points">Example_GetPointCount3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get Point Locations">Example_GetLocations3d</docanchor>
     <docanchor file="md__three_d__tutorial" title="Example - Get Location of a Point">Example_PointLocation3d</docanchor>
     <docanchor file="md__three_d__tutorial" title="Example - Set Point Location">Example_SetLocation3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Locations of an Array of Points">Example_PointsLocations3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Extents of UGrid">Example_Extents3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get Locations of an Array of Points">Example_GetPointsLocations3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get GetExtents of UGrid">Example_GetExtents3d</docanchor>
     <docanchor file="md__three_d__tutorial" title="Example - Get Cells Associated with a Point">Example_PointCells3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Cells that Share the Same Point or Points">Example_PointsAdjacentCells3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Points of a Cell">Example_CellPointsLocations3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Type of a Cell">Example_CellType3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Number of the Cells of each Dimension in a UGrid">Example_DimensionCounts3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Dimension of a Cell">Example_CellDimension3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Cellstream of the UGrid">Example_Cellstream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get a Single Cellstream for One Cell">Example_CellCellstream3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get the Cells Adjacent to a Given Cell">Example_CellAdjacentCells3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get a Plan View Polygon">Example_CellPlanViewPolygon3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example - Get Number of Cell Edges">Example_CellEdgeCount3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Cell Edge Adjacent Cells">Example_CellEdgeAdjacentCells3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Edges Associated with a Cell">Example_CellEdges3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Number of Faces for a Cell">Example_Cell3dFaceCount3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Cell Face">Example_Cell3dFacePoints3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Faces of Cell">Example_Cell3dFacesPoints3d</docanchor>
-    <docanchor file="md__three_d__tutorial" title="Example Get Cell Face Ajacent Cell">Example_Cell3dFaceAdjacentCell3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get the Cells that Share the Same Point or Points">Example_GetPointsAdjacentCells3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get the Points of a Cell">Example_GetCellPointsLocations3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get the Type of a Cell">Example_GetCellType3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get the Number of the Cells of each Dimension in a UGrid">Example_GetDimensionCounts3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get the Dimension of a Cell">Example_GetCellDimension3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get the Cellstream of the UGrid">Example_GetCellstream3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get a Single Cellstream for One Cell">Example_GetCellCellstream3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get the Cells Adjacent to a Given Cell">Example_GetCellAdjacentCells3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get a Plan View Polygon">Example_GetCellPlanViewPolygon3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example - Get Number of Cell Edges">Example_GetCellEdgeCount3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example Get Cell Edge Adjacent Cells">Example_GetCellEdgeAdjacentCells3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example Get Edges Associated with a Cell">Example_GetCellEdges3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example Get Number of Faces for a Cell">Example_GetCell3dFaceCount3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example Get Cell Face">Example_GetCell3dFacePoints3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example Get Faces of Cell">Example_GetCell3dFacesPoints3d</docanchor>
+    <docanchor file="md__three_d__tutorial" title="Example Get Cell Face Ajacent Cell">Example_GetCell3dFaceAdjacentCell3d</docanchor>
   </compound>
   <compound kind="page">
     <name>md_TwoD_Tutorial</name>
@@ -137,30 +299,29 @@
     <docanchor file="md__two_d__tutorial" title="Example - Creating a New 2D UGrid">Example_New2d</docanchor>
     <docanchor file="md__two_d__tutorial" title="Example - Setting the UGrid Points">Example_SetPoints2d</docanchor>
     <docanchor file="md__two_d__tutorial" title="Example - Setting the UGrid Cell Stream">Example_SetCellstream2d</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Validating the Cellstream">Example_IsValidCellstream</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Number Of Points">Example_PointCount</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Points (Locations)">Example_Locations</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Point Location">Example_PointLocation</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Number Of Points">Example_GetPointCount</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Points (Locations)">Example_GetLocations</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Point Location">Example_GetPointLocation</docanchor>
     <docanchor file="md__two_d__tutorial" title="Example - Set Point Location">Example_SetLocation</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Locations of Many Points">Example_PointsLocations</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Extents of UGrid">Example_Extents</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Cells Adjacent to a Point">Example_PointAdjacentCells</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Cells that Share All of Group of Points">Example_PointsAdjacentCells</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Points (or their Locations) Adjacent to Point">Example_PointAdjacentPoints</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Points or Locations of a Cell">Example_CellPointsLocations</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Type of a Cell">Example_CellType</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Count of Cells in a UGrid of each of the possible Dimensions">Example_DimensionCounts</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Dimension of a Cell">Example_CellDimension</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Cellstream of the UGrid">Example_Cellstream</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get a the Cellstream for Single Cell">Example_CellCellstream</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get the Cells Adjacent to a Given Cell">Example_CellAdjacentCells</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get a Plan View Polygon">Example_CellPlanViewPolygon</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Number of Cell Edges">Example_CellEdgeCount</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example - Get Cell Edge from Edge Index">Example_CellEdge</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example Get Cells Adjacent to an Edge of a Cell">Example_CellEdgeAdjacentCells</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example 2D Get the Other Cell Adjacent to a particular Cell Edge">Example_Cell2dEdgeAdjacentCell</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example Get Cells Adjacent to a Given Edge">Example_EdgeAdjacentCells</docanchor>
-    <docanchor file="md__two_d__tutorial" title="Example Get Edges of a Cell">Example_CellEdges</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Locations of Many Points">Example_GetPointsLocations</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Extents of UGrid">Example_GetExtents</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Cells Adjacent to a Point">Example_GetPointAdjacentCells</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Cells that Share All of Group of Points">Example_GetPointsAdjacentCells</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Points (or their Locations) Adjacent to Point">Example_GetPointAdjacentPoints</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Points or Locations of a Cell">Example_GetCellPointsLocations</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Type of a Cell">Example_GetCellType</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Count of Cells in a UGrid of each of the possible Dimensions">Example_GetDimensionCounts</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Dimension of a Cell">Example_GetCellDimension</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Cellstream of the UGrid">Example_GetCellstream</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get a the Cellstream for Single Cell">Example_GetCellCellstream</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get the Cells Adjacent to a Given Cell">Example_GetCellAdjacentCells</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get a Plan View Polygon">Example_GetCellPlanViewPolygon</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Number of Cell Edges">Example_GetCellEdgeCount</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example - Get Cell Edge from Edge Index">Example_GetCellEdge</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example Get Cells Adjacent to an Edge of a Cell">Example_GetCellEdgeAdjacentCells</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example 2D Get the Other Cell Adjacent to a particular Cell Edge">Example_GetCell2dEdgeAdjacentCell</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example Get Cells Adjacent to a Given Edge">Example_GetEdgeAdjacentCells</docanchor>
+    <docanchor file="md__two_d__tutorial" title="Example Get Edges of a Cell">Example_GetCellEdges</docanchor>
   </compound>
   <compound kind="class">
     <name>XmEdgeUnitTests</name>
@@ -221,100 +382,100 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellCellstream</name>
+      <name>testGetCellCellstream</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a2116b1d1771d395a117e222205a6bf7d</anchor>
+      <anchor>ae73fd2b8e90884a9cba99bd116fc1420</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellType</name>
+      <name>testGetCellType</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>ac4053b1a7c59e998ddc703a3d22fcd41</anchor>
+      <anchor>afa1aba19187a3773dfd67177f69fd61c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellDimension</name>
+      <name>testGetCellDimension</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a6cf379ff58118f56a4f67a7cc6c6376e</anchor>
+      <anchor>af94b78cd1c7f2bb1824cb970907825c2</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testExtents</name>
+      <name>testGetExtents</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>ab86d75b903cc9d4018773c5b3efc69fd</anchor>
+      <anchor>a77d4e944bf291f94ededbcbedb295fe9</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellEdgeCount</name>
+      <name>testGetCellEdgeCount</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a6ac9410bbb1dc654028ff63ecd830071</anchor>
+      <anchor>abc5b4f556d07a27d80d5e300bc470123</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCell3dFaceCount</name>
+      <name>testGetCell3dFaceCount</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a802dd4c3c03c26b09acfe29fd386366e</anchor>
+      <anchor>a24af8a3e33913422fe3ad15c0e092583</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCell3dFacePointCount</name>
+      <name>testGetCell3dFacePointCount</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a93be1616ec0e204bb6ac7c0c983972a7</anchor>
+      <anchor>aa64c5e0c1cb6b4c7d215e9353c8eb94e</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testPointAdjacentCellsSimple</name>
+      <name>testGetPointAdjacentCellsSimple</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a8d605539900c285b67b31b896b01c197</anchor>
+      <anchor>a96b2c359b67c2ca38a965f61c7ad7ad3</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testPointAdjacentCells</name>
+      <name>testGetPointAdjacentCells</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>ad3dffadcff99711fcd5cd781de8f8470</anchor>
+      <anchor>a233fd26970ec2d93297a91dc55405b96</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellPoints</name>
+      <name>testGetCellPoints</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a9abb53399e9963ffeabe49c88b603d12</anchor>
+      <anchor>a0fd4ec904f001bd1c46811c626b40b44</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellEdge</name>
+      <name>testGetCellEdge</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>aa3270157a391081ab47a72ccdf192b78</anchor>
+      <anchor>a879170cb8bc9ea1ec63d642c0a17da7a</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testPointsAdjacentCells</name>
+      <name>testGetPointsAdjacentCells</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a48369c900cbef2080d12d97dc2e57177</anchor>
+      <anchor>a1e7c907b9b39e0581157e422d5613932</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellAdjacentCells</name>
+      <name>testGetCellAdjacentCells</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a021d24be5ed533444e1ca6bbb55b942b</anchor>
+      <anchor>af64a6531be327452cc4a1ad83990acf5</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellEdgeAdjacentCells</name>
+      <name>testGetCellEdgeAdjacentCells</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>ad7bb1c9c4a8b5769f5d43b6e1b4436d4</anchor>
+      <anchor>a5097b385a23b1507a4620aec2e706beb</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -326,37 +487,37 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCell3dFacePoints</name>
+      <name>testGetCell3dFacePoints</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a9b47cf1dd39184b45d3474a048d19060</anchor>
+      <anchor>a4b745c672b7c2efbc42ecdc8bf6f6035</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCell3dFaceAdjacentCell</name>
+      <name>testGetCell3dFaceAdjacentCell</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a67848a10071ac23289df49793b6691e6</anchor>
+      <anchor>ad0716e5ca692e4d3f3f01d9e70c9d42c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testPointAdjacentPoints</name>
+      <name>testGetPointAdjacentPoints</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a7020d394c986e0fef23b0227ce2ea19e</anchor>
+      <anchor>a95e4da4737130b850d934d54592857ef</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellPlanViewPolygon</name>
+      <name>testGetCellPlanViewPolygon</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a129e82c2a7eb6661c64decd00521ae8d</anchor>
+      <anchor>a2a501c42695c70642a07a142391f3a10</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>testCellPlanViewPolygonMultiSideFace</name>
+      <name>testGetCellPlanViewPolygonMultiSideFace</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
-      <anchor>a5107cc71a46ae4df21ab51aa9da35891</anchor>
+      <anchor>a197e0b6f082a9946dd3510348ecd0593</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -511,6 +672,167 @@
       <arglist>()</arglist>
     </member>
   </compound>
+  <compound kind="namespace">
+    <name>xms</name>
+    <filename>namespacexms.html</filename>
+    <class kind="class">xms::XmEdge</class>
+    <class kind="class">xms::XmUGridImpl</class>
+    <class kind="class">xms::XmUGrid</class>
+    <member kind="typedef">
+      <type>std::vector&lt; XmEdge &gt;</type>
+      <name>VecEdge</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>acd21e8de7357a71eb268548c301c9f43</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>XmUGridCellType</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ac31bf74ccc479f6e1c2ae761d3d727a9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>XmUGridFaceOrientation</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a136ad631d47aa5714f72cdc84fd8dca5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Pt3d &gt;</type>
+      <name>ConvexHull</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a1973dbb5cf1431334a569f565b1c7d13</anchor>
+      <arglist>(std::vector&lt; Pt3d &gt; a_points)</arglist>
+    </member>
+    <member kind="function">
+      <type>VecInt</type>
+      <name>ConvexHullWithIndices</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
+      <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGrid1Left90Tri</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>acf4c5713f23e0600ec26bb0294263068</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGridSimpleQuad</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a65e5eef7f0e8c64484b1aaa0924364b7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGrid2dLinear</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a8260f0723d0bdca40b077369e5321ac8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGrid3dLinear</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>af931fa91f04abddf2d9469ef64ecfa70</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>TEST_XmUGridHexagonalPolyhedron</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a15d3f924e7e8424b2c491ef2132b700c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildQuadUGrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a66cfca71e0f54169d0175e75a1da1b9f</anchor>
+      <arglist>(const int a_rows, const int a_cols)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildQuadUGrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ae795f753066bfd3749f441b965aba896</anchor>
+      <arglist>(const int a_rows, const int a_cols, const xms::Pt3d &amp;a_origin)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildHexahedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a0a50a2c6d678fa5e90212d03fecd3f44</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildHexahedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a9b7018697957bbe8aed198fe6cf69a07</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildPolyhedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a512cd32ebbe039154d962c0d47a6e4fc</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuildPolyhedronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a6b241889d06a379363e269e80a06ea1c</anchor>
+      <arglist>(const int a_rows, const int a_cols, const int a_lays, const xms::Pt3d &amp;a_origin)</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; xms::XmUGrid &gt;</type>
+      <name>TEST_XmUBuild3DChevronUgrid</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a18cc668860be57dfc3d4800446ab6dfb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>XmReadUGridFromAsciiFile</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a92b5c5c0a9e2455db6d671eb7134a76e</anchor>
+      <arglist>(const std::string &amp;a_filePath)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToAsciiFile</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
+      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>cross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a19d9cf623f58dfd2c0f07818b00c3ef0</anchor>
+      <arglist>(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ae637b67d3f1510d9d944bbf58b357f96</anchor>
+      <arglist>(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a65c87e21852eec5a00868110b3cdc729</anchor>
+      <arglist>(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)</arglist>
+    </member>
+  </compound>
   <compound kind="class">
     <name>xms::XmEdge</name>
     <filename>classxms_1_1_xm_edge.html</filename>
@@ -626,9 +948,9 @@
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual const VecPt3d &amp;</type>
-      <name>Locations</name>
+      <name>GetLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>aadbfb69cae20d526e89563dc13209359</anchor>
+      <anchor>a21ed238c5e4c9118e3c5ad0a5099e250</anchor>
       <arglist>() const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -640,9 +962,9 @@
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Pt3d</type>
-      <name>PointLocation</name>
+      <name>GetPointLocation</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>add177e82ab0a293d1f12da81480c07ae</anchor>
+      <anchor>af34e4c2d2b7eb8a414c89f78fbaecc37</anchor>
       <arglist>(const int a_pointIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -654,135 +976,135 @@
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual Pt3d</type>
-      <name>PointXy0</name>
+      <name>GetPointXy0</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a426fb03455743fbcca4d1bde9d84ca45</anchor>
+      <anchor>a86b5100050202c6e7e1ae940212da0a5</anchor>
       <arglist>(const int a_pointIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecPt3d</type>
-      <name>PointsLocations</name>
+      <name>GetPointsLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>acb24d1d3e3a0edd12aa6dab5144eeb1e</anchor>
+      <anchor>a1fb343e6970ad37b346fd8161c887a17</anchor>
       <arglist>(const VecInt &amp;a_points) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>Extents</name>
+      <name>GetExtents</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>afc9296fde38d01819dc626c8ae8cb181</anchor>
+      <anchor>a110228f473bdce917fdae9edfd3ea970</anchor>
       <arglist>(Pt3d &amp;a_min, Pt3d &amp;a_max) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
-      <name>PointAdjacentCells</name>
+      <name>GetPointAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ad4078922bbeca58f66f34920ca09c001</anchor>
+      <anchor>aa68ec80d9faae0e377c95257c01e1dac</anchor>
       <arglist>(const int a_pointIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>PointAdjacentCells</name>
+      <name>GetPointAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a81bca1024eed0d0a9674e5a71f2d8c37</anchor>
+      <anchor>a4cc86f3c153e86e4fdfe8c7b19046a04</anchor>
       <arglist>(const int a_pointIdx, VecInt &amp;a_adjacentCells) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
-      <name>PointsAdjacentCells</name>
+      <name>GetPointsAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a33fc735bd312dd2082ea9be7c396e3f9</anchor>
+      <anchor>a8c026bafde697ca475712d6c09982954</anchor>
       <arglist>(const VecInt &amp;a_points) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>PointsAdjacentCells</name>
+      <name>GetPointsAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a0b49825cbef5d7a6e17735f2a7693bdc</anchor>
+      <anchor>a0269b202dda6e477d51739162d08e37d</anchor>
       <arglist>(const int *a_pointIdxs, int a_numpointIdxs, VecInt &amp;a_commonCellIdxs) const </arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>PointsAdjacentCells</name>
+      <name>GetPointsAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ae263a1781a7b4d5abc82d328abf9773c</anchor>
+      <anchor>a5d04574d7e5dbf707abf9fb8bf703a37</anchor>
       <arglist>(const VecInt &amp;a_points, VecInt &amp;a_commonCellIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>PointsAdjacentCells</name>
+      <name>GetPointsAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ab8a097177f13f5292ffa31a1a4131e0b</anchor>
+      <anchor>a10eeac62d5cec0c88d6000c2beb02d07</anchor>
       <arglist>(const int a_pointIdx1, const int a_pointIdx2, VecInt &amp;a_commonCellIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>CellCount</name>
+      <name>GetCellCount</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a3ef6ff998c2c8a8b914f4e4ee12186c9</anchor>
+      <anchor>ab7675dc5297790cb3a467fedcb70bf07</anchor>
       <arglist>() const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>CellPointCount</name>
+      <name>GetCellPointCount</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a6c371caf8356c8049220b8b629c8910d</anchor>
+      <anchor>a27b8d19e26fa258bce61dfe220715590</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
-      <name>CellPoints</name>
+      <name>GetCellPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a44c72b489033b7c630779dadc1bd9d87</anchor>
+      <anchor>a61251e6f9231a3079467aa0155ce28c9</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
-      <name>CellPoints</name>
+      <name>GetCellPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a19bc1291ce88131fbbd17f0e88c2b330</anchor>
+      <anchor>a938ceec91449a093548dcaaa384a0f37</anchor>
       <arglist>(const int a_cellIdx, VecInt &amp;a_cellPoints) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>CellLocations</name>
+      <name>GetCellLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a97205f47c8ec1c550c40ff0852c4432d</anchor>
+      <anchor>ae6157c33f9f5475fc077a42a135f19fb</anchor>
       <arglist>(const int a_cellIdx, VecPt3d &amp;a_cellLocations) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual XmUGridCellType</type>
-      <name>CellType</name>
+      <name>GetCellType</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a6c0f48c0acc2b6ad97d5691a10500241</anchor>
+      <anchor>a36d0b59da6296f1e990583cad17c86f5</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual std::vector&lt; int &gt;</type>
-      <name>DimensionCounts</name>
+      <name>GetDimensionCounts</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>aebc2f8ef76e2836fb73bd3e704d42b6a</anchor>
+      <anchor>a2c20ecde4a30a8cc9ceb9481c6354f29</anchor>
       <arglist>() const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>CellDimension</name>
+      <name>GetCellDimension</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>af30fa6e808fa4abc959866a66a6d5269</anchor>
+      <anchor>a672fe28101f211d9291001e0ce6a5318</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>CellExtents</name>
+      <name>GetCellExtents</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a8a972f53b8a28194679bba05664f77f0</anchor>
+      <anchor>a6aecf50ac2c0a8c1e7688faa5950cd2e</anchor>
       <arglist>(const int a_cellIdx, Pt3d &amp;a_min, Pt3d &amp;a_max) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual const VecInt &amp;</type>
-      <name>Cellstream</name>
+      <name>GetCellStream</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ac1b60bb3cdf18316064da5d566671a88</anchor>
+      <anchor>a01973db2557667f57acd11fc1c5af393</anchor>
       <arglist>() const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -794,163 +1116,163 @@
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
-      <name>CellCellstream</name>
+      <name>GetCellCellstream</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a2aed3cc1126379b061e7beb16c8db2a0</anchor>
+      <anchor>a597d3c60eec441b2176141211ec258d1</anchor>
       <arglist>(const int a_cellIdx, VecInt &amp;a_cellstream) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
-      <name>CellAdjacentCells</name>
+      <name>GetCellAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>abf9156add7c2964276435b27dbf8dafb</anchor>
+      <anchor>a4acb3c229c93c1364265b9e757f7c611</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>CellAdjacentCells</name>
+      <name>GetCellAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a04e83ed459a54ac63af54a2f097a0e16</anchor>
+      <anchor>af29e62d8167b41176724eb058de46987</anchor>
       <arglist>(const int a_cellIdx, VecInt &amp;a_cellNeighbors) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
-      <name>CellPlanViewPolygon</name>
+      <name>GetCellPlanViewPolygon</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a9fae9a5bbc1859b77810f59b54f1e0be</anchor>
+      <anchor>ac688327b72a4bd20526dc62302785eaf</anchor>
       <arglist>(int a_cellIdx, VecPt3d &amp;a_polygon) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
-      <name>CellCentroid</name>
+      <name>GetCellCentroid</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>acb27caaf2f3175026c9ea21ef4748e54</anchor>
+      <anchor>af5bad30c44856f0eda9e6158700c3b9f</anchor>
       <arglist>(int a_cellIdx, Pt3d &amp;a_centroid) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>CellEdgeCount</name>
+      <name>GetCellEdgeCount</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a1ae4c4d420050a1784d7dd5602fc7a6f</anchor>
+      <anchor>a76313735b4b511047eadf7c4c41df8d1</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual XmEdge</type>
-      <name>CellEdge</name>
+      <name>GetCellEdge</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a866511a3eb80a8dc4ff6bf61ec09734b</anchor>
+      <anchor>a6c543f756089e1a14bf3298e9b6046ba</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
-      <name>CellEdgeAdjacentCells</name>
+      <name>GetCellEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a3c52debae0aaff6ab71fc8ff3b52c216</anchor>
+      <anchor>a054fae8cf18dd3a3345f2871c3413b5a</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>CellEdgeAdjacentCells</name>
+      <name>GetCellEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a170c177f62e471824edde4ff56948b37</anchor>
+      <anchor>aba4f1740a78221cc88d14ed119ff128b</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx, VecInt &amp;a_adjacentCellIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>Cell2dEdgeAdjacentCell</name>
+      <name>GetCell2dEdgeAdjacentCell</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a6ab486ee03c1631e771477b0cfe9ce50</anchor>
+      <anchor>acd3be022b5d2952635bbf2a46d872c3b</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>EdgeAdjacentCells</name>
+      <name>GetEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ab648d6bd5062d6d3d891a2fe1a5a164f</anchor>
+      <anchor>a3ab06fe0d32a5e77d95c2e9820d9e267</anchor>
       <arglist>(const XmEdge &amp;a_edge, VecInt &amp;a_adjacentCellIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
-      <name>EdgeAdjacentCells</name>
+      <name>GetEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a13e4d1a8c8a3b37fd56e81cf8ab98221</anchor>
+      <anchor>a105a352f0b1364105b8be45e1463dbdc</anchor>
       <arglist>(const XmEdge &amp;a_edge) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual std::vector&lt; XmEdge &gt;</type>
-      <name>CellEdges</name>
+      <name>GetCellEdges</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ac62eb31219c7242583db1ff6cfbc0287</anchor>
+      <anchor>a7751b8e82fd63b1390c7231cef3c77ca</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>CellEdges</name>
+      <name>GetCellEdges</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a14599efbf4c4fac39e9779c5262c3df0</anchor>
+      <anchor>af9cde4a78ab9b3b94e7af14f6c7b20cd</anchor>
       <arglist>(const int a_cellIdx, std::vector&lt; XmEdge &gt; &amp;a_edges) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>PointAdjacentPoints</name>
+      <name>GetPointAdjacentPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a5f58157541905b88a1ad4b49b2e13f09</anchor>
+      <anchor>a4e406ce976e7f8b33ea4c0e15aef0dea</anchor>
       <arglist>(int a_pointIdx, VecInt &amp;a_edgePoints) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>PointAdjacentLocations</name>
+      <name>GetPointAdjacentLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a8ae36b0cb5300e00a7c9fcc72042dc42</anchor>
+      <anchor>a0f2bcba9f04aa6b6e4140e678273c1d0</anchor>
       <arglist>(int a_pointIdx, VecPt3d &amp;a_edgePoints) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>Cell3dFaceCount</name>
+      <name>GetCell3dFaceCount</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ab6d3a4153d08d85d18ec2a2449d963cf</anchor>
+      <anchor>ad504659993e196d1edbde16421e56d9a</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>Cell3dFacePointCount</name>
+      <name>GetCell3dFacePointCount</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>ae82587a85f8f6439129f14e2864cad48</anchor>
+      <anchor>a7669685008f40cea3d79aa93ea9e1b85</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt</type>
-      <name>Cell3dFacePoints</name>
+      <name>GetCell3dFacePoints</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>afa9c67e7b6ea0b893b128779f1035680</anchor>
+      <anchor>a69f889294477362c7c1a1c9362ec62b1</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
-      <name>Cell3dFacePoints</name>
+      <name>GetCell3dFacePoints</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a32cad314c861db0385c727e5f354df66</anchor>
+      <anchor>ad4945cd666a17e2b1d7fceb0730b9c8c</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx, VecInt &amp;a_facePtIdxs) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual VecInt2d</type>
-      <name>Cell3dFacesPoints</name>
+      <name>GetCell3dFacesPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a89d45123f3665636f378a1514f777887</anchor>
+      <anchor>a8cc422be8230daead9995d6c52b567bd</anchor>
       <arglist>(const int a_cellIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
-      <name>Cell3dFaceAdjacentCell</name>
+      <name>GetCell3dFaceAdjacentCell</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>afec2c713bb6b92c9ad2116995c0747b8</anchor>
+      <anchor>a2d867bf0312d37fb6e53deb8f285a99f</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
-      <name>Cell3dFaceAdjacentCell</name>
+      <name>GetCell3dFaceAdjacentCell</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a648637f05d90988b15c4c00a66d337c0</anchor>
+      <anchor>a71f6e717cb390605927b80f31f615d5a</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx, int &amp;a_neighborCell, int &amp;a_neighborFace) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -990,9 +1312,9 @@
     </member>
     <member kind="function" protection="private">
       <type>void</type>
-      <name>CellCellstream</name>
+      <name>GetCellCellstream</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a54568b96123d2598691b7e9f3b31f465</anchor>
+      <anchor>a12845592b3f3ebab9d51eee545c071bf</anchor>
       <arglist>(const int a_cellIdx, const int **a_start, int &amp;a_length) const </arglist>
     </member>
     <member kind="function" protection="private">
@@ -1169,9 +1491,9 @@
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual const VecPt3d &amp;</type>
-      <name>Locations</name>
+      <name>GetLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a3ac5cb116773897678dc8fb2e581b82e</anchor>
+      <anchor>acca1315fd4948f73d62c3a2f23d36fd0</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -1183,9 +1505,9 @@
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual Pt3d</type>
-      <name>PointLocation</name>
+      <name>GetPointLocation</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a9a0cf0b228de233370f4d54fd23950fe</anchor>
+      <anchor>abcf4127cfd961e75bdfe445a6816fcc9</anchor>
       <arglist>(const int a_pointIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -1197,128 +1519,128 @@
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual Pt3d</type>
-      <name>PointXy0</name>
+      <name>GetPointXy0</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a3fd548fc9b48c44815dbe24a7fea1020</anchor>
+      <anchor>ae91a9014ce352ffcd04e9f5cefc32abf</anchor>
       <arglist>(const int a_pointIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecPt3d</type>
-      <name>PointsLocations</name>
+      <name>GetPointsLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a29dec21a3196cff364d22c23b1dbb575</anchor>
+      <anchor>a8d7b8b87d255095224d0004946ac8192</anchor>
       <arglist>(const VecInt &amp;a_points) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>Extents</name>
+      <name>GetExtents</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a90b625c7a7224b002041912e1aac970e</anchor>
+      <anchor>a49d600d7857cfcaaa7fe04440136866d</anchor>
       <arglist>(Pt3d &amp;a_min, Pt3d &amp;a_max) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt</type>
-      <name>PointAdjacentCells</name>
+      <name>GetPointAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>ab8f8b630c0045955f93c02c7d4ce67e3</anchor>
+      <anchor>a0f4708efacb13ae29dd4e57f98aec9d9</anchor>
       <arglist>(const int a_pointIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>PointAdjacentCells</name>
+      <name>GetPointAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>afee64b8e1a8b32f5e613aedf3b85b2f4</anchor>
+      <anchor>ab27c613c1e9916b0727c2ce461fde681</anchor>
       <arglist>(const int a_pointIdx, VecInt &amp;a_adjacentCells) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt</type>
-      <name>PointsAdjacentCells</name>
+      <name>GetPointsAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a5bdf8dd8b524dc322390f89a4c401f3b</anchor>
+      <anchor>a1dcd067fcfb353dae765a731d2df7282</anchor>
       <arglist>(const VecInt &amp;a_points) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>PointsAdjacentCells</name>
+      <name>GetPointsAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a890556aa13687a49e945d5bf64fb8de2</anchor>
+      <anchor>aef04f51dc3e35f16425bceff7f8fefe0</anchor>
       <arglist>(const VecInt &amp;a_pointIdxs, VecInt &amp;a_adjacentCellIdxs) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>PointsAdjacentCells</name>
+      <name>GetPointsAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a0bfbfad1a053e7e7f768a9e883571383</anchor>
+      <anchor>ae5038fe12f39352f0701d30b743a5b3d</anchor>
       <arglist>(const int a_pointIdx1, const int a_pointIdx2, VecInt &amp;a_adjacentCellIdxs) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>CellCount</name>
+      <name>GetCellCount</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a9d2335b67efebca09cc2cddeaaecaa3d</anchor>
+      <anchor>a52cf65faae233be569bb14bd73e09449</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>CellPointCount</name>
+      <name>GetCellPointCount</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>ac2c3d3eaf21fff425df7ad3d824468c7</anchor>
+      <anchor>a114e30713605c5fe8affd578232aacda</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt</type>
-      <name>CellPoints</name>
+      <name>GetCellPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>aae598fa45d4d12da632068fd4349566c</anchor>
+      <anchor>a768d1f03936ec142895b4c89ba305a0a</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
-      <name>CellPoints</name>
+      <name>GetCellPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>aea40872ee82deb19c88c7ddc869f4a19</anchor>
+      <anchor>ac69f3687dec8cc12956ace0049e8dac9</anchor>
       <arglist>(const int a_cellIdx, VecInt &amp;a_cellPoints) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>CellLocations</name>
+      <name>GetCellLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a787ebe23eda0bbae32268192f883dc6f</anchor>
+      <anchor>a0a7b5afd0becce46368ff3736c38311e</anchor>
       <arglist>(const int a_cellIdx, VecPt3d &amp;a_cellLocations) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual XmUGridCellType</type>
-      <name>CellType</name>
+      <name>GetCellType</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a7f7b0016ae13480cbe4003668519042a</anchor>
+      <anchor>a1cdc6b0ed97cfbef84d2529b14c79f0d</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual std::vector&lt; int &gt;</type>
-      <name>DimensionCounts</name>
+      <name>GetDimensionCounts</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>ad75d18dc6b338aaec6871c3366e1822e</anchor>
+      <anchor>a7eb4afae2e77ddf6a7fedfcee18a72e7</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>CellDimension</name>
+      <name>GetCellDimension</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a6654a7bab894cb90b8c1c6d5c147154d</anchor>
+      <anchor>a046db5d518cc1f2e250f402bcc0cc21a</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>CellExtents</name>
+      <name>GetCellExtents</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>aa59353ea33a8d1c8859e0a4e9ba73c5f</anchor>
+      <anchor>a9cc849c9e815e1650aa2584c65528b5f</anchor>
       <arglist>(const int a_cellIdx, Pt3d &amp;a_min, Pt3d &amp;a_max) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual const VecInt &amp;</type>
-      <name>Cellstream</name>
+      <name>GetCellStream</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>add7d9d6b618225d188baa0e34824dac4</anchor>
+      <anchor>ab26fd6b8caeabeecde13a7c7f8b40343</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -1330,163 +1652,163 @@
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
-      <name>CellCellstream</name>
+      <name>GetCellCellstream</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a851b7d3a8bc88b912b3a6a1886bf4a57</anchor>
+      <anchor>a780c96b0be08754ac120574192c17d91</anchor>
       <arglist>(const int a_cellIdx, VecInt &amp;a_cellstream) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt</type>
-      <name>CellAdjacentCells</name>
+      <name>GetCellAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a002b1d2ed69471c118a8273f7457ed63</anchor>
+      <anchor>ae4761217c3999fb3153527ec56d3a1ee</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>CellAdjacentCells</name>
+      <name>GetCellAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a79c222e31410b64e7714d7c409a558fc</anchor>
+      <anchor>a98dd14c7ab9e527eacbc229d6e2e2a02</anchor>
       <arglist>(const int a_cellIdx, VecInt &amp;a_cellNeighbors) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
-      <name>CellPlanViewPolygon</name>
+      <name>GetCellPlanViewPolygon</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>ade1aac122ab06df7091f22b6dcaa56db</anchor>
+      <anchor>a493091705fb4d7b05f294950afb52018</anchor>
       <arglist>(int a_cellIdx, VecPt3d &amp;a_polygon) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
-      <name>CellCentroid</name>
+      <name>GetCellCentroid</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>aef0ad8ec43dafc029c4850d0a790fc90</anchor>
+      <anchor>aef337606cfbd43cc04e64333cf95a02b</anchor>
       <arglist>(int a_cellIdx, Pt3d &amp;a_centroid) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>CellEdgeCount</name>
+      <name>GetCellEdgeCount</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a213e43669dcff500c2087192430449b3</anchor>
+      <anchor>aa0227de33b3905bfb2f34cf12176e45b</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual XmEdge</type>
-      <name>CellEdge</name>
+      <name>GetCellEdge</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a2fb0b1a2acd778f6672f0394253d3af5</anchor>
+      <anchor>a0cfeae5f8e045aa26de22f0f12968770</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt</type>
-      <name>CellEdgeAdjacentCells</name>
+      <name>GetCellEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>ac4881a29478d4aadc5f3082e25f590e6</anchor>
+      <anchor>ab6022c9cadb27816b426bdc62f5635f5</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>CellEdgeAdjacentCells</name>
+      <name>GetCellEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a5956f04e0f33f795ea03dfe43297b96d</anchor>
+      <anchor>a6f2de396eb174cf1acd5e6a640cdc96a</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx, VecInt &amp;a_adjacentCellIdxs) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>Cell2dEdgeAdjacentCell</name>
+      <name>GetCell2dEdgeAdjacentCell</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a2b28f473aa30d88d921ac6243d28b850</anchor>
+      <anchor>aafb5073097a30d0c5a64153eae76ac3e</anchor>
       <arglist>(const int a_cellIdx, const int a_edgeIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>EdgeAdjacentCells</name>
+      <name>GetEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a27fa32df3b42b6933b67235d67d84576</anchor>
+      <anchor>a5eac64030b549a8805147908ae5b738e</anchor>
       <arglist>(const XmEdge &amp;a_edge, VecInt &amp;a_adjacentCellIdxs) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt</type>
-      <name>EdgeAdjacentCells</name>
+      <name>GetEdgeAdjacentCells</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a3d45f36a8a0f066e279c71ee53769e77</anchor>
+      <anchor>a39d44fc045be2bc895dc94f354d23502</anchor>
       <arglist>(const XmEdge &amp;a_edge) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual std::vector&lt; XmEdge &gt;</type>
-      <name>CellEdges</name>
+      <name>GetCellEdges</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>aab16746cde9081edfc25db433a31a826</anchor>
+      <anchor>afae1758d8433f3a9112aa0a5661505b8</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>CellEdges</name>
+      <name>GetCellEdges</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a3cdb6e2976d7e4c36ec9ddc1faea8276</anchor>
+      <anchor>abd543b795f3968837dcd591b7b3dcf7c</anchor>
       <arglist>(const int a_cellIdx, std::vector&lt; XmEdge &gt; &amp;a_edges) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>PointAdjacentPoints</name>
+      <name>GetPointAdjacentPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a387a78237c295fa3b3bcae9a476338ab</anchor>
+      <anchor>aafd7cd6f70a335e67f4251543af72990</anchor>
       <arglist>(int a_pointIdx, VecInt &amp;a_edgePoints) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>PointAdjacentLocations</name>
+      <name>GetPointAdjacentLocations</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a2787d93f5992033ab88735210f106737</anchor>
+      <anchor>a9ee7727ba92139fd26cebc41f0982419</anchor>
       <arglist>(int a_pointIdx, VecPt3d &amp;a_edgePoints) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>Cell3dFaceCount</name>
+      <name>GetCell3dFaceCount</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a3cb142a5c9274eba5073374b19349566</anchor>
+      <anchor>acad05ff1b6cc4352dc7ba150a315dde0</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>Cell3dFacePointCount</name>
+      <name>GetCell3dFacePointCount</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>aa1505ad0803c08d493d60a6fb5dad2e9</anchor>
+      <anchor>a8a8b79f7bd67deba4a12a36b39ec8858</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt</type>
-      <name>Cell3dFacePoints</name>
+      <name>GetCell3dFacePoints</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>af6f305d2252d18e925a367874101b5ad</anchor>
+      <anchor>aba063b951d106385dc680be3f7942731</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
-      <name>Cell3dFacePoints</name>
+      <name>GetCell3dFacePoints</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a5240c8d85c38eaa0867def358e9d3413</anchor>
+      <anchor>aa56e589cf053ede93c849b977c408cd2</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx, VecInt &amp;a_facePtIdxs) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual VecInt2d</type>
-      <name>Cell3dFacesPoints</name>
+      <name>GetCell3dFacesPoints</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a02db78e59d6671e6ded636a9fa7affe0</anchor>
+      <anchor>a517137f93176ed8883356771f3f1bc9b</anchor>
       <arglist>(const int a_cellIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
-      <name>Cell3dFaceAdjacentCell</name>
+      <name>GetCell3dFaceAdjacentCell</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>ade225faa01046571ff9dbd1755ac390b</anchor>
+      <anchor>a15628550e1b02ae974f0d4948f4e9912</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
-      <name>Cell3dFaceAdjacentCell</name>
+      <name>GetCell3dFaceAdjacentCell</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>aa3b423f7e4c799a48f14f9643c227f69</anchor>
+      <anchor>a1a8edc40d0386aac81162b18d57368b0</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx, int &amp;a_neighborCell, int &amp;a_neighborFace) const =0</arglist>
     </member>
   </compound>
