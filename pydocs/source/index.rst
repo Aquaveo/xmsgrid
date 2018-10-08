@@ -3,9 +3,9 @@
    :width: 250px
    :align: right
 
-*******************
+*****************
 XmsGrid |version|
-*******************
+*****************
 
 **Last Updated:** October 5, 2018
 
