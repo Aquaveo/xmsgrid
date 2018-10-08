@@ -154,7 +154,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'xmsgrid', 'xmsgrid Documentation',
-     author, 'xmsgrid', 'Interpolation library used by aquaveo libraries.',
+     author, 'xmsgrid', 'Grid library used by aquaveo libraries.',
      'Miscellaneous'),
 ]
 
