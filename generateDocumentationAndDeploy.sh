@@ -125,7 +125,7 @@ sphinx-build -b html . $(dirname $DOXYFILE)/html/pydocs
 # Doxygen and Sphinx did their work.
 cd $(dirname $DOXYFILE)
 if [ -d "html" ] && [ -f "html/index.html" ] && [ -f "html/pydocs/index.html" ]; then
-    mv xmsinterp.tag "$TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME/"
+    mv xmsgrid.tag "$TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME/"
     mv html/* "$TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME/"
     cd $TRAVIS_BUILD_DIR/code_docs/$GH_REPO_NAME
     echo 'Uploading documentation to the gh-pages branch...'
