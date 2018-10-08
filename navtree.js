@@ -1,130 +1,6 @@
-var NAVTREE =
-[
-  [ "xmsgrid", "index.html", [
-    [ "xmsgrid ", "index.html#xmsgrid", [
-      [ "Introduction ", "index.html#XmsugridIntroduction", null ],
-      [ "License ", "index.html#XmsgridLicense", null ],
-      [ "Features ", "index.html#XmsgridFeatures", null ],
-      [ "Testing ", "index.html#XmsgridTesting", null ],
-      [ "The Code ", "index.html#XmsgridTheCode", [
-        [ "Namespaces", "index.html#XmsgridNamespaces", null ],
-        [ "Interface pattern", "index.html#XmsgridInterfacePattern", null ]
-      ] ],
-      [ "\"xmsgrid\" Name ", "index.html#xmsgridName", null ]
-    ] ],
-    [ "xmscore", "https://aquaveo.github.io/xmscore/index.html", null ],
-    [ "UGrid File IO Tutorial", "md__file_i_o__tutorial.html", [
-      [ "UGrid File IO Tutorial", "md__file_i_o__tutorial.html#FileIO_Tutorial", [
-        [ "Introduction", "md__file_i_o__tutorial.html#Intro_FileIO", null ],
-        [ "Example - Writing UGrid data to ASCII file format", "md__file_i_o__tutorial.html#Example_XmWriteUGridFromAsciiFile", null ],
-        [ "Example - Reading a UGrid from ASCII file format", "md__file_i_o__tutorial.html#Example_XmReadUGridFromAsciiFile", null ]
-      ] ]
-    ] ],
-    [ "3D UGrid Tutorial", "md__three_d__tutorial.html", [
-      [ "3D UGrid Tutorial", "md__three_d__tutorial.html#ThreeD_Tutorial", [
-        [ "Introduction", "md__three_d__tutorial.html#Intro_3Ugrid", null ],
-        [ "Example - Defining Ugrid Cells", "md__three_d__tutorial.html#Example_DefiningA3dUGridCell", null ],
-        [ "Example - Creating a New 3D UGrid With Data", "md__three_d__tutorial.html#Example_New_With_Data_3d", null ],
-        [ "Example - Creating a New 3D UGrid", "md__three_d__tutorial.html#Example_New3d", null ],
-        [ "Example - Setting the UGrid Points", "md__three_d__tutorial.html#Example_SetPoints3d", null ],
-        [ "Example - Setting the UGrid Cell Stream", "md__three_d__tutorial.html#Example_SetCellstream3d", null ],
-        [ "Example - Get Number Of Points", "md__three_d__tutorial.html#Example_GetPointCount3d", null ],
-        [ "Example - Get Point Locations", "md__three_d__tutorial.html#Example_GetLocations3d", null ],
-        [ "Example - Get Location of a Point", "md__three_d__tutorial.html#Example_PointLocation3d", null ],
-        [ "Example - Set Point Location", "md__three_d__tutorial.html#Example_SetLocation3d", null ],
-        [ "Example - Get Locations of an Array of Points", "md__three_d__tutorial.html#Example_GetPointsLocations3d", null ],
-        [ "Example - Get GetExtents of UGrid", "md__three_d__tutorial.html#Example_GetExtents3d", null ],
-        [ "Example - Get Cells Associated with a Point", "md__three_d__tutorial.html#Example_PointCells3d", null ],
-        [ "Example - Get the Cells that Share the Same Point or Points", "md__three_d__tutorial.html#Example_GetPointsAdjacentCells3d", null ],
-        [ "Example - Get the Points of a Cell", "md__three_d__tutorial.html#Example_GetCellPointsLocations3d", null ],
-        [ "Example - Get the Type of a Cell", "md__three_d__tutorial.html#Example_GetCellType3d", null ],
-        [ "Example - Get the Number of the Cells of each Dimension in a UGrid", "md__three_d__tutorial.html#Example_GetDimensionCounts3d", null ],
-        [ "Example - Get the Dimension of a Cell", "md__three_d__tutorial.html#Example_GetCellDimension3d", null ],
-        [ "Example - Get the Cellstream of the UGrid", "md__three_d__tutorial.html#Example_GetCellstream3d", null ],
-        [ "Example - Get a Single Cellstream for One Cell", "md__three_d__tutorial.html#Example_GetCellCellstream3d", null ],
-        [ "Example - Get the Cells Adjacent to a Given Cell", "md__three_d__tutorial.html#Example_GetCellAdjacentCells3d", null ],
-        [ "Example - Get a Plan View Polygon", "md__three_d__tutorial.html#Example_GetCellPlanViewPolygon3d", null ],
-        [ "Example - Get Number of Cell Edges", "md__three_d__tutorial.html#Example_GetCellEdgeCount3d", null ],
-        [ "Example Get Cell Edge Adjacent Cells", "md__three_d__tutorial.html#Example_GetCellEdgeAdjacentCells3d", null ],
-        [ "Example Get Edges Associated with a Cell", "md__three_d__tutorial.html#Example_GetCellEdges3d", null ],
-        [ "Example Get Number of Faces for a Cell", "md__three_d__tutorial.html#Example_GetCell3dFaceCount3d", null ],
-        [ "Example Get Cell Face", "md__three_d__tutorial.html#Example_GetCell3dFacePoints3d", null ],
-        [ "Example Get Faces of Cell", "md__three_d__tutorial.html#Example_GetCell3dFacesPoints3d", null ],
-        [ "Example Get Cell Face Ajacent Cell", "md__three_d__tutorial.html#Example_GetCell3dFaceAdjacentCell3d", null ]
-      ] ]
-    ] ],
-    [ "2D UGrid Tutorial", "md__two_d__tutorial.html", [
-      [ "2D UGrid Tutorial", "md__two_d__tutorial.html#TwoD_Tutorial", [
-        [ "Introduction", "md__two_d__tutorial.html#Intro_2Ugrid", null ],
-        [ "Example - Defining Ugrid Cells", "md__two_d__tutorial.html#Example_DefiningA2dUGridCell", null ],
-        [ "Example - Creating a New 2D UGrid With Data", "md__two_d__tutorial.html#Example_New_With_Data_2d", null ],
-        [ "Example - Creating a New 2D UGrid", "md__two_d__tutorial.html#Example_New2d", null ],
-        [ "Example - Setting the UGrid Points", "md__two_d__tutorial.html#Example_SetPoints2d", null ],
-        [ "Example - Setting the UGrid Cell Stream", "md__two_d__tutorial.html#Example_SetCellstream2d", null ],
-        [ "Example - Get Number Of Points", "md__two_d__tutorial.html#Example_GetPointCount", null ],
-        [ "Example - Get Points (Locations)", "md__two_d__tutorial.html#Example_GetLocations", null ],
-        [ "Example - Get Point Location", "md__two_d__tutorial.html#Example_GetPointLocation", null ],
-        [ "Example - Set Point Location", "md__two_d__tutorial.html#Example_SetLocation", null ],
-        [ "Example - Get Locations of Many Points", "md__two_d__tutorial.html#Example_GetPointsLocations", null ],
-        [ "Example - Get Extents of UGrid", "md__two_d__tutorial.html#Example_GetExtents", null ],
-        [ "Example - Get Cells Adjacent to a Point", "md__two_d__tutorial.html#Example_GetPointAdjacentCells", null ],
-        [ "Example - Get the Cells that Share All of Group of Points", "md__two_d__tutorial.html#Example_GetPointsAdjacentCells", null ],
-        [ "Example - Get the Points (or their Locations) Adjacent to Point", "md__two_d__tutorial.html#Example_GetPointAdjacentPoints", null ],
-        [ "Example - Get the Points or Locations of a Cell", "md__two_d__tutorial.html#Example_GetCellPointsLocations", null ],
-        [ "Example - Get the Type of a Cell", "md__two_d__tutorial.html#Example_GetCellType", null ],
-        [ "Example - Get the Count of Cells in a UGrid of each of the possible Dimensions", "md__two_d__tutorial.html#Example_GetDimensionCounts", null ],
-        [ "Example - Get the Dimension of a Cell", "md__two_d__tutorial.html#Example_GetCellDimension", null ],
-        [ "Example - Get the Cellstream of the UGrid", "md__two_d__tutorial.html#Example_GetCellstream", null ],
-        [ "Example - Get a the Cellstream for Single Cell", "md__two_d__tutorial.html#Example_GetCellCellstream", null ],
-        [ "Example - Get the Cells Adjacent to a Given Cell", "md__two_d__tutorial.html#Example_GetCellAdjacentCells", null ],
-        [ "Example - Get a Plan View Polygon", "md__two_d__tutorial.html#Example_GetCellPlanViewPolygon", null ],
-        [ "Example - Get Number of Cell Edges", "md__two_d__tutorial.html#Example_GetCellEdgeCount", null ],
-        [ "Example - Get Cell Edge from Edge Index", "md__two_d__tutorial.html#Example_GetCellEdge", null ],
-        [ "Example Get Cells Adjacent to an Edge of a Cell", "md__two_d__tutorial.html#Example_GetCellEdgeAdjacentCells", null ],
-        [ "Example 2D Get the Other Cell Adjacent to a particular Cell Edge", "md__two_d__tutorial.html#Example_GetCell2dEdgeAdjacentCell", null ],
-        [ "Example Get Cells Adjacent to a Given Edge", "md__two_d__tutorial.html#Example_GetEdgeAdjacentCells", null ],
-        [ "Example Get Edges of a Cell", "md__two_d__tutorial.html#Example_GetCellEdges", null ]
-      ] ]
-    ] ],
-    [ "Namespaces", null, [
-      [ "Namespace List", "namespaces.html", "namespaces" ],
-      [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
-        [ "Functions", "namespacemembers_func.html", null ],
-        [ "Typedefs", "namespacemembers_type.html", null ],
-        [ "Enumerations", "namespacemembers_enum.html", null ]
-      ] ]
-    ] ],
-    [ "Classes", null, [
-      [ "Class List", "annotated.html", "annotated" ],
-      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
-      [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ],
-        [ "Variables", "functions_vars.html", null ]
-      ] ]
-    ] ],
-    [ "Files", null, [
-      [ "File List", "files.html", "files" ],
-      [ "File Members", "globals.html", [
-        [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ]
-      ] ]
-    ] ]
-  ] ]
-];
-
-var NAVTREEINDEX =
-[
-"_xm_convex_hull_8cpp.html",
-"classxms_1_1_xm_u_grid_impl.html#a110228f473bdce917fdae9edfd3ea970"
-];
-
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
 var navTreeSubIndices = new Array();
+var arrowDown = '&#9660;';
+var arrowRight = '&#9658;';
 
 function getData(varName)
 {
@@ -144,6 +20,21 @@ function stripPath2(uri)
   var s = uri.substring(i+1);
   var m = uri.substring(0,i+1).match(/\/d\w\/d\w\w\/$/);
   return m ? uri.substring(i-6) : s;
+}
+
+function hashValue()
+{
+  return $(location).attr('hash').substring(1).replace(/[^\w\-]/g,'');
+}
+
+function hashUrl()
+{
+  return '#'+hashValue();
+}
+
+function pathName()
+{
+  return $(location).attr('pathname').replace(/[^-A-Za-z0-9+&@#/%?=~_|!:,.;\(\)]/g, '');
 }
 
 function localStorageSupported()
@@ -168,7 +59,7 @@ function deleteLink()
 {
   if (localStorageSupported()) {
     window.localStorage.setItem('navpath','');
-  } 
+  }
 }
 
 function cachedLink()
@@ -182,17 +73,17 @@ function cachedLink()
 
 function getScript(scriptName,func,show)
 {
-  var head = document.getElementsByTagName("head")[0]; 
+  var head = document.getElementsByTagName("head")[0];
   var script = document.createElement('script');
   script.id = scriptName;
   script.type = 'text/javascript';
-  script.onload = func; 
-  script.src = scriptName+'.js'; 
-  if ($.browser.msie && $.browser.version<=8) { 
+  script.onload = func;
+  script.src = scriptName+'.js';
+  if ($.browser.msie && $.browser.version<=8) {
     // script.onload does not work with older versions of IE
     script.onreadystatechange = function() {
-      if (script.readyState=='complete' || script.readyState=='loaded') { 
-        func(); if (show) showRoot(); 
+      if (script.readyState=='complete' || script.readyState=='loaded') {
+        func(); if (show) showRoot();
       }
     }
   }
@@ -205,18 +96,17 @@ function createIndent(o,domNode,node,level)
   var n = node;
   while (n.parentNode) { level++; n=n.parentNode; }
   if (node.childrenData) {
-    var imgNode = document.createElement("img");
+    var imgNode = document.createElement("span");
+    imgNode.className = 'arrow';
     imgNode.style.paddingLeft=(16*level).toString()+'px';
-    imgNode.width  = 16;
-    imgNode.height = 22;
-    imgNode.border = 0;
+    imgNode.innerHTML=arrowRight;
     node.plus_img = imgNode;
     node.expandToggle = document.createElement("a");
     node.expandToggle.href = "javascript:void(0)";
     node.expandToggle.onclick = function() {
       if (node.expanded) {
         $(node.getChildrenUL()).slideUp("fast");
-        node.plus_img.src = node.relpath+"ftv2pnode.png";
+        node.plus_img.innerHTML=arrowRight;
         node.expanded = false;
       } else {
         expandNode(o, node, false, false);
@@ -224,15 +114,13 @@ function createIndent(o,domNode,node,level)
     }
     node.expandToggle.appendChild(imgNode);
     domNode.appendChild(node.expandToggle);
-    imgNode.src = node.relpath+"ftv2pnode.png";
   } else {
     var span = document.createElement("span");
-    span.style.display = 'inline-block';
+    span.className = 'arrow';
     span.style.width   = 16*(level+1)+'px';
-    span.style.height  = '22px';
     span.innerHTML = '&#160;';
     domNode.appendChild(span);
-  } 
+  }
 }
 
 var animationInProgress = false;
@@ -240,11 +128,13 @@ var animationInProgress = false;
 function gotoAnchor(anchor,aname,updateLocation)
 {
   var pos, docContent = $('#doc-content');
-  if (anchor.parent().attr('class')=='memItemLeft' ||
-      anchor.parent().attr('class')=='fieldtype' ||
-      anchor.parent().is(':header')) 
+  var ancParent = $(anchor.parent());
+  if (ancParent.hasClass('memItemLeft') ||
+      ancParent.hasClass('fieldname') ||
+      ancParent.hasClass('fieldtype') ||
+      ancParent.is(':header'))
   {
-    pos = anchor.parent().position().top;
+    pos = ancParent.position().top;
   } else if (anchor.position()) {
     pos = anchor.position().top;
   }
@@ -302,9 +192,9 @@ function newNode(o, po, text, link, childrenData, lastNode)
     a.className = stripPath(link.replace('#',':'));
     if (link.indexOf('#')!=-1) {
       var aname = '#'+link.split('#')[1];
-      var srcPage = stripPath($(location).attr('pathname'));
+      var srcPage = stripPath(pathName());
       var targetPage = stripPath(link.split('#')[0]);
-      a.href = srcPage!=targetPage ? url : "javascript:void(0)"; 
+      a.href = srcPage!=targetPage ? url : "javascript:void(0)";
       a.onclick = function(){
         storeLink(link);
         if (!$(a).parent().parent().hasClass('selected'))
@@ -322,7 +212,7 @@ function newNode(o, po, text, link, childrenData, lastNode)
       a.onclick = function() { storeLink(link); }
     }
   } else {
-    if (childrenData != null) 
+    if (childrenData != null)
     {
       a.className = "nolink";
       a.href = "javascript:void(0)";
@@ -371,17 +261,13 @@ function expandNode(o, node, imm, showRoot)
     } else {
       if (!node.childrenVisited) {
         getNode(o, node);
-      } if (imm || ($.browser.msie && $.browser.version>8)) { 
+      } if (imm || ($.browser.msie && $.browser.version>8)) {
         // somehow slideDown jumps to the start of tree for IE9 :-(
         $(node.getChildrenUL()).show();
       } else {
         $(node.getChildrenUL()).slideDown("fast");
       }
-      if (node.isLast) {
-        node.plus_img.src = node.relpath+"ftv2mlastnode.png";
-      } else {
-        node.plus_img.src = node.relpath+"ftv2mnode.png";
-      }
+      node.plus_img.innerHTML = arrowDown;
       node.expanded = true;
     }
   }
@@ -396,14 +282,13 @@ function glowEffect(n,duration)
 
 function highlightAnchor()
 {
-  var aname = $(location).attr('hash');
+  var aname = hashUrl();
   var anchor = $(aname);
   if (anchor.parent().attr('class')=='memItemLeft'){
-    var rows = $('.memberdecls tr[class$="'+
-               window.location.hash.substring(1)+'"]');
+    var rows = $('.memberdecls tr[class$="'+hashValue()+'"]');
     glowEffect(rows.children(),300); // member without details
-  } else if (anchor.parents().slice(2).prop('tagName')=='TR') {
-    glowEffect(anchor.parents('div.memitem'),1000); // enum value
+  } else if (anchor.parent().attr('class')=='fieldname'){
+    glowEffect(anchor.parent().parent(),1000); // enum value
   } else if (anchor.parent().attr('class')=='fieldtype'){
     glowEffect(anchor.parent().parent(),1000); // struct field
   } else if (anchor.parent().is(":header")) {
@@ -418,7 +303,7 @@ function selectAndHighlight(hash,n)
 {
   var a;
   if (hash) {
-    var link=stripPath($(location).attr('pathname'))+':'+hash.substring(1);
+    var link=stripPath(pathName())+':'+hash.substring(1);
     a=$('.item a[class$="'+link+'"]');
   }
   if (a && a.length) {
@@ -451,11 +336,7 @@ function showNode(o, node, index, hash)
         getNode(o, node);
       }
       $(node.getChildrenUL()).css({'display':'block'});
-      if (node.isLast) {
-        node.plus_img.src = node.relpath+"ftv2mlastnode.png";
-      } else {
-        node.plus_img.src = node.relpath+"ftv2mnode.png";
-      }
+      node.plus_img.innerHTML = arrowDown;
       node.expanded = true;
       var n = node.children[o.breadcrumbs[index]];
       if (index+1<o.breadcrumbs.length) {
@@ -529,14 +410,13 @@ function navTo(o,root,hash,relpath)
   if (link) {
     var parts = link.split('#');
     root = parts[0];
-    if (parts.length>1) hash = '#'+parts[1];
+    if (parts.length>1) hash = '#'+parts[1].replace(/[^\w\-]/g,'');
     else hash='';
   }
   if (hash.match(/^#l\d+$/)) {
     var anchor=$('a[name='+hash.substring(1)+']');
     glowEffect(anchor.parent(),1000); // line number
     hash=''; // strip line number anchors
-    //root=root.replace(/_source\./,'.'); // source link to doc link
   }
   var url=root+hash;
   var i=-1;
@@ -570,7 +450,7 @@ function toggleSyncButton(relpath)
   if (navSync.hasClass('sync')) {
     navSync.removeClass('sync');
     showSyncOff(navSync,relpath);
-    storeLink(stripPath2($(location).attr('pathname'))+$(location).attr('hash'));
+    storeLink(stripPath2(pathName())+hashUrl());
   } else {
     navSync.addClass('sync');
     showSyncOn(navSync,relpath);
@@ -593,10 +473,9 @@ function initNavTree(toroot,relpath)
   o.node.relpath = relpath;
   o.node.expanded = false;
   o.node.isLast = true;
-  o.node.plus_img = document.createElement("img");
-  o.node.plus_img.src = relpath+"ftv2pnode.png";
-  o.node.plus_img.width = 16;
-  o.node.plus_img.height = 22;
+  o.node.plus_img = document.createElement("span");
+  o.node.plus_img.className = 'arrow';
+  o.node.plus_img.innerHTML = arrowRight;
 
   if (localStorageSupported()) {
     var navSync = $('#nav-sync');
@@ -610,7 +489,7 @@ function initNavTree(toroot,relpath)
   }
 
   $(window).load(function(){
-    navTo(o,toroot,window.location.hash,relpath);
+    navTo(o,toroot,hashUrl(),relpath);
     showRoot();
   });
 
@@ -618,21 +497,20 @@ function initNavTree(toroot,relpath)
      if (window.location.hash && window.location.hash.length>1){
        var a;
        if ($(location).attr('hash')){
-         var clslink=stripPath($(location).attr('pathname'))+':'+
-                               $(location).attr('hash').substring(1);
-         a=$('.item a[class$="'+clslink+'"]');
+         var clslink=stripPath(pathName())+':'+hashValue();
+         a=$('.item a[class$="'+clslink.replace(/</g,'\\3c ')+'"]');
        }
        if (a==null || !$(a).parent().parent().hasClass('selected')){
          $('.item').removeClass('selected');
          $('.item').removeAttr('id');
        }
-       var link=stripPath2($(location).attr('pathname'));
-       navTo(o,link,$(location).attr('hash'),relpath);
+       var link=stripPath2(pathName());
+       navTo(o,link,hashUrl(),relpath);
      } else if (!animationInProgress) {
        $('#doc-content').scrollTop(0);
        $('.item').removeClass('selected');
        $('.item').removeAttr('id');
-       navTo(o,toroot,window.location.hash,relpath);
+       navTo(o,toroot,hashUrl(),relpath);
      }
   })
 }

@@ -1,11 +1,8 @@
 var searchData=
 [
-  ['_7eprogress',['~Progress',['https://aquaveo.github.io/xmscore/classxms_1_1_progress.html#a093986f04a87dda5503b097ade380029',1,'xms::Progress']]],
-  ['_7eprogresslistener',['~ProgressListener',['https://aquaveo.github.io/xmscore/classxms_1_1_progress_listener.html#a284b9861f146ecfe2ec6967288aca1d3',1,'xms::ProgressListener']]],
-  ['_7ept2',['~Pt2',['https://aquaveo.github.io/xmscore/classxms_1_1_pt2.html#a07974c1bfe87d83350b897fa8ad98e54',1,'xms::Pt2']]],
-  ['_7ept3',['~Pt3',['https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a1b4a4cb9de9e47f8e0702dd7ac6e1fa7',1,'xms::Pt3']]],
-  ['_7ept4',['~Pt4',['https://aquaveo.github.io/xmscore/classxms_1_1_pt4.html#a5cd39733ccb240f7c9c10f3569d2f2bd',1,'xms::Pt4']]],
-  ['_7esttemp2digitexponents',['~StTemp2DigitExponents',['https://aquaveo.github.io/xmscore/classxms_1_1_st_temp2_digit_exponents.html#a6c3f0dc95e653a725b26cd5557497403',1,'xms::StTemp2DigitExponents']]],
-  ['_7exmlog',['~XmLog',['https://aquaveo.github.io/xmscore/classxms_1_1_xm_log.html#acc5f8eee341aeac5b06dba422619e5d6',1,'xms::XmLog']]],
-  ['_7exmugrid',['~XmUGrid',['../classxms_1_1_xm_u_grid.html#a00ece5dcb23ebc06e2651f4a3f3695c4',1,'xms::XmUGrid']]]
+  ['xmedge',['XmEdge',['../classxms_1_1_xm_edge.html#ac469ef46c007327f5e7ba35a386e238b',1,'xms::XmEdge::XmEdge()'],['../classxms_1_1_xm_edge.html#a448df3ee696594baa8f89e8019d0c8d9',1,'xms::XmEdge::XmEdge(int a_pt1, int a_pt2, bool a_sorted=false)'],['../classxms_1_1_xm_edge.html#a4a07febba9a95f90eeb614cdfbac5b77',1,'xms::XmEdge::XmEdge(const std::pair&lt; int, int &gt; &amp;a_edge)']]],
+  ['xmlog',['XmLog',['https://aquaveo.github.io/xmscore/classxms_1_1_xm_log.html#aa755e43cb07d364b0bce3b265569985b',1,'xms::XmLog']]],
+  ['xmreadugridfromasciifile',['XmReadUGridFromAsciiFile',['../namespacexms.html#a92b5c5c0a9e2455db6d671eb7134a76e',1,'xms']]],
+  ['xmugrid',['XmUGrid',['../classxms_1_1_xm_u_grid.html#ae30014ef614bff4158d0f1e79785162a',1,'xms::XmUGrid']]],
+  ['xmwriteugridtoasciifile',['XmWriteUGridToAsciiFile',['../namespacexms.html#aad684d8d566604305a00cc4d875dd51e',1,'xms']]]
 ];

@@ -7,8 +7,7 @@ var hierarchy =
       [ "XmUGridUtilsTests", "class_xm_u_grid_utils_tests.html", null ]
     ] ],
     [ "xms::XmEdge", "classxms_1_1_xm_edge.html", null ],
-    [ "xms::XmUGrid", "classxms_1_1_xm_u_grid.html", [
-      [ "xms::XmUGridImpl", "classxms_1_1_xm_u_grid_impl.html", null ]
-    ] ],
+    [ "xms::XmUGrid", "classxms_1_1_xm_u_grid.html", null ],
+    [ "XmUGrid", "class_xm_u_grid.html", null ],
     [ "XmUGridTests", "class_xm_u_grid_tests.html", null ]
 ];
