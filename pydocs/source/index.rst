@@ -4,7 +4,7 @@
    :align: right
 
 *******************
-XmsMesh |version|
+XmsGrid |version|
 *******************
 
 **Last Updated:** October 5, 2018
