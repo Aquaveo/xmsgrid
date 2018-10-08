@@ -3228,7 +3228,7 @@ using namespace xms;
 //------------------------------------------------------------------------------
 std::string TestFilesPath()
 {
-  return std::string(XMSGRID_TEST_PATH);
+  return std::string(XMS_TEST_PATH);
 } // TestFilesPath
 
 ////////////////////////////////////////////////////////////////////////////////
