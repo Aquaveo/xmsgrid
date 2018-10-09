@@ -93,7 +93,7 @@ VecInt ConvexHullWithIndices(const VecInt& a_points, BSHP<XmUGrid> a_ugrid)
   std::vector<Pt3d> points3d(a_points.size());
   for (int i = 0; i < a_points.size(); ++i)
   {
-    points3d.push_back(a_ugrid->GetPoint(a_points[i]));
+    points3d.push_back(a_ugrid->GetPointLocation(a_points[i]));
   }
   std::vector<Pt3d> convexHull = ConvexHull(points3d);
   VecInt returnPoints(convexHull.size());

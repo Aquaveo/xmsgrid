@@ -53,7 +53,7 @@ void iWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
   a_outStream << "ASCII XmUGrid Version 1.0\n";
 
   // number of points
-  const VecPt3d& points = a_ugrid->GetPoints();
+  const VecPt3d& points = a_ugrid->GetLocations();
   a_outStream << "NUM_POINTS " << points.size() << "\n";
 
   // points
@@ -64,16 +64,16 @@ void iWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
   }
 
   // number of cell stream items
-  const VecInt& cellStream = a_ugrid->GetCellStream();
-  int cellStreamSize = (int)cellStream.size();
-  a_outStream << "NUM_CELL_ITEMS " << cellStreamSize << "\n";
+  const VecInt& cellstream = a_ugrid->GetCellStream();
+  int cellstreamSize = (int)cellstream.size();
+  a_outStream << "NUM_CELL_ITEMS " << cellstreamSize << "\n";
 
   // cells
   int currIdx = 0;
-  while (currIdx < cellStreamSize)
+  while (currIdx < cellstreamSize)
   {
-    int cellType = cellStream[currIdx++];
-    int numItems = cellStream[currIdx++];
+    int cellType = cellstream[currIdx++];
+    int numItems = cellstream[currIdx++];
     a_outStream << "  CELL " << cellType;
     if (cellType == -1)
     {
@@ -85,11 +85,11 @@ void iWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
       a_outStream << " " << numFaces;
       for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
       {
-        numItems = cellStream[currIdx++];
+        numItems = cellstream[currIdx++];
         a_outStream << "\n    " << numItems;
         for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
         {
-          a_outStream << " " << cellStream[currIdx++];
+          a_outStream << " " << cellstream[currIdx++];
         }
       }
     }
@@ -98,7 +98,7 @@ void iWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
       a_outStream << " " << numItems;
       for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
       {
-        a_outStream << " " << cellStream[currIdx++];
+        a_outStream << " " << cellstream[currIdx++];
       }
     }
     a_outStream << "\n";
@@ -568,7 +568,7 @@ void XmUGridUtilsTests::testReadEmptyUGridAsciiFile()
   if (!ugrid)
     TS_FAIL("Failed to read UGrid.");
 
-  TS_ASSERT(ugrid->GetPoints().empty());
+  TS_ASSERT(ugrid->GetLocations().empty());
   TS_ASSERT(ugrid->GetCellStream().empty());
 } // XmUGridReaderTests::testReadEmptyUGridAsciiFile
 //------------------------------------------------------------------------------
@@ -592,7 +592,7 @@ void XmUGridUtilsTests::testReadBasicUGrid()
     TS_FAIL("Failed to read UGrid.");
 
   BSHP<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
-  TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugrid->GetPoints());
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugrid->GetCellStream());
 } // XmUGridUtilsTests::testReadBasicUGrid
 //------------------------------------------------------------------------------
@@ -627,7 +627,7 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
     TS_FAIL("Failed to read UGrid.");
 
   BSHP<XmUGrid> ugridBase = TEST_XmUGridHexagonalPolyhedron();
-  TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugrid->GetPoints());
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugrid->GetCellStream());
 } // XmUGridUtilsTests::testReadPolyhedronUGrid
 //------------------------------------------------------------------------------
@@ -646,7 +646,7 @@ void XmUGridUtilsTests::testLinear2dWriteThenRead()
   input.str(output.str());
   BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
 
-  TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testLinear2dWriteThenRead
 //------------------------------------------------------------------------------
@@ -665,7 +665,7 @@ void XmUGridUtilsTests::testLinear3dWriteThenRead()
   input.str(output.str());
   BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
 
-  TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testLinear3dWriteThenRead
 //------------------------------------------------------------------------------
@@ -691,7 +691,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
     return;
   }
 
-  TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
 //! [snip_test_WriteReadAscii]
@@ -715,7 +715,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
     return;
   }
 
-  TS_ASSERT_EQUALS(ugridBase->GetPoints(), ugridOut->GetPoints());
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
 //! [snip_test_WriteReadAscii]

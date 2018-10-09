@@ -48,7 +48,7 @@ The Code {#XmsgridTheCode}
 * "xmt" - Testing code will be put into this namespace once CXX_TEST is upgraded such that it will find the testing code in this namespace.
 
 ### Interface pattern {#XmsgridInterfacePattern}
-Many classes follow the interface pattern. An abstract base class is used to define the interface and a concrete implementation class is used to implement the functionality. The implementation class will be named the same as the interface class but will end in "Impl" and will only be found in the .cpp file. For example: xms::InterpIdw and xms::InterpIdwImpl. The Doxygen documentation will be for the Impl class.
+Many classes follow the interface pattern. An abstract base class is used to define the interface and a concrete implementation class is used to implement the functionality. The implementation class will be named the same as the interface class but will end in "Impl" and will only be found in the .cpp file. For example: xms::XmUGrid and xms::XmUGridImpl.
 
 More about the interface pattern can be found at the following resources:
 * The C++ Programming Language, Stroustroup, p 318 - 322
