@@ -87,46 +87,208 @@ $(document).ready(function(){initNavTree('classxms_1_1_xm_u_grid.html','');});
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classxms_1_1_xm_u_grid-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">xms::XmUGrid Class Reference</div>  </div>
+<div class="title">xms::XmUGrid Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Geometry for an unstructured grid.  
+<p>Geometry for an unstructured grid. An <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> is defined as a vector of 3d points and a stream of cells. Throughout this interface, we use these terms:  
  <a href="classxms_1_1_xm_u_grid.html#details">More...</a></p>
+<div class="dynheader">
+Inheritance diagram for xms::XmUGrid:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classxms_1_1_xm_u_grid.png" usemap="#xms::XmUGrid_map" alt=""/>
+  <map id="xms::XmUGrid_map" name="xms::XmUGrid_map">
+<area href="classxms_1_1_xm_u_grid_impl.html" title="Implementation for XmUGrid. " alt="xms::XmUGridImpl" shape="rect" coords="0,56,111,80"/>
+</map>
+ </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a714342c17dc5bb731eb78edcad66336d"><td class="memItemLeft" align="right" valign="top"><a id="a714342c17dc5bb731eb78edcad66336d"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a714342c17dc5bb731eb78edcad66336d">~XmUGrid</a> ()</td></tr>
-<tr class="memdesc:a714342c17dc5bb731eb78edcad66336d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
-<tr class="separator:a714342c17dc5bb731eb78edcad66336d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00ece5dcb23ebc06e2651f4a3f3695c4"><td class="memItemLeft" align="right" valign="top"><a id="a00ece5dcb23ebc06e2651f4a3f3695c4"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a00ece5dcb23ebc06e2651f4a3f3695c4">~XmUGrid</a> ()</td></tr>
+<tr class="memdesc:a00ece5dcb23ebc06e2651f4a3f3695c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="separator:a00ece5dcb23ebc06e2651f4a3f3695c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a079d0f44930c597b1ebe45786f8ff000"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a079d0f44930c597b1ebe45786f8ff000">PointCount</a> () const =0</td></tr>
+<tr class="memdesc:a079d0f44930c597b1ebe45786f8ff000"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of points.  <a href="#a079d0f44930c597b1ebe45786f8ff000">More...</a><br /></td></tr>
+<tr class="separator:a079d0f44930c597b1ebe45786f8ff000"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acca1315fd4948f73d62c3a2f23d36fd0"><td class="memItemLeft" align="right" valign="top">virtual const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#acca1315fd4948f73d62c3a2f23d36fd0">GetLocations</a> () const =0</td></tr>
+<tr class="memdesc:acca1315fd4948f73d62c3a2f23d36fd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get vector of UGrid points.  <a href="#acca1315fd4948f73d62c3a2f23d36fd0">More...</a><br /></td></tr>
+<tr class="separator:acca1315fd4948f73d62c3a2f23d36fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a097f42fb1696612e316a576d5dd79083"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a097f42fb1696612e316a576d5dd79083">SetLocations</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_locations)=0</td></tr>
+<tr class="memdesc:a097f42fb1696612e316a576d5dd79083"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set UGrid points.  <a href="#a097f42fb1696612e316a576d5dd79083">More...</a><br /></td></tr>
+<tr class="separator:a097f42fb1696612e316a576d5dd79083"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcf4127cfd961e75bdfe445a6816fcc9"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#abcf4127cfd961e75bdfe445a6816fcc9">GetPointLocation</a> (const int a_pointIdx) const =0</td></tr>
+<tr class="memdesc:abcf4127cfd961e75bdfe445a6816fcc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the point.  <a href="#abcf4127cfd961e75bdfe445a6816fcc9">More...</a><br /></td></tr>
+<tr class="separator:abcf4127cfd961e75bdfe445a6816fcc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d4a2d53eeea06866fb2a875dc4cbb1e"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a3d4a2d53eeea06866fb2a875dc4cbb1e">SetLocation</a> (const int a_pointIdx, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_location)=0</td></tr>
+<tr class="memdesc:a3d4a2d53eeea06866fb2a875dc4cbb1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the point.  <a href="#a3d4a2d53eeea06866fb2a875dc4cbb1e">More...</a><br /></td></tr>
+<tr class="separator:a3d4a2d53eeea06866fb2a875dc4cbb1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae91a9014ce352ffcd04e9f5cefc32abf"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ae91a9014ce352ffcd04e9f5cefc32abf">GetPointXy0</a> (const int a_pointIdx) const =0</td></tr>
+<tr class="memdesc:ae91a9014ce352ffcd04e9f5cefc32abf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the X, Y location of a point.  <a href="#ae91a9014ce352ffcd04e9f5cefc32abf">More...</a><br /></td></tr>
+<tr class="separator:ae91a9014ce352ffcd04e9f5cefc32abf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d7b8b87d255095224d0004946ac8192"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a8d7b8b87d255095224d0004946ac8192">GetPointsLocations</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_points) const =0</td></tr>
+<tr class="memdesc:a8d7b8b87d255095224d0004946ac8192"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a vector of point indices into a vector of point 3d.  <a href="#a8d7b8b87d255095224d0004946ac8192">More...</a><br /></td></tr>
+<tr class="separator:a8d7b8b87d255095224d0004946ac8192"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49d600d7857cfcaaa7fe04440136866d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a49d600d7857cfcaaa7fe04440136866d">GetExtents</a> (<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_min, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_max) const =0</td></tr>
+<tr class="memdesc:a49d600d7857cfcaaa7fe04440136866d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get extents of all points in UGrid.  <a href="#a49d600d7857cfcaaa7fe04440136866d">More...</a><br /></td></tr>
+<tr class="separator:a49d600d7857cfcaaa7fe04440136866d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f4708efacb13ae29dd4e57f98aec9d9"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a0f4708efacb13ae29dd4e57f98aec9d9">GetPointAdjacentCells</a> (const int a_pointIdx) const =0</td></tr>
+<tr class="memdesc:a0f4708efacb13ae29dd4e57f98aec9d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells that are associated with the specified point.  <a href="#a0f4708efacb13ae29dd4e57f98aec9d9">More...</a><br /></td></tr>
+<tr class="separator:a0f4708efacb13ae29dd4e57f98aec9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab27c613c1e9916b0727c2ce461fde681"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ab27c613c1e9916b0727c2ce461fde681">GetPointAdjacentCells</a> (const int a_pointIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_adjacentCells) const =0</td></tr>
+<tr class="memdesc:ab27c613c1e9916b0727c2ce461fde681"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells that are associated with the specified point.  <a href="#ab27c613c1e9916b0727c2ce461fde681">More...</a><br /></td></tr>
+<tr class="separator:ab27c613c1e9916b0727c2ce461fde681"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1dcd067fcfb353dae765a731d2df7282"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a1dcd067fcfb353dae765a731d2df7282">GetPointsAdjacentCells</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_points) const =0</td></tr>
+<tr class="memdesc:a1dcd067fcfb353dae765a731d2df7282"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the common cells from a vector of points.  <a href="#a1dcd067fcfb353dae765a731d2df7282">More...</a><br /></td></tr>
+<tr class="separator:a1dcd067fcfb353dae765a731d2df7282"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef04f51dc3e35f16425bceff7f8fefe0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#aef04f51dc3e35f16425bceff7f8fefe0">GetPointsAdjacentCells</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_pointIdxs, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_adjacentCellIdxs) const =0</td></tr>
+<tr class="memdesc:aef04f51dc3e35f16425bceff7f8fefe0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the cells adjacent to all of a vector of points.  <a href="#aef04f51dc3e35f16425bceff7f8fefe0">More...</a><br /></td></tr>
+<tr class="separator:aef04f51dc3e35f16425bceff7f8fefe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5038fe12f39352f0701d30b743a5b3d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ae5038fe12f39352f0701d30b743a5b3d">GetPointsAdjacentCells</a> (const int a_pointIdx1, const int a_pointIdx2, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_adjacentCellIdxs) const =0</td></tr>
+<tr class="memdesc:ae5038fe12f39352f0701d30b743a5b3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the cells adjacent to both of the two points.  <a href="#ae5038fe12f39352f0701d30b743a5b3d">More...</a><br /></td></tr>
+<tr class="separator:ae5038fe12f39352f0701d30b743a5b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52cf65faae233be569bb14bd73e09449"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a52cf65faae233be569bb14bd73e09449">GetCellCount</a> () const =0</td></tr>
+<tr class="memdesc:a52cf65faae233be569bb14bd73e09449"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of cells.  <a href="#a52cf65faae233be569bb14bd73e09449">More...</a><br /></td></tr>
+<tr class="separator:a52cf65faae233be569bb14bd73e09449"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a114e30713605c5fe8affd578232aacda"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a114e30713605c5fe8affd578232aacda">GetCellPointCount</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:a114e30713605c5fe8affd578232aacda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of cell points (including polyhedron).  <a href="#a114e30713605c5fe8affd578232aacda">More...</a><br /></td></tr>
+<tr class="separator:a114e30713605c5fe8affd578232aacda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a768d1f03936ec142895b4c89ba305a0a"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a768d1f03936ec142895b4c89ba305a0a">GetCellPoints</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:a768d1f03936ec142895b4c89ba305a0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the points of a cell (including polyhedron)  <a href="#a768d1f03936ec142895b4c89ba305a0a">More...</a><br /></td></tr>
+<tr class="separator:a768d1f03936ec142895b4c89ba305a0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac69f3687dec8cc12956ace0049e8dac9"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ac69f3687dec8cc12956ace0049e8dac9">GetCellPoints</a> (const int a_cellIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellPoints) const =0</td></tr>
+<tr class="memdesc:ac69f3687dec8cc12956ace0049e8dac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the points of a cell.  <a href="#ac69f3687dec8cc12956ace0049e8dac9">More...</a><br /></td></tr>
+<tr class="separator:ac69f3687dec8cc12956ace0049e8dac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a7b5afd0becce46368ff3736c38311e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a0a7b5afd0becce46368ff3736c38311e">GetCellLocations</a> (const int a_cellIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_cellLocations) const =0</td></tr>
+<tr class="memdesc:a0a7b5afd0becce46368ff3736c38311e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get locations of cell points.  <a href="#a0a7b5afd0becce46368ff3736c38311e">More...</a><br /></td></tr>
+<tr class="separator:a0a7b5afd0becce46368ff3736c38311e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cdc6b0ed97cfbef84d2529b14c79f0d"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacexms.html#ac31bf74ccc479f6e1c2ae761d3d727a9">XmUGridCellType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a1cdc6b0ed97cfbef84d2529b14c79f0d">GetCellType</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:a1cdc6b0ed97cfbef84d2529b14c79f0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of cells.  <a href="#a1cdc6b0ed97cfbef84d2529b14c79f0d">More...</a><br /></td></tr>
+<tr class="separator:a1cdc6b0ed97cfbef84d2529b14c79f0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eb4afae2e77ddf6a7fedfcee18a72e7"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a7eb4afae2e77ddf6a7fedfcee18a72e7">GetDimensionCounts</a> () const =0</td></tr>
+<tr class="memdesc:a7eb4afae2e77ddf6a7fedfcee18a72e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count all number of the cells with each dimenion (0, 1, 2, 3)  <a href="#a7eb4afae2e77ddf6a7fedfcee18a72e7">More...</a><br /></td></tr>
+<tr class="separator:a7eb4afae2e77ddf6a7fedfcee18a72e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a046db5d518cc1f2e250f402bcc0cc21a"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a046db5d518cc1f2e250f402bcc0cc21a">GetCellDimension</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:a046db5d518cc1f2e250f402bcc0cc21a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the dimension of the specified cell.  <a href="#a046db5d518cc1f2e250f402bcc0cc21a">More...</a><br /></td></tr>
+<tr class="separator:a046db5d518cc1f2e250f402bcc0cc21a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cc849c9e815e1650aa2584c65528b5f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a9cc849c9e815e1650aa2584c65528b5f">GetCellExtents</a> (const int a_cellIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_min, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_max) const =0</td></tr>
+<tr class="memdesc:a9cc849c9e815e1650aa2584c65528b5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the extents of the given cell.  <a href="#a9cc849c9e815e1650aa2584c65528b5f">More...</a><br /></td></tr>
+<tr class="separator:a9cc849c9e815e1650aa2584c65528b5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab26fd6b8caeabeecde13a7c7f8b40343"><td class="memItemLeft" align="right" valign="top">virtual const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ab26fd6b8caeabeecde13a7c7f8b40343">GetCellStream</a> () const =0</td></tr>
+<tr class="memdesc:ab26fd6b8caeabeecde13a7c7f8b40343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get cell stream vector for the entire UGrid. A cellstream is defined as follows: Polyhedrons: Cell type, number of faces, [num points in face, point numbers (0-based, CCW when looking in)] repeated for each face. Hexahedrons, polygons, quads, triangles etc: Cell type (ElemTypeEnum), number of points, point numbers. Zero-based, CCW, bottom, then top. Not true for pixel or voxel.  <a href="#ab26fd6b8caeabeecde13a7c7f8b40343">More...</a><br /></td></tr>
+<tr class="separator:ab26fd6b8caeabeecde13a7c7f8b40343"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4757d88c6874cf636b968827e62c184"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#af4757d88c6874cf636b968827e62c184">SetCellstream</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellstream)=0</td></tr>
+<tr class="memdesc:af4757d88c6874cf636b968827e62c184"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the ugrid cells for the entire UGrid using a cell stream.  <a href="#af4757d88c6874cf636b968827e62c184">More...</a><br /></td></tr>
+<tr class="separator:af4757d88c6874cf636b968827e62c184"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a780c96b0be08754ac120574192c17d91"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a780c96b0be08754ac120574192c17d91">GetCellCellstream</a> (const int a_cellIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellstream) const =0</td></tr>
+<tr class="memdesc:a780c96b0be08754ac120574192c17d91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get cell stream vector for a single cell.  <a href="#a780c96b0be08754ac120574192c17d91">More...</a><br /></td></tr>
+<tr class="separator:a780c96b0be08754ac120574192c17d91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4761217c3999fb3153527ec56d3a1ee"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ae4761217c3999fb3153527ec56d3a1ee">GetCellAdjacentCells</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:ae4761217c3999fb3153527ec56d3a1ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells neighboring a cell (cells associated with any of it's points)  <a href="#ae4761217c3999fb3153527ec56d3a1ee">More...</a><br /></td></tr>
+<tr class="separator:ae4761217c3999fb3153527ec56d3a1ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98dd14c7ab9e527eacbc229d6e2e2a02"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a98dd14c7ab9e527eacbc229d6e2e2a02">GetCellAdjacentCells</a> (const int a_cellIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellNeighbors) const =0</td></tr>
+<tr class="memdesc:a98dd14c7ab9e527eacbc229d6e2e2a02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cells neighboring a cell (cells associated with any of it's points)  <a href="#a98dd14c7ab9e527eacbc229d6e2e2a02">More...</a><br /></td></tr>
+<tr class="separator:a98dd14c7ab9e527eacbc229d6e2e2a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a493091705fb4d7b05f294950afb52018"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a493091705fb4d7b05f294950afb52018">GetCellPlanViewPolygon</a> (int a_cellIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_polygon) const =0</td></tr>
+<tr class="memdesc:a493091705fb4d7b05f294950afb52018"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a plan view polygon of a specified cell.  <a href="#a493091705fb4d7b05f294950afb52018">More...</a><br /></td></tr>
+<tr class="separator:a493091705fb4d7b05f294950afb52018"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef337606cfbd43cc04e64333cf95a02b"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#aef337606cfbd43cc04e64333cf95a02b">GetCellCentroid</a> (int a_cellIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_centroid) const =0</td></tr>
+<tr class="memdesc:aef337606cfbd43cc04e64333cf95a02b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the centroid location of a cell.  <a href="#aef337606cfbd43cc04e64333cf95a02b">More...</a><br /></td></tr>
+<tr class="separator:aef337606cfbd43cc04e64333cf95a02b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0227de33b3905bfb2f34cf12176e45b"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#aa0227de33b3905bfb2f34cf12176e45b">GetCellEdgeCount</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:aa0227de33b3905bfb2f34cf12176e45b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of edges for a cell.  <a href="#aa0227de33b3905bfb2f34cf12176e45b">More...</a><br /></td></tr>
+<tr class="separator:aa0227de33b3905bfb2f34cf12176e45b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cfeae5f8e045aa26de22f0f12968770"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a0cfeae5f8e045aa26de22f0f12968770">GetCellEdge</a> (const int a_cellIdx, const int a_edgeIdx) const =0</td></tr>
+<tr class="memdesc:a0cfeae5f8e045aa26de22f0f12968770"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the points of a cell.  <a href="#a0cfeae5f8e045aa26de22f0f12968770">More...</a><br /></td></tr>
+<tr class="separator:a0cfeae5f8e045aa26de22f0f12968770"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6022c9cadb27816b426bdc62f5635f5"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ab6022c9cadb27816b426bdc62f5635f5">GetCellEdgeAdjacentCells</a> (const int a_cellIdx, const int a_edgeIdx) const =0</td></tr>
+<tr class="memdesc:ab6022c9cadb27816b426bdc62f5635f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#ab6022c9cadb27816b426bdc62f5635f5">More...</a><br /></td></tr>
+<tr class="separator:ab6022c9cadb27816b426bdc62f5635f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f2de396eb174cf1acd5e6a640cdc96a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a6f2de396eb174cf1acd5e6a640cdc96a">GetCellEdgeAdjacentCells</a> (const int a_cellIdx, const int a_edgeIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_adjacentCellIdxs) const =0</td></tr>
+<tr class="memdesc:a6f2de396eb174cf1acd5e6a640cdc96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#a6f2de396eb174cf1acd5e6a640cdc96a">More...</a><br /></td></tr>
+<tr class="separator:a6f2de396eb174cf1acd5e6a640cdc96a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafb5073097a30d0c5a64153eae76ac3e"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#aafb5073097a30d0c5a64153eae76ac3e">GetCell2dEdgeAdjacentCell</a> (const int a_cellIdx, const int a_edgeIdx) const =0</td></tr>
+<tr class="memdesc:aafb5073097a30d0c5a64153eae76ac3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#aafb5073097a30d0c5a64153eae76ac3e">More...</a><br /></td></tr>
+<tr class="separator:aafb5073097a30d0c5a64153eae76ac3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5eac64030b549a8805147908ae5b738e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a5eac64030b549a8805147908ae5b738e">GetEdgeAdjacentCells</a> (const <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &amp;a_edge, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_adjacentCellIdxs) const =0</td></tr>
+<tr class="memdesc:a5eac64030b549a8805147908ae5b738e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the indices of the adjacent cells (that shares the same cell edge)  <a href="#a5eac64030b549a8805147908ae5b738e">More...</a><br /></td></tr>
+<tr class="separator:a5eac64030b549a8805147908ae5b738e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39d44fc045be2bc895dc94f354d23502"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a39d44fc045be2bc895dc94f354d23502">GetEdgeAdjacentCells</a> (const <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &amp;a_edge) const =0</td></tr>
+<tr class="memdesc:a39d44fc045be2bc895dc94f354d23502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the index of the adjacent cells (that shares the same cell edge)  <a href="#a39d44fc045be2bc895dc94f354d23502">More...</a><br /></td></tr>
+<tr class="separator:a39d44fc045be2bc895dc94f354d23502"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afae1758d8433f3a9112aa0a5661505b8"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#afae1758d8433f3a9112aa0a5661505b8">GetCellEdges</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:afae1758d8433f3a9112aa0a5661505b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Edges of a cell.  <a href="#afae1758d8433f3a9112aa0a5661505b8">More...</a><br /></td></tr>
+<tr class="separator:afae1758d8433f3a9112aa0a5661505b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd543b795f3968837dcd591b7b3dcf7c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#abd543b795f3968837dcd591b7b3dcf7c">GetCellEdges</a> (const int a_cellIdx, std::vector&lt; <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &gt; &amp;a_edges) const =0</td></tr>
+<tr class="memdesc:abd543b795f3968837dcd591b7b3dcf7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the Edges of a cell.  <a href="#abd543b795f3968837dcd591b7b3dcf7c">More...</a><br /></td></tr>
+<tr class="separator:abd543b795f3968837dcd591b7b3dcf7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafd7cd6f70a335e67f4251543af72990"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#aafd7cd6f70a335e67f4251543af72990">GetPointAdjacentPoints</a> (int a_pointIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_edgePoints) const =0</td></tr>
+<tr class="memdesc:aafd7cd6f70a335e67f4251543af72990"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a point gets point indices attached to the point by an edge.  <a href="#aafd7cd6f70a335e67f4251543af72990">More...</a><br /></td></tr>
+<tr class="separator:aafd7cd6f70a335e67f4251543af72990"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ee7727ba92139fd26cebc41f0982419"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a9ee7727ba92139fd26cebc41f0982419">GetPointAdjacentLocations</a> (int a_pointIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_edgePoints) const =0</td></tr>
+<tr class="memdesc:a9ee7727ba92139fd26cebc41f0982419"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a point gets point locations attached to the point by an edge.  <a href="#a9ee7727ba92139fd26cebc41f0982419">More...</a><br /></td></tr>
+<tr class="separator:a9ee7727ba92139fd26cebc41f0982419"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acad05ff1b6cc4352dc7ba150a315dde0"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#acad05ff1b6cc4352dc7ba150a315dde0">GetCell3dFaceCount</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:acad05ff1b6cc4352dc7ba150a315dde0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of cell faces for given cell.  <a href="#acad05ff1b6cc4352dc7ba150a315dde0">More...</a><br /></td></tr>
+<tr class="separator:acad05ff1b6cc4352dc7ba150a315dde0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a8b79f7bd67deba4a12a36b39ec8858"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a8a8b79f7bd67deba4a12a36b39ec8858">GetCell3dFacePointCount</a> (const int a_cellIdx, const int a_faceIdx) const =0</td></tr>
+<tr class="memdesc:a8a8b79f7bd67deba4a12a36b39ec8858"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of face points for a given cell and face.  <a href="#a8a8b79f7bd67deba4a12a36b39ec8858">More...</a><br /></td></tr>
+<tr class="separator:a8a8b79f7bd67deba4a12a36b39ec8858"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba063b951d106385dc680be3f7942731"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#aba063b951d106385dc680be3f7942731">GetCell3dFacePoints</a> (const int a_cellIdx, const int a_faceIdx) const =0</td></tr>
+<tr class="memdesc:aba063b951d106385dc680be3f7942731"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cell face for given cell and face index.  <a href="#aba063b951d106385dc680be3f7942731">More...</a><br /></td></tr>
+<tr class="separator:aba063b951d106385dc680be3f7942731"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa56e589cf053ede93c849b977c408cd2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#aa56e589cf053ede93c849b977c408cd2">GetCell3dFacePoints</a> (const int a_cellIdx, const int a_faceIdx, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_facePtIdxs) const =0</td></tr>
+<tr class="memdesc:aa56e589cf053ede93c849b977c408cd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cell face for given cell and face index.  <a href="#aa56e589cf053ede93c849b977c408cd2">More...</a><br /></td></tr>
+<tr class="separator:aa56e589cf053ede93c849b977c408cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a517137f93176ed8883356771f3f1bc9b"><td class="memItemLeft" align="right" valign="top">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a517137f93176ed8883356771f3f1bc9b">GetCell3dFacesPoints</a> (const int a_cellIdx) const =0</td></tr>
+<tr class="memdesc:a517137f93176ed8883356771f3f1bc9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the faces of a cell.  <a href="#a517137f93176ed8883356771f3f1bc9b">More...</a><br /></td></tr>
+<tr class="separator:a517137f93176ed8883356771f3f1bc9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15628550e1b02ae974f0d4948f4e9912"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a15628550e1b02ae974f0d4948f4e9912">GetCell3dFaceAdjacentCell</a> (const int a_cellIdx, const int a_faceIdx) const =0</td></tr>
+<tr class="memdesc:a15628550e1b02ae974f0d4948f4e9912"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cell face neighbors for given cell and face index.  <a href="#a15628550e1b02ae974f0d4948f4e9912">More...</a><br /></td></tr>
+<tr class="separator:a15628550e1b02ae974f0d4948f4e9912"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a8edc40d0386aac81162b18d57368b0"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a1a8edc40d0386aac81162b18d57368b0">GetCell3dFaceAdjacentCell</a> (const int a_cellIdx, const int a_faceIdx, int &amp;a_neighborCell, int &amp;a_neighborFace) const =0</td></tr>
+<tr class="memdesc:a1a8edc40d0386aac81162b18d57368b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the cell face neighbors for given cell and face index.  <a href="#a1a8edc40d0386aac81162b18d57368b0">More...</a><br /></td></tr>
+<tr class="separator:a1a8edc40d0386aac81162b18d57368b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a689177bac440b1879851461f08009502"><td class="memItemLeft" align="right" valign="top">static <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a689177bac440b1879851461f08009502">New</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_points, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellStream)</td></tr>
-<tr class="memdesc:a689177bac440b1879851461f08009502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>.  <a href="#a689177bac440b1879851461f08009502">More...</a><br /></td></tr>
-<tr class="separator:a689177bac440b1879851461f08009502"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8144c1fe7cb0f3da5d13db63f6937fe"><td class="memItemLeft" align="right" valign="top">static <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ab8144c1fe7cb0f3da5d13db63f6937fe">New</a> ()</td></tr>
-<tr class="memdesc:ab8144c1fe7cb0f3da5d13db63f6937fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>.  <a href="#ab8144c1fe7cb0f3da5d13db63f6937fe">More...</a><br /></td></tr>
-<tr class="separator:ab8144c1fe7cb0f3da5d13db63f6937fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae14dda044c695529ea6250f860cafbd2"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ae14dda044c695529ea6250f860cafbd2">ValidCellStream</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellStream)</td></tr>
-<tr class="memdesc:ae14dda044c695529ea6250f860cafbd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check a cell stream to make sure it's valid. Compares cell type against expected number of points.  <a href="#ae14dda044c695529ea6250f860cafbd2">More...</a><br /></td></tr>
-<tr class="separator:ae14dda044c695529ea6250f860cafbd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45106b162bbdb8cfacb6a17e57d6b271"><td class="memItemLeft" align="right" valign="top">static <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a45106b162bbdb8cfacb6a17e57d6b271">New</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_points, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellstream)</td></tr>
+<tr class="memdesc:a45106b162bbdb8cfacb6a17e57d6b271"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>.  <a href="#a45106b162bbdb8cfacb6a17e57d6b271">More...</a><br /></td></tr>
+<tr class="separator:a45106b162bbdb8cfacb6a17e57d6b271"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51464b4cc71bddbb97e9e8a6ff7fb798"><td class="memItemLeft" align="right" valign="top">static <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798">New</a> ()</td></tr>
+<tr class="memdesc:a51464b4cc71bddbb97e9e8a6ff7fb798"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>.  <a href="#a51464b4cc71bddbb97e9e8a6ff7fb798">More...</a><br /></td></tr>
+<tr class="separator:a51464b4cc71bddbb97e9e8a6ff7fb798"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75064634282c829c88596c6da646f4f3"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a75064634282c829c88596c6da646f4f3">IsValidCellstream</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;a_cellstream)</td></tr>
+<tr class="memdesc:a75064634282c829c88596c6da646f4f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check a cell stream to make sure it's valid. Compares cell type against expected number of points.  <a href="#a75064634282c829c88596c6da646f4f3">More...</a><br /></td></tr>
+<tr class="separator:a75064634282c829c88596c6da646f4f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ae30014ef614bff4158d0f1e79785162a"><td class="memItemLeft" align="right" valign="top"><a id="ae30014ef614bff4158d0f1e79785162a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#ae30014ef614bff4158d0f1e79785162a">XmUGrid</a> ()</td></tr>
-<tr class="memdesc:ae30014ef614bff4158d0f1e79785162a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="separator:ae30014ef614bff4158d0f1e79785162a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2830cab0aca6c776321d58294dbc2208"><td class="memItemLeft" align="right" valign="top"><a id="a2830cab0aca6c776321d58294dbc2208"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html#a2830cab0aca6c776321d58294dbc2208">XmUGrid</a> ()</td></tr>
+<tr class="memdesc:a2830cab0aca6c776321d58294dbc2208"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:a2830cab0aca6c776321d58294dbc2208"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Geometry for an unstructured grid. </p>
+<div class="textblock"><p>Geometry for an unstructured grid. An <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> is defined as a vector of 3d points and a stream of cells. Throughout this interface, we use these terms: </p>
+<p>Point or pointIdx refer to an index into the vector of points.</p>
+<p>Location refers to the actual 3d coordinates of one or more of those points.</p>
+<p>GetCellStream refers to a single flat vector of integers that defines the cells. The cellstream for each cell begins with an integer that defines the cell type. For most cell types, the next integer specifies the number of points in the cell (even though that number never varies for all cells of most types). That is followed by the indices for that number of points. One of the cell types is a polyhedron. It follows the cell type with a count of the faces in the polyhedron. Then for that number of faces, each face is defined by a number of points (ordered counter-clockwise from the outside), followed by that many point indices.</p>
+<p>Cell or CellIdx refers to the n-th cell defined in the cell stream. Internally, such an value is used to index into a secondary vector that defines the offsets into the cellstream where that cell begins and ends.</p>
+<p>Edge refers to a simple structure that contains a pair of indices to points that are connected by at least one cell's points.</p>
+<p>EdgeIdx refers to a particular ordering of the edges of a cell. For each cell type, there is a predefined way of connecting the points of cells of that type to form an Edge. The EdgeIdx is a convenient way to loop through that set of edges on a cell without actually collecting them into a vector.</p>
+<p>Dimension refers to the kinds of connectivity a cell type will have. Cells that represent a single point have dimension 0. Those that connect into a curve have dimension 1. Those that connect to form a surface have dimension 2. Those that represent solids have dimension 3. (All of these cell types can exist in 3 dimensional space.)</p>
+<p>Functions that just have one word, like <a class="el" href="classxms_1_1_xm_u_grid.html#acca1315fd4948f73d62c3a2f23d36fd0" title="Get vector of UGrid points. ">GetLocations()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#ab26fd6b8caeabeecde13a7c7f8b40343" title="Get cell stream vector for the entire UGrid. A cellstream is defined as follows: Polyhedrons: Cell ty...">GetCellStream()</a>, or <a class="el" href="classxms_1_1_xm_u_grid.html#a49d600d7857cfcaaa7fe04440136866d" title="Get extents of all points in UGrid. ">GetExtents()</a> return properties of the entire <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>. Those that return properties of a particular cell will begin with the word "Cell" (and have a_cellIdx as their first argument) and end with type of related objects. For example: <a class="el" href="classxms_1_1_xm_u_grid.html#a768d1f03936ec142895b4c89ba305a0a" title="Get the points of a cell (including polyhedron) ">GetCellPoints()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#a0a7b5afd0becce46368ff3736c38311e" title="Get locations of cell points. ">GetCellLocations()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#a1cdc6b0ed97cfbef84d2529b14c79f0d" title="Get the number of cells. ">GetCellType()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#a046db5d518cc1f2e250f402bcc0cc21a" title="Get the dimension of the specified cell. ">GetCellDimension()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#ae4761217c3999fb3153527ec56d3a1ee" title="Get the cells neighboring a cell (cells associated with any of it&#39;s points) ">GetCellAdjacentCells()</a>, etc.</p>
+<p>Functions that begin with "Point" have a_pointIdx as their first argument return objects relative to that point, such <a class="el" href="classxms_1_1_xm_u_grid.html#abcf4127cfd961e75bdfe445a6816fcc9" title="Get the point. ">GetPointLocation()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#ae91a9014ce352ffcd04e9f5cefc32abf" title="Get the X, Y location of a point. ">GetPointXy0()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#a0f4708efacb13ae29dd4e57f98aec9d9" title="Get the cells that are associated with the specified point. ">GetPointAdjacentCells()</a>, etc. (One could expect a function like PointEdges() or <a class="el" href="classxms_1_1_xm_u_grid.html#aafd7cd6f70a335e67f4251543af72990" title="Given a point gets point indices attached to the point by an edge. ">GetPointAdjacentPoints()</a> to take a_pointIdx as the first argument return a vector of Edges or PointIdxs that connect to that point.)</p>
+<p>Functions that return the number of objects in some scope end with the word "Count" preceded by the type of things being counted and optionally a scope. So <a class="el" href="classxms_1_1_xm_u_grid.html#a079d0f44930c597b1ebe45786f8ff000" title="Get the number of points. ">PointCount()</a> and <a class="el" href="classxms_1_1_xm_u_grid.html#a52cf65faae233be569bb14bd73e09449" title="Get the number of cells. ">GetCellCount()</a> return the number of points and cells respectively in the <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>, while <a class="el" href="classxms_1_1_xm_u_grid.html#a114e30713605c5fe8affd578232aacda" title="Get the number of cell points (including polyhedron). ">GetCellPointCount()</a> and <a class="el" href="classxms_1_1_xm_u_grid.html#aa0227de33b3905bfb2f34cf12176e45b" title="Get the number of edges for a cell. ">GetCellEdgeCount()</a> return the number of points or edges, respectively, in a specified cell.</p>
+<p>There is a predefined ordering of faces within the solid cell types, so faceIdx refers to the face in that ordering. Methods containing the words Cell3d or Face are specific to solids (dimension 3 cells).</p>
+<p>Some functions begin with two scoping words and take two input index arguments; for example: <a class="el" href="classxms_1_1_xm_u_grid.html#ab6022c9cadb27816b426bdc62f5635f5" title="Get the index of the adjacent cells (that shares the same cell edge) ">GetCellEdgeAdjacentCells()</a> or <a class="el" href="classxms_1_1_xm_u_grid.html#aba063b951d106385dc680be3f7942731" title="Get the cell face for given cell and face index. ">GetCell3dFacePoints()</a>. </p>
 
 <p class="definition">Definition at line <a class="el" href="_xm_u_grid_8h_source.html#l00119">119</a> of file <a class="el" href="_xm_u_grid_8h_source.html">XmUGrid.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a689177bac440b1879851461f08009502"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a689177bac440b1879851461f08009502">&#9670;&nbsp;</a></span>New() <span class="overload">[1/2]</span></h2>
+<a id="aafb5073097a30d0c5a64153eae76ac3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafb5073097a30d0c5a64153eae76ac3e">&#9670;&nbsp;</a></span>GetCell2dEdgeAdjacentCell()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -135,7 +297,1905 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt; XmUGrid::New </td>
+          <td class="memname">virtual int xms::XmUGrid::GetCell2dEdgeAdjacentCell </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_edgeIdx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the index of the adjacent cells (that shares the same cell edge) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_edgeIdx</td><td>the index of the edge </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>index of the adjacent cell (or -1 if none). </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#acd3be022b5d2952635bbf2a46d872c3b">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a15628550e1b02ae974f0d4948f4e9912"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15628550e1b02ae974f0d4948f4e9912">&#9670;&nbsp;</a></span>GetCell3dFaceAdjacentCell() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int xms::XmUGrid::GetCell3dFaceAdjacentCell </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_faceIdx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cell face neighbors for given cell and face index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_faceIdx</td><td>the face index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a cell index of the neighbor </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a2d867bf0312d37fb6e53deb8f285a99f">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a1a8edc40d0386aac81162b18d57368b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a8edc40d0386aac81162b18d57368b0">&#9670;&nbsp;</a></span>GetCell3dFaceAdjacentCell() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool xms::XmUGrid::GetCell3dFaceAdjacentCell </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_faceIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>a_neighborCell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>a_neighborFace</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cell face neighbors for given cell and face index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_faceIdx</td><td>the face index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_neighborCell</td><td>the index of the neighboring cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_neighborFace</td><td>the face index of the neighboring cell adjacent to the given face </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a cell index of the neighbor </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a71f6e717cb390605927b80f31f615d5a">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="acad05ff1b6cc4352dc7ba150a315dde0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acad05ff1b6cc4352dc7ba150a315dde0">&#9670;&nbsp;</a></span>GetCell3dFaceCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int xms::XmUGrid::GetCell3dFaceCount </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of cell faces for given cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the count of cell faces </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ad504659993e196d1edbde16421e56d9a">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a8a8b79f7bd67deba4a12a36b39ec8858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a8b79f7bd67deba4a12a36b39ec8858">&#9670;&nbsp;</a></span>GetCell3dFacePointCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int xms::XmUGrid::GetCell3dFacePointCount </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_faceIdx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of face points for a given cell and face. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>The cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_faceIdx</td><td>The face </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of face points or -1 if invalid face or cell index. </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a7669685008f40cea3d79aa93ea9e1b85">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="aba063b951d106385dc680be3f7942731"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba063b951d106385dc680be3f7942731">&#9670;&nbsp;</a></span>GetCell3dFacePoints() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> xms::XmUGrid::GetCell3dFacePoints </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_faceIdx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cell face for given cell and face index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_faceIdx</td><td>the face index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of point indices for the face index of the cell </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a69f889294477362c7c1a1c9362ec62b1">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="aa56e589cf053ede93c849b977c408cd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa56e589cf053ede93c849b977c408cd2">&#9670;&nbsp;</a></span>GetCell3dFacePoints() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetCell3dFacePoints </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_faceIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_facePtIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cell face for given cell and face index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_faceIdx</td><td>the face index of the cell </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_facePtIdxs</td><td>a vector of point indices for the face </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of point indices for the face index of the cell </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ad4945cd666a17e2b1d7fceb0730b9c8c">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a517137f93176ed8883356771f3f1bc9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a517137f93176ed8883356771f3f1bc9b">&#9670;&nbsp;</a></span>GetCell3dFacesPoints()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a91ad569308b76393ca27c1270a637d9b">VecInt2d</a> xms::XmUGrid::GetCell3dFacesPoints </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the faces of a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the cells to whom the faces belong </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of faces, which is a vector of point indices </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a8cc422be8230daead9995d6c52b567bd">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="ae4761217c3999fb3153527ec56d3a1ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4761217c3999fb3153527ec56d3a1ee">&#9670;&nbsp;</a></span>GetCellAdjacentCells() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> xms::XmUGrid::GetCellAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cells neighboring a cell (cells associated with any of it's points) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>vector of cell indices </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a4acb3c229c93c1364265b9e757f7c611">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a98dd14c7ab9e527eacbc229d6e2e2a02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98dd14c7ab9e527eacbc229d6e2e2a02">&#9670;&nbsp;</a></span>GetCellAdjacentCells() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetCellAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_cellNeighbors</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cells neighboring a cell (cells associated with any of it's points) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_cellNeighbors</td><td>vector of cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#af29e62d8167b41176724eb058de46987">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a780c96b0be08754ac120574192c17d91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a780c96b0be08754ac120574192c17d91">&#9670;&nbsp;</a></span>GetCellCellstream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool xms::XmUGrid::GetCellCellstream </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_cellstream</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get cell stream vector for a single cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellstream</td><td>The cellstream of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classxms_1_1_xm_u_grid.html#ab26fd6b8caeabeecde13a7c7f8b40343" title="Get cell stream vector for the entire UGrid. A cellstream is defined as follows: Polyhedrons: Cell ty...">GetCellStream</a> for more detail on cell stream definitions. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>whether it was successfull or not </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a597d3c60eec441b2176141211ec258d1">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="aef337606cfbd43cc04e64333cf95a02b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef337606cfbd43cc04e64333cf95a02b">&#9670;&nbsp;</a></span>GetCellCentroid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool xms::XmUGrid::GetCellCentroid </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_centroid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the centroid location of a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>The index of the cell. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_centroid</td><td>The location of the cell centroid. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False if the cell index does not exist. </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#af5bad30c44856f0eda9e6158700c3b9f">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a52cf65faae233be569bb14bd73e09449"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52cf65faae233be569bb14bd73e09449">&#9670;&nbsp;</a></span>GetCellCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int xms::XmUGrid::GetCellCount </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of cells. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of cells </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ab7675dc5297790cb3a467fedcb70bf07">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a046db5d518cc1f2e250f402bcc0cc21a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a046db5d518cc1f2e250f402bcc0cc21a">&#9670;&nbsp;</a></span>GetCellDimension()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int xms::XmUGrid::GetCellDimension </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the dimension of the specified cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the dimension of the cells or -1 if invalid index or invalid dimension </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a672fe28101f211d9291001e0ce6a5318">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a0cfeae5f8e045aa26de22f0f12968770"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cfeae5f8e045aa26de22f0f12968770">&#9670;&nbsp;</a></span>GetCellEdge()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> xms::XmUGrid::GetCellEdge </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_edgeIdx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the points of a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_edgeIdx</td><td>the index of the edge </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a standard pair of point indices (which is an edge) </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a6c543f756089e1a14bf3298e9b6046ba">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="ab6022c9cadb27816b426bdc62f5635f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6022c9cadb27816b426bdc62f5635f5">&#9670;&nbsp;</a></span>GetCellEdgeAdjacentCells() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> xms::XmUGrid::GetCellEdgeAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_edgeIdx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the index of the adjacent cells (that shares the same cell edge) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_edgeIdx</td><td>the index of the edge </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of cell indices of the adjacent cells </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a054fae8cf18dd3a3345f2871c3413b5a">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a6f2de396eb174cf1acd5e6a640cdc96a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f2de396eb174cf1acd5e6a640cdc96a">&#9670;&nbsp;</a></span>GetCellEdgeAdjacentCells() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetCellEdgeAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_edgeIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_adjacentCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the index of the adjacent cells (that shares the same cell edge) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_edgeIdx</td><td>the index of the edge </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_adjacentCellIdxs</td><td>a vector of cell indices of the adjacent cells </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#aba4f1740a78221cc88d14ed119ff128b">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="aa0227de33b3905bfb2f34cf12176e45b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0227de33b3905bfb2f34cf12176e45b">&#9670;&nbsp;</a></span>GetCellEdgeCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int xms::XmUGrid::GetCellEdgeCount </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of edges for a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the count of cell edges </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a76313735b4b511047eadf7c4c41df8d1">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="afae1758d8433f3a9112aa0a5661505b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afae1758d8433f3a9112aa0a5661505b8">&#9670;&nbsp;</a></span>GetCellEdges() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::vector&lt;<a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a>&gt; xms::XmUGrid::GetCellEdges </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Edges of a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the cells to whom the edges belong </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of edges </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a7751b8e82fd63b1390c7231cef3c77ca">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="abd543b795f3968837dcd591b7b3dcf7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd543b795f3968837dcd591b7b3dcf7c">&#9670;&nbsp;</a></span>GetCellEdges() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetCellEdges </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>a_edges</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the Edges of a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the cells to whom the edges belong </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_edges</td><td>a vector of edges </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#af9cde4a78ab9b3b94e7af14f6c7b20cd">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a9cc849c9e815e1650aa2584c65528b5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cc849c9e815e1650aa2584c65528b5f">&#9670;&nbsp;</a></span>GetCellExtents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetCellExtents </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_min</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_max</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the extents of the given cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>The cell index to get the extents of. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_min</td><td>The minimum location. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_max</td><td>The maximum location. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a6aecf50ac2c0a8c1e7688faa5950cd2e">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a0a7b5afd0becce46368ff3736c38311e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a7b5afd0becce46368ff3736c38311e">&#9670;&nbsp;</a></span>GetCellLocations()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetCellLocations </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_cellLocations</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get locations of cell points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_cellLocations</td><td>The locations of the cell points </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ae6157c33f9f5475fc077a42a135f19fb">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a493091705fb4d7b05f294950afb52018"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a493091705fb4d7b05f294950afb52018">&#9670;&nbsp;</a></span>GetCellPlanViewPolygon()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool xms::XmUGrid::GetCellPlanViewPolygon </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_polygon</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a plan view polygon of a specified cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>The index of the cell. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_polygon</td><td>Vector of Pt3d that is the plan view polygon. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False if the cell index does not exist or if the cell is not 2 or 3 dimensional. </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#ac688327b72a4bd20526dc62302785eaf">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a114e30713605c5fe8affd578232aacda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a114e30713605c5fe8affd578232aacda">&#9670;&nbsp;</a></span>GetCellPointCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int xms::XmUGrid::GetCellPointCount </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of cell points (including polyhedron). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of point indices </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a27b8d19e26fa258bce61dfe220715590">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a768d1f03936ec142895b4c89ba305a0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a768d1f03936ec142895b4c89ba305a0a">&#9670;&nbsp;</a></span>GetCellPoints() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> xms::XmUGrid::GetCellPoints </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the points of a cell (including polyhedron) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of point indices </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a61251e6f9231a3079467aa0155ce28c9">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="ac69f3687dec8cc12956ace0049e8dac9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac69f3687dec8cc12956ace0049e8dac9">&#9670;&nbsp;</a></span>GetCellPoints() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool xms::XmUGrid::GetCellPoints </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_cellPoints</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the points of a cell. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_cellPoints</td><td>the points of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>if the cell index is valid </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a938ceec91449a093548dcaaa384a0f37">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="ab26fd6b8caeabeecde13a7c7f8b40343"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab26fd6b8caeabeecde13a7c7f8b40343">&#9670;&nbsp;</a></span>GetCellStream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&amp; xms::XmUGrid::GetCellStream </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get cell stream vector for the entire UGrid. A cellstream is defined as follows: Polyhedrons: Cell type, number of faces, [num points in face, point numbers (0-based, CCW when looking in)] repeated for each face. Hexahedrons, polygons, quads, triangles etc: Cell type (ElemTypeEnum), number of points, point numbers. Zero-based, CCW, bottom, then top. Not true for pixel or voxel. </p>
+<dl class="section return"><dt>Returns</dt><dd>constant reference to the cell stream vector </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a01973db2557667f57acd11fc1c5af393">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a1cdc6b0ed97cfbef84d2529b14c79f0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cdc6b0ed97cfbef84d2529b14c79f0d">&#9670;&nbsp;</a></span>GetCellType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="namespacexms.html#ac31bf74ccc479f6e1c2ae761d3d727a9">XmUGridCellType</a> xms::XmUGrid::GetCellType </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_cellIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of cells. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellIdx</td><td>the index of the cell </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the number of cells or -1 if invalid index </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a36d0b59da6296f1e990583cad17c86f5">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a7eb4afae2e77ddf6a7fedfcee18a72e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eb4afae2e77ddf6a7fedfcee18a72e7">&#9670;&nbsp;</a></span>GetDimensionCounts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::vector&lt;int&gt; xms::XmUGrid::GetDimensionCounts </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Count all number of the cells with each dimenion (0, 1, 2, 3) </p>
+<dl class="section return"><dt>Returns</dt><dd>the count of dimensions of all of the cells of the ugrid </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a2c20ecde4a30a8cc9ceb9481c6354f29">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a5eac64030b549a8805147908ae5b738e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5eac64030b549a8805147908ae5b738e">&#9670;&nbsp;</a></span>GetEdgeAdjacentCells() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetEdgeAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_edge</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_adjacentCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the indices of the adjacent cells (that shares the same cell edge) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_edge</td><td>the edge (a pair of point indices) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_adjacentCellIdxs</td><td>a vector of cell indices of the adjacent cells </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a3ab06fe0d32a5e77d95c2e9820d9e267">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a39d44fc045be2bc895dc94f354d23502"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39d44fc045be2bc895dc94f354d23502">&#9670;&nbsp;</a></span>GetEdgeAdjacentCells() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> xms::XmUGrid::GetEdgeAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_edge</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the index of the adjacent cells (that shares the same cell edge) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_edge</td><td>the edge (a pair of point indices) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of cell indices of the adjacent cells </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a105a352f0b1364105b8be45e1463dbdc">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a49d600d7857cfcaaa7fe04440136866d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49d600d7857cfcaaa7fe04440136866d">&#9670;&nbsp;</a></span>GetExtents()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetExtents </td>
+          <td>(</td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_min</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_max</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get extents of all points in UGrid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_min</td><td>minimum extent of all points </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_max</td><td>maximum extent of all points </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a110228f473bdce917fdae9edfd3ea970">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="acca1315fd4948f73d62c3a2f23d36fd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acca1315fd4948f73d62c3a2f23d36fd0">&#9670;&nbsp;</a></span>GetLocations()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a>&amp; xms::XmUGrid::GetLocations </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get vector of UGrid points. </p>
+<dl class="section return"><dt>Returns</dt><dd>a vector of point locations </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a21ed238c5e4c9118e3c5ad0a5099e250">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a0f4708efacb13ae29dd4e57f98aec9d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f4708efacb13ae29dd4e57f98aec9d9">&#9670;&nbsp;</a></span>GetPointAdjacentCells() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> xms::XmUGrid::GetPointAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cells that are associated with the specified point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>the index of the point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of the cell indices associated with this point </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#aa68ec80d9faae0e377c95257c01e1dac">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="ab27c613c1e9916b0727c2ce461fde681"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab27c613c1e9916b0727c2ce461fde681">&#9670;&nbsp;</a></span>GetPointAdjacentCells() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetPointAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_adjacentCells</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the cells that are associated with the specified point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>the index of the point </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_adjacentCells</td><td>a vector of the adjacent cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of the cell indices associated with this point </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a4cc86f3c153e86e4fdfe8c7b19046a04">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a9ee7727ba92139fd26cebc41f0982419"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ee7727ba92139fd26cebc41f0982419">&#9670;&nbsp;</a></span>GetPointAdjacentLocations()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetPointAdjacentLocations </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_edgePoints</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Given a point gets point locations attached to the point by an edge. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>The point to get attached point from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_edgePoints</td><td>A vector of points attached across edges. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a0f2bcba9f04aa6b6e4140e678273c1d0">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="aafd7cd6f70a335e67f4251543af72990"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafd7cd6f70a335e67f4251543af72990">&#9670;&nbsp;</a></span>GetPointAdjacentPoints()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetPointAdjacentPoints </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_edgePoints</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Given a point gets point indices attached to the point by an edge. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>The point to get adjacent points from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_edgePoints</td><td>The indices of the adjacent points. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a4e406ce976e7f8b33ea4c0e15aef0dea">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="abcf4127cfd961e75bdfe445a6816fcc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abcf4127cfd961e75bdfe445a6816fcc9">&#9670;&nbsp;</a></span>GetPointLocation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> xms::XmUGrid::GetPointLocation </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>the index of the point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the point or an initialize point if the index is invalid </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#af34e4c2d2b7eb8a414c89f78fbaecc37">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a1dcd067fcfb353dae765a731d2df7282"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1dcd067fcfb353dae765a731d2df7282">&#9670;&nbsp;</a></span>GetPointsAdjacentCells() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> xms::XmUGrid::GetPointsAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_points</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the common cells from a vector of points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_points</td><td>a vector of unique points </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of cell indices </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a8c026bafde697ca475712d6c09982954">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="aef04f51dc3e35f16425bceff7f8fefe0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef04f51dc3e35f16425bceff7f8fefe0">&#9670;&nbsp;</a></span>GetPointsAdjacentCells() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetPointsAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_pointIdxs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_adjacentCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the cells adjacent to all of a vector of points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdxs</td><td>an array of point indices </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_adjacentCellIdxs</td><td>a vector of cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a5d04574d7e5dbf707abf9fb8bf703a37">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="ae5038fe12f39352f0701d30b743a5b3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5038fe12f39352f0701d30b743a5b3d">&#9670;&nbsp;</a></span>GetPointsAdjacentCells() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::GetPointsAdjacentCells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_adjacentCellIdxs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the cells adjacent to both of the two points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx1</td><td>first point index </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx2</td><td>second point index </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_adjacentCellIdxs</td><td>a vector of cell indices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a10eeac62d5cec0c88d6000c2beb02d07">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a8d7b8b87d255095224d0004946ac8192"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d7b8b87d255095224d0004946ac8192">&#9670;&nbsp;</a></span>GetPointsLocations()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> xms::XmUGrid::GetPointsLocations </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_points</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convert a vector of point indices into a vector of point 3d. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_points</td><td>a vector of point indices </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>vector of point 3d </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a1fb343e6970ad37b346fd8161c887a17">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="ae91a9014ce352ffcd04e9f5cefc32abf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae91a9014ce352ffcd04e9f5cefc32abf">&#9670;&nbsp;</a></span>GetPointXy0()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> xms::XmUGrid::GetPointXy0 </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the X, Y location of a point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>The index of the point. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The location of the point with Z set to 0.0. </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a86b5100050202c6e7e1ae940212da0a5">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a75064634282c829c88596c6da646f4f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75064634282c829c88596c6da646f4f3">&#9670;&nbsp;</a></span>IsValidCellstream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool xms::XmUGrid::IsValidCellstream </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_cellstream</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check a cell stream to make sure it's valid. Compares cell type against expected number of points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellstream</td><td>the cell stream to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if cell stream is valid </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02681">2681</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01232">xms::XmUGridImpl::SetCellstream()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l03194">XmUGridUnitTests::testUGridStreams()</a>.</p>
+
+</div>
+</div>
+<a id="a45106b162bbdb8cfacb6a17e57d6b271"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45106b162bbdb8cfacb6a17e57d6b271">&#9670;&nbsp;</a></span>New() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt; xms::XmUGrid::New </td>
           <td>(</td>
           <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td>
           <td class="paramname"><em>a_points</em>, </td>
@@ -144,7 +2204,7 @@ Protected Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
-          <td class="paramname"><em>a_cellStream</em>&#160;</td>
+          <td class="paramname"><em>a_cellstream</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -159,24 +2219,24 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>. </p>
+<p>Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">a_points</td><td>the UGrid points </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellStream</td><td>the UGrid cell stream </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellstream</td><td>the UGrid cell stream </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02705">2705</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02656">2656</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02694">New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02645">New()</a>.</p>
 
 </div>
 </div>
-<a id="ab8144c1fe7cb0f3da5d13db63f6937fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8144c1fe7cb0f3da5d13db63f6937fe">&#9670;&nbsp;</a></span>New() <span class="overload">[2/2]</span></h2>
+<a id="a51464b4cc71bddbb97e9e8a6ff7fb798"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51464b4cc71bddbb97e9e8a6ff7fb798">&#9670;&nbsp;</a></span>New() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -185,7 +2245,7 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt; XmUGrid::New </td>
+          <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt; xms::XmUGrid::New </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -198,17 +2258,19 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>. </p>
-<dl class="section return"><dt>Returns</dt><dd>the new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. ">XmUGrid</a>. </dd></dl>
+<p>Create a new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>. </p>
+<dl class="section return"><dt>Returns</dt><dd>the new <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02694">2694</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02645">2645</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02705">New()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03198">xms::TEST_XmUBuild3DChevronUgrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03048">xms::TEST_XmUBuildHexahedronUgrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03114">xms::TEST_XmUBuildPolyhedronUgrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02995">xms::TEST_XmUBuildQuadUGrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02853">xms::TEST_XmUGrid1Left90Tri()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02893">xms::TEST_XmUGrid2dLinear()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02919">xms::TEST_XmUGrid3dLinear()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02954">xms::TEST_XmUGridHexagonalPolyhedron()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02876">xms::TEST_XmUGridSimpleQuad()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04600">XmUGridUnitTests::testGetPlanViewPolygonMultiSideFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03607">XmUGridUnitTests::testGetPointCellsSimple()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03296">XmUGridUnitTests::testGetSetPoint()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03333">XmUGridUnitTests::testGetSingleCellStream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04970">XmUGridUnitTests::testLargeUGridLinkSpeed()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03242">XmUGridUnitTests::testUGridStreams()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00399">XmUGridUtilsTests::testWriteEmptyUGrid()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l00830">xms::XmUGridImpl::XmUGridImpl()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02656">New()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03149">xms::TEST_XmUBuild3DChevronUgrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02999">xms::TEST_XmUBuildHexahedronUgrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::TEST_XmUBuildPolyhedronUgrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02946">xms::TEST_XmUBuildQuadUGrid()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02804">xms::TEST_XmUGrid1Left90Tri()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02844">xms::TEST_XmUGrid2dLinear()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02870">xms::TEST_XmUGrid3dLinear()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02905">xms::TEST_XmUGridHexagonalPolyhedron()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02827">xms::TEST_XmUGridSimpleQuad()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03282">XmUGridUnitTests::testGetCellCellstream()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04442">XmUGridUnitTests::testGetCellPlanViewPolygonMultiSideFace()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03558">XmUGridUnitTests::testGetPointAdjacentCellsSimple()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03247">XmUGridUnitTests::testGetSetPoint()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04806">XmUGridUnitTests::testLargeUGridLinkSpeed()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03194">XmUGridUnitTests::testUGridStreams()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00399">XmUGridUtilsTests::testWriteEmptyUGrid()</a>.</p>
 
 </div>
 </div>
-<a id="ae14dda044c695529ea6250f860cafbd2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae14dda044c695529ea6250f860cafbd2">&#9670;&nbsp;</a></span>ValidCellStream()</h2>
+<a id="a079d0f44930c597b1ebe45786f8ff000"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a079d0f44930c597b1ebe45786f8ff000">&#9670;&nbsp;</a></span>PointCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -217,32 +2279,145 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool XmUGrid::ValidCellStream </td>
+          <td class="memname">virtual int xms::XmUGrid::PointCount </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the number of points. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of points </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a91222e8f9816eb369898da1f91ae3d10">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="af4757d88c6874cf636b968827e62c184"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4757d88c6874cf636b968827e62c184">&#9670;&nbsp;</a></span>SetCellstream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool xms::XmUGrid::SetCellstream </td>
           <td>(</td>
           <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a> &amp;&#160;</td>
-          <td class="paramname"><em>a_cellStream</em></td><td>)</td>
+          <td class="paramname"><em>a_cellstream</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Check a cell stream to make sure it's valid. Compares cell type against expected number of points. </p>
+<p>Set the ugrid cells for the entire UGrid using a cell stream. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellStream</td><td>the cell stream to check </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_cellstream</td><td>The cellstream for the UGrid. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if cell stream is valid </dd></dl>
+<dl class="section see"><dt>See also</dt><dd>CellStream </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>if successfully set </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l02730">2730</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a31f9108df0577b749c739b0c507d23e5">xms::XmUGridImpl</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l03242">XmUGridUnitTests::testUGridStreams()</a>.</p>
+</div>
+</div>
+<a id="a3d4a2d53eeea06866fb2a875dc4cbb1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d4a2d53eeea06866fb2a875dc4cbb1e">&#9670;&nbsp;</a></span>SetLocation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool xms::XmUGrid::SetLocation </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>a_pointIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_location</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the point. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pointIdx</td><td>the index of the point </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_location</td><td>The new location of the specified point </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>whether the point was successfully set </dd></dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a347f370d4ff4a3cdb862dcb139001434">xms::XmUGridImpl</a>.</p>
+
+</div>
+</div>
+<a id="a097f42fb1696612e316a576d5dd79083"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a097f42fb1696612e316a576d5dd79083">&#9670;&nbsp;</a></span>SetLocations()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void xms::XmUGrid::SetLocations </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_locations</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set UGrid points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_locations</td><td>vector of point locations </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classxms_1_1_xm_u_grid_impl.html#a7c8c4f205d39d31f42859c35f28800d3">xms::XmUGridImpl</a>.</p>
 
 </div>
 </div>
@@ -256,7 +2431,7 @@ Protected Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacexms.html">xms</a></li><li class="navelem"><a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a></li>
-    <li class="footer">Generated on Mon Oct 8 2018 18:12:28 for xmsgrid by
+    <li class="footer">Generated on Tue Oct 9 2018 18:09:27 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

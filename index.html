@@ -114,6 +114,8 @@ Introduction </h2>
 <h2><a class="anchor" id="XmsgridLicense"></a>
 License </h2>
 <p>The code is distributed under the xmsng Software License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at <a href="http://www.aquaveo.com/xmsng/LICENSE_1_0.txt">http://www.aquaveo.com/xmsng/LICENSE_1_0.txt</a>).</p>
+<h2>Python </h2>
+<p>This library is available as a python module. See <a href="./pydocs">Python Documentation</a></p>
 <h2><a class="anchor" id="XmsgridFeatures"></a>
 Features </h2>
 <p>The library supports unstructured grids with 0D, 1D, 2D and 3D elements.</p>
@@ -135,7 +137,7 @@ Namespaces</h3>
 </ul>
 <h3><a class="anchor" id="XmsgridInterfacePattern"></a>
 Interface pattern</h3>
-<p>Many classes follow the interface pattern. An abstract base class is used to define the interface and a concrete implementation class is used to implement the functionality. The implementation class will be named the same as the interface class but will end in "Impl" and will only be found in the .cpp file. For example: xms::InterpIdw and xms::InterpIdwImpl. The Doxygen documentation will be for the Impl class.</p>
+<p>Many classes follow the interface pattern. An abstract base class is used to define the interface and a concrete implementation class is used to implement the functionality. The implementation class will be named the same as the interface class but will end in "Impl" and will only be found in the .cpp file. For example: <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">xms::XmUGrid</a> and <a class="el" href="classxms_1_1_xm_u_grid_impl.html" title="Implementation for XmUGrid. ">xms::XmUGridImpl</a>.</p>
 <p>More about the interface pattern can be found at the following resources:</p><ul>
 <li>The C++ Programming Language, Stroustroup, p 318 - 322</li>
 <li>Effective C++ Third Edition, Meyers, items 31 and 40</li>
@@ -150,7 +152,7 @@ Interface pattern</h3>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Oct 8 2018 18:12:28 for xmsgrid by
+    <li class="footer">Generated on Tue Oct 9 2018 18:09:27 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>
