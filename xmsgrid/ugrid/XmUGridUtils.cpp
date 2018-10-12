@@ -1,7 +1,8 @@
 //------------------------------------------------------------------------------
 /// \file XmUGridUtils.cpp
 /// \ingroup ugrid
-/// \copyright (C) Copyright Aquaveo 2018.
+/// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
+/// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
 //------------------------------------------------------------------------------
 
 //----- Included files ---------------------------------------------------------
@@ -265,8 +266,8 @@ bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
   // These two conditions can be tested for using the notion of a scalar cross product(formulas
   // below).
 
-  // is true if and only if the scalar cross products CA->×CD-> and CB->×CD-> have opposite signs.
-  // is true if and only if the scalar cross products AC->×AB-> and AD->×AB-> have opposite signs.
+  // is true if and only if the scalar cross products CA->ï¿½CD-> and CB->ï¿½CD-> have opposite signs.
+  // is true if and only if the scalar cross products AC->ï¿½AB-> and AD->ï¿½AB-> have opposite signs.
 
   // Conclusion: the line segments intersect if and only if both are negative
   double result1 = cross(a_segment2Point1, a_segment1Point1, a_segment2Point2);
