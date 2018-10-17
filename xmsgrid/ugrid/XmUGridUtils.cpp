@@ -197,7 +197,8 @@ BSHP<XmUGrid> iReadUGridFromAsciiFile(std::istream& a_inStream)
 //------------------------------------------------------------------------------
 /// \brief Read XmUGrid from an ASCII file.
 /// \param[in] a_filePath: filename to read including path, file name, and
-/// extension \return the UGrid that was read from the file
+/// extension 
+/// \return the UGrid that was read from the file
 //------------------------------------------------------------------------------
 BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
 {
@@ -219,8 +220,8 @@ void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePat
 //------------------------------------------------------------------------------
 /// \brief 2D cross product of two points
 /// \param[in] a_origin: origin point for the "vectors"
-/// \param[in] a_A: first point
-/// \param[in] a_B: second point
+/// \param[in] a_A: first vector
+/// \param[in] a_B: second vector
 /// \return the cross product
 //------------------------------------------------------------------------------
 double cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
