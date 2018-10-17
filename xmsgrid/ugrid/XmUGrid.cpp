@@ -1163,8 +1163,8 @@ void XmUGridImpl::GetCellLocations(const int a_cellIdx, VecPt3d& a_cellLocations
   a_cellLocations = GetPointsLocations(ptIdxs);
 } // XmUGridImpl::GetCellPoints
 
-//------------------------------------------------------------------------------
-/// \brief Get the number of cells.
+//------------------------------------------------------------------------------ 
+/// \brief Get the number of cells.   /// is this correct
 /// \param[in] a_cellIdx the index of the cell
 /// \return the number of cells or -1 if invalid index
 //------------------------------------------------------------------------------

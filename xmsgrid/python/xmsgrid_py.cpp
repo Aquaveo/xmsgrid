@@ -23,9 +23,15 @@ PYBIND11_MODULE(xmsgrid_py, m) {
     m.doc() = "Python bindings for xmsgrid"; // optional module docstring
     m.def("version", &version,
           "Get current version of xmsgrid Python bindings.");
-
+    const char* misc_doc = R"pydoc(
+        The misc module of the xmsgrid python library contains classes and
+        functions that are shared between all of the xms family of libraries.
+        These functions and classes can be used in any of the library to ensure
+        that functionality is standardized. Xmsgrid is a grid geometry library 
+        used in xms libraries and products.
+    )pydoc"; 
     // UGrid module
-    py::module modUGrid = m.def_submodule("ugrid");
+    py::module modUGrid = m.def_submodule("ugrid", misc_doc);
     initUGrid(modUGrid);
 }
 
