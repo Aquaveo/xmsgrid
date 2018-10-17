@@ -28,10 +28,11 @@ void initXmUGridUtils(py::module &m) {
     Read XmUGrid from an ASCII file.
 
     Args: 
-        file_path (str): Path of the ascii file
+        file_path (str): Filename to read including path, file name, and
+            extension.
 
     Returns:
-        XmUGrid: The generated XmUGrid
+        XmUGrid: The UGrid that was read from the file.
   )pydoc";
   modXmUGridUtils.def("read_ugrid_from_ascii_file", &xms::XmReadUGridFromAsciiFile,
         read_ugrid_from_ascii_file_doc,py::arg("file_path"));
@@ -39,11 +40,12 @@ void initXmUGridUtils(py::module &m) {
   // function: write_ugrid_to_ascii_file
   // --------------------------------------------------------------------------- 
   const char* write_ugrid_to_ascii_file_doc = R"pydoc(
-    Write XmUGrid to an ASCII file.
+    Write an XmUGrid to an ASCII file.
 
     Args: 
-        ugrid (XmUGrid): XmUGrid to write to file
-        file_path (str): Path of the ascii file to be created
+        ugrid (XmUGrid): The XmUGrid to write to file.
+        file_path (str): Filename to write including path, file name, and
+            extension.
   )pydoc";
   modXmUGridUtils.def("write_ugrid_to_ascii_file", &xms::XmWriteUGridToAsciiFile,
         write_ugrid_to_ascii_file_doc,py::arg("ugrid"),py::arg("file_path"));
@@ -51,15 +53,15 @@ void initXmUGridUtils(py::module &m) {
   // function: cross
   // --------------------------------------------------------------------------- 
   const char* cross_doc = R"pydoc(
-    2D cross product of two points
+    2D cross product of two points.
 
     Args: 
-        Origin (iterable): The point of origin
-        A (iterable): The first vector
-        B (iterable): The second vector
+        Origin (iterable): Origin point for the "vectors".
+        A (iterable): The first point.
+        B (iterable): The second point.
 
     Returns:
-        float: The cross product of two points
+        float: The cross product.
   )pydoc";
   modXmUGridUtils.def("cross", [](py::iterable Origin, py::iterable A, py::iterable B) -> double {
           xms::Pt3d origin = xms::Pt3dFromPyIter(Origin);
@@ -71,16 +73,16 @@ void initXmUGridUtils(py::module &m) {
   // function: do_line_segments_cross
   // --------------------------------------------------------------------------- 
   const char* do_line_segments_cross_doc = R"pydoc(
-    Determine whether 2 line segments intersect
+    Determine whether 2 line segments intersect.
 
     Args: 
-        seg1_pt1 (iterable): First point of the first line segment
-        set1_pt2 (iterable): Second point of the first line segment
-        seg2_pt1 (iterable): First point of the second line segment
-        seg2_pt2 (iterable): Second point of the second line segment
+        seg1_pt1 (iterable): First point 3d of line segment 1.
+        set1_pt2 (iterable): Second point 3d of line segment 1.
+        seg2_pt1 (iterable): First point 3d of line segment 2.
+        seg2_pt2 (iterable): Second point 3d of line segment 2.
 
     Returns:
-        bool: Whether the line segments cross
+        bool: True if the line segments cross.
   )pydoc";
   modXmUGridUtils.def("do_line_segments_cross", [](py::iterable seg1_pt1, py::iterable seg1_pt2,
                                         py::iterable seg2_pt1, py::iterable seg2_pt2) -> bool {
