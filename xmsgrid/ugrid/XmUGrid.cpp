@@ -1166,7 +1166,7 @@ void XmUGridImpl::GetCellLocations(const int a_cellIdx, VecPt3d& a_cellLocations
 //------------------------------------------------------------------------------ 
 /// \brief Get the number of cells.   /// is this correct
 /// \param[in] a_cellIdx the index of the cell
-/// \return the number of cells or -1 if invalid index
+/// \return The type of the specified cell or -1 if invalid.
 //------------------------------------------------------------------------------
 XmUGridCellType XmUGridImpl::GetCellType(const int a_cellIdx) const
 {
