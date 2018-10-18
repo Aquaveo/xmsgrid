@@ -57,8 +57,8 @@ void initXmUGridUtils(py::module &m) {
 
     Args: 
         Origin (iterable): Origin point for the "vectors".
-        A (iterable): The first point.
-        B (iterable): The second point.
+        A (iterable): The first vector.
+        B (iterable): The second vector.
 
     Returns:
         float: The cross product.
