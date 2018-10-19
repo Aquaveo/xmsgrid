@@ -34,7 +34,8 @@ void initXmUGridUtils(py::module &m) {
     Returns:
         XmUGrid: The UGrid that was read from the file.
   )pydoc";
-  modXmUGridUtils.def("read_ugrid_from_ascii_file", &xms::XmReadUGridFromAsciiFile,
+  modXmUGridUtils.def("read_ugrid_from_ascii_file", 
+    &xms::XmReadUGridFromAsciiFile,
         read_ugrid_from_ascii_file_doc,py::arg("file_path"));
   // ---------------------------------------------------------------------------
   // function: write_ugrid_to_ascii_file
@@ -47,7 +48,8 @@ void initXmUGridUtils(py::module &m) {
         file_path (str): Filename to write including path, file name, and
             extension.
   )pydoc";
-  modXmUGridUtils.def("write_ugrid_to_ascii_file", &xms::XmWriteUGridToAsciiFile,
+  modXmUGridUtils.def("write_ugrid_to_ascii_file", 
+    &xms::XmWriteUGridToAsciiFile,
         write_ugrid_to_ascii_file_doc,py::arg("ugrid"),py::arg("file_path"));
   // ---------------------------------------------------------------------------
   // function: cross
@@ -63,7 +65,8 @@ void initXmUGridUtils(py::module &m) {
     Returns:
         float: The cross product.
   )pydoc";
-  modXmUGridUtils.def("cross", [](py::iterable Origin, py::iterable A, py::iterable B) -> double {
+  modXmUGridUtils.def("cross", [](py::iterable Origin, py::iterable A, 
+   py::iterable B) -> double {
           xms::Pt3d origin = xms::Pt3dFromPyIter(Origin);
           xms::Pt3d a = xms::Pt3dFromPyIter(A);
           xms::Pt3d b = xms::Pt3dFromPyIter(B);
@@ -84,8 +87,8 @@ void initXmUGridUtils(py::module &m) {
     Returns:
         bool: True if the line segments cross.
   )pydoc";
-  modXmUGridUtils.def("do_line_segments_cross", [](py::iterable seg1_pt1, py::iterable seg1_pt2,
-                                        py::iterable seg2_pt1, py::iterable seg2_pt2) -> bool {
+  modXmUGridUtils.def("do_line_segments_cross", [](py::iterable seg1_pt1, 
+  py::iterable seg1_pt2, py::iterable seg2_pt1, py::iterable seg2_pt2) -> bool {
           xms::Pt3d s1p1 = xms::Pt3dFromPyIter(seg1_pt1);
           xms::Pt3d s1p2 = xms::Pt3dFromPyIter(seg1_pt2);
           xms::Pt3d s2p1 = xms::Pt3dFromPyIter(seg2_pt1);
