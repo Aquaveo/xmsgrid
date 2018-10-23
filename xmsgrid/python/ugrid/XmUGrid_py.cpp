@@ -199,8 +199,10 @@ void initXmUGrid(py::module &m) {
         Returns:
             iterable: Vector of point 3d.
     )pydoc";
-    xmUg.def("get_points_locations", [](xms::XmUGrid &self, py::iterable point_idxs) -> py::iterable {
-            boost::shared_ptr<xms::VecInt> point_indices = xms::VecIntFromPyIter(point_idxs);
+    xmUg.def("get_points_locations", [](xms::XmUGrid &self, 
+    py::iterable point_idxs) -> py::iterable {
+            boost::shared_ptr<xms::VecInt> point_indices = 
+            xms::VecIntFromPyIter(point_idxs);
             xms::VecPt3d locations = self.GetPointsLocations(*point_indices);
             return xms::PyIterFromVecPt3d(locations);
         }, get_points_locations_doc,py::arg("point_idxs"));
@@ -211,8 +213,8 @@ void initXmUGrid(py::module &m) {
         Get extents of all points in UGrid.
 
         Returns:
-            tuple: Contains the minimum extent of all points and maximum extent
-                of all points.
+            iterable: Contains the minimum extent of all points and maximum 
+                extent of all points.
     )pydoc";
     xmUg.def("get_extents", [](xms::XmUGrid &self) -> py::iterable {
             xms::Pt3d p_min, p_max;
@@ -417,9 +419,9 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
-            cellstream (iterable): The cellstream for the specified point.
         Returns:
-            bool: Whether it was successfull or not.
+            iterable: Contains whether it was successfull or not and the 
+                cellstream for the specified point..
     )pydoc";
     xmUg.def("get_cell_cellstream", [](xms::XmUGrid &self, int cell_idx) ->
      py::iterable {
@@ -454,7 +456,7 @@ void initXmUGrid(py::module &m) {
             cell_idx (int): The index of the cell.
 
         Returns:
-            tuple: Contains a bool that is false if the cell index does not 
+            iterable: Contains a bool that is false if the cell index does not 
                 exist or if the cell is not 2 or 3 dimensional and a vector of 
                 Pt3d that is the plan view polygon.
     )pydoc";
@@ -474,7 +476,7 @@ void initXmUGrid(py::module &m) {
             cell_idx (int): The index of the cell.
 
         Returns:
-            tuple: Contains a bool that is false if the cell index does not 
+            iterable: Contains a bool that is false if the cell index does not 
                 exist and the location of the cell centroid.
     )pydoc";
     xmUg.def("get_cell_centroid", [](xms::XmUGrid &self, int cell_idx) 
