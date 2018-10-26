@@ -151,6 +151,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             point_idx (int): The index of the point.
+
             location (iterable): The new location of the specified point.
         Returns:
             bool: Whether the point was successfully set.
@@ -201,8 +202,7 @@ void initXmUGrid(py::module &m) {
         Get extents of all points in UGrid.
 
         Returns:
-            iterable: Contains the minimum extent of all points and maximum 
-                extent of all points.
+            iterable: Contains the minimum extent of all points and maximum extent of all points.
     )pydoc";
     xmUg.def("get_extents", [](xms::XmUGrid &self) -> py::iterable {
             xms::Pt3d p_min, p_max;
@@ -325,8 +325,7 @@ void initXmUGrid(py::module &m) {
             cell_idx (int): The index of the cell.
 
         Returns:
-            int: The dimension of the cells or -1 if invalid index or invalid
-                dimension.
+            int: The dimension of the cells or -1 if invalid index or invalid dimension.
     )pydoc";
     xmUg.def("get_cell_dimension", &xms::XmUGrid::GetCellDimension,
              get_cell_dimension_doc,py::arg("cell_idx")
@@ -394,8 +393,7 @@ void initXmUGrid(py::module &m) {
         Args:
             cell_idx (int): The index of the cell.
         Returns:
-            iterable: Contains whether it was successfull or not and the 
-                cellstream for the specified point..
+            iterable: Contains whether it was successfull or not and the cellstream for the specified point..
     )pydoc";
     xmUg.def("get_cell_cellstream", [](xms::XmUGrid &self, int cell_idx) ->
      py::iterable {
@@ -408,7 +406,7 @@ void initXmUGrid(py::module &m) {
   // ---------------------------------------------------------------------------
     const char* get_cell_adjacent_cells_doc = R"pydoc(
         Get the cells neighboring a cell (cells associated with any of it's 
-            points).
+        points).
 
         Args:
             cell_idx (int): The index of the cell.
@@ -430,9 +428,7 @@ void initXmUGrid(py::module &m) {
             cell_idx (int): The index of the cell.
 
         Returns:
-            iterable: Contains a bool that is false if the cell index does not 
-                exist or if the cell is not 2 or 3 dimensional and a vector of 
-                Pt3d that is the plan view polygon.
+            iterable: Contains a bool that is false if the cell index does not exist or if the cell is not 2 or 3 dimensional and a vector of Pt3d that is the plan view polygon.
     )pydoc";
     xmUg.def("get_cell_plan_view_polygon", [](xms::XmUGrid &self, int cell_idx) 
     -> py::iterable {
@@ -450,8 +446,7 @@ void initXmUGrid(py::module &m) {
             cell_idx (int): The index of the cell.
 
         Returns:
-            iterable: Contains a bool that is false if the cell index does not 
-                exist and the location of the cell centroid.
+            iterable: Contains a bool that is false if the cell index does not exist and the location of the cell centroid.
     )pydoc";
     xmUg.def("get_cell_centroid", [](xms::XmUGrid &self, int cell_idx) 
     -> py::iterable {
@@ -485,6 +480,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
+
             edge_idx (int): The index of the edge.
 
         Returns:
@@ -503,6 +499,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
+
             edge_idx (int): The index of the edge.
 
         Returns:
@@ -522,6 +519,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
+
             edge_idx (int): The index of the edge.
 
         Returns:
@@ -626,6 +624,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The cell.
+
             face_idx (int): The face.
 
         Returns:
@@ -643,6 +642,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
+
             face_idx (int): The face index of the cell.
 
         Returns:
@@ -677,6 +677,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
+            
             face_idx (int): The face index of the cell.
 
         Returns:

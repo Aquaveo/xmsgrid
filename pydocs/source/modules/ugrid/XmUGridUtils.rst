@@ -1,6 +1,6 @@
 ************
 XmUGridUtils
-*************
+************
 
-.. autoclass:: xmsgrid_py.ugrid.XmUgridUtils
+.. automodule:: xmsgrid_py.ugrid.XmUGridUtils
    :members:

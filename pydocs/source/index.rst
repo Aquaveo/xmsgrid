@@ -22,6 +22,7 @@ Contents
    :maxdepth: 1
 
    gettingstarted
+   modules
 
 Acknowledgements
 ================
