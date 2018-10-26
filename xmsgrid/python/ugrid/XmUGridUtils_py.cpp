@@ -28,8 +28,7 @@ void initXmUGridUtils(py::module &m) {
     Read XmUGrid from an ASCII file.
 
     Args: 
-        file_path (str): Filename to read including path, file name, and
-            extension.
+        file_path (str): Filename to read including path, file name, and extension.
 
     Returns:
         XmUGrid: The UGrid that was read from the file.
@@ -45,8 +44,8 @@ void initXmUGridUtils(py::module &m) {
 
     Args: 
         ugrid (XmUGrid): The XmUGrid to write to file.
-        file_path (str): Filename to write including path, file name, and
-            extension.
+
+        file_path (str): Filename to write including path, file name, and extension.
   )pydoc";
   modXmUGridUtils.def("write_ugrid_to_ascii_file", 
     &xms::XmWriteUGridToAsciiFile,
@@ -59,7 +58,9 @@ void initXmUGridUtils(py::module &m) {
 
     Args: 
         Origin (iterable): Origin point for the "vectors".
+
         A (iterable): The first vector.
+
         B (iterable): The second vector.
 
     Returns:
@@ -80,8 +81,11 @@ void initXmUGridUtils(py::module &m) {
 
     Args: 
         seg1_pt1 (iterable): First point 3d of line segment 1.
+
         set1_pt2 (iterable): Second point 3d of line segment 1.
+
         seg2_pt1 (iterable): First point 3d of line segment 2.
+
         seg2_pt2 (iterable): Second point 3d of line segment 2.
 
     Returns:
