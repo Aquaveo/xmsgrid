@@ -11,9 +11,6 @@ Ugrid
 
 .. automodule:: xmsgrid_py.ugrid
 
-.. note::
-   
-    Description of the ugrid module is coming soon!
 
 .. toctree::
    :maxdepth: 1
