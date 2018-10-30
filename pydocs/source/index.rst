@@ -11,9 +11,6 @@ XmsGrid |version|
 
 The xmsgrid library is a grid library for other aquaveo products. This library contains classes used to create grids.
 
-.. note::
-
-    Documentation coming soon!
 
 Contents
 ========
