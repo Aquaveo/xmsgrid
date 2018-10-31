@@ -36,8 +36,7 @@ class TestXmUGridUtilFunctions(unittest.TestCase):
         import numpy as np
         xu3d = self.get_3d_linear_ugrid()
         # write
-        out_file_name = "PLACEHOLDER FOR TEST FILES PATH" + 
-        "3d_grid_linear.xmugrid"
+        out_file_name = "PLACEHOLDER FOR TEST FILES PATH" + "3d_grid_linear.xmugrid"
         XmUGridUtils.write_ugrid_to_ascii_file(xu3d, out_file_name)
         # read
         xu_read = XmUGridUtils.read_ugrid_from_ascii_file(out_file_name)
