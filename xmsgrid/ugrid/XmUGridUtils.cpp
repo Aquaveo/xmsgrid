@@ -718,6 +718,6 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
-//! [snip_test_WriteReadAscii]
+  //! [snip_test_WriteReadAscii]
 
 #endif

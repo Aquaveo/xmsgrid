@@ -120,7 +120,9 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         xu = XmUGrid()
         self.assertEqual(0, xu.get_point_count())  # Should be empty
+        self.assertFalse(xu.get_modified())
         xu.set_locations(points)
+        self.assertTrue(xu.get_modified())
         num_points_base = len(points)
         self.assertEqual(num_points_base, xu.get_point_count())
         points_out = xu.get_locations()
@@ -163,25 +165,29 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertEqual((0, 20, 0), p3)
         self.assertEqual((0, 0, 0), p4)
 
-    def test_xmugrid_set_location(self):
+    def test_xmugrid_set_point_location(self):
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                   (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0))
         cells = (9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5)
         xu = XmUGrid(points, cells)
-        self.assertFalse(xu.set_location(-1, (0, 0, 0)))
-        self.assertFalse(xu.set_location(len(points), (0, 0, 0)))
-        self.assertTrue(xu.set_location(0, (-10, -10, 0)))
+        self.assertTrue(xu.get_modified())
+        xu.set_unmodified()
+        self.assertFalse(xu.get_modified())
+        self.assertFalse(xu.set_point_location(-1, (0, 0, 0)))
+        self.assertFalse(xu.set_point_location(len(points), (0, 0, 0)))
+        self.assertTrue(xu.set_point_location(0, (-10, -10, 0)))
+        self.assertTrue(xu.get_modified())
         self.assertEqual((-10, -10, 0), xu.get_point_location(0))
 
-    def test_xmugrid_set_location_numpy(self):
+    def test_xmugrid_set_point_location_numpy(self):
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                            (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
         cells = np.array((9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5))
         xu = XmUGrid(points, cells)
-        self.assertFalse(xu.set_location(-1, (0, 0, 0)))
-        self.assertFalse(xu.set_location(len(points), (0, 0, 0)))
-        self.assertTrue(xu.set_location(0, (-10, -10, 0)))
+        self.assertFalse(xu.set_point_location(-1, (0, 0, 0)))
+        self.assertFalse(xu.set_point_location(len(points), (0, 0, 0)))
+        self.assertTrue(xu.set_point_location(0, (-10, -10, 0)))
         self.assertEqual((-10, -10, 0), xu.get_point_location(0))
 
     def test_xmugrid_get_points_locations(self):
@@ -770,6 +776,33 @@ class TestXmUGridPointFunctions(unittest.TestCase):
                 neighbor_cell = xuhex.get_cell3d_face_adjacent_cell(i, j)
                 self.assertEqual(expected_neighbor[curr_id], neighbor_cell)
                 curr_id += 1
+
+    def test_is_valid_point_change(self):
+        #     0-----1-----2
+        #     |  0  |  1  |
+        #     3-----4-----5
+        #     |  2  |  3  |
+        #     6-----7-----8
+
+        ugrid = self.get_simple_quad_ugrid()
+
+        valid_pt = (5.0, 5.0, 0.0)
+        invalid = (500.0, 500.0, 0.0)
+
+        self.assertTrue(ugrid.is_valid_point_change(4, valid_pt))
+        self.assertFalse(ugrid.is_valid_point_change(4, invalid))
+
+        ugrid3d = self.get_hexahedron_ugrid(4, 4, 4, (0.0, 0.0, 0.0))
+
+        valid_pt = ugrid3d.get_point_location(21)
+        valid_pt = (valid_pt[0] + 0.05, valid_pt[1] + 0.05, valid_pt[2] + 0.05)
+        self.assertTrue(ugrid3d.is_valid_point_change(21, valid_pt))
+        self.assertFalse(ugrid3d.is_valid_point_change(21, invalid))
+
+        self.assertTrue(ugrid.set_point_location(4, valid_pt))
+        self.assertTrue(ugrid.set_point_location(4, invalid))
+        self.assertTrue(ugrid3d.set_point_location(21, valid_pt))
+        self.assertTrue(ugrid3d.set_point_location(21, invalid))
 
 
 class TestXmUGridCellTypeEnum(unittest.TestCase):

@@ -82,6 +82,26 @@ void initXmUGrid(py::module &m) {
             boost::shared_ptr<xms::VecInt> _cellstream = xms::VecIntFromPyIter(cellstream);
             return boost::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New(*points, *_cellstream));
         }));
+  // Misc Functions
+  // ---------------------------------------------------------------------------
+  // function: get_modified
+  // --------------------------------------------------------------------------- 
+    const char* get_modified_doc = R"pydoc(
+        Returns the modified flag. Gets set when points or cells get changed.
+
+        Returns:
+            bool: the modified flag
+    )pydoc";
+    xmUg.def("get_modified", &xms::XmUGrid::GetModified,
+             get_modified_doc);
+    // ---------------------------------------------------------------------------
+    // function: set_unmodified
+    // --------------------------------------------------------------------------- 
+    const char* set_unmodified_doc = R"pydoc(
+        Resets the modified flag to false.
+    )pydoc";
+    xmUg.def("set_unmodified", &xms::XmUGrid::SetUnmodified,
+             set_unmodified_doc);
   // Point Functions
   // ---------------------------------------------------------------------------
   // function: get_point_count
@@ -92,7 +112,7 @@ void initXmUGrid(py::module &m) {
         Returns:
             int: the number of points
     )pydoc";
-    xmUg.def("get_point_count", &xms::XmUGrid::PointCount,
+    xmUg.def("get_point_count", &xms::XmUGrid::GetPointCount,
              point_count_doc);
   // ---------------------------------------------------------------------------
   // function: get_locations
@@ -143,9 +163,9 @@ void initXmUGrid(py::module &m) {
             point_idx (int): the index of the point to be set
             location (iterable): the location of the point
     )pydoc";
-    xmUg.def("set_location", [](xms::XmUGrid &self, int point_idx, py::iterable location) -> bool {
+    xmUg.def("set_point_location", [](xms::XmUGrid &self, int point_idx, py::iterable location) -> bool {
             xms::Pt3d loc = xms::Pt3dFromPyIter(location);
-            return self.SetLocation(point_idx, loc);
+            return self.SetPointLocation(point_idx, loc);
         }, set_location_doc,py::arg("point_idx"),py::arg("location"));
   // ---------------------------------------------------------------------------
   // function: get_point_xy0
@@ -221,6 +241,24 @@ void initXmUGrid(py::module &m) {
             boost::shared_ptr<xms::VecInt> points = xms::VecIntFromPyIter(point_idxs);
             return xms::PyIterFromVecInt(self.GetPointsAdjacentCells(*points));
         }, get_points_adjacent_cells_doc,py::arg("point_idxs"));
+
+    // ---------------------------------------------------------------------------
+    // function: is_valid_point_change
+    // ---------------------------------------------------------------------------
+      const char* is_valid_point_change_doc = R"pydoc(
+          Determine whether adjacent cells are valid after a point is moved.
+
+          Args:
+              changed_pt_idx (int): index of the point to be changed
+              new_location (iterable): location the point is to be moved to
+          Returns:
+              iterable: Whether the change is valid
+      )pydoc";
+      xmUg.def("is_valid_point_change", [](xms::XmUGrid &self, int changed_pt_idx,
+                                           py::iterable new_location) -> bool {
+        xms::Pt3d location = xms::Pt3dFromPyIter(new_location);
+        return self.IsValidPointChange(changed_pt_idx, location);
+      }, is_valid_point_change_doc, py::arg("changed_pt_idx"), py::arg("new_location"));
         // Cell Functions
   // ---------------------------------------------------------------------------
   // function: get_cell_count
