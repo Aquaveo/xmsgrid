@@ -87,10 +87,10 @@ void initXmUGrid(py::module &m) {
   // function: get_modified
   // --------------------------------------------------------------------------- 
     const char* get_modified_doc = R"pydoc(
-        Returns the modified flag. Gets set when points or cells get changed.
+        Determine if the UGrid has been modified.
 
         Returns:
-            bool: the modified flag
+            bool: The modified flag.
     )pydoc";
     xmUg.def("get_modified", &xms::XmUGrid::GetModified,
              get_modified_doc);
@@ -98,7 +98,7 @@ void initXmUGrid(py::module &m) {
     // function: set_unmodified
     // --------------------------------------------------------------------------- 
     const char* set_unmodified_doc = R"pydoc(
-        Resets the modified flag to false.
+        Set the UGrid unmodified.
     )pydoc";
     xmUg.def("set_unmodified", &xms::XmUGrid::SetUnmodified,
              set_unmodified_doc);
@@ -246,19 +246,19 @@ void initXmUGrid(py::module &m) {
     // function: is_valid_point_change
     // ---------------------------------------------------------------------------
       const char* is_valid_point_change_doc = R"pydoc(
-          Determine whether adjacent cells are valid after a point is moved.
+          Determine if adjacent cells would be valid upon changing a point.
 
           Args:
-              changed_pt_idx (int): index of the point to be changed
-              new_location (iterable): location the point is to be moved to
+              point_idx (int): The index of the point.
+              new_location (iterable): The proposed new location of the point.
           Returns:
-              iterable: Whether the change is valid
+              bool: Whether the change would be valid.
       )pydoc";
-      xmUg.def("is_valid_point_change", [](xms::XmUGrid &self, int changed_pt_idx,
+      xmUg.def("is_valid_point_change", [](xms::XmUGrid &self, int point_idx,
                                            py::iterable new_location) -> bool {
         xms::Pt3d location = xms::Pt3dFromPyIter(new_location);
         return self.IsValidPointChange(changed_pt_idx, location);
-      }, is_valid_point_change_doc, py::arg("changed_pt_idx"), py::arg("new_location"));
+      }, is_valid_point_change_doc, py::arg("point_idx"), py::arg("new_location"));
         // Cell Functions
   // ---------------------------------------------------------------------------
   // function: get_cell_count
