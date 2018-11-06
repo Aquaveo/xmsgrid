@@ -257,7 +257,7 @@ void initXmUGrid(py::module &m) {
       xmUg.def("is_valid_point_change", [](xms::XmUGrid &self, int point_idx,
                                            py::iterable new_location) -> bool {
         xms::Pt3d location = xms::Pt3dFromPyIter(new_location);
-        return self.IsValidPointChange(changed_pt_idx, location);
+        return self.IsValidPointChange(point_idx, location);
       }, is_valid_point_change_doc, py::arg("point_idx"), py::arg("new_location"));
         // Cell Functions
   // ---------------------------------------------------------------------------
