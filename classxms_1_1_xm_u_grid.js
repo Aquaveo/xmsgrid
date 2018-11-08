@@ -35,10 +35,12 @@ var classxms_1_1_xm_u_grid =
     [ "GetEdgeAdjacentCells", "classxms_1_1_xm_u_grid.html#a39d44fc045be2bc895dc94f354d23502", null ],
     [ "GetExtents", "classxms_1_1_xm_u_grid.html#a49d600d7857cfcaaa7fe04440136866d", null ],
     [ "GetLocations", "classxms_1_1_xm_u_grid.html#acca1315fd4948f73d62c3a2f23d36fd0", null ],
+    [ "GetModified", "classxms_1_1_xm_u_grid.html#a07e34c7999367a543dd4cefcfa9507a8", null ],
     [ "GetPointAdjacentCells", "classxms_1_1_xm_u_grid.html#a0f4708efacb13ae29dd4e57f98aec9d9", null ],
     [ "GetPointAdjacentCells", "classxms_1_1_xm_u_grid.html#ab27c613c1e9916b0727c2ce461fde681", null ],
     [ "GetPointAdjacentLocations", "classxms_1_1_xm_u_grid.html#a9ee7727ba92139fd26cebc41f0982419", null ],
     [ "GetPointAdjacentPoints", "classxms_1_1_xm_u_grid.html#aafd7cd6f70a335e67f4251543af72990", null ],
+    [ "GetPointCount", "classxms_1_1_xm_u_grid.html#a9475f0253ff1ea4fbf9c8e96b0ada784", null ],
     [ "GetPointLocation", "classxms_1_1_xm_u_grid.html#abcf4127cfd961e75bdfe445a6816fcc9", null ],
     [ "GetPointsAdjacentCells", "classxms_1_1_xm_u_grid.html#a1dcd067fcfb353dae765a731d2df7282", null ],
     [ "GetPointsAdjacentCells", "classxms_1_1_xm_u_grid.html#aef04f51dc3e35f16425bceff7f8fefe0", null ],
@@ -46,10 +48,11 @@ var classxms_1_1_xm_u_grid =
     [ "GetPointsLocations", "classxms_1_1_xm_u_grid.html#a8d7b8b87d255095224d0004946ac8192", null ],
     [ "GetPointXy0", "classxms_1_1_xm_u_grid.html#ae91a9014ce352ffcd04e9f5cefc32abf", null ],
     [ "IsValidCellstream", "classxms_1_1_xm_u_grid.html#a75064634282c829c88596c6da646f4f3", null ],
+    [ "IsValidPointChange", "classxms_1_1_xm_u_grid.html#ad6f3d7d765531ee84a37e14358c2bf57", null ],
     [ "New", "classxms_1_1_xm_u_grid.html#a45106b162bbdb8cfacb6a17e57d6b271", null ],
     [ "New", "classxms_1_1_xm_u_grid.html#a51464b4cc71bddbb97e9e8a6ff7fb798", null ],
-    [ "PointCount", "classxms_1_1_xm_u_grid.html#a079d0f44930c597b1ebe45786f8ff000", null ],
     [ "SetCellstream", "classxms_1_1_xm_u_grid.html#af4757d88c6874cf636b968827e62c184", null ],
-    [ "SetLocation", "classxms_1_1_xm_u_grid.html#a3d4a2d53eeea06866fb2a875dc4cbb1e", null ],
-    [ "SetLocations", "classxms_1_1_xm_u_grid.html#a097f42fb1696612e316a576d5dd79083", null ]
+    [ "SetLocations", "classxms_1_1_xm_u_grid.html#a097f42fb1696612e316a576d5dd79083", null ],
+    [ "SetPointLocation", "classxms_1_1_xm_u_grid.html#ad738abdda85a724b7677fac67f663539", null ],
+    [ "SetUnmodified", "classxms_1_1_xm_u_grid.html#acbc96a0841007f895e8169cd1c310e35", null ]
 ];

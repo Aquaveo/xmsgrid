@@ -49,6 +49,13 @@
     <filename>_xm_edge_8cpp</filename>
     <includes id="_xm_edge_8t_8h" name="XmEdge.t.h" local="no" imported="no">xmsgrid/ugrid/XmEdge.t.h</includes>
     <namespace>xms</namespace>
+    <member kind="function">
+      <type>bool</type>
+      <name>XmEdgesEquivalent</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a78f807814aab6186ecac3c7f44a9af37</anchor>
+      <arglist>(const XmEdge &amp;a_edge1, const XmEdge &amp;a_edge2)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>XmEdge.t.h</name>
@@ -508,10 +515,24 @@
       <arglist>()</arglist>
     </member>
     <member kind="function" virtualness="pure">
-      <type>virtual int</type>
-      <name>PointCount</name>
+      <type>virtual bool</type>
+      <name>GetModified</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a079d0f44930c597b1ebe45786f8ff000</anchor>
+      <anchor>a07e34c7999367a543dd4cefcfa9507a8</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>SetUnmodified</name>
+      <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
+      <anchor>acbc96a0841007f895e8169cd1c310e35</anchor>
+      <arglist>()=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual int</type>
+      <name>GetPointCount</name>
+      <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
+      <anchor>a9475f0253ff1ea4fbf9c8e96b0ada784</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -537,9 +558,9 @@
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
-      <name>SetLocation</name>
+      <name>SetPointLocation</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>a3d4a2d53eeea06866fb2a875dc4cbb1e</anchor>
+      <anchor>ad738abdda85a724b7677fac67f663539</anchor>
       <arglist>(const int a_pointIdx, const Pt3d &amp;a_location)=0</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -597,6 +618,13 @@
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
       <anchor>ae5038fe12f39352f0701d30b743a5b3d</anchor>
       <arglist>(const int a_pointIdx1, const int a_pointIdx2, VecInt &amp;a_adjacentCellIdxs) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>IsValidPointChange</name>
+      <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
+      <anchor>ad6f3d7d765531ee84a37e14358c2bf57</anchor>
+      <arglist>(const int a_changedPtIdx, const Pt3d &amp;a_newPosition) const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual int</type>
@@ -888,10 +916,24 @@
       <arglist>()</arglist>
     </member>
     <member kind="function" virtualness="virtual">
-      <type>virtual int</type>
-      <name>PointCount</name>
+      <type>virtual bool</type>
+      <name>GetModified</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a91222e8f9816eb369898da1f91ae3d10</anchor>
+      <anchor>a0d7a79c355cabf0173d28a3f60899928</anchor>
+      <arglist>() const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>SetUnmodified</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>aef492cc16d1627d6738d739eb0715aee</anchor>
+      <arglist>() override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual int</type>
+      <name>GetPointCount</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>acf4be3401b60ad6a46f66a80022098e7</anchor>
       <arglist>() const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -917,9 +959,9 @@
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual bool</type>
-      <name>SetLocation</name>
+      <name>SetPointLocation</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a347f370d4ff4a3cdb862dcb139001434</anchor>
+      <anchor>a828a910ecb2a5b934ea9b869b5330220</anchor>
       <arglist>(const int a_pointIdx, const Pt3d &amp;a_point) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -984,6 +1026,13 @@
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>a10eeac62d5cec0c88d6000c2beb02d07</anchor>
       <arglist>(const int a_pointIdx1, const int a_pointIdx2, VecInt &amp;a_commonCellIdxs) const override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>IsValidPointChange</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>ab1ad52b8dce2a65557b73ebe57daad08</anchor>
+      <arglist>(const int a_changedPtIdx, const Pt3d &amp;a_newPosition) const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
@@ -1245,6 +1294,20 @@
       <arglist>()</arglist>
     </member>
     <member kind="function" protection="private">
+      <type>void</type>
+      <name>SetModified</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a20068651e307621d342160ec296c7749</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>bool</type>
+      <name>IsCellValidWithPointChange</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a456aa05765a4760f5bf049bb74cb585a</anchor>
+      <arglist>(const int a_cellIdx, const int a_changedPtIdx, const Pt3d &amp;a_newPosition) const</arglist>
+    </member>
+    <member kind="function" protection="private">
       <type>int</type>
       <name>GetNumberOfItemsForCell</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
@@ -1292,13 +1355,6 @@
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>a1a2fe07e003610af5213172cb8eaa68e</anchor>
       <arglist>(int cellIdx, VecPt3d &amp;segments) const</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>bool</type>
-      <name>IsCellValidWithPointChange</name>
-      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a456aa05765a4760f5bf049bb74cb585a</anchor>
-      <arglist>(const int a_cellIdx, const int a_changedPtIdx, const Pt3d &amp;a_newPosition) const</arglist>
     </member>
     <member kind="function" protection="private">
       <type>void</type>
@@ -1389,6 +1445,13 @@
       <name>m_pointIdxToPointsToCells</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>abf9068082d14f0782f7332b08b34bb61</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>m_modified</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a64fc398df8d76becf856bbbd48669ef6</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -1745,6 +1808,13 @@
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
       <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>XmEdgesEquivalent</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a78f807814aab6186ecac3c7f44a9af37</anchor>
+      <arglist>(const XmEdge &amp;a_edge1, const XmEdge &amp;a_edge2)</arglist>
     </member>
     <member kind="function">
       <type>BSHP&lt; XmUGrid &gt;</type>
