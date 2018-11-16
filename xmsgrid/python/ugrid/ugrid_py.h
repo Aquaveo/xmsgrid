@@ -15,5 +15,6 @@ namespace py = pybind11;
 //----- Function declarations --------------------------------------------------
 void initUGrid(py::module &);
 
+void initXmEdge(py::module &);
 void initXmUGrid(py::module &);
 void initXmUGridUtils(py::module &);

@@ -15,6 +15,7 @@ namespace py = pybind11;
 //----- Python Interface -------------------------------------------------------
 
 void initUGrid(py::module &m) {
+    initXmEdge(m);
     initXmUGrid(m);
     initXmUGridUtils(m);
 }

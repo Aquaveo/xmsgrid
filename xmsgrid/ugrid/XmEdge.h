@@ -53,5 +53,6 @@ private:
 };
 
 //----- Function prototypes ----------------------------------------------------
+bool XmEdgesEquivalent(const XmEdge& a_edge1, const XmEdge& a_edge2);
 
 } // namespace xms

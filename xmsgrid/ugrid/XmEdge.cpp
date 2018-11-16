@@ -149,6 +149,16 @@ void XmEdge::SortIndexes()
   if (m_pt1 > m_pt2)
     std::swap(m_pt1, m_pt2);
 } // XmEdge::SortIndexes
+//------------------------------------------------------------------------------
+/// \brief Test if two edges are the same ignoring direction.
+/// \param a_edge1 The first edge to compare against.
+/// \param a_edge2 The second edge to compare against.
+/// \return True if two edges are same when indexes are in sorted order.
+//------------------------------------------------------------------------------
+bool XmEdgesEquivalent(const XmEdge& a_edge1, const XmEdge& a_edge2)
+{
+  return a_edge1.IsEquivalent(a_edge2);
+} // XmEdgesEquivalent
 
 } // namespace xms
 
@@ -202,6 +212,8 @@ void XmEdgeUnitTests::testIsEquivalent()
   TS_ASSERT(!(edge1 == edge1a));
   TS_ASSERT(edge1a.IsEquivalent(edge1));
   TS_ASSERT(!edge1.IsEquivalent(edge2));
+  TS_ASSERT(XmEdgesEquivalent(edge1, edge1a));
+  TS_ASSERT(!XmEdgesEquivalent(edge1, edge2));
 } // XmEdgeUnitTests::testIsEquivalent
 
 #endif

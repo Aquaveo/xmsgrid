@@ -56,15 +56,19 @@ class XmUGridImpl : public XmUGrid
 public:
   XmUGridImpl();
 
-  // Locations
+  // Misc
+  virtual bool GetModified() const override;
+  virtual void SetUnmodified() override;
 
-  virtual int PointCount() const override;
+  // Points
+
+  virtual int GetPointCount() const override;
 
   virtual const VecPt3d& GetLocations() const override;
   virtual void SetLocations(const VecPt3d& a_locations) override;
 
   virtual Pt3d GetPointLocation(const int a_pointIdx) const override;
-  virtual bool SetLocation(const int a_pointIdx, const Pt3d& a_point) override;
+  virtual bool SetPointLocation(const int a_pointIdx, const Pt3d& a_point) override;
 
   virtual Pt3d GetPointXy0(const int a_pointIdx) const override;
   virtual VecPt3d GetPointsLocations(const VecInt& a_points) const override;
@@ -84,6 +88,8 @@ public:
   virtual void GetPointsAdjacentCells(const int a_pointIdx1,
                                       const int a_pointIdx2,
                                       VecInt& a_commonCellIdxs) const override;
+  virtual bool IsValidPointChange(const int a_changedPtIdx,
+                                  const Pt3d& a_newPosition) const override;
 
   // Cells
   virtual int GetCellCount() const override;
@@ -151,6 +157,12 @@ private:
   void UpdateCellLinks();
   void UpdatePointLinks();
 
+  void SetModified();
+
+  bool IsCellValidWithPointChange(const int a_cellIdx,
+                                  const int a_changedPtIdx,
+                                  const Pt3d& a_newPosition) const;
+
   static int DimensionFromCellType(const XmUGridCellType a_cellType);
 
   int GetNumberOfItemsForCell(const int a_cellIdx) const;
@@ -177,9 +189,6 @@ private:
 
   bool IsFaceSide(const VecInt& a_facePts) const;               // plan view
   bool GetCellXySegments(int cellIdx, VecPt3d& segments) const; // plan view
-  bool IsCellValidWithPointChange(const int a_cellIdx,
-                                  const int a_changedPtIdx,
-                                  const Pt3d& a_newPosition) const;
   void GetEdgesOfFace(const VecInt& a_face, std::vector<XmEdge>& a_edges) const;
   bool DoEdgesCrossWithPointChange(const int a_changedPtIdx,
                                    const Pt3d& a_newPosition,
@@ -194,6 +203,7 @@ private:
                                     ///< of cells)
   VecInt m_pointIdxToPointsToCells; ///< Indexes for each point in array of
                                     ///< points cells
+  bool m_modified = 0; ///< True if UGrid has been modified since last SetUnmodified call
 };
 
 namespace
@@ -626,8 +636,8 @@ bool gmEqualPointsXY(double x1, double y1, double x2, double y2, double toleranc
 /// \param x x coord of point to test
 /// \param y y coord of point to test
 /// \param tol tolerance for geometric comparison
-/// \return  Returns true if the PointLocation is on the line passing through p1 and p2
-///          within the tolerance passed.
+/// \return  Returns true if the GetPointLocation is on the line passing through
+///          p1 and p2 within the tolerance passed.
 /// \note: you should always be careful to consider the case when p1 and
 ///          p2 are very close to each other but not to x,y.  in that case this
 ///          test will almost always fail because it will be more susceptible to
@@ -831,15 +841,37 @@ void iMergeSegmentsToPoly(const VecPt3d& segments, VecPt3d& polygon)
 XmUGridImpl::XmUGridImpl()
 {
 } // XmUGridImpl::XmUGridImpl
-// Locations
+//------------------------------------------------------------------------------
+/// \brief Returns the modified flag. Gets set when points or cells get changed.
+/// \return the modified flag
+//------------------------------------------------------------------------------
+bool XmUGridImpl::GetModified() const
+{
+  return m_modified;
+} // XmUGridImpl::GetModified
+//------------------------------------------------------------------------------
+/// \brief Resets the modified flag to false.
+//------------------------------------------------------------------------------
+void XmUGridImpl::SetUnmodified()
+{
+  m_modified = false;
+} // XmUGridImpl::SetUnmodified
+//------------------------------------------------------------------------------
+/// \brief Sets the modified flag to true.
+//------------------------------------------------------------------------------
+void XmUGridImpl::SetModified()
+{
+  m_modified = true;
+} // XmUGridImpl::SetModified
+// Points
 //------------------------------------------------------------------------------
 /// \brief Get the number of points.
 /// \return the number of points
 //------------------------------------------------------------------------------
-int XmUGridImpl::PointCount() const
+int XmUGridImpl::GetPointCount() const
 {
   return (int)m_points.size();
-} // XmUGridImpl::PointCount
+} // XmUGridImpl::GetPointCount
 //------------------------------------------------------------------------------
 /// \brief Get vector of UGrid points.
 /// \return constant reference to vector of points
@@ -855,6 +887,7 @@ const VecPt3d& XmUGridImpl::GetLocations() const
 void XmUGridImpl::SetLocations(const VecPt3d& a_locations)
 {
   m_points = a_locations;
+  SetModified();
 } // XmUGridImpl::SetLocations
 //------------------------------------------------------------------------------
 /// \brief Get the point
@@ -873,29 +906,16 @@ Pt3d XmUGridImpl::GetPointLocation(const int a_pointIdx) const
 /// \param[in] a_location The new location of the specified point
 /// \return whether the point was successfully set
 //------------------------------------------------------------------------------
-bool XmUGridImpl::SetLocation(const int a_pointIdx, const Pt3d& a_location)
+bool XmUGridImpl::SetPointLocation(const int a_pointIdx, const Pt3d& a_location)
 {
   if (a_pointIdx >= 0 && a_pointIdx < m_points.size())
   {
-    VecInt affectedCells = GetPointAdjacentCells(a_pointIdx);
-    bool badCell = false;
-    for (int i(0); i < affectedCells.size(); i++)
-    {
-      if (!IsCellValidWithPointChange(affectedCells[i], a_pointIdx, a_location))
-      {
-        badCell = true;
-        break;
-      }
-    }
-    if (!badCell)
-    {
-      m_points[a_pointIdx] = a_location;
-      return true;
-    }
-    return false;
+    m_points[a_pointIdx] = a_location;
+    SetModified();
+    return true;
   }
   return false;
-} // XmUGridImpl::SetLocation
+} // XmUGridImpl::SetPointLocation
 
 //------------------------------------------------------------------------------
 /// \brief Get the X, Y location of a point.
@@ -1236,6 +1256,7 @@ bool XmUGridImpl::SetCellstream(const VecInt& a_cellstream)
   {
     m_cellstream = a_cellstream;
     UpdateLinks();
+    SetModified();
     return true;
   }
   else
@@ -1360,14 +1381,13 @@ bool XmUGridImpl::GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const
   a_centroid = centroid;
   return retVal;
 } // XmUGridImpl::GetCellCentroid
-
-//------------------------------------------------------------------------------
-/// \brief Determine whether a cell is valid after a point is moved.
-/// \param[in] a_cellIdx the index of the cell
-/// \param[in] a_changedPtIdx index of the point to be changed
-/// \param[in] a_newPosition location the point is to be moved to
-/// \return whether the cell is valid
-//------------------------------------------------------------------------------
+  //------------------------------------------------------------------------------
+  /// \brief Determine whether a cell is valid after a point is moved.
+  /// \param[in] a_cellIdx the index of the cell
+  /// \param[in] a_changedPtIdx index of the point to be changed
+  /// \param[in] a_newPosition location the point is to be moved to
+  /// \return whether the cell is valid
+  //------------------------------------------------------------------------------
 bool XmUGridImpl::IsCellValidWithPointChange(const int a_cellIdx,
                                              const int a_changedPtIdx,
                                              const Pt3d& a_newPosition) const
@@ -1403,6 +1423,30 @@ bool XmUGridImpl::IsCellValidWithPointChange(const int a_cellIdx,
   }
   return true;
 } // XmUGridImpl::IsCellValidWithPointChange
+//------------------------------------------------------------------------------
+/// \brief Determine whether adjacent cells are valid after a point is moved.
+/// \param[in] a_changedPtIdx index of the point to be changed
+/// \param[in] a_newPosition location the point is to be moved to
+/// \return whether the change is valid
+//------------------------------------------------------------------------------
+bool XmUGridImpl::IsValidPointChange(const int a_changedPtIdx, const Pt3d& a_newPosition) const
+{
+  bool validChange = false;
+  if (a_changedPtIdx >= 0 && a_changedPtIdx < m_points.size())
+  {
+    validChange = true;
+    VecInt affectedCells = GetPointAdjacentCells(a_changedPtIdx);
+    for (int i(0); i < affectedCells.size(); i++)
+    {
+      if (!IsCellValidWithPointChange(affectedCells[i], a_changedPtIdx, a_newPosition))
+      {
+        validChange = false;
+        break;
+      }
+    }
+  }
+  return validChange;
+} // XmUGridImpl::IsValidPointChange
 //------------------------------------------------------------------------------
 /// \brief Get the edges of a cell given a face
 /// \param[in] a_face a vector of point indices of a face
@@ -2628,9 +2672,10 @@ bool XmUGridImpl::GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_seg
 ///
 /// Functions that return the number of objects in some scope end with the word
 /// "Count" preceded by the type of things being counted and optionally a
-/// scope. So PointCount() and GetCellCount() return the number of points and cells
-/// respectively in the XmUGrid, while GetCellPointCount() and GetCellEdgeCount()
-/// return the number of points or edges, respectively, in a specified cell.
+/// scope. So GetPointCount() and GetCellCount() return the number of points and
+/// cells respectively in the XmUGrid, while GetCellPointCount() and
+/// GetCellEdgeCount() return the number of points or edges, respectively, in a
+/// specified cell.
 ///
 /// There is a predefined ordering of faces within the solid cell types, so
 /// faceIdx refers to the face in that ordering. Methods containing the words
@@ -3219,13 +3264,18 @@ void XmUGridUnitTests::testUGridStreams()
   // Cell type (9), number of points (4), point numbers, counterclockwise
   cellstream = {9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5};
 
+  TS_ASSERT(!ugrid->GetModified());
   ugrid->SetLocations(points);
   VecPt3d pointsOut = ugrid->GetLocations();
   TS_ASSERT_EQUALS(points, pointsOut);
+  TS_ASSERT(ugrid->GetModified());
 
+  ugrid->SetUnmodified();
+  TS_ASSERT(!ugrid->GetModified());
   TS_ASSERT(ugrid->SetCellstream(cellstream));
   VecInt cellstreamOut = ugrid->GetCellStream();
   TS_ASSERT_EQUALS(cellstream, cellstreamOut);
+  TS_ASSERT(ugrid->GetModified());
 
   // Test invalid cell streams
   cellstream = {-1};
@@ -3270,12 +3320,17 @@ void XmUGridUnitTests::testGetSetPoint()
   }
   TS_ASSERT_EQUALS(Pt3d(10, 10, 0), ugrid->GetPointXy0(1));
   TS_ASSERT_EQUALS(Pt3d(), ugrid->GetPointLocation((int)points.size()));
+  TS_ASSERT(ugrid->GetModified());
 
-  TS_ASSERT(!ugrid->SetLocation(-1, Pt3d()));
-  TS_ASSERT(!ugrid->SetLocation((int)points.size(), Pt3d()));
+  ugrid->SetUnmodified();
+  TS_ASSERT(!ugrid->GetModified());
+  TS_ASSERT(!ugrid->SetPointLocation(-1, Pt3d()));
+  TS_ASSERT(!ugrid->SetPointLocation((int)points.size(), Pt3d()));
+  TS_ASSERT(!ugrid->GetModified());
 
-  TS_ASSERT(ugrid->SetLocation(0, Pt3d(-10, 10, 0)));
+  TS_ASSERT(ugrid->SetPointLocation(0, Pt3d(-10, 10, 0)));
   TS_ASSERT_EQUALS(Pt3d(-10, 10, 0), ugrid->GetPointLocation(0));
+  TS_ASSERT(ugrid->GetModified());
 } // XmUGridUnitTests::testGetSetPoint
 //------------------------------------------------------------------------------
 /// \brief Test Getting a cell stream.
@@ -3328,7 +3383,7 @@ void XmUGridUnitTests::testGetCellType()
     TS_FAIL("Unable to create UGrid.");
     return;
   }
-  TS_ASSERT_EQUALS(14, ugrid2d->PointCount());
+  TS_ASSERT_EQUALS(14, ugrid2d->GetPointCount());
   TS_ASSERT_EQUALS(6, ugrid2d->GetCellCount());
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid2d->GetCellType(-1));
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid2d->GetCellType(6));
@@ -3345,7 +3400,7 @@ void XmUGridUnitTests::testGetCellType()
     TS_FAIL("Unable to create UGrid.");
     return;
   }
-  TS_ASSERT_EQUALS(30, ugrid3d->PointCount());
+  TS_ASSERT_EQUALS(30, ugrid3d->GetPointCount());
   TS_ASSERT_EQUALS(6, ugrid3d->GetCellCount());
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid3d->GetCellType(-1));
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid3d->GetCellType(6));
@@ -3914,11 +3969,11 @@ void XmUGridUnitTests::testGetPointsAdjacentCells()
   points.clear();
   retrievedCells.clear();
 
-  points = {ugrid->PointCount(), 0};
+  points = {ugrid->GetPointCount(), 0};
   retrievedCells = ugrid->GetPointsAdjacentCells(points);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
 
-  points = {0, ugrid->PointCount()};
+  points = {0, ugrid->GetPointCount()};
   retrievedCells = ugrid->GetPointsAdjacentCells(points);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
 
@@ -4106,7 +4161,7 @@ void XmUGridUnitTests::testEdgeAdjacentCells()
     TS_ASSERT_EQUALS(expectedCells[i], adjacentCells);
   }
 
-  XmEdge badEdge(0, ugrid->PointCount());
+  XmEdge badEdge(0, ugrid->GetPointCount());
   adjacentCells = ugrid->GetEdgeAdjacentCells(badEdge);
   TS_ASSERT_EQUALS(expectedFail, adjacentCells);
 
@@ -4507,21 +4562,25 @@ void XmUGridUnitTests::testIsCellValidWithPointChange()
     return;
   }
 
-  Pt3d valid = {5.0, 5.0, 0.0};
+  Pt3d validPt = {5.0, 5.0, 0.0};
   Pt3d invalid = {500.0, 500.0, 0.0};
 
-  TS_ASSERT(ugrid->SetLocation(4, valid));
-  TS_ASSERT(!ugrid->SetLocation(4, invalid));
+  TS_ASSERT(ugrid->IsValidPointChange(4, validPt));
+  TS_ASSERT(!ugrid->IsValidPointChange(4, invalid));
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUBuildHexahedronUgrid(4, 4, 4);
 
-  valid = ugrid3d->GetPointLocation(21);
-  valid.x += 0.5;
-  valid.y += 0.5;
-  valid.z += 0.5;
-  TS_ASSERT(ugrid3d->SetLocation(21, valid));
-  TS_ASSERT(!ugrid3d->SetLocation(21, invalid));
+  validPt = ugrid3d->GetPointLocation(21);
+  validPt.x += 0.5;
+  validPt.y += 0.5;
+  validPt.z += 0.5;
+  TS_ASSERT(ugrid3d->IsValidPointChange(21, validPt));
+  TS_ASSERT(!ugrid3d->IsValidPointChange(21, invalid));
 
+  TS_ASSERT(ugrid->SetPointLocation(4, validPt));
+  TS_ASSERT(ugrid->SetPointLocation(4, invalid));
+  TS_ASSERT(ugrid3d->SetPointLocation(21, validPt));
+  TS_ASSERT(ugrid3d->SetPointLocation(21, invalid));
 } // XmUGridUnitTests::testIsCellValidWithPointChange
 
 //! [snip_test_PointFunctions]
@@ -4537,8 +4596,8 @@ void XmUGridUnitTests::testPointFunctions()
     return;
   }
 
-  // Test PointCount
-  TS_ASSERT_EQUALS(ugrid->PointCount(), 9);
+  // Test GetPointCount
+  TS_ASSERT_EQUALS(ugrid->GetPointCount(), 9);
   VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
                     {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
 
@@ -4549,12 +4608,11 @@ void XmUGridUnitTests::testPointFunctions()
     TS_ASSERT_EQUALS(points[i], ugrid->GetPointLocation(i));
   }
 
-  // Test SetLocation & PointLocation
+  // Test SetPointLocation & GetPointLocation
   Pt3d invalid = {100, 100, 100};
   Pt3d valid = {5, 5, 5};
-  TS_ASSERT(!ugrid->SetLocation(4, invalid));
-  TS_ASSERT_EQUALS(points[4], ugrid->GetPointLocation(4));
-  TS_ASSERT(ugrid->SetLocation(4, valid));
+  TS_ASSERT(!ugrid->IsValidPointChange(4, invalid));
+  TS_ASSERT(ugrid->SetPointLocation(4, valid));
   TS_ASSERT_EQUALS(valid, ugrid->GetPointLocation(4));
 
   VecInt pointIndices = {0, 3, 6};

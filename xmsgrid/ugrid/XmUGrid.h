@@ -123,13 +123,20 @@ public:
   virtual ~XmUGrid();
 
   // Misc
+  /// \brief Returns the modified flag. Gets set when points or cells get changed.
+  /// \return the modified flag
+  virtual bool GetModified() const = 0;
+
+  /// \brief Resets the modified flag to false.
+  virtual void SetUnmodified() = 0;
+
   static bool IsValidCellstream(const VecInt& a_cellstream);
 
   // Points
 
   /// \brief Get the number of points.
   /// \return the number of points
-  virtual int PointCount() const = 0;
+  virtual int GetPointCount() const = 0;
 
   /// \brief Get vector of UGrid points.
   /// \return a vector of point locations
@@ -148,7 +155,7 @@ public:
   /// \param[in] a_pointIdx the index of the point
   /// \param[in] a_location The new location of the specified point
   /// \return whether the point was successfully set
-  virtual bool SetLocation(const int a_pointIdx, const Pt3d& a_location) = 0;
+  virtual bool SetPointLocation(const int a_pointIdx, const Pt3d& a_location) = 0;
 
   /// \brief Get the X, Y location of a point.
   /// \param[in] a_pointIdx The index of the point.
@@ -194,6 +201,12 @@ public:
   virtual void GetPointsAdjacentCells(const int a_pointIdx1,
                                       const int a_pointIdx2,
                                       VecInt& a_adjacentCellIdxs) const = 0;
+
+  /// \brief Determine whether adjacent cells are valid after a point is moved.
+  /// \param[in] a_changedPtIdx index of the point to be changed
+  /// \param[in] a_newPosition location the point is to be moved to
+  /// \return whether the change is valid
+  virtual bool IsValidPointChange(const int a_changedPtIdx, const Pt3d& a_newPosition) const = 0;
 
   // Cells
 
