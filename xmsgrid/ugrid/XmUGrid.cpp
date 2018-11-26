@@ -1188,22 +1188,23 @@ XmUGridCellType XmUGridImpl::GetCellType(const int a_cellIdx) const
   }
 } // XmUGridImpl::GetCellType
 //------------------------------------------------------------------------------
-/// \brief Count all number of the cells with each dimenion (0, 1, 2, 3)
+/// \brief Count all number of the cells with each dimension (0, 1, 2, 3)
 /// \return the count of dimensions of all of the cells of the ugrid
 //------------------------------------------------------------------------------
 std::vector<int> XmUGridImpl::GetDimensionCounts() const
 {
-  std::vector<int> m_dimensionCounts(4, 0);
-  int itemp(0);
-  for (int i(0); i < m_cellIdxToStreamIdx.size() - 1; i++)
+  std::vector<int> dimensionCounts(4, 0);
+  int itemp = 0;
+  int cellCount = GetCellCount();
+  for (int i = 0; i < cellCount; i++)
   {
     itemp = GetCellDimension(i);
     if (itemp >= 0)
     {
-      m_dimensionCounts[itemp]++;
+      dimensionCounts[itemp]++;
     }
   }
-  return m_dimensionCounts;
+  return dimensionCounts;
 } // XmUGridImpl::GetDimensionCounts
 //------------------------------------------------------------------------------
 /// \brief Get the dimension of the specified cell.
@@ -3454,6 +3455,11 @@ void XmUGridUnitTests::testGetCellDimension()
   threeDResults[3] = 6;
   TS_ASSERT_EQUALS(twoDResults, ugrid2d->GetDimensionCounts());
   TS_ASSERT_EQUALS(threeDResults, ugrid3d->GetDimensionCounts());
+
+  // Test GetDimensionCounts with an empty grid
+  BSHP<XmUGrid> emptyUgrid = XmUGrid::New();
+  std::vector<int> emptyResults = emptyUgrid->GetDimensionCounts();
+  TS_ASSERT_EQUALS(VecInt(4, 0), emptyResults);
 } // XmUGridUnitTests::testGetCellDimension
 //------------------------------------------------------------------------------
 /// \brief Test getting the extents of a UGrid
