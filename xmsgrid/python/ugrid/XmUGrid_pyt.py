@@ -357,12 +357,18 @@ class TestXmUGridPointFunctions(unittest.TestCase):
 
     def test_get_dimension_counts(self):
         import numpy as np
+        #test 2D UGrid
         xu2d = self.get_2d_linear_ugrid()
         results_2d = np.array((0, 2, 4, 0))
         np.testing.assert_array_equal(results_2d, xu2d.get_dimension_counts())
+        # test 3D UGrid
         xu3d = self.get_3d_linear_ugrid()
         results_3d = np.array((0, 0, 0, 6))
         np.testing.assert_array_equal(results_3d, xu3d.get_dimension_counts())
+        xuempty = XmUGrid()
+        # test empty UGrid
+        results_empty = np.array((0, 0, 0, 0))
+        np.testing.assert_array_equal(results_empty, xuempty.get_dimension_counts())
 
     def test_get_cell_dimension(self):
         xu2d = self.get_2d_linear_ugrid()
