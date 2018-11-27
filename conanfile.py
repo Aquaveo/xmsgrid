@@ -80,6 +80,7 @@ class XmsgridConan(ConanFile):
         cmake.definitions["PYTHON_TARGET_VERSION"] = self.env.get("PYTHON_TARGET_VERSION", "3.6")
         cmake.configure(source_folder=".")
         cmake.build()
+        cmake.install()
 
         if self.options.testing:
             print("***********(0.0)*************")
@@ -103,20 +104,11 @@ class XmsgridConan(ConanFile):
                 self.run('python -m unittest discover -v -p *_pyt.py -s ../xmsgrid/python', cwd="./lib")
 
     def package(self):
-        self.copy("*.h", dst="include/xmsgrid", src="xmsgrid")
-        self.copy("*.lib", dst="lib", keep_path=False)
-        self.copy("*.pyd", dst="site-packages", keep_path=False)
-        self.copy("*_py.*.so", dst="site-packages", keep_path=False)
-        self.copy("*_py.so", dst="site-packages", keep_path=False)
-        self.copy("*.dll", dst="bin", keep_path=False)
-        self.copy("*.dylib*", dst="lib", keep_path=False)
-        self.copy("*.so", dst="lib", keep_path=False)
-        self.copy("*.a", dst="lib", keep_path=False)
         self.copy("license", dst="licenses", ignore_case=True, keep_path=False)
 
     def package_info(self):
         self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "site-packages"))
         if self.settings.build_type == 'Debug':
-            self.cpp_info.libs = ["xmsgrid_d"]
+            self.cpp_info.libs = ["xmsgridlib_d"]
         else:
-            self.cpp_info.libs = ["xmsgrid"]
+            self.cpp_info.libs = ["xmsgridlib"]
