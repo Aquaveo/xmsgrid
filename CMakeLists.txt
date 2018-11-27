@@ -9,7 +9,7 @@ else()
   set(CMAKE_POSITION_INDEPENDENT_CODE True)
 endif()
 
-project(xmsgrid C CXX)
+project(xmsgridlib C CXX)
 
 set(BUILD_TESTING NO CACHE BOOL "Enable/Disable testing")
 set(IS_CONDA_BUILD NO CACHE BOOL "Set this if you want to make a conda package.")
@@ -158,26 +158,26 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(IS_PYTHON_BUILD)
-    pybind11_add_module(xmsgrid_py
+    pybind11_add_module(xmsgrid
       ${xmsgrid_py} ${xmsgrid_py_headers}
     )
-    target_include_directories(xmsgrid_py
+    target_include_directories(xmsgrid
         PRIVATE
           ${EXT_LIBS}
           ${PYTHON_INCLUDE_DIRS}
     )
-    target_link_libraries(xmsgrid_py
+    target_link_libraries(xmsgrid
       PRIVATE
         ${EXT_LIBS}
         ${PROJECT_NAME}
     )
-    set_target_properties(xmsgrid_py PROPERTIES
+    set_target_properties(xmsgrid PROPERTIES
       LINKER_LANGUAGE CXX
     )
 
     # Install recipe
     install(
-      TARGETS xmsgrid_py
+      TARGETS xmsgrid
       ARCHIVE DESTINATION "site-packages"
       LIBRARY DESTINATION "site-packages"
     )
