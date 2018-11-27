@@ -1,7 +1,7 @@
 """Test XmUGrid_py.cpp"""
 import unittest
-import xmsgrid_py
-from xmsgrid_py.ugrid import XmEdge
+import xmsgrid
+from xmsgrid.ugrid import XmEdge
 
 
 class TestXmEdgeFunctions(unittest.TestCase):

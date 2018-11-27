@@ -1,7 +1,7 @@
 # Place holder for XMUGridUtils Tests
 import unittest
-from xmsgrid_py.ugrid import XmUGridUtils
-from xmsgrid_py.ugrid import XmUGrid
+from xmsgrid.ugrid import XmUGridUtils
+from xmsgrid.ugrid import XmUGrid
 
 
 class TestXmUGridUtilFunctions(unittest.TestCase):

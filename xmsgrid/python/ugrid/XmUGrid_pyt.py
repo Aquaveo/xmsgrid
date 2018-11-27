@@ -1,7 +1,7 @@
 """Test XmUGrid_py.cpp"""
 import unittest
-import xmsgrid_py
-from xmsgrid_py.ugrid import XmUGrid
+import xmsgrid
+from xmsgrid.ugrid import XmUGrid
 
 
 class TestXmUGridPointFunctions(unittest.TestCase):
@@ -815,7 +815,7 @@ class TestXmUGridCellTypeEnum(unittest.TestCase):
     """CellType enum tests"""
 
     def test_xmugrid_celltype_enum(self):
-        from xmsgrid_py.ugrid import XmUGrid
+        from xmsgrid.ugrid import XmUGrid
         self.assertEqual("xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE",
                          str(XmUGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE))
         self.assertEqual("xmugrid_celltype_enum.XMU_EMPTY_CELL", str(XmUGrid.xmugrid_celltype_enum.XMU_EMPTY_CELL))
@@ -910,7 +910,7 @@ class TestXmUGridFaceOrientationEnum(unittest.TestCase):
     """FaceOrientation enum tests"""
 
     def test_xmugrid_faceorientation_enum(self):
-        from xmsgrid_py.ugrid import XmUGrid
+        from xmsgrid.ugrid import XmUGrid
         self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_UNKNOWN",
                          str(XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_UNKNOWN))
         self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE",
