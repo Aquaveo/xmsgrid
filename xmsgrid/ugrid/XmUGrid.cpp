@@ -24,6 +24,7 @@
 #include <xmscore/misc/XmConst.h>
 #include <xmscore/misc/XmError.h>
 #include <xmscore/misc/XmLog.h>
+#include <xmscore/misc/xmstype.h>
 #include <xmscore/stl/set.h>
 
 // 6. Non-shared code headers
@@ -59,6 +60,7 @@ public:
   // Misc
   virtual bool GetModified() const override;
   virtual void SetUnmodified() override;
+  virtual void SetUseCache(bool a_useCache) override;
 
   // Points
 
@@ -147,11 +149,6 @@ public:
                                          int& a_neighborCell,
                                          int& a_neighborFace) const override;
 
-  // virtual XmUGridFaceOrientation GetFaceOrientation(const int a_cellIdx, const int a_faceIdx)
-  // const override;
-
-  // Misc
-
 private:
   void UpdateLinks(); // Calls UpdateCellLinks & UpdatePointLinks
   void UpdateCellLinks();
@@ -162,6 +159,7 @@ private:
   bool IsCellValidWithPointChange(const int a_cellIdx,
                                   const int a_changedPtIdx,
                                   const Pt3d& a_newPosition) const;
+  bool IsValidCellIdx(const int a_cellIdx) const;
 
   static int DimensionFromCellType(const XmUGridCellType a_cellType);
 
@@ -196,6 +194,16 @@ private:
   void GetExtentsFromPoints(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max) const;
   bool GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_segments) const; // plan view
 
+  void CalculateCacheValues() const;
+  void ClearCacheValues();
+  int GetCell3dFaceCountNoCache(const int a_cellIdx) const;
+  int GetCell3dFaceAdjacentCellNoCache(const int a_cellIdx, const int a_faceIdx) const;
+
+  /// Constant for when an item needs to be calculated.
+  enum XmUGridCacheHolder {
+    NEEDS_CALCULATION = -2 ///< Cached value needs to be calculated
+  };
+
   VecPt3d m_points;                 ///< UGrid points
   VecInt m_cellstream;              ///< UGrid cell stream. @see SetCellstream, GetCellStream
   VecInt m_cellIdxToStreamIdx;      ///< Indexes for each cell in the cell stream
@@ -203,7 +211,12 @@ private:
                                     ///< of cells)
   VecInt m_pointIdxToPointsToCells; ///< Indexes for each point in array of
                                     ///< points cells
-  bool m_modified = 0; ///< True if UGrid has been modified since last SetUnmodified call
+  bool m_modified = false;          ///< Has UGrid been modified since last SetUnmodified call?
+  bool m_useCache = true;           ///< Are we using caching for some calls?
+  mutable VecInt m_numberOfFaces;   ///< Cache for number of cell faces
+  mutable VecInt m_cellFaceOffset;  ///< Cache for offset to m_faceOrientation and m_faceNeighbor
+  mutable VecInt m_faceNeighbor;    ///< Cache for Face neighbor
+  mutable VecInt m_cellDimensionCounts; ///< Cache for cell dimension counts
 };
 
 namespace
@@ -869,8 +882,17 @@ void XmUGridImpl::SetUnmodified()
 //------------------------------------------------------------------------------
 void XmUGridImpl::SetModified()
 {
+  ClearCacheValues();
   m_modified = true;
 } // XmUGridImpl::SetModified
+//------------------------------------------------------------------------------
+/// \brief Turn on or off use of caching.
+/// \param a_useCache Flag to determine if caching will be used.
+//------------------------------------------------------------------------------
+void XmUGridImpl::SetUseCache(bool a_useCache)
+{
+  m_useCache = a_useCache;
+} // XmUGridImpl::SetUseCache
 // Points
 //------------------------------------------------------------------------------
 /// \brief Get the number of points.
@@ -1201,18 +1223,26 @@ XmUGridCellType XmUGridImpl::GetCellType(const int a_cellIdx) const
 //------------------------------------------------------------------------------
 std::vector<int> XmUGridImpl::GetDimensionCounts() const
 {
-  std::vector<int> dimensionCounts(4, 0);
-  int itemp = 0;
-  int cellCount = GetCellCount();
-  for (int i = 0; i < cellCount; i++)
+  if (!m_cellDimensionCounts.empty())
   {
-    itemp = GetCellDimension(i);
-    if (itemp >= 0)
-    {
-      dimensionCounts[itemp]++;
-    }
+    return m_cellDimensionCounts;
   }
-  return dimensionCounts;
+  else
+  {
+    m_cellDimensionCounts.clear();
+    m_cellDimensionCounts.resize(4, 0);
+    int itemp = 0;
+    int cellCount = GetCellCount();
+    for (int i = 0; i < cellCount; i++)
+    {
+      itemp = GetCellDimension(i);
+      if (itemp >= 0)
+      {
+        m_cellDimensionCounts[itemp]++;
+      }
+    }
+    return m_cellDimensionCounts;
+  }
 } // XmUGridImpl::GetDimensionCounts
 //------------------------------------------------------------------------------
 /// \brief Get the dimension of the specified cell.
@@ -1347,7 +1377,7 @@ void XmUGridImpl::GetCellAdjacentCells(const int a_cellIdx, VecInt& a_cellNeighb
 bool XmUGridImpl::GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const
 {
   a_polygon.clear();
-  if (a_cellIdx < 0 || a_cellIdx >= GetCellCount())
+  if (!IsValidCellIdx(a_cellIdx))
     return false;
   int dimension = GetCellDimension(a_cellIdx);
   if (dimension == 3)
@@ -1373,7 +1403,7 @@ bool XmUGridImpl::GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const
   {
     centroid = gmComputePolygonCentroid(pts);
   }
-  else if (a_cellIdx < 0 || a_cellIdx >= GetCellCount())
+  else if (!IsValidCellIdx(a_cellIdx))
   {
     retVal = false;
   }
@@ -1390,13 +1420,13 @@ bool XmUGridImpl::GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const
   a_centroid = centroid;
   return retVal;
 } // XmUGridImpl::GetCellCentroid
-  //------------------------------------------------------------------------------
-  /// \brief Determine whether a cell is valid after a point is moved.
-  /// \param[in] a_cellIdx the index of the cell
-  /// \param[in] a_changedPtIdx index of the point to be changed
-  /// \param[in] a_newPosition location the point is to be moved to
-  /// \return whether the cell is valid
-  //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+/// \brief Determine whether a cell is valid after a point is moved.
+/// \param[in] a_cellIdx the index of the cell
+/// \param[in] a_changedPtIdx index of the point to be changed
+/// \param[in] a_newPosition location the point is to be moved to
+/// \return whether the cell is valid
+//------------------------------------------------------------------------------
 bool XmUGridImpl::IsCellValidWithPointChange(const int a_cellIdx,
                                              const int a_changedPtIdx,
                                              const Pt3d& a_newPosition) const
@@ -1432,6 +1462,15 @@ bool XmUGridImpl::IsCellValidWithPointChange(const int a_cellIdx,
   }
   return true;
 } // XmUGridImpl::IsCellValidWithPointChange
+//------------------------------------------------------------------------------
+/// \brief Determine if a cell index is valid.
+/// \param[in] a_cellIdx the index of the cell
+/// \return True if the cell index is valid.
+//------------------------------------------------------------------------------
+bool XmUGridImpl::IsValidCellIdx(const int a_cellIdx) const
+{
+  return a_cellIdx >= 0 && a_cellIdx < GetCellCount();
+} // XmUGridImpl::IsValidCellIdx
 //------------------------------------------------------------------------------
 /// \brief Determine whether adjacent cells are valid after a point is moved.
 /// \param[in] a_changedPtIdx index of the point to be changed
@@ -1788,25 +1827,16 @@ void XmUGridImpl::GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoint
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetCell3dFaceCount(const int a_cellIdx) const
 {
-  if (a_cellIdx < 0 || a_cellIdx >= GetCellCount())
-    return -1;
-
-  int cellType(GetCellType(a_cellIdx));
-  switch (cellType)
+  if (m_useCache)
   {
-  case XMU_POLYHEDRON:
-    return GetNumberOfItemsForCell(a_cellIdx);
-    break;
-
-  default:
+    CalculateCacheValues();
+    int faceCount = IsValidCellIdx(a_cellIdx) ? m_numberOfFaces[a_cellIdx] : -1;
+    return faceCount;
+  }
+  else
   {
-    const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
-    return (int)faceTable.size();
-    break;
+    return GetCell3dFaceCountNoCache(a_cellIdx);
   }
-  }
-
-  return 0;
 } // XmUGridImpl::GetCell3dFaceCount
 
 //------------------------------------------------------------------------------
@@ -1817,7 +1847,7 @@ int XmUGridImpl::GetCell3dFaceCount(const int a_cellIdx) const
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetCell3dFacePointCount(const int a_cellIdx, const int a_faceIdx) const
 {
-  if (a_cellIdx < 0 || a_cellIdx >= GetCellCount())
+  if (!IsValidCellIdx(a_cellIdx))
   {
     return -1;
   }
@@ -1959,24 +1989,35 @@ VecInt2d XmUGridImpl::GetCell3dFacesPoints(const int a_cellIdx) const
 //------------------------------------------------------------------------------
 int XmUGridImpl::GetCell3dFaceAdjacentCell(const int a_cellIdx, const int a_faceIdx) const
 {
-  VecInt cellFace = GetCell3dFacePoints(a_cellIdx, a_faceIdx);
-  if (cellFace.empty())
-    return -1;
-  VecInt neighborCellFace = GetPointsAdjacentCells(cellFace);
-  if (neighborCellFace.size() <= 1)
-    return -1;
-  if (neighborCellFace.size() > 2)
+  if (m_useCache)
   {
-    assert("Cell definitions are invalid; more than 2 cells found sharing the same face.");
-  }
-  for (int i(0); i < neighborCellFace.size(); i++)
-  {
-    if (neighborCellFace[i] != a_cellIdx)
+    CalculateCacheValues();
+    int faceNeighbor = -1;
+    int numFaces = GetCell3dFaceCount(a_cellIdx);
+    if (a_faceIdx >= 0 && a_faceIdx < numFaces)
     {
-      return neighborCellFace[i];
+      int faceOffset = m_cellFaceOffset[a_cellIdx];
+      if (faceOffset >= 0)
+      {
+        faceOffset += a_faceIdx;
+        faceNeighbor = m_faceNeighbor[faceOffset];
+        if (faceNeighbor == NEEDS_CALCULATION)
+        {
+          faceNeighbor = GetCell3dFaceAdjacentCellNoCache(a_cellIdx, a_faceIdx);
+          m_faceNeighbor[faceOffset] = faceNeighbor;
+        }
+        else
+        {
+          faceNeighbor = m_faceNeighbor[faceOffset];
+        }
+      }
     }
+    return faceNeighbor;
   }
-  return -1;
+  else
+  {
+    return GetCell3dFaceAdjacentCellNoCache(a_cellIdx, a_faceIdx);
+  }
 } // XmUGridImpl::GetCell3dFaceAdjacentCell
 //------------------------------------------------------------------------------
 /// \brief Get the cell face neighbors for given cell and face index.
@@ -2030,7 +2071,6 @@ bool XmUGridImpl::GetCell3dFaceAdjacentCell(const int a_cellIdx,
   a_neighborCell = a_neighborFace = -1;
   return false;
 } // XmUGridImpl::GetCell3dFaceAdjacentCell
-
 //------------------------------------------------------------------------------
 /// \brief Update internal links to navigate between associated points and
 ///        cells.
@@ -2627,6 +2667,92 @@ bool XmUGridImpl::GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_seg
   iGetFacePointSegments(*this, facePts, column2End, column1Begin, a_segments);
   return true;
 } // XmUGridImpl::GetFaceXySegments
+//------------------------------------------------------------------------------
+/// \brief Calculate cached values for faster lookup.
+//------------------------------------------------------------------------------
+void XmUGridImpl::CalculateCacheValues() const
+{
+  if (m_numberOfFaces.empty() && GetCellCount() != 0)
+  {
+    int cellCount = GetCellCount();
+    m_numberOfFaces.assign(cellCount, 0);
+    m_cellFaceOffset.assign(cellCount + 1, 0);
+    int faceCount = 0;
+    for (int cellIdx = 0; cellIdx < cellCount; ++cellIdx)
+    {
+      int numberOfFaces = GetCell3dFaceCountNoCache(cellIdx);
+      m_numberOfFaces[cellIdx] = numberOfFaces;
+      faceCount += numberOfFaces;
+      m_cellFaceOffset[cellIdx + 1] = faceCount;
+    }
+
+    m_faceNeighbor.assign(faceCount, NEEDS_CALCULATION);
+  }
+} // XmUGridImpl::CalculateCacheValues
+//------------------------------------------------------------------------------
+/// \brief Clear cached so they will be recalculated.
+//------------------------------------------------------------------------------
+void XmUGridImpl::ClearCacheValues()
+{
+  m_numberOfFaces.clear();
+  m_cellFaceOffset.clear();
+  m_faceNeighbor.clear();
+  m_cellDimensionCounts.clear();
+} // XmUGridImpl::ClearCacheValues
+//------------------------------------------------------------------------------
+/// \brief Get the number of cell faces for given cell.
+/// \param[in] a_cellIdx the index of the cell
+/// \return the count of cell faces
+//------------------------------------------------------------------------------
+int XmUGridImpl::GetCell3dFaceCountNoCache(const int a_cellIdx) const
+{
+  if (!IsValidCellIdx(a_cellIdx))
+    return -1;
+
+  int cellType(GetCellType(a_cellIdx));
+  switch (cellType)
+  {
+  case XMU_POLYHEDRON:
+    return GetNumberOfItemsForCell(a_cellIdx);
+    break;
+
+  default:
+  {
+    const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
+    return (int)faceTable.size();
+    break;
+  }
+  }
+
+  return 0;
+} // XmUGridImpl::GetCell3dFaceCountNoCache
+//------------------------------------------------------------------------------
+/// \brief Get the cell face neighbors for given cell and face index.
+/// \param[in] a_cellIdx the index of the cell
+/// \param[in] a_faceIdx the face index of the cell
+/// \return a cell index of the neighbor
+//------------------------------------------------------------------------------
+int XmUGridImpl::GetCell3dFaceAdjacentCellNoCache(const int a_cellIdx, const int a_faceIdx) const
+{
+  VecInt cellFace = GetCell3dFacePoints(a_cellIdx, a_faceIdx);
+  if (cellFace.empty())
+    return -1;
+  VecInt neighborCellFace = GetPointsAdjacentCells(cellFace);
+  if (neighborCellFace.size() <= 1)
+    return -1;
+  if (neighborCellFace.size() > 2)
+  {
+    assert("Cell definitions are invalid; more than 2 cells found sharing the same face.");
+  }
+  for (int i(0); i < neighborCellFace.size(); i++)
+  {
+    if (neighborCellFace[i] != a_cellIdx)
+    {
+      return neighborCellFace[i];
+    }
+  }
+  return -1;
+} // XmUGridImpl::GetCell3dFaceAdjacentCellNoCache
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
@@ -2938,12 +3064,12 @@ BSHP<XmUGrid> TEST_XmUGrid3dLinear()
                             (int)XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
                             (int)XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
                             (int)XMU_POLYHEDRON, 6, // A polyhedron with 6 faces
-                            4, 8, 9, 14, 13, // First face with 4 points : 8, 9, 14, 13
-                            4, 8, 9, 24, 23, // Second face with 4 points : 8, 9, 24, 23
-                            4, 9, 14, 29, 24, // Third face with 4 points : 9, 14, 29, 28
-                            4, 13, 14, 29, 28, // Fourth face with 4 points : 13, 14, 29, 28
-                            4, 8, 13, 28, 23, // Fifth face with 4 points : 8, 13, 28, 23
-                            4, 23, 24, 29, 28, // Sixth face with 4 points : 23, 24, 29, 28
+                            4, 9, 8, 13, 14, // Bottom face with 4 points : 9, 8, 13, 14
+                            4, 8, 9, 24, 23, // Front face with 4 points : 8, 9, 24, 23
+                            4, 9, 14, 29, 24, // Right face with 4 points : 9, 14, 29, 28
+                            4, 14, 13, 28, 29, // Back face with 4 points : 14, 13, 28, 29
+                            4, 8, 13, 28, 23, // Left face with 4 points : 13, 8, 23, 28
+                            4, 23, 24, 29, 28, // Top face with 4 points : 23, 24, 29, 28
                             (int)XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
                             (int)XMU_PYRAMID, 5, 5, 6, 11, 10, 20};
   //! [snip_test_3DShapes]
@@ -3779,7 +3905,7 @@ void XmUGridUnitTests::testGetCellPoints()
   expectedGetCellPoints = {{0, 1, 5, 15},
                            {1, 2, 6, 7, 16, 17, 21, 22},
                            {2, 3, 8, 7, 17, 18, 23, 22},
-                           {8, 9, 14, 13, 24, 23, 29, 28},
+                           {9, 8, 13, 14, 24, 23, 29, 28},
                            {3, 4, 18, 8, 9, 23},
                            {5, 6, 11, 10, 20}};
   VecInt expectedPointCounts = {4, 8, 8, 8, 6, 5};
@@ -4073,7 +4199,7 @@ void XmUGridUnitTests::testGetCellAdjacentCells()
   expectedCells = {1, 4, 3};
   retrievedCells = ugrid3d->GetCellAdjacentCells(2);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
-  expectedCells = {2, 4};
+  expectedCells = {4, 2};
   retrievedCells = ugrid3d->GetCellAdjacentCells(3);
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
   expectedCells = {2, 3};
@@ -4254,10 +4380,10 @@ void XmUGridUnitTests::testGetCell3dFacePoints()
                        {2, 7, 8, 3},
                        {17, 18, 23, 22},
                        // Polyhedron
-                       {8, 9, 14, 13},
+                       {9, 8, 13, 14},
                        {8, 9, 24, 23},
                        {9, 14, 29, 24},
-                       {13, 14, 29, 28},
+                       {14, 13, 28, 29},
                        {8, 13, 28, 23},
                        {23, 24, 29, 28},
                        // Wedge
@@ -4828,10 +4954,10 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
                                 {2, 7, 8, 3},
                                 {17, 18, 23, 22},
                                 // Polyhedron
-                                {8, 9, 14, 13},
+                                {9, 8, 13, 14},
                                 {8, 9, 24, 23},
                                 {9, 14, 29, 24},
-                                {13, 14, 29, 28},
+                                {14, 13, 28, 29},
                                 {8, 13, 28, 23},
                                 {23, 24, 29, 28},
                                 // Wedge
@@ -4855,7 +4981,7 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
       TS_ASSERT_EQUALS(expectedCellFaces[expectedIdx], cellFace);
     }
   }
-  // Tetra
+
   VecInt2d cellFaces;
   expectedIdx = 0;
   for (int i(0); i < ugrid3d->GetCellCount(); i++)
@@ -4869,6 +4995,51 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
   }
 } // XmUGridUnitTests::testCell3dFaceFunctions
 //! [snip_test_Cell3dFaceFunctions]
+//------------------------------------------------------------------------------
+/// \brief Test caching to speed up a few 3D cell getters.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testCell3dFunctionCaching()
+{
+  BSHP<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 3, 2);
+
+  VecInt2d expectedNeighbors = {{-1, -1, -1, 1, -1, -1}, {-1, -1, 0, -1, -1, -1}};
+
+  // test four times, to fill the cache, read from the cache, turn off the cache,
+  // and turn on the cache
+  bool useCacheValues[] = {true, true, false, true};
+  for (int i = 0; i < 4; ++i)
+  {
+    xmUGrid->SetUseCache(useCacheValues[i]);
+    for (int cellIdx = 0; cellIdx < xmUGrid->GetCellCount(); ++cellIdx)
+    {
+      TS_ASSERT_EQUALS(6, xmUGrid->GetCell3dFaceCount(cellIdx));
+      for (int faceIdx = 0; faceIdx < xmUGrid->GetCell3dFaceCount(cellIdx); ++faceIdx)
+      {
+        int neighbor = xmUGrid->GetCell3dFaceAdjacentCell(cellIdx, faceIdx);
+        TS_ASSERT_EQUALS(expectedNeighbors[cellIdx][faceIdx], neighbor);
+      }
+    }
+  }
+
+  // change to different points and cells and test again
+  expectedNeighbors = {{-1, -1, -1, 1, -1, -1}, {-1, -1, 0, 2, -1, -1}, {-1, -1, 1, -1, -1, -1}};
+  BSHP<XmUGrid> newXmUGrid = TEST_XmUBuildHexahedronUgrid(2, 4, 2);
+  xmUGrid->SetLocations(newXmUGrid->GetLocations());
+  xmUGrid->SetCellstream(newXmUGrid->GetCellStream());
+  for (int i = 0; i < 4; ++i)
+  {
+    xmUGrid->SetUseCache(useCacheValues[i]);
+    for (int cellIdx = 0; cellIdx < xmUGrid->GetCellCount(); ++cellIdx)
+    {
+      TS_ASSERT_EQUALS(6, xmUGrid->GetCell3dFaceCount(cellIdx));
+      for (int faceIdx = 0; faceIdx < xmUGrid->GetCell3dFaceCount(cellIdx); ++faceIdx)
+      {
+        int neighbor = xmUGrid->GetCell3dFaceAdjacentCell(cellIdx, faceIdx);
+        TS_ASSERT_EQUALS(expectedNeighbors[cellIdx][faceIdx], neighbor);
+      }
+    }
+  }
+} // XmUGridUnitTests::testCell3dFunctionCaching
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------

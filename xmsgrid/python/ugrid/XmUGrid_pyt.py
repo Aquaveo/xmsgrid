@@ -42,12 +42,12 @@ class TestXmUGridPointFunctions(unittest.TestCase):
                  XmUGrid.xmugrid_celltype_enum.XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
                  XmUGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
                  XmUGrid.xmugrid_celltype_enum.XMU_POLYHEDRON, 6,
-                 4, 8, 9, 14, 13,
-                 4, 8, 9, 24, 23,
-                 4, 9, 14, 29, 24,
-                 4, 13, 14, 29, 28,
-                 4, 8, 13, 28, 23,
-                 4, 23, 24, 29, 28,
+                 4, 9, 8, 13, 14, # Bottom face with 4 points : 9, 8, 13, 14
+                 4, 8, 9, 24, 23, # Front face with 4 points : 8, 9, 24, 23
+                 4, 9, 14, 29, 24, # Right face with 4 points : 9, 14, 29, 28
+                 4, 14, 13, 28, 29, # Back face with 4 points : 14, 13, 28, 29
+                 4, 8, 13, 28, 23, # Left face with 4 points : 13, 8, 23, 28
+                 4, 23, 24, 29, 28, # Top face with 4 points : 23, 24, 29, 28
                  XmUGrid.xmugrid_celltype_enum.XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
                  XmUGrid.xmugrid_celltype_enum.XMU_PYRAMID, 5, 5, 6, 11, 10, 20)
         xu = XmUGrid(points, cells)
@@ -323,7 +323,7 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         expected_cell_points_3d = [np.array((0, 1, 5, 15)),
                                    np.array((1, 2, 6, 7, 16, 17, 21, 22)),
                                    np.array((2, 3, 8, 7, 17, 18, 23, 22)),
-                                   np.array((8, 9, 14, 13, 24, 23, 29, 28)),
+                                   np.array((9, 8, 13, 14, 24, 23, 29, 28)),
                                    np.array((3, 4, 18, 8, 9, 23)),
                                    np.array((5, 6, 11, 10, 20))]
         for i in range(0, len(expected_cell_points_3d)):
@@ -687,10 +687,10 @@ class TestXmUGridPointFunctions(unittest.TestCase):
             (2, 7, 8, 3),
             (17, 18, 23, 22),
             # Polyhedron
-            (8, 9, 14, 13),
+            (9, 8, 13, 14),
             (8, 9, 24, 23),
             (9, 14, 29, 24),
-            (13, 14, 29, 28),
+            (14, 13, 28, 29),
             (8, 13, 28, 23),
             (23, 24, 29, 28),
             # Wedge
@@ -733,10 +733,10 @@ class TestXmUGridPointFunctions(unittest.TestCase):
             (2, 7, 8, 3),
             (17, 18, 23, 22),
             # Polyhedron
-            (8, 9, 14, 13),
+            (9, 8, 13, 14),
             (8, 9, 24, 23),
             (9, 14, 29, 24),
-            (13, 14, 29, 28),
+            (14, 13, 28, 29),
             (8, 13, 28, 23),
             (23, 24, 29, 28),
             # Wedge
@@ -809,6 +809,93 @@ class TestXmUGridPointFunctions(unittest.TestCase):
         self.assertTrue(ugrid.set_point_location(4, invalid))
         self.assertTrue(ugrid3d.set_point_location(21, valid_pt))
         self.assertTrue(ugrid3d.set_point_location(21, invalid))
+
+    def test_cell3d_face_functions(self):
+        # 3D Shapes
+        ugrid3d = self.get_3d_linear_ugrid()
+        expected_cell_faces = ( (0, 1, 15), # Tetra
+                                (1, 5, 15),
+                                (5, 0, 15),
+                                (0, 5, 1),
+                                # Voxel
+                                (1, 16, 21, 6),
+                                (2, 7, 22, 17),
+                                (1, 2, 17, 16),
+                                (6, 21, 22, 7),
+                                (1, 6, 7, 2),
+                                (16, 17, 22, 21),
+                                # Hexahedron
+                                (2, 17, 22, 7),
+                                (3, 8, 23, 18),
+                                (2, 3, 18, 17),
+                                (7, 22, 23, 8),
+                                (2, 7, 8, 3),
+                                (17, 18, 23, 22),
+                                # Polyhedron
+                                (9, 8, 13, 14),
+                                (8, 9, 24, 23),
+                                (9, 14, 29, 24),
+                                (14, 13, 28, 29),
+                                (8, 13, 28, 23),
+                                (23, 24, 29, 28),
+                                # Wedge
+                                (3, 4, 18),
+                                (8, 23, 9),
+                                (3, 8, 9, 4),
+                                (4, 9, 23, 18),
+                                (18, 23, 8, 3),
+                                # Pyramid
+                                (5, 10, 11, 6),
+                                (5, 6, 20),
+                                (6, 11, 20),
+                                (11, 10, 20),
+                                (10, 5, 20))
+        expected_idx = 0
+        for cell_idx in range(0, ugrid3d.get_cell_count()):
+            for face_idx in range(0, ugrid3d.get_cell3d_face_count(cell_idx)):
+                face_points = ugrid3d.get_cell3d_face_points(cell_idx, face_idx)
+                self.assertEqual(expected_cell_faces[expected_idx], face_points)
+                expected_idx += 1
+
+        expected_idx = 0
+        for cell_idx in range(0, ugrid3d.get_cell_count()):
+            faces_points = ugrid3d.get_cell3d_faces_points(cell_idx)
+            self.assertEqual(len(faces_points), ugrid3d.get_cell3d_face_count(cell_idx))
+            for face_idx in range(0, ugrid3d.get_cell3d_face_count(cell_idx)):
+                self.assertEqual(expected_cell_faces[expected_idx], faces_points[face_idx])
+                expected_idx += 1
+
+    def test_cell3d_function_caching(self):
+        ugrid = self.get_hexahedron_ugrid(2, 3, 2, (0, 0, 0))
+
+        expected_neighbors = (( -1, -1, -1,  1, -1, -1 ),
+                              ( -1, -1,  0, -1, -1, -1 ))
+
+        # test four times, to fill the cache, read from the cache, turn off the cache,
+        # and turn on the cache
+        use_cache_values = ( True, True, False, True )
+        for i in range(0, 4):
+            ugrid.set_use_cache(use_cache_values[i])
+            for cell_idx in range(0, ugrid.get_cell_count()):
+                self.assertEqual(6, ugrid.get_cell3d_face_count(cell_idx))
+                for face_idx in range(0, ugrid.get_cell3d_face_count(cell_idx)):
+                    neighbor = ugrid.get_cell3d_face_adjacent_cell(cell_idx, face_idx)
+                    self.assertEqual(expected_neighbors[cell_idx][face_idx], neighbor)
+
+        # change to different points and cells and test again
+        expected_neighbors =  (( -1, -1, -1,  1, -1, -1 ),
+                               ( -1, -1,  0,  2, -1, -1 ),
+                               ( -1, -1,  1, -1, -1, -1 ))
+        new_ugrid = self.get_hexahedron_ugrid(2, 4, 2, (0, 0, 0))
+        ugrid.set_locations(new_ugrid.get_locations())
+        ugrid.set_cellstream(new_ugrid.get_cellstream())
+        for i in range(0, 4):
+            ugrid.set_use_cache(use_cache_values[i])
+            for cell_idx in range(0, ugrid.get_cell_count()):
+                self.assertEqual(6, ugrid.get_cell3d_face_count(cell_idx))
+                for face_idx in range(0, ugrid.get_cell3d_face_count(cell_idx)):
+                    neighbor = ugrid.get_cell3d_face_adjacent_cell(cell_idx, face_idx)
+                    self.assertEqual(expected_neighbors[cell_idx][face_idx], neighbor)
 
 
 class TestXmUGridCellTypeEnum(unittest.TestCase):
