@@ -21,12 +21,12 @@ class TestXmUGridUtilFunctions(unittest.TestCase):
                  21, 22, XmUGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON, 8, 2, 3, 
                  8, 7, 17, 18, 23, 22, 
                  XmUGrid.xmugrid_celltype_enum.XMU_POLYHEDRON, 6,
-                 4, 8, 9, 14, 13,
-                 4, 8, 9, 24, 23,
-                 4, 9, 14, 29, 24,
-                 4, 13, 14, 29, 28,
-                 4, 8, 13, 28, 23,
-                 4, 23, 24, 29, 28,
+                 4, 9, 8, 13, 14, # Bottom face with 4 points : 9, 8, 13, 14
+                 4, 8, 9, 24, 23, # Front face with 4 points : 8, 9, 24, 23
+                 4, 9, 14, 29, 24, # Right face with 4 points : 9, 14, 29, 28
+                 4, 14, 13, 28, 29, # Back face with 4 points : 14, 13, 28, 29
+                 4, 8, 13, 28, 23, # Left face with 4 points : 13, 8, 23, 28
+                 4, 23, 24, 29, 28, # Top face with 4 points : 23, 24, 29, 28
                  XmUGrid.xmugrid_celltype_enum.XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
                  XmUGrid.xmugrid_celltype_enum.XMU_PYRAMID, 5, 5, 6, 11, 10, 20)
         xu = XmUGrid(points, cells)
