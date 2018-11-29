@@ -41,7 +41,7 @@ xms::XmEdge XmEdgeFromPyIter(const py::iterable& a_intpair)
 
 void initXmEdge(py::module &m)
 {
-  py::module modXmEdge = m.def_submodule("XmEdge");
+  py::module modXmEdge = m.def_submodule("edge");
   // ---------------------------------------------------------------------------
   // function: edges_equivalent
   // --------------------------------------------------------------------------- 
