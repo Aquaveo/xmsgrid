@@ -110,6 +110,17 @@ void initXmUGrid(py::module &m) {
     )pydoc";
     xmUg.def("set_unmodified", &xms::XmUGrid::SetUnmodified,
              set_unmodified_doc);
+    // ---------------------------------------------------------------------------
+    // function: set_use_cache
+    // --------------------------------------------------------------------------- 
+    const char* set_use_cache_doc = R"pydoc(
+        Turn on or off use of caching to speed up some operations.
+
+        Args:
+            use_cache (bool): Flag to determine if caching will be used.
+    )pydoc";
+    xmUg.def("set_use_cache", &xms::XmUGrid::SetUseCache,
+             set_use_cache_doc);
   // Point Functions
   // ---------------------------------------------------------------------------
   // function: get_point_count

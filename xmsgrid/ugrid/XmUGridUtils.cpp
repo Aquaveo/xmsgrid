@@ -197,7 +197,7 @@ BSHP<XmUGrid> iReadUGridFromAsciiFile(std::istream& a_inStream)
 //------------------------------------------------------------------------------
 /// \brief Read XmUGrid from an ASCII file.
 /// \param[in] a_filePath: filename to read including path, file name, and
-/// extension 
+/// extension
 /// \return the UGrid that was read from the file
 //------------------------------------------------------------------------------
 BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
@@ -545,10 +545,10 @@ void XmUGridUtilsTests::testWriteLinear3dCells()
     "  CELL 11 8 1 2 6 7 16 17 21 22\n"
     "  CELL 12 8 2 3 8 7 17 18 23 22\n"
     "  CELL 42 6\n"
-    "    4 8 9 14 13\n"
+    "    4 9 8 13 14\n"
     "    4 8 9 24 23\n"
     "    4 9 14 29 24\n"
-    "    4 13 14 29 28\n"
+    "    4 14 13 28 29\n"
     "    4 8 13 28 23\n"
     "    4 23 24 29 28\n"
     "  CELL 13 6 3 4 18 8 9 23\n"

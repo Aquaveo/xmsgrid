@@ -101,11 +101,9 @@ enum XmUGridCellType {
 
 };
 
-/// The orientation of a face must be one of these.
+/// The orientation of a 3D face must be one of these.
 enum XmUGridFaceOrientation {
   XMU_ORIENTATION_UNKNOWN = -1,
-
-  // Linear cells
   XMU_ORIENTATION_SIDE = 0,
   XMU_ORIENTATION_TOP = 1,
   XMU_ORIENTATION_BOTTOM = 2,
@@ -129,6 +127,10 @@ public:
 
   /// \brief Resets the modified flag to false.
   virtual void SetUnmodified() = 0;
+
+  /// \brief Turn on or off use of caching to speed up some operations.
+  /// \param a_useCache Flag to determine if caching will be used.
+  virtual void SetUseCache(bool a_useCache) = 0;
 
   static bool IsValidCellstream(const VecInt& a_cellstream);
 
