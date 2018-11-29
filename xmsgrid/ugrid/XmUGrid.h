@@ -417,6 +417,12 @@ public:
                                          int& a_neighborCell,
                                          int& a_neighborFace) const = 0;
 
+  /// \brief Get the orientation of the face of a vertically prismatic cell.
+  /// \param[in] a_cellIdx the index of the cell
+  /// \param[in] a_faceIdx the face index of the cell
+  /// \return The orientation of the face (TOP, BOTTOM, SIDE, UNKNOWN).
+  virtual XmUGridFaceOrientation GetCell3dFaceOrientation(int a_cellIdx, int a_faceIdx) const = 0;
+
 private:
   /// \cond
   XM_DISALLOW_COPY_AND_ASSIGN(XmUGrid)

@@ -59,6 +59,7 @@ public:
   void testCellEdgeAdjacentCellFunctions();
   void testCellEdges();
   void testCell3dFaceFunctions();
+  void testGetCell3dFaceOrientationConcaveCell();
   void testCell3dFunctionCaching();
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests
