@@ -20,7 +20,7 @@ namespace py = pybind11;
 PYBIND11_DECLARE_HOLDER_TYPE(T, boost::shared_ptr<T>);
 
 void initXmUGridUtils(py::module &m) {
-  py::module modXmUGridUtils = m.def_submodule("XmUGridUtils");
+  py::module modXmUGridUtils = m.def_submodule("ugrid_utils");
   // ---------------------------------------------------------------------------
   // function: read_ugrid_from_ascii_file
   // --------------------------------------------------------------------------- 
