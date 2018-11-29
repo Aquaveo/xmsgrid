@@ -453,8 +453,13 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
 //////////// plan view
 //------------------------------------------------------------------------------
 /// \brief Get next column of points with equal x/y values for side face.
+/// \param[in] a_xmUGrid the XmUGrid
+/// \param[in] facePoints the face point indices
+/// \param[in] starti the starting index into facePoints
+/// \param[out] columnBegin the first index of the column of points
+/// \param[out] columnEnd the last index of the column of points
 //------------------------------------------------------------------------------
-bool iGetNextFaceColumn(const XmUGridImpl& ugridGeom,
+bool iGetNextFaceColumn(const XmUGridImpl& a_xmUGrid,
                         const VecInt& facePoints,
                         size_t starti,
                         size_t& columnBegin,
@@ -463,14 +468,14 @@ bool iGetNextFaceColumn(const XmUGridImpl& ugridGeom,
   size_t facePointsSize = facePoints.size();
 
   // find next start of column of points (matching x/y values)
-  Pt3d lastPt = ugridGeom.GetPointXy0(facePoints[starti]);
+  Pt3d lastPt = a_xmUGrid.GetPointXy0(facePoints[starti]);
   size_t lasti = starti;
   size_t i = (starti + 1) % facePointsSize;
   Pt3d pt;
   bool found = false;
   while (!found && i != starti)
   {
-    pt = ugridGeom.GetPointXy0(facePoints[i]);
+    pt = a_xmUGrid.GetPointXy0(facePoints[i]);
     if (pt == lastPt)
     {
       columnBegin = lasti;
@@ -491,7 +496,7 @@ bool iGetNextFaceColumn(const XmUGridImpl& ugridGeom,
   found = false;
   while (!found && i != columnBegin)
   {
-    pt = ugridGeom.GetPointXy0(facePoints[i]);
+    pt = a_xmUGrid.GetPointXy0(facePoints[i]);
     if (pt != lastPt)
     {
       columnEnd = lasti;
@@ -515,9 +520,11 @@ bool iGetNextFaceColumn(const XmUGridImpl& ugridGeom,
 } // iGetNextFaceColumn
 
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Get plan view segments of face points.
+/// \param[in] a_xmUGrid the XmUGrid
+/// \param[in] facePts the face point indices
 //------------------------------------------------------------------------------
-void iGetFacePointSegments(const XmUGridImpl& ugridGeom,
+void iGetFacePointSegments(const XmUGridImpl& a_xmUGrid,
                            const VecInt& facePts,
                            size_t columnBegin,
                            size_t columnEnd,
@@ -526,16 +533,17 @@ void iGetFacePointSegments(const XmUGridImpl& ugridGeom,
   size_t i = columnBegin;
   while (i != columnEnd)
   {
-    Pt3d p = ugridGeom.GetPointXy0(facePts[i]);
+    Pt3d p = a_xmUGrid.GetPointXy0(facePts[i]);
     segments.push_back(p);
     if (i != columnBegin)
       segments.push_back(p);
     i = (i + 1) % facePts.size();
   }
-  segments.push_back(ugridGeom.GetPointXy0(facePts[i]));
+  segments.push_back(a_xmUGrid.GetPointXy0(facePts[i]));
 } // iGetFacePointSegments
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Determine if a location is within the X/Y bounds of two other points.
+/// 
 //------------------------------------------------------------------------------
 bool iPointInSegmentBounds(const Pt3d& point, const Pt3d first, const Pt3d& second)
 {
@@ -1164,7 +1172,7 @@ void XmUGridImpl::GetCellLocations(const int a_cellIdx, VecPt3d& a_cellLocations
 } // XmUGridImpl::GetCellPoints
 
 //------------------------------------------------------------------------------ 
-/// \brief Get the number of cells.   /// is this correct
+/// \brief Get the cell type of a specified cell.
 /// \param[in] a_cellIdx the index of the cell
 /// \return The type of the specified cell or -1 if invalid.
 //------------------------------------------------------------------------------
