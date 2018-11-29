@@ -736,6 +736,22 @@ void initXmUGrid(py::module &m) {
             return self.GetCell3dFaceAdjacentCell(cell_idx, face_idx);
         }, get_cell3d_face_adjacent_cell_doc,py::arg("cell_idx"),py::arg(
             "face_idx"));
+    // ---------------------------------------------------------------------------
+    // function: get_cell3d_face_orientation
+    // ---------------------------------------------------------------------------
+    const char* get_cell3d_face_orientation_doc = R"pydoc(
+        Get the orientation of the face of a vertically prismatic cell.
+
+        Args:
+            cell_idx (int): The index of the cell.
+
+            face_idx (int): The face index of the cell.
+
+        Returns:
+            xmugrid_face_orientation_enum: The orientation of the face.
+    )pydoc";
+    xmUg.def("get_cell3d_face_orientation", &xms::XmUGrid::GetCell3dFaceOrientation,
+             get_cell3d_face_orientation_doc, py::arg("cell_idx"), py::arg("face_idx"));
 
     // UGrid CellType
     py::enum_<xms::XmUGridCellType>(xmUg, "xmugrid_celltype_enum",
