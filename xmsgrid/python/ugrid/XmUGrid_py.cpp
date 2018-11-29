@@ -71,7 +71,7 @@ void initXmUGrid(py::module &m) {
     const char* xmUGrid_doc = R"pydoc(
         Class is a grid geometry library.
     )pydoc";
-    py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUg(m, "XmUGrid",
+    py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUg(m, "UGrid",
                                                                    xmUGrid_doc);
 
 
