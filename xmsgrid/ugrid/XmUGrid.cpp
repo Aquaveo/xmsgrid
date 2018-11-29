@@ -149,6 +149,9 @@ public:
                                          int& a_neighborCell,
                                          int& a_neighborFace) const override;
 
+  virtual XmUGridFaceOrientation GetCell3dFaceOrientation(int a_cellIdx,
+                                                          int a_faceIdx) const override;
+
 private:
   void UpdateLinks(); // Calls UpdateCellLinks & UpdatePointLinks
   void UpdateCellLinks();
@@ -198,6 +201,7 @@ private:
   void ClearCacheValues();
   int GetCell3dFaceCountNoCache(const int a_cellIdx) const;
   int GetCell3dFaceAdjacentCellNoCache(const int a_cellIdx, const int a_faceIdx) const;
+  XmUGridFaceOrientation GetCell3dFaceOrientationNoCache(int a_cellIdx, int a_faceIdx) const;
 
   /// Constant for when an item needs to be calculated.
   enum XmUGridCacheHolder {
@@ -215,6 +219,7 @@ private:
   bool m_useCache = true;           ///< Are we using caching for some calls?
   mutable VecInt m_numberOfFaces;   ///< Cache for number of cell faces
   mutable VecInt m_cellFaceOffset;  ///< Cache for offset to m_faceOrientation and m_faceNeighbor
+  mutable VecInt m_faceOrientation; ///< For vertically prismatic cell is face top, side, bottom
   mutable VecInt m_faceNeighbor;    ///< Cache for Face neighbor
   mutable VecInt m_cellDimensionCounts; ///< Cache for cell dimension counts
 };
@@ -848,6 +853,163 @@ void iMergeSegmentsToPoly(const VecPt3d& segments, VecPt3d& polygon)
     polygon.clear();
   }
 } // iMergeSegmentsToPoly
+//------------------------------------------------------------------------------
+/// \brief Is face a side face?
+/// \param[in] a_xmUGrid The UGrid.
+/// \param[in] a_cellIdx The cell index.
+/// \param[in] a_faceIdx The face index.
+/// \return True if the face is a vertical side face (points with same X and Y).
+//------------------------------------------------------------------------------
+bool iIsSideFace(const XmUGrid& a_xmUGrid, int cellIdx, int a_faceIdx)
+{
+  VecInt facePts;
+  a_xmUGrid.GetCell3dFacePoints(cellIdx, a_faceIdx, facePts);
+
+  // if any face point has same x and y as any other face point then
+  // the face is a side face
+  if (!facePts.empty())
+  {
+    Pt3d ptLast = a_xmUGrid.GetPointXy0(facePts[0]);
+    for (size_t facePtIdx = 1; facePtIdx < facePts.size(); ++facePtIdx)
+    {
+      Pt3d ptCurr = a_xmUGrid.GetPointXy0(facePts[facePtIdx]);
+      if (ptLast == ptCurr)
+        return true;
+
+      ptLast = ptCurr;
+    }
+  }
+
+  return false;
+} // iIsSideFace
+//------------------------------------------------------------------------------
+/// \brief Is connected top or bottom face (connected to lower idx top, higher
+/// bottom).
+/// \param[in] a_cellIdx The cell index.
+/// \param[in] a_faceIdx The face index.
+/// \return The orientation of the face (TOP, BOTTOM, UNKNOWN).
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation iConnectedTopOrBottom(const XmUGrid& a_xmUGrid, int a_cellIdx, int a_faceIdx)
+{
+  int adjacentCellIdx = a_xmUGrid.GetCell3dFaceAdjacentCell(a_cellIdx, a_faceIdx);
+  if (adjacentCellIdx != XM_NONE && adjacentCellIdx < a_cellIdx)
+    return XMU_ORIENTATION_TOP;
+  else if (adjacentCellIdx != XM_NONE && adjacentCellIdx > a_cellIdx)
+    return XMU_ORIENTATION_BOTTOM;
+  return XMU_ORIENTATION_UNKNOWN;
+} // iConnectedTopOrBottom
+//------------------------------------------------------------------------------
+/// \brief Get orientation from normal of a given 3D cell face from the sign of
+/// the area.
+/// \param[in] a_cellIdx The cell index.
+/// \param[in] a_faceIdx The face index.
+/// \return The orientation of the face (TOP, BOTTOM, UNKNOWN).
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation iGetOrientationFromArea(const XmUGrid& a_xmUGrid,
+                                               int a_cellIdx,
+                                               int a_faceIdx)
+{
+  VecInt facePtIdxs;
+  a_xmUGrid.GetCell3dFacePoints(a_cellIdx, a_faceIdx, facePtIdxs);
+  VecPt3d facePts;
+  for (size_t i = 0; i < facePtIdxs.size(); ++i)
+    facePts.push_back(a_xmUGrid.GetPointXy0(facePtIdxs[i]));
+  double area = gmPolygonArea(&facePts[0], facePts.size());
+  if (area > 0.0)
+    return XMU_ORIENTATION_TOP;
+  else if (area < 0.0)
+    return XMU_ORIENTATION_BOTTOM;
+  return XMU_ORIENTATION_UNKNOWN;
+} // iGetOrientationFromArea
+//------------------------------------------------------------------------------
+/// \brief Find the orientation of a given 3D cell face.
+/// \param[in] a_cellIdx The cell index.
+/// \param[in] a_faceIdx The face index.
+/// \return The orientation of the face (TOP, BOTTOM, SIDE, UNKNOWN).
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation iFaceOrientationWithFail(const XmUGrid& a_xmUGrid,
+                                                int a_cellIdx,
+                                                int a_faceIdx)
+{
+  // if first face point has same x and y as any other face point then
+  // the face is a side face
+  if (iIsSideFace(a_xmUGrid, a_cellIdx, a_faceIdx))
+    return XMU_ORIENTATION_SIDE;
+
+  // else if face connected to cell lower idx cell then top face
+  // else if face connected to cell higher idx cell then bottom face
+  XmUGridFaceOrientation orientation = iConnectedTopOrBottom(a_xmUGrid, a_cellIdx, a_faceIdx);
+  if (orientation != XMU_ORIENTATION_UNKNOWN)
+    return orientation;
+
+  // else use sign of area to determine up or down
+  orientation = iGetOrientationFromArea(a_xmUGrid, a_cellIdx, a_faceIdx);
+  if (orientation != XMU_ORIENTATION_UNKNOWN)
+    return orientation;
+
+  return XMU_ORIENTATION_UNKNOWN;
+} // iFaceOrientationWithFail
+//------------------------------------------------------------------------------
+/// \brief Find vertical orientation of a given 3D cell face from opposing face.
+/// \param[in] a_cellIdx The cell index.
+/// \param[in] a_faceIdx The face index.
+/// \return The orientation of the face (TOP, BOTTOM, UNKNOWN).
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation iVerticalOrientationFromOpposing(const XmUGrid& a_xmUGrid,
+                                                        int a_cellIdx,
+                                                        int a_faceIdx)
+{
+  XmUGridFaceOrientation orientation = XMU_ORIENTATION_UNKNOWN;
+
+  // Assume only 1 top and bottom.  Find other face that's top or bottom and
+  // give answer as opposite.  Otherwise first top other is bottom.
+  bool firstUnknown = false;
+  bool foundTop = false;
+  bool foundBot = false;
+  for (int face = 0; face < a_xmUGrid.GetCell3dFaceCount(a_cellIdx); ++face)
+  {
+    int orientation = iFaceOrientationWithFail(a_xmUGrid, a_cellIdx, face);
+    if (orientation == XMU_ORIENTATION_UNKNOWN)
+    {
+      if (a_faceIdx == face)
+        firstUnknown = true;
+    }
+    else if (orientation == XMU_ORIENTATION_TOP)
+      foundTop = true;
+    else if (orientation == XMU_ORIENTATION_BOTTOM)
+      foundBot = true;
+  }
+
+  if (foundTop)
+    orientation = XMU_ORIENTATION_BOTTOM;
+  else if (foundBot)
+    orientation = XMU_ORIENTATION_TOP;
+  else if (firstUnknown)
+    orientation = XMU_ORIENTATION_TOP;
+  else
+    orientation = XMU_ORIENTATION_BOTTOM;
+  return orientation;
+} // iVerticalOrientationFromOpposing
+//------------------------------------------------------------------------------
+/// \brief Find the orientation of a given 3D cell face.
+/// \param[in] a_cellIdx The cell index.
+/// \param[in] a_faceIdx The face index.
+/// \return The orientation of the face (TOP, BOTTOM, SIDE, UNKNOWN).
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation iFaceOrientation(const XmUGrid& a_xmUGrid, int a_cellIdx, int a_faceIdx)
+{
+  XmUGridFaceOrientation orientation = iFaceOrientationWithFail(a_xmUGrid, a_cellIdx, a_faceIdx);
+  if (orientation == XMU_ORIENTATION_UNKNOWN)
+  {
+    // Is there any way to know if we reach this point? First face top and next
+    // bottom? What about multi-panel top with no cell above?
+    // XM_ASSERT(0);
+    orientation = iVerticalOrientationFromOpposing(a_xmUGrid, a_cellIdx, a_faceIdx);
+  }
+
+  XM_ASSERT(orientation != XMU_ORIENTATION_UNKNOWN);
+  return orientation;
+} // iFaceOrientation
 
 } // namespace
 
@@ -2072,6 +2234,44 @@ bool XmUGridImpl::GetCell3dFaceAdjacentCell(const int a_cellIdx,
   return false;
 } // XmUGridImpl::GetCell3dFaceAdjacentCell
 //------------------------------------------------------------------------------
+/// \brief Get the orientation of the face of a vertically prismatic cell.
+/// \param[in] a_cellIdx the index of the cell
+/// \param[in] a_faceIdx the face index of the cell
+/// \return The orientation of the face (TOP, BOTTOM, SIDE, UNKNOWN).
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation XmUGridImpl::GetCell3dFaceOrientation(int a_cellIdx, int a_faceIdx) const
+{
+  if (m_useCache)
+  {
+    CalculateCacheValues();
+    int faceOrientation = XMU_ORIENTATION_UNKNOWN;
+    int numFaces = GetCell3dFaceCount(a_cellIdx);
+    if (a_faceIdx >= 0 && a_faceIdx < numFaces)
+    {
+      int faceOffset = m_cellFaceOffset[a_cellIdx];
+      if (faceOffset >= 0)
+      {
+        faceOffset += a_faceIdx;
+        faceOrientation = m_faceOrientation[faceOffset];
+        if (faceOrientation == NEEDS_CALCULATION)
+        {
+          faceOrientation = (int)GetCell3dFaceOrientationNoCache(a_cellIdx, a_faceIdx);
+          m_faceOrientation[faceOffset] = faceOrientation;
+        }
+        else
+        {
+          faceOrientation = m_faceOrientation[faceOffset];
+        }
+      }
+    }
+    return (XmUGridFaceOrientation)faceOrientation;
+  }
+  else
+  {
+    return GetCell3dFaceOrientationNoCache(a_cellIdx, a_faceIdx);
+  }
+} // XmUGridImpl::GetCell3dFaceOrientation
+//------------------------------------------------------------------------------
 /// \brief Update internal links to navigate between associated points and
 ///        cells.
 //------------------------------------------------------------------------------
@@ -2686,6 +2886,7 @@ void XmUGridImpl::CalculateCacheValues() const
       m_cellFaceOffset[cellIdx + 1] = faceCount;
     }
 
+    m_faceOrientation.assign(faceCount, NEEDS_CALCULATION);
     m_faceNeighbor.assign(faceCount, NEEDS_CALCULATION);
   }
 } // XmUGridImpl::CalculateCacheValues
@@ -2696,6 +2897,7 @@ void XmUGridImpl::ClearCacheValues()
 {
   m_numberOfFaces.clear();
   m_cellFaceOffset.clear();
+  m_faceOrientation.clear();
   m_faceNeighbor.clear();
   m_cellDimensionCounts.clear();
 } // XmUGridImpl::ClearCacheValues
@@ -2753,6 +2955,18 @@ int XmUGridImpl::GetCell3dFaceAdjacentCellNoCache(const int a_cellIdx, const int
   }
   return -1;
 } // XmUGridImpl::GetCell3dFaceAdjacentCellNoCache
+//------------------------------------------------------------------------------
+/// \brief Get the orientation of the face of a vertically prismatic cell.
+/// \param[in] a_cellIdx the index of the cell
+/// \param[in] a_faceIdx the face index of the cell
+/// \return The orientation of the face (TOP, BOTTOM, SIDE, UNKNOWN).
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation XmUGridImpl::GetCell3dFaceOrientationNoCache(int a_cellIdx,
+                                                                    int a_faceIdx) const
+{
+  XmUGridFaceOrientation faceOrientation = iFaceOrientation(*this, a_cellIdx, a_faceIdx);
+  return faceOrientation;
+} // XmUGridImpl::GetCell3dFaceOrientationNoCache
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
@@ -4993,8 +5207,91 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
       TS_ASSERT_EQUALS(expectedCellFaces[expectedIdx], cellFaces[j]);
     }
   }
+
+  VecInt faceOrientations;
+  for (int cellIdx = 0; cellIdx < ugrid3d->GetCellCount(); ++cellIdx)
+  {
+    for (int faceIdx = 0; faceIdx < ugrid3d->GetCell3dFaceCount(cellIdx); ++faceIdx)
+    {
+      faceOrientations.push_back(ugrid3d->GetCell3dFaceOrientation(cellIdx, faceIdx));
+    }
+  }
+
+  VecInt expectedFaceOrientations = {
+    // Tetra
+    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM,
+    // Voxel
+    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
+    // Hexahedron
+    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
+    // Polyhedron
+    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP,
+    // Wedge
+    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
+    XMU_ORIENTATION_SIDE,
+    // Pyramid
+    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP, XMU_ORIENTATION_TOP,
+    XMU_ORIENTATION_SIDE};
+
+  TS_ASSERT_EQUALS(expectedFaceOrientations, faceOrientations);
 } // XmUGridUnitTests::testCell3dFaceFunctions
 //! [snip_test_Cell3dFaceFunctions]
+//------------------------------------------------------------------------------
+/// \brief Test face orientation for concave cell where a triangle from the
+///        first two points in the top face to the centroid create a triangle
+///        with a normal pointing down rather than up.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCell3dFaceOrientationConcaveCell()
+{
+  // clang-format off
+  // vertically prismatic concave cell
+  VecPt3d nodes = {
+    Pt3d(1620022.8468, 6134363.759, 0),    Pt3d(1620009.9411, 6134414.9476, 0),
+    Pt3d(1619994.9996, 6134289.4991, 0),   Pt3d(1619866.1047, 6134542.8755, 0),
+    Pt3d(1619745.5374, 6134167.0467, 0),   Pt3d(1619829.9996, 6134192.9991, 0),
+    Pt3d(1619773.3077, 6134545.2322, 0),   Pt3d(1619710.0815, 6134182.8542, 0),
+    Pt3d(1619693.1618, 6134208.2547, 0),   Pt3d(1619645.5529, 6134438.0278, 0),
+    Pt3d(1619774.9993, 6134371.9982, 0),   Pt3d(1620022.8468, 6134363.759, -10),
+    Pt3d(1620009.9411, 6134414.9476, -10), Pt3d(1619994.9996, 6134289.4991, -10),
+    Pt3d(1619866.1047, 6134542.8755, -10), Pt3d(1619745.5374, 6134167.0467, -10),
+    Pt3d(1619829.9996, 6134192.9991, -10), Pt3d(1619773.3077, 6134545.2322, -10),
+    Pt3d(1619710.0815, 6134182.8542, -10), Pt3d(1619693.1618, 6134208.2547, -10),
+    Pt3d(1619645.5529, 6134438.0278, -10), Pt3d(1619774.9993, 6134371.9982, -10) };
+  VecInt elements = {
+    XMU_POLYHEDRON,
+    13, // number of faces
+    11, 5, 10, 2, 0, 1, 3, 6, 9, 8, 7, 4, // top
+    11, 16, 15, 18, 19, 20, 17, 14, 12, 11, 13, 21, // bottom
+    4, 5, 16, 21, 10, // sides
+    4, 10, 21, 13, 2,
+    4, 2, 13, 11, 0,
+    4, 0, 11, 12, 1,
+    4, 1, 12, 14, 3,
+    4, 3, 14, 17, 6,
+    4, 6, 17, 20, 9,
+    4, 9, 20, 19, 8,
+    4, 8, 19, 18, 7,
+    4, 7, 18, 15, 4,
+    4, 4, 1, 16, 5
+  };
+  // clang-format on
+
+  BSHP<XmUGrid> xmUGrid = XmUGrid::New(nodes, elements);
+  VecInt actual;
+  for (int faceIdx = 0; faceIdx < xmUGrid->GetCell3dFaceCount(0); ++faceIdx)
+  {
+    actual.push_back(xmUGrid->GetCell3dFaceOrientation(0, faceIdx));
+  }
+  VecInt expected = {XMU_ORIENTATION_TOP,  XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE,
+                     XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,   XMU_ORIENTATION_SIDE,
+                     XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,   XMU_ORIENTATION_SIDE,
+                     XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,   XMU_ORIENTATION_SIDE,
+                     XMU_ORIENTATION_SIDE};
+  TS_ASSERT_EQUALS(expected, actual);
+} // XmUGridUnitTests::testFaceOrientationConcaveCell
 //------------------------------------------------------------------------------
 /// \brief Test caching to speed up a few 3D cell getters.
 //------------------------------------------------------------------------------
@@ -5003,6 +5300,11 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
   BSHP<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 3, 2);
 
   VecInt2d expectedNeighbors = {{-1, -1, -1, 1, -1, -1}, {-1, -1, 0, -1, -1, -1}};
+  VecInt2d expectedOrientations = {
+    {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP},
+    {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP}};
 
   // test four times, to fill the cache, read from the cache, turn off the cache,
   // and turn on the cache
@@ -5017,12 +5319,20 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
       {
         int neighbor = xmUGrid->GetCell3dFaceAdjacentCell(cellIdx, faceIdx);
         TS_ASSERT_EQUALS(expectedNeighbors[cellIdx][faceIdx], neighbor);
+        int orientation = (int)xmUGrid->GetCell3dFaceOrientation(cellIdx, faceIdx);
+        TS_ASSERT_EQUALS(expectedOrientations[cellIdx][faceIdx], orientation);
       }
     }
   }
 
   // change to different points and cells and test again
   expectedNeighbors = {{-1, -1, -1, 1, -1, -1}, {-1, -1, 0, 2, -1, -1}, {-1, -1, 1, -1, -1, -1}};
+  expectedOrientations = {{XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP},
+                          {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP},
+                          {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP}};
   BSHP<XmUGrid> newXmUGrid = TEST_XmUBuildHexahedronUgrid(2, 4, 2);
   xmUGrid->SetLocations(newXmUGrid->GetLocations());
   xmUGrid->SetCellstream(newXmUGrid->GetCellStream());
@@ -5036,6 +5346,8 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
       {
         int neighbor = xmUGrid->GetCell3dFaceAdjacentCell(cellIdx, faceIdx);
         TS_ASSERT_EQUALS(expectedNeighbors[cellIdx][faceIdx], neighbor);
+        int orientation = (int)xmUGrid->GetCell3dFaceOrientation(cellIdx, faceIdx);
+        TS_ASSERT_EQUALS(expectedOrientations[cellIdx][faceIdx], orientation);
       }
     }
   }
