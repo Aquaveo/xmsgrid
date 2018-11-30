@@ -65,7 +65,7 @@ void iWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
   }
 
   // number of cell stream items
-  const VecInt& cellstream = a_ugrid->GetCellStream();
+  const VecInt& cellstream = a_ugrid->GetCellstream();
   int cellstreamSize = (int)cellstream.size();
   a_outStream << "NUM_CELL_ITEMS " << cellstreamSize << "\n";
 
@@ -217,68 +217,6 @@ void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePat
   iWriteUGridToAsciiFile(a_ugrid, outFile);
 } // XmWriteUGridToAsciiFile
 
-//------------------------------------------------------------------------------
-/// \brief 2D cross product of two points
-/// \param[in] a_origin: origin point for the "vectors"
-/// \param[in] a_A: first vector
-/// \param[in] a_B: second vector
-/// \return the cross product
-//------------------------------------------------------------------------------
-double cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
-{
-  return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
-} // cross
-//------------------------------------------------------------------------------
-/// \brief Determine whether 2 line segments intersect
-/// \param[in] a_segment1: The first line segment
-/// \param[in] a_segment2: The second line segment
-/// \return true if the line segments intersect
-//------------------------------------------------------------------------------
-bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
-                         const std::pair<Pt3d, Pt3d>& a_segment2)
-{
-  return DoLineSegmentsCross(a_segment1.first, a_segment1.second, a_segment2.first,
-                             a_segment2.second);
-} // DoLineSegmentsCross
-
-//------------------------------------------------------------------------------
-/// \brief Determine whether 2 line segments cross
-/// \param[in] a_segment1Point1: First point 3d of line segment 1
-/// \param[in] a_segment1Point2: Second point 3d of line segment 1
-/// \param[in] a_segment2Point1: First point 3d of line segment 2
-/// \param[in] a_segment2Point2: Second point 3d of line segment 2
-/// \return true if the line segments cross
-//------------------------------------------------------------------------------
-bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
-                         const Pt3d& a_segment1Point2,
-                         const Pt3d& a_segment2Point1,
-                         const Pt3d& a_segment2Point2)
-{
-  // Boundary case checks
-  // Any of the points from line segment 1 are the same as any points from line segment 2
-  if ((a_segment1Point1 == a_segment2Point1 || a_segment1Point1 == a_segment2Point2) &&
-      (a_segment1Point2 == a_segment2Point1 || a_segment1Point2 == a_segment2Point2))
-    return true;
-
-  // The segments AB and CD intersect if and only if both of the following are true:
-  //
-  // A and B lie on different sides of the line through C and D
-  // C and D lie on different sides of the line through A and B
-  // These two conditions can be tested for using the notion of a scalar cross product(formulas
-  // below).
-
-  // is true if and only if the scalar cross products CA->�CD-> and CB->�CD-> have opposite signs.
-  // is true if and only if the scalar cross products AC->�AB-> and AD->�AB-> have opposite signs.
-
-  // Conclusion: the line segments intersect if and only if both are negative
-  double result1 = cross(a_segment2Point1, a_segment1Point1, a_segment2Point2);
-  double result2 = cross(a_segment2Point1, a_segment1Point2, a_segment2Point2);
-  double result3 = cross(a_segment1Point1, a_segment2Point1, a_segment1Point2);
-  double result4 = cross(a_segment2Point1, a_segment2Point2, a_segment1Point2);
-
-  return (result1 * result2 < 0 && result3 * result4 < 0);
-
-} // DoLineSegmentsCross
 } // namespace xms
 
 #ifdef CXX_TEST
@@ -293,108 +231,6 @@ using namespace xms;
 /// \class XmUGridTests
 /// \brief Tests XmUGrids.
 ////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------
-/// \brief Test determining if two lines intersect
-//------------------------------------------------------------------------------
-void XmUGridUtilsTests::testDoLineSegmentsCross()
-{
-  // Test 1 Segments do not intersect
-  {
-    Pt3d point1(1, 2);
-    Pt3d point2(1, 4);
-    Pt3d point3(2, 1);
-    Pt3d point4(4, 1);
-    std::pair<Pt3d, Pt3d> segment1;
-    std::pair<Pt3d, Pt3d> segment2;
-    segment1.first = point1;
-    segment1.second = point2;
-    segment2.first = point3;
-    segment2.second = point4;
-    bool expected = false;
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(point1, point2, point3, point4));
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(segment1, segment2));
-  }
-  // Test 2 Segments that do intersect (generic)
-  {
-    Pt3d point1(2, 2);
-    Pt3d point2(4, 4);
-    Pt3d point3(2, 4);
-    Pt3d point4(4, 2);
-    std::pair<Pt3d, Pt3d> segment1;
-    std::pair<Pt3d, Pt3d> segment2;
-    segment1.first = point1;
-    segment1.second = point2;
-    segment2.first = point3;
-    segment2.second = point4;
-    bool expected = true;
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(point1, point2, point3, point4));
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(segment1, segment2));
-  }
-  // Test 3 Colinear
-  {
-    Pt3d point1(1, 5);
-    Pt3d point2(1, 8);
-    Pt3d point3(1, 5);
-    Pt3d point4(1, 8);
-    std::pair<Pt3d, Pt3d> segment1;
-    std::pair<Pt3d, Pt3d> segment2;
-    segment1.first = point1;
-    segment1.second = point2;
-    segment2.first = point3;
-    segment2.second = point4;
-    bool expected = true;
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(point1, point2, point3, point4));
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(segment1, segment2));
-  }
-  // Test 4 T intersection (false because it does not cross)
-  {
-    Pt3d point1(6, 2);
-    Pt3d point2(6, 4);
-    Pt3d point3(5, 4);
-    Pt3d point4(7, 4);
-    std::pair<Pt3d, Pt3d> segment1;
-    std::pair<Pt3d, Pt3d> segment2;
-    segment1.first = point1;
-    segment1.second = point2;
-    segment2.first = point3;
-    segment2.second = point4;
-    bool expected = false;
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(point1, point2, point3, point4));
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(segment1, segment2));
-  }
-  // Test 5 L intersection (which is allowed for valid shapes, so return false)
-  {
-    Pt3d point1(2, 5);
-    Pt3d point2(2, 8);
-    Pt3d point3(2, 8);
-    Pt3d point4(4, 8);
-    std::pair<Pt3d, Pt3d> segment1;
-    std::pair<Pt3d, Pt3d> segment2;
-    segment1.first = point1;
-    segment1.second = point2;
-    segment2.first = point3;
-    segment2.second = point4;
-    bool expected = false;
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(point1, point2, point3, point4));
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(segment1, segment2));
-  }
-  // Test 6 Near miss
-  {
-    Pt3d point1(5, 5);
-    Pt3d point2(7, 5);
-    Pt3d point3(5, 6);
-    Pt3d point4(5, 8);
-    std::pair<Pt3d, Pt3d> segment1;
-    std::pair<Pt3d, Pt3d> segment2;
-    segment1.first = point1;
-    segment1.second = point2;
-    segment2.first = point3;
-    segment2.second = point4;
-    bool expected = false;
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(point1, point2, point3, point4));
-    TS_ASSERT_EQUALS(expected, DoLineSegmentsCross(segment1, segment2));
-  }
-} // XmUGridUtilsTests::testDoLineSegmentsCross
 //------------------------------------------------------------------------------
 /// \brief Test writing an ASCII file for an empty UGrid.
 //------------------------------------------------------------------------------
@@ -571,7 +407,7 @@ void XmUGridUtilsTests::testReadEmptyUGridAsciiFile()
     TS_FAIL("Failed to read UGrid.");
 
   TS_ASSERT(ugrid->GetLocations().empty());
-  TS_ASSERT(ugrid->GetCellStream().empty());
+  TS_ASSERT(ugrid->GetCellstream().empty());
 } // XmUGridReaderTests::testReadEmptyUGridAsciiFile
 //------------------------------------------------------------------------------
 /// \brief Test reading an ASCII file for a single triangle UGrid.
@@ -595,7 +431,7 @@ void XmUGridUtilsTests::testReadBasicUGrid()
 
   BSHP<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
-  TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugrid->GetCellStream());
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugrid->GetCellstream());
 } // XmUGridUtilsTests::testReadBasicUGrid
 //------------------------------------------------------------------------------
 /// \brief Test reading an ASCII file for a single triangle UGrid.
@@ -630,7 +466,7 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
 
   BSHP<XmUGrid> ugridBase = TEST_XmUGridHexagonalPolyhedron();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
-  TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugrid->GetCellStream());
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugrid->GetCellstream());
 } // XmUGridUtilsTests::testReadPolyhedronUGrid
 //------------------------------------------------------------------------------
 /// \brief Test reading an ASCII file for a single triangle UGrid.
@@ -649,7 +485,7 @@ void XmUGridUtilsTests::testLinear2dWriteThenRead()
   BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
-  TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
 } // XmUGridUtilsTests::testLinear2dWriteThenRead
 //------------------------------------------------------------------------------
 /// \brief Test reading an ASCII file for a single triangle UGrid.
@@ -668,7 +504,7 @@ void XmUGridUtilsTests::testLinear3dWriteThenRead()
   BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
-  TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
 } // XmUGridUtilsTests::testLinear3dWriteThenRead
 //------------------------------------------------------------------------------
 /// \brief Test reading from file.
@@ -694,7 +530,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
   }
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
-  TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
 //! [snip_test_WriteReadAscii]
 //------------------------------------------------------------------------------
@@ -718,7 +554,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
   }
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
-  TS_ASSERT_EQUALS(ugridBase->GetCellStream(), ugridOut->GetCellStream());
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
   //! [snip_test_WriteReadAscii]
 

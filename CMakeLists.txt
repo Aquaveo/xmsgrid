@@ -86,14 +86,14 @@ set(xmsgrid_sources
   xmsgrid/ugrid/XmEdge.cpp
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
-  xmsgrid/ugrid/XmConvexHull.cpp
+  xmsgrid/ugrid/detail/XmGeometry.cpp
 )
 
 set(xmsgrid_headers
   xmsgrid/ugrid/XmEdge.h
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
-  xmsgrid/ugrid/XmConvexHull.h
+  xmsgrid/ugrid/detail/XmGeometry.h
 )
 
 # Pybind11 sources
@@ -119,7 +119,7 @@ if (BUILD_TESTING)
    xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
-   xmsgrid/ugrid/XmConvexHull.t.h
+   xmsgrid/ugrid/detail/XmGeometry.t.h
  )
 
  find_package(CxxTest)

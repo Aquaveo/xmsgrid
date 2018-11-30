@@ -267,7 +267,7 @@ public:
   ///     Cell type (ElemTypeEnum), number of points, point numbers.  Zero-based, CCW,
   ///     bottom, then top. Not true for pixel or voxel.
   /// \return constant reference to the cell stream vector
-  virtual const VecInt& GetCellStream() const = 0;
+  virtual const VecInt& GetCellstream() const = 0;
 
   /// \brief Set the ugrid cells for the entire UGrid using a cell stream.
   /// \param[in] a_cellstream The cellstream for the UGrid.
@@ -278,7 +278,7 @@ public:
   /// \brief Get cell stream vector for a single cell.
   /// \param[in] a_cellIdx the index of the cell
   /// \param[in] a_cellstream The cellstream of the cell
-  /// @see GetCellStream for more detail on cell stream definitions.
+  /// @see GetCellstream for more detail on cell stream definitions.
   /// \return whether it was successfull or not
   virtual bool GetCellCellstream(const int a_cellIdx, VecInt& a_cellstream) const = 0;
 
