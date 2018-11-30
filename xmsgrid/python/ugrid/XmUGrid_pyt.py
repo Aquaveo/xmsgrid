@@ -21,12 +21,12 @@ class TestUGridPointFunctions(unittest.TestCase):
         points = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (40, 0, 0),
                   (0, 10, 0), (10, 10, 0), (20, 10, 0), (40, 10, 0), (0, 20, 0),
                   (10, 20, 0), (20, 20, 0), (30, 20, 0), (40, 20, 0))
-        cells = (UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 1, 6, 5,
-                 UGrid.xmugrid_celltype_enum.XMU_PIXEL, 4, 1, 2, 6, 7,
-                 UGrid.xmugrid_celltype_enum.XMU_TRIANGLE, 3, 2, 3, 7,
-                 UGrid.xmugrid_celltype_enum.XMU_POLYGON, 6, 3, 4, 8, 13, 12, 7,
-                 UGrid.xmugrid_celltype_enum.XMU_POLY_LINE, 3, 7, 11, 10,
-                 UGrid.xmugrid_celltype_enum.XMU_LINE, 2, 5, 9)
+        cells = (UGrid.ugrid_celltype_enum.QUAD, 4, 0, 1, 6, 5,
+                 UGrid.ugrid_celltype_enum.PIXEL, 4, 1, 2, 6, 7,
+                 UGrid.ugrid_celltype_enum.TRIANGLE, 3, 2, 3, 7,
+                 UGrid.ugrid_celltype_enum.POLYGON, 6, 3, 4, 8, 13, 12, 7,
+                 UGrid.ugrid_celltype_enum.POLY_LINE, 3, 7, 11, 10,
+                 UGrid.ugrid_celltype_enum.LINE, 2, 5, 9)
         xu = UGrid(points, cells)
         return xu
 
@@ -38,18 +38,18 @@ class TestUGridPointFunctions(unittest.TestCase):
                   (0, 0, 10), (10, 0, 10), (20, 0, 10), (30, 0, 10), (40, 0, 10),
                   (0, 10, 10), (10, 10, 10), (20, 10, 10), (30, 10, 10), (40, 10, 10),
                   (0, 20, 10), (10, 20, 10), (20, 20, 10), (30, 20, 10), (40, 20, 10))
-        cells = (UGrid.xmugrid_celltype_enum.XMU_TETRA, 4, 0, 1, 5, 15,
-                 UGrid.xmugrid_celltype_enum.XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
-                 UGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
-                 UGrid.xmugrid_celltype_enum.XMU_POLYHEDRON, 6,
+        cells = (UGrid.ugrid_celltype_enum.TETRA, 4, 0, 1, 5, 15,
+                 UGrid.ugrid_celltype_enum.VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
+                 UGrid.ugrid_celltype_enum.HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
+                 UGrid.ugrid_celltype_enum.POLYHEDRON, 6,
                  4, 9, 8, 13, 14, # Bottom face with 4 points : 9, 8, 13, 14
                  4, 8, 9, 24, 23, # Front face with 4 points : 8, 9, 24, 23
                  4, 9, 14, 29, 24, # Right face with 4 points : 9, 14, 29, 28
                  4, 14, 13, 28, 29, # Back face with 4 points : 14, 13, 28, 29
                  4, 8, 13, 28, 23, # Left face with 4 points : 13, 8, 23, 28
                  4, 23, 24, 29, 28, # Top face with 4 points : 23, 24, 29, 28
-                 UGrid.xmugrid_celltype_enum.XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
-                 UGrid.xmugrid_celltype_enum.XMU_PYRAMID, 5, 5, 6, 11, 10, 20)
+                 UGrid.ugrid_celltype_enum.WEDGE, 6, 3, 4, 18, 8, 9, 23,
+                 UGrid.ugrid_celltype_enum.PYRAMID, 5, 5, 6, 11, 10, 20)
         xu = UGrid(points, cells)
         return xu
 
@@ -69,7 +69,7 @@ class TestUGridPointFunctions(unittest.TestCase):
             lay_offset = num_in_layer * k
             for i in range(0, rows - 1):
                 for j in range(0, cols - 1):
-                    cells[curr_id] = UGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON
+                    cells[curr_id] = UGrid.ugrid_celltype_enum.HEXAHEDRON
                     cells[curr_id + 1] = 8
                     cells[curr_id + 2] = j + cols * i + lay_offset
                     cells[curr_id + 3] = j + cols * (i + 1) + lay_offset
@@ -83,31 +83,31 @@ class TestUGridPointFunctions(unittest.TestCase):
         xu = UGrid(points, cells)
         return xu
 
-    def test_xmugrid_new_default(self):
+    def test_ugrid_new_default(self):
         xu = UGrid()
         self.assertIsInstance(xu, UGrid)
 
-    def test_xmugrid_new(self):
+    def test_ugrid_new(self):
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
         self.assertIsInstance(xu, UGrid)
 
-    def test_xmugrid_new_numpy(self):
+    def test_ugrid_new_numpy(self):
         import numpy as np
         points = np.array(((0, 0, 0), (20, 0, 0), (0, 20, 0)))
         cells = np.array((5, 3, 0, 1, 2))
         xu = UGrid(points, cells)
         self.assertIsInstance(xu, UGrid)
 
-    def test_xmugrid_point_count(self):
+    def test_ugrid_point_count(self):
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
         num_points_base = len(points)
         self.assertEqual(num_points_base, xu.get_point_count())
 
-    def test_xmugrid_get_locations(self):
+    def test_ugrid_get_locations(self):
         import numpy as np
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
@@ -115,7 +115,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         points_out = xu.get_locations()
         np.testing.assert_array_equal(np.array(points), points_out)
 
-    def test_xmugrid_set_locations(self):
+    def test_ugrid_set_locations(self):
         import numpy as np
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         xu = UGrid()
@@ -128,7 +128,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         points_out = xu.get_locations()
         np.testing.assert_array_equal(np.array(points), points_out)
 
-    def test_xmugrid_get_locations_numpy(self):
+    def test_ugrid_get_locations_numpy(self):
         import numpy as np
         points = np.array(((0, 0, 0), (20, 0, 0), (0, 20, 0)))
         xu = UGrid()
@@ -139,7 +139,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         points_out = xu.get_locations()
         np.testing.assert_array_equal(np.array(points), points_out)
 
-    def test_xmugrid_get_locations(self):
+    def test_ugrid_get_locations(self):
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
@@ -152,7 +152,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual((0, 20, 0), p3)
         self.assertEqual((0, 0, 0), p4)
 
-    def test_xmugrid_get_point_xy0(self):
+    def test_ugrid_get_point_xy0(self):
         points = ((0, 0, 2), (20, 0, 1), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
@@ -165,7 +165,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual((0, 20, 0), p3)
         self.assertEqual((0, 0, 0), p4)
 
-    def test_xmugrid_set_point_location(self):
+    def test_ugrid_set_point_location(self):
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                   (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0))
         cells = (9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5)
@@ -179,7 +179,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertTrue(xu.get_modified())
         self.assertEqual((-10, -10, 0), xu.get_point_location(0))
 
-    def test_xmugrid_set_point_location_numpy(self):
+    def test_ugrid_set_point_location_numpy(self):
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                            (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
@@ -190,7 +190,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertTrue(xu.set_point_location(0, (-10, -10, 0)))
         self.assertEqual((-10, -10, 0), xu.get_point_location(0))
 
-    def test_xmugrid_get_points_locations(self):
+    def test_ugrid_get_points_locations(self):
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                            (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
@@ -201,16 +201,16 @@ class TestUGridPointFunctions(unittest.TestCase):
         points_from_indxs = xu.get_points_locations(point_indices)
         np.testing.assert_array_equal(expected_points, points_from_indxs)
 
-    def test_xmugrid_get_extents(self):
+    def test_ugrid_get_extents(self):
         points = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (40, 0, 0),
                   (0, 10, 0), (10, 10, 0), (20, 10, 0), (40, 10, 0), (0, 20, 0),
                   (10, 20, 0), (20, 20, 0), (30, 20, 0), (40, 20, 0))
-        cells = (UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 1, 6, 5,
-                 UGrid.xmugrid_celltype_enum.XMU_PIXEL, 4, 1, 2, 6, 7,
-                 UGrid.xmugrid_celltype_enum.XMU_TRIANGLE, 3, 2, 3, 7,
-                 UGrid.xmugrid_celltype_enum.XMU_POLYGON, 6, 3, 4, 8, 13, 12, 7,
-                 UGrid.xmugrid_celltype_enum.XMU_POLY_LINE, 3, 7, 11, 10,
-                 UGrid.xmugrid_celltype_enum.XMU_LINE, 2, 5, 9)
+        cells = (UGrid.ugrid_celltype_enum.QUAD, 4, 0, 1, 6, 5,
+                 UGrid.ugrid_celltype_enum.PIXEL, 4, 1, 2, 6, 7,
+                 UGrid.ugrid_celltype_enum.TRIANGLE, 3, 2, 3, 7,
+                 UGrid.ugrid_celltype_enum.POLYGON, 6, 3, 4, 8, 13, 12, 7,
+                 UGrid.ugrid_celltype_enum.POLY_LINE, 3, 7, 11, 10,
+                 UGrid.ugrid_celltype_enum.LINE, 2, 5, 9)
         xu = UGrid(points, cells)
         exp_min = (0, 0, 0)
         exp_max = (40, 20, 0)
@@ -220,8 +220,8 @@ class TestUGridPointFunctions(unittest.TestCase):
 
     def test_get_point_adjacent_cells(self):
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0), (20, 0, 0))
-        cellstream = (UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 3, 4, 1,
-                      UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 1, 4, 5, 2)
+        cellstream = (UGrid.ugrid_celltype_enum.QUAD, 4, 0, 3, 4, 1,
+                      UGrid.ugrid_celltype_enum.QUAD, 4, 1, 4, 5, 2)
         xu = UGrid(points, cellstream)
 
         cell_empty = ()
@@ -241,10 +241,10 @@ class TestUGridPointFunctions(unittest.TestCase):
     def test_get_points_adjacent_cells(self):
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                   (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0))
-        cellstream = (UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 3, 4, 1,
-                       UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 1, 4, 5, 2,
-                       UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 3, 6, 7, 4,
-                       UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 4, 7, 8, 5)
+        cellstream = (UGrid.ugrid_celltype_enum.QUAD, 4, 0, 3, 4, 1,
+                       UGrid.ugrid_celltype_enum.QUAD, 4, 1, 4, 5, 2,
+                       UGrid.ugrid_celltype_enum.QUAD, 4, 3, 6, 7, 4,
+                       UGrid.ugrid_celltype_enum.QUAD, 4, 4, 7, 8, 5)
         xu = UGrid(points, cellstream)
         expected_cells = ()
 
@@ -334,26 +334,26 @@ class TestUGridPointFunctions(unittest.TestCase):
         xu2d = self.get_2d_linear_ugrid()
         self.assertEqual(14, xu2d.get_point_count())
         self.assertEqual(6, xu2d.get_cell_count())
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE, xu2d.get_cell_type(-1))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE, xu2d.get_cell_type(6))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_QUAD, xu2d.get_cell_type(0))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_PIXEL, xu2d.get_cell_type(1))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_TRIANGLE, xu2d.get_cell_type(2))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_POLYGON, xu2d.get_cell_type(3))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_POLY_LINE, xu2d.get_cell_type(4))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_LINE, xu2d.get_cell_type(5))
+        self.assertEqual(UGrid.ugrid_celltype_enum.INVALID_CELL_TYPE, xu2d.get_cell_type(-1))
+        self.assertEqual(UGrid.ugrid_celltype_enum.INVALID_CELL_TYPE, xu2d.get_cell_type(6))
+        self.assertEqual(UGrid.ugrid_celltype_enum.QUAD, xu2d.get_cell_type(0))
+        self.assertEqual(UGrid.ugrid_celltype_enum.PIXEL, xu2d.get_cell_type(1))
+        self.assertEqual(UGrid.ugrid_celltype_enum.TRIANGLE, xu2d.get_cell_type(2))
+        self.assertEqual(UGrid.ugrid_celltype_enum.POLYGON, xu2d.get_cell_type(3))
+        self.assertEqual(UGrid.ugrid_celltype_enum.POLY_LINE, xu2d.get_cell_type(4))
+        self.assertEqual(UGrid.ugrid_celltype_enum.LINE, xu2d.get_cell_type(5))
 
         xu3d = self.get_3d_linear_ugrid()
         self.assertEqual(30, xu3d.get_point_count())
         self.assertEqual(6, xu3d.get_cell_count())
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE, xu3d.get_cell_type(-1))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE, xu3d.get_cell_type(6))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_TETRA, xu3d.get_cell_type(0))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_VOXEL, xu3d.get_cell_type(1))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON, xu3d.get_cell_type(2))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_POLYHEDRON, xu3d.get_cell_type(3))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_WEDGE, xu3d.get_cell_type(4))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_PYRAMID, xu3d.get_cell_type(5))
+        self.assertEqual(UGrid.ugrid_celltype_enum.INVALID_CELL_TYPE, xu3d.get_cell_type(-1))
+        self.assertEqual(UGrid.ugrid_celltype_enum.INVALID_CELL_TYPE, xu3d.get_cell_type(6))
+        self.assertEqual(UGrid.ugrid_celltype_enum.TETRA, xu3d.get_cell_type(0))
+        self.assertEqual(UGrid.ugrid_celltype_enum.VOXEL, xu3d.get_cell_type(1))
+        self.assertEqual(UGrid.ugrid_celltype_enum.HEXAHEDRON, xu3d.get_cell_type(2))
+        self.assertEqual(UGrid.ugrid_celltype_enum.POLYHEDRON, xu3d.get_cell_type(3))
+        self.assertEqual(UGrid.ugrid_celltype_enum.WEDGE, xu3d.get_cell_type(4))
+        self.assertEqual(UGrid.ugrid_celltype_enum.PYRAMID, xu3d.get_cell_type(5))
 
     def test_get_dimension_counts(self):
         import numpy as np
@@ -380,8 +380,8 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(1, xu2d.get_cell_dimension(5))
 
         xu3d = self.get_3d_linear_ugrid()
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE, xu3d.get_cell_dimension(-1))
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE, xu3d.get_cell_dimension(6))
+        self.assertEqual(UGrid.ugrid_celltype_enum.INVALID_CELL_TYPE, xu3d.get_cell_dimension(-1))
+        self.assertEqual(UGrid.ugrid_celltype_enum.INVALID_CELL_TYPE, xu3d.get_cell_dimension(6))
         self.assertEqual(3, xu3d.get_cell_dimension(0))
         self.assertEqual(3, xu3d.get_cell_dimension(1))
         self.assertEqual(3, xu3d.get_cell_dimension(2))
@@ -411,7 +411,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(expected_extents, extents)
 
         # Test get_cell_type
-        self.assertEqual(UGrid.xmugrid_celltype_enum.XMU_QUAD, ugrid.get_cell_type(0))
+        self.assertEqual(UGrid.ugrid_celltype_enum.QUAD, ugrid.get_cell_type(0))
 
         # Test get_dimension_counts
         expected_dimensions = (0, 0, 4, 0)
@@ -431,10 +431,10 @@ class TestUGridPointFunctions(unittest.TestCase):
         import numpy as np
         xu = self.get_simple_quad_ugrid()
         cellstream = xu.get_cellstream()
-        expected_cellstream = np.array((UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 3, 4, 1,
-                                         UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 1, 4, 5, 2,
-                                         UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 3, 6, 7, 4,
-                                         UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 4, 7, 8, 5))
+        expected_cellstream = np.array((UGrid.ugrid_celltype_enum.QUAD, 4, 0, 3, 4, 1,
+                                         UGrid.ugrid_celltype_enum.QUAD, 4, 1, 4, 5, 2,
+                                         UGrid.ugrid_celltype_enum.QUAD, 4, 3, 6, 7, 4,
+                                         UGrid.ugrid_celltype_enum.QUAD, 4, 4, 7, 8, 5))
         np.testing.assert_array_equal(expected_cellstream, cellstream)
 
     def test_set_cellstream(self):
@@ -453,7 +453,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         import numpy as np
         xu = self.get_simple_quad_ugrid()
         ret, cellstream = xu.get_cell_cellstream(0)
-        expected_cellstream = np.array((UGrid.xmugrid_celltype_enum.XMU_QUAD, 4, 0, 3, 4, 1))
+        expected_cellstream = np.array((UGrid.ugrid_celltype_enum.QUAD, 4, 0, 3, 4, 1))
         np.testing.assert_array_equal(expected_cellstream, cellstream)
 
     def test_get_cell_adjacent_cells(self):
@@ -562,12 +562,12 @@ class TestUGridPointFunctions(unittest.TestCase):
 
         xu3d = self.get_3d_linear_ugrid()
         expected_cell_edges = [
-          [(0, 1), (1, 5), (5, 0), (0, 15), (1, 15), (5, 15)], # XMU_TETRA
-          [(1, 2), (2, 7), (6, 7), (1, 6), (16, 17), (17, 22), (21, 22), (16, 21), (1, 16), (2, 17), (6, 21), (7, 22)], # XMU_VOXEL
-          [(2, 3), (3, 8), (7, 8), (2, 7), (17, 18), (18, 23), (22, 23), (17, 22), (2, 17), (3, 18), (7, 22), (8, 23)], # XMU_HEXAHEDRON
-          [(8, 9), (8, 13), (8, 23), (9, 14), (9, 24), (13, 14), (13, 28), (14, 29), (23, 24), (23, 28), (24, 29), (28, 29)], # XMU_POLYHEDRON
-          [(3, 4), (4, 18), (18, 3), (8, 9), (9, 23), (23, 8), (3, 8), (4, 9), (18, 23)], # XMU_WEDGE
-          [(5, 6), (6, 11), (11, 10), (10, 5), (5, 20), (6, 20), (11, 20), (10, 20)] # XMU_PYRAMID
+          [(0, 1), (1, 5), (5, 0), (0, 15), (1, 15), (5, 15)], # TETRA
+          [(1, 2), (2, 7), (6, 7), (1, 6), (16, 17), (17, 22), (21, 22), (16, 21), (1, 16), (2, 17), (6, 21), (7, 22)], # VOXEL
+          [(2, 3), (3, 8), (7, 8), (2, 7), (17, 18), (18, 23), (22, 23), (17, 22), (2, 17), (3, 18), (7, 22), (8, 23)], # HEXAHEDRON
+          [(8, 9), (8, 13), (8, 23), (9, 14), (9, 24), (13, 14), (13, 28), (14, 29), (23, 24), (23, 28), (24, 29), (28, 29)], # POLYHEDRON
+          [(3, 4), (4, 18), (18, 3), (8, 9), (9, 23), (23, 8), (3, 8), (4, 9), (18, 23)], # WEDGE
+          [(5, 6), (6, 11), (11, 10), (10, 5), (5, 20), (6, 20), (11, 20), (10, 20)] # PYRAMID
         ]
 
         self.assertEqual(xu3d.get_cell_count(), len(expected_cell_edges))
@@ -870,43 +870,43 @@ class TestUGridPointFunctions(unittest.TestCase):
             for face_idx in range(0, ugrid3d.get_cell3d_face_count(cell_idx)):
                 orientation.append(ugrid3d.get_cell3d_face_orientation(cell_idx, face_idx))
 
-        expected_orientation = [UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM, # Tetra
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+        expected_orientation = [UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM, # Tetra
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
                                 # Voxel
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
                                 # Hexahedron
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
                                 # Polyhedron
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
                                 # Wedge
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
                                 # Pyramid
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE ]
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
+                                UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE ]
 
         self.assertEqual(expected_orientation, orientation)
 
@@ -924,7 +924,7 @@ class TestUGridPointFunctions(unittest.TestCase):
                 (1619710.0815, 6134182.8542, -10), (1619693.1618, 6134208.2547, -10),
                 (1619645.5529, 6134438.0278, -10), (1619774.9993, 6134371.9982, -10))
         elements = (
-            UGrid.xmugrid_celltype_enum.XMU_POLYHEDRON,
+            UGrid.ugrid_celltype_enum.POLYHEDRON,
             13, # number of faces
             11, 5, 10, 2, 0, 1, 3, 6, 9, 8, 7, 4, # top
             11, 16, 15, 18, 19, 20, 17, 14, 12, 11, 13, 21, # bottom
@@ -944,19 +944,19 @@ class TestUGridPointFunctions(unittest.TestCase):
         actual = []
         for face_idx in range(0, ugrid.get_cell3d_face_count(0)):
             actual.append(ugrid.get_cell3d_face_orientation(0, face_idx))
-        expected = [ UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE ]
+        expected = [ UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                     UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE ]
         self.assertEqual(expected, actual)
 
     def test_cell3d_function_caching(self):
@@ -964,18 +964,18 @@ class TestUGridPointFunctions(unittest.TestCase):
 
         expected_neighbors = (( -1, -1, -1,  1, -1, -1 ),
                               ( -1, -1,  0, -1, -1, -1 ))
-        expected_orientations = ((UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
-                                 (UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
+        expected_orientations = ((UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP),
+                                 (UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP))
 
         # test four times, to fill the cache, read from the cache, turn off the cache,
         # and turn on the cache
@@ -994,24 +994,24 @@ class TestUGridPointFunctions(unittest.TestCase):
         expected_neighbors =  (( -1, -1, -1,  1, -1, -1 ),
                                ( -1, -1,  0,  2, -1, -1 ),
                                ( -1, -1,  1, -1, -1, -1 ))
-        expected_orientations = ((UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
-                                 (UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
-                                 (UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
+        expected_orientations = ((UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP),
+                                 (UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP),
+                                 (UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM,
+                                  UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP))
         new_ugrid = self.get_hexahedron_ugrid(2, 4, 2, (0, 0, 0))
         ugrid.set_locations(new_ugrid.get_locations())
         ugrid.set_cellstream(new_ugrid.get_cellstream())
@@ -1029,109 +1029,109 @@ class TestUGridPointFunctions(unittest.TestCase):
 class TestUGridCellTypeEnum(unittest.TestCase):
     """CellType enum tests"""
 
-    def test_xmugrid_celltype_enum(self):
+    def test_ugrid_celltype_enum(self):
         from xmsgrid.ugrid import UGrid
-        self.assertEqual("xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_INVALID_CELL_TYPE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_EMPTY_CELL", str(UGrid.xmugrid_celltype_enum.XMU_EMPTY_CELL))
-        self.assertEqual("xmugrid_celltype_enum.XMU_VERTEX", str(UGrid.xmugrid_celltype_enum.XMU_VERTEX))
-        self.assertEqual("xmugrid_celltype_enum.XMU_POLY_VERTEX", str(UGrid.xmugrid_celltype_enum.XMU_POLY_VERTEX))
-        self.assertEqual("xmugrid_celltype_enum.XMU_LINE", str(UGrid.xmugrid_celltype_enum.XMU_LINE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_POLY_LINE", str(UGrid.xmugrid_celltype_enum.XMU_POLY_LINE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_TRIANGLE", str(UGrid.xmugrid_celltype_enum.XMU_TRIANGLE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_TRIANGLE_STRIP",
-                         str(UGrid.xmugrid_celltype_enum.XMU_TRIANGLE_STRIP))
-        self.assertEqual("xmugrid_celltype_enum.XMU_POLYGON", str(UGrid.xmugrid_celltype_enum.XMU_POLYGON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PIXEL", str(UGrid.xmugrid_celltype_enum.XMU_PIXEL))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUAD", str(UGrid.xmugrid_celltype_enum.XMU_QUAD))
-        self.assertEqual("xmugrid_celltype_enum.XMU_TETRA", str(UGrid.xmugrid_celltype_enum.XMU_TETRA))
-        self.assertEqual("xmugrid_celltype_enum.XMU_VOXEL", str(UGrid.xmugrid_celltype_enum.XMU_VOXEL))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HEXAHEDRON", str(UGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_WEDGE", str(UGrid.xmugrid_celltype_enum.XMU_WEDGE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PYRAMID", str(UGrid.xmugrid_celltype_enum.XMU_PYRAMID))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PENTAGONAL_PRISM",
-                         str(UGrid.xmugrid_celltype_enum.XMU_PENTAGONAL_PRISM))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HEXAGONAL_PRISM",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HEXAGONAL_PRISM))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_EDGE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_EDGE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_TRIANGLE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_TRIANGLE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_QUAD",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_QUAD))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_POLYGON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_POLYGON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_TETRA",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_TETRA))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_HEXAHEDRON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_HEXAHEDRON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_WEDGE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_WEDGE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_PYRAMID",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_PYRAMID))
-        self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_QUAD",
-                         str(UGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUAD))
-        self.assertEqual("xmugrid_celltype_enum.XMU_TRIQUADRATIC_HEXAHEDRON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_TRIQUADRATIC_HEXAHEDRON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_QUAD",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_QUAD))
-        self.assertEqual("xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_WEDGE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_QUADRATIC_LINEAR_WEDGE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_WEDGE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_WEDGE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_BIQUADRATIC_TRIANGLE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_BIQUADRATIC_TRIANGLE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_CUBIC_LINE", str(UGrid.xmugrid_celltype_enum.XMU_CUBIC_LINE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_CONVEX_POINT_SET",
-                         str(UGrid.xmugrid_celltype_enum.XMU_CONVEX_POINT_SET))
-        self.assertEqual("xmugrid_celltype_enum.XMU_POLYHEDRON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_POLYHEDRON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_CURVE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_CURVE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_SURFACE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_SURFACE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_TRI_SURFACE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_TRI_SURFACE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_QUAD_SURFACE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_QUAD_SURFACE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_TETRA_REGION",
-                         str(UGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_TETRA_REGION))
-        self.assertEqual("xmugrid_celltype_enum.XMU_PARAMETRIC_HEX_REGION",
-                         str(UGrid.xmugrid_celltype_enum.XMU_PARAMETRIC_HEX_REGION))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_EDGE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_EDGE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_TRIANGLE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_TRIANGLE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_QUAD",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_QUAD))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_POLYGON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_POLYGON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_TETRAHEDRON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_TETRAHEDRON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_WEDGE",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_WEDGE))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_PYRAMID",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_PYRAMID))
-        self.assertEqual("xmugrid_celltype_enum.XMU_HIGHER_ORDER_HEXAHEDRON",
-                         str(UGrid.xmugrid_celltype_enum.XMU_HIGHER_ORDER_HEXAHEDRON))
-        self.assertEqual("xmugrid_celltype_enum.XMU_NUMBER_OF_CELL_TYPES",
-                         str(UGrid.xmugrid_celltype_enum.XMU_NUMBER_OF_CELL_TYPES))
-        self.assertEqual(51, len(UGrid.xmugrid_celltype_enum.__members__))
+        self.assertEqual("ugrid_celltype_enum.INVALID_CELL_TYPE",
+                         str(UGrid.ugrid_celltype_enum.INVALID_CELL_TYPE))
+        self.assertEqual("ugrid_celltype_enum.EMPTY_CELL", str(UGrid.ugrid_celltype_enum.EMPTY_CELL))
+        self.assertEqual("ugrid_celltype_enum.VERTEX", str(UGrid.ugrid_celltype_enum.VERTEX))
+        self.assertEqual("ugrid_celltype_enum.POLY_VERTEX", str(UGrid.ugrid_celltype_enum.POLY_VERTEX))
+        self.assertEqual("ugrid_celltype_enum.LINE", str(UGrid.ugrid_celltype_enum.LINE))
+        self.assertEqual("ugrid_celltype_enum.POLY_LINE", str(UGrid.ugrid_celltype_enum.POLY_LINE))
+        self.assertEqual("ugrid_celltype_enum.TRIANGLE", str(UGrid.ugrid_celltype_enum.TRIANGLE))
+        self.assertEqual("ugrid_celltype_enum.TRIANGLE_STRIP",
+                         str(UGrid.ugrid_celltype_enum.TRIANGLE_STRIP))
+        self.assertEqual("ugrid_celltype_enum.POLYGON", str(UGrid.ugrid_celltype_enum.POLYGON))
+        self.assertEqual("ugrid_celltype_enum.PIXEL", str(UGrid.ugrid_celltype_enum.PIXEL))
+        self.assertEqual("ugrid_celltype_enum.QUAD", str(UGrid.ugrid_celltype_enum.QUAD))
+        self.assertEqual("ugrid_celltype_enum.TETRA", str(UGrid.ugrid_celltype_enum.TETRA))
+        self.assertEqual("ugrid_celltype_enum.VOXEL", str(UGrid.ugrid_celltype_enum.VOXEL))
+        self.assertEqual("ugrid_celltype_enum.HEXAHEDRON", str(UGrid.ugrid_celltype_enum.HEXAHEDRON))
+        self.assertEqual("ugrid_celltype_enum.WEDGE", str(UGrid.ugrid_celltype_enum.WEDGE))
+        self.assertEqual("ugrid_celltype_enum.PYRAMID", str(UGrid.ugrid_celltype_enum.PYRAMID))
+        self.assertEqual("ugrid_celltype_enum.PENTAGONAL_PRISM",
+                         str(UGrid.ugrid_celltype_enum.PENTAGONAL_PRISM))
+        self.assertEqual("ugrid_celltype_enum.HEXAGONAL_PRISM",
+                         str(UGrid.ugrid_celltype_enum.HEXAGONAL_PRISM))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_EDGE",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_EDGE))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_TRIANGLE",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_TRIANGLE))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_QUAD",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_QUAD))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_POLYGON",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_POLYGON))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_TETRA",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_TETRA))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_HEXAHEDRON",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_HEXAHEDRON))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_WEDGE",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_WEDGE))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_PYRAMID",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_PYRAMID))
+        self.assertEqual("ugrid_celltype_enum.BIQUADRATIC_QUAD",
+                         str(UGrid.ugrid_celltype_enum.BIQUADRATIC_QUAD))
+        self.assertEqual("ugrid_celltype_enum.TRIQUADRATIC_HEXAHEDRON",
+                         str(UGrid.ugrid_celltype_enum.TRIQUADRATIC_HEXAHEDRON))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_LINEAR_QUAD",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_LINEAR_QUAD))
+        self.assertEqual("ugrid_celltype_enum.QUADRATIC_LINEAR_WEDGE",
+                         str(UGrid.ugrid_celltype_enum.QUADRATIC_LINEAR_WEDGE))
+        self.assertEqual("ugrid_celltype_enum.BIQUADRATIC_QUADRATIC_WEDGE",
+                         str(UGrid.ugrid_celltype_enum.BIQUADRATIC_QUADRATIC_WEDGE))
+        self.assertEqual("ugrid_celltype_enum.BIQUADRATIC_QUADRATIC_HEXAHEDRON",
+                         str(UGrid.ugrid_celltype_enum.BIQUADRATIC_QUADRATIC_HEXAHEDRON))
+        self.assertEqual("ugrid_celltype_enum.BIQUADRATIC_TRIANGLE",
+                         str(UGrid.ugrid_celltype_enum.BIQUADRATIC_TRIANGLE))
+        self.assertEqual("ugrid_celltype_enum.CUBIC_LINE", str(UGrid.ugrid_celltype_enum.CUBIC_LINE))
+        self.assertEqual("ugrid_celltype_enum.CONVEX_POINT_SET",
+                         str(UGrid.ugrid_celltype_enum.CONVEX_POINT_SET))
+        self.assertEqual("ugrid_celltype_enum.POLYHEDRON",
+                         str(UGrid.ugrid_celltype_enum.POLYHEDRON))
+        self.assertEqual("ugrid_celltype_enum.PARAMETRIC_CURVE",
+                         str(UGrid.ugrid_celltype_enum.PARAMETRIC_CURVE))
+        self.assertEqual("ugrid_celltype_enum.PARAMETRIC_SURFACE",
+                         str(UGrid.ugrid_celltype_enum.PARAMETRIC_SURFACE))
+        self.assertEqual("ugrid_celltype_enum.PARAMETRIC_TRI_SURFACE",
+                         str(UGrid.ugrid_celltype_enum.PARAMETRIC_TRI_SURFACE))
+        self.assertEqual("ugrid_celltype_enum.PARAMETRIC_QUAD_SURFACE",
+                         str(UGrid.ugrid_celltype_enum.PARAMETRIC_QUAD_SURFACE))
+        self.assertEqual("ugrid_celltype_enum.PARAMETRIC_TETRA_REGION",
+                         str(UGrid.ugrid_celltype_enum.PARAMETRIC_TETRA_REGION))
+        self.assertEqual("ugrid_celltype_enum.PARAMETRIC_HEX_REGION",
+                         str(UGrid.ugrid_celltype_enum.PARAMETRIC_HEX_REGION))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_EDGE",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_EDGE))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_TRIANGLE",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_TRIANGLE))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_QUAD",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_QUAD))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_POLYGON",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_POLYGON))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_TETRAHEDRON",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_TETRAHEDRON))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_WEDGE",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_WEDGE))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_PYRAMID",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_PYRAMID))
+        self.assertEqual("ugrid_celltype_enum.HIGHER_ORDER_HEXAHEDRON",
+                         str(UGrid.ugrid_celltype_enum.HIGHER_ORDER_HEXAHEDRON))
+        self.assertEqual("ugrid_celltype_enum.NUMBER_OF_CELL_TYPES",
+                         str(UGrid.ugrid_celltype_enum.NUMBER_OF_CELL_TYPES))
+        self.assertEqual(51, len(UGrid.ugrid_celltype_enum.__members__))
 
 
 class TestUGridFaceOrientationEnum(unittest.TestCase):
     """FaceOrientation enum tests"""
 
-    def test_xmugrid_faceorientation_enum(self):
+    def test_ugrid_faceorientation_enum(self):
         from xmsgrid.ugrid import UGrid
-        self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_UNKNOWN",
-                         str(UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_UNKNOWN))
-        self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE",
-                         str(UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE))
-        self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP",
-                         str(UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
-        self.assertEqual("xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM",
-                         str(UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM))
-        self.assertEqual(4, len(UGrid.xmugrid_faceorientation_enum.__members__))
+        self.assertEqual("ugrid_faceorientation_enum.ORIENTATION_UNKNOWN",
+                         str(UGrid.ugrid_faceorientation_enum.ORIENTATION_UNKNOWN))
+        self.assertEqual("ugrid_faceorientation_enum.ORIENTATION_SIDE",
+                         str(UGrid.ugrid_faceorientation_enum.ORIENTATION_SIDE))
+        self.assertEqual("ugrid_faceorientation_enum.ORIENTATION_TOP",
+                         str(UGrid.ugrid_faceorientation_enum.ORIENTATION_TOP))
+        self.assertEqual("ugrid_faceorientation_enum.ORIENTATION_BOTTOM",
+                         str(UGrid.ugrid_faceorientation_enum.ORIENTATION_BOTTOM))
+        self.assertEqual(4, len(UGrid.ugrid_faceorientation_enum.__members__))
