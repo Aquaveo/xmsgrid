@@ -188,8 +188,8 @@ private:
   bool GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const;
   bool GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) const;
 
-  bool IsFaceSide(const VecInt& a_facePts) const;               // plan view
-  bool GetCellXySegments(int cellIdx, VecPt3d& segments) const; // plan view
+  bool IsFaceSide(const VecInt& a_facePts) const;                 // plan view
+  bool GetCellXySegments(int cellIdx, VecPt3d& a_segments) const; // plan view
   void GetEdgesOfFace(const VecInt& a_face, std::vector<XmEdge>& a_edges) const;
   bool DoEdgesCrossWithPointChange(const int a_changedPtIdx,
                                    const Pt3d& a_newPosition,
@@ -203,7 +203,7 @@ private:
   int GetCell3dFaceAdjacentCellNoCache(const int a_cellIdx, const int a_faceIdx) const;
   XmUGridFaceOrientation GetCell3dFaceOrientationNoCache(int a_cellIdx, int a_faceIdx) const;
 
-  /// Constant for when an item needs to be calculated.
+  /// Constant for when a cached integer item needs to be calculated.
   enum XmUGridCacheHolder {
     NEEDS_CALCULATION = -2 ///< Cached value needs to be calculated
   };
@@ -470,33 +470,34 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
 
 //////////// plan view
 //------------------------------------------------------------------------------
-/// \brief Get next column of points with equal x/y values for side face.
-/// \param[in] a_xmUGrid the XmUGrid
-/// \param[in] facePoints the face point indices
-/// \param[in] starti the starting index into facePoints
-/// \param[out] columnBegin the first index of the column of points
-/// \param[out] columnEnd the last index of the column of points
+/// \brief Get next vertical column of points with equal x/y values for side
+/// face.
+/// \param[in] a_xmUGrid The UGrid.
+/// \param[in] a_facePoints The face point indices.
+/// \param[in] a_starti The starting index into a_facePoints.
+/// \param[out] a_columnBegin The first index of the column of points.
+/// \param[out] a_columnEnd The last index of the column of points.
 //------------------------------------------------------------------------------
 bool iGetNextFaceColumn(const XmUGridImpl& a_xmUGrid,
-                        const VecInt& facePoints,
-                        size_t starti,
-                        size_t& columnBegin,
-                        size_t& columnEnd)
+                        const VecInt& a_facePoints,
+                        int a_starti,
+                        int& a_columnBegin,
+                        int& a_columnEnd)
 {
-  size_t facePointsSize = facePoints.size();
+  int facePointsSize = (int)a_facePoints.size();
 
   // find next start of column of points (matching x/y values)
-  Pt3d lastPt = a_xmUGrid.GetPointXy0(facePoints[starti]);
-  size_t lasti = starti;
-  size_t i = (starti + 1) % facePointsSize;
+  Pt3d lastPt = a_xmUGrid.GetPointXy0(a_facePoints[a_starti]);
+  int lasti = a_starti;
+  int i = (a_starti + 1) % facePointsSize;
   Pt3d pt;
   bool found = false;
-  while (!found && i != starti)
+  while (!found && i != a_starti)
   {
-    pt = a_xmUGrid.GetPointXy0(facePoints[i]);
+    pt = a_xmUGrid.GetPointXy0(a_facePoints[i]);
     if (pt == lastPt)
     {
-      columnBegin = lasti;
+      a_columnBegin = lasti;
       found = true;
     }
     lastPt = pt;
@@ -512,12 +513,12 @@ bool iGetNextFaceColumn(const XmUGridImpl& a_xmUGrid,
 
   // find end of column of points
   found = false;
-  while (!found && i != columnBegin)
+  while (!found && i != a_columnBegin)
   {
-    pt = a_xmUGrid.GetPointXy0(facePoints[i]);
+    pt = a_xmUGrid.GetPointXy0(a_facePoints[i]);
     if (pt != lastPt)
     {
-      columnEnd = lasti;
+      a_columnEnd = lasti;
       found = true;
     }
     else
@@ -539,74 +540,84 @@ bool iGetNextFaceColumn(const XmUGridImpl& a_xmUGrid,
 
 //------------------------------------------------------------------------------
 /// \brief Get plan view segments of face points.
-/// \param[in] a_xmUGrid the XmUGrid
-/// \param[in] facePts the face point indices
+/// \param[in] a_xmUGrid The XmUGrid.
+/// \param[in] a_facePts The face point indices.
+/// \param[in] a_columnBegin The the first point of a vertical column.
+/// \param[in] a_columnEnd The last point of a vertical column.
 //------------------------------------------------------------------------------
 void iGetFacePointSegments(const XmUGridImpl& a_xmUGrid,
-                           const VecInt& facePts,
-                           size_t columnBegin,
-                           size_t columnEnd,
-                           VecPt3d& segments)
+                           const VecInt& a_facePts,
+                           int a_columnBegin,
+                           int a_columnEnd,
+                           VecPt3d& a_segments)
 {
-  size_t i = columnBegin;
-  while (i != columnEnd)
+  int i = a_columnBegin;
+  while (i != a_columnEnd)
   {
-    Pt3d p = a_xmUGrid.GetPointXy0(facePts[i]);
-    segments.push_back(p);
-    if (i != columnBegin)
-      segments.push_back(p);
-    i = (i + 1) % facePts.size();
+    Pt3d p = a_xmUGrid.GetPointXy0(a_facePts[i]);
+    a_segments.push_back(p);
+    if (i != a_columnBegin)
+      a_segments.push_back(p);
+    i = (i + 1) % a_facePts.size();
   }
-  segments.push_back(a_xmUGrid.GetPointXy0(facePts[i]));
+  a_segments.push_back(a_xmUGrid.GetPointXy0(a_facePts[i]));
 } // iGetFacePointSegments
 //------------------------------------------------------------------------------
 /// \brief Determine if a location is within the X/Y bounds of two other points.
-/// 
+/// \param[in] The point location.
+/// \param[in] The first bounds location.
+/// \param[in] The second bounds location.
+/// \return True if the point is within the bounds locations.
 //------------------------------------------------------------------------------
-bool iPointInSegmentBounds(const Pt3d& point, const Pt3d first, const Pt3d& second)
+bool iPointInSegmentBounds(const Pt3d& a_location, const Pt3d a_first, const Pt3d& a_second)
 {
-  bool inBounds = point.x >= std::min(first.x, second.x) &&
-                  point.y >= std::min(first.y, second.y) &&
-                  point.x <= std::max(first.x, second.x) && point.y <= std::max(first.y, second.y);
+  bool inBounds = a_location.x >= std::min(a_first.x, a_second.x) &&
+                  a_location.y >= std::min(a_first.y, a_second.y) &&
+                  a_location.x <= std::max(a_first.x, a_second.x) &&
+                  a_location.y <= std::max(a_first.y, a_second.y);
   return inBounds;
 } // iPointInSegmentBounds
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Gets a vector of sorted unique values.
+/// \param[in] a_segments The input vector.
+/// \return A sorted vector of unique values.
 //------------------------------------------------------------------------------
 template <typename T>
-std::vector<T> iGetUniquePoints(const std::vector<T>& segments)
+std::vector<T> iGetUniquePoints(const std::vector<T>& a_segments)
 {
-  std::vector<T> points = segments;
+  std::vector<T> points = a_segments;
   std::sort(points.begin(), points.end());
   auto pIt = std::unique(points.begin(), points.end());
   points.resize(pIt - points.begin());
   return points;
 } // iGetUniquePoints
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Build a polygon from vector of polygon segments.
+/// \param[in] a_segs Vector of segments that would make a polygon.
+/// \param[out] a_polygon Output polygon vector ordered either CW or CCW.
 //------------------------------------------------------------------------------
 template <typename T>
-void iBuildPolygon(std::vector<std::pair<T, T>>& segs, std::vector<T>& polygon)
+void iBuildPolygon(std::vector<std::pair<T, T>>& a_segs, std::vector<T>& a_polygon)
 {
-  xms::VecChar placed(segs.size(), false);
-  polygon.push_back(segs[0].first);
-  polygon.push_back(segs[0].second);
+  xms::VecChar placed(a_segs.size(), false);
+  a_polygon.push_back(a_segs[0].first);
+  a_polygon.push_back(a_segs[0].second);
   placed[0] = true;
-  for (size_t i = 1; i != segs.size(); ++i)
+  for (size_t i = 1; i != a_segs.size(); ++i)
   {
-    T& toMatch = polygon.back();
-    for (size_t j = 1; j != segs.size(); ++j)
+    T& toMatch = a_polygon.back();
+    for (size_t j = 1; j != a_segs.size(); ++j)
     {
       if (!placed[j])
       {
-        if (segs[j].first == toMatch)
+        if (a_segs[j].first == toMatch)
         {
-          polygon.push_back(segs[j].second);
+          a_polygon.push_back(a_segs[j].second);
           placed[j] = true;
         }
-        else if (segs[j].second == toMatch)
+        else if (a_segs[j].second == toMatch)
         {
-          polygon.push_back(segs[j].first);
+          a_polygon.push_back(a_segs[j].first);
           placed[j] = true;
         }
       }
@@ -614,16 +625,19 @@ void iBuildPolygon(std::vector<std::pair<T, T>>& segs, std::vector<T>& polygon)
   }
 } // iBuildPolygon
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Builds a vector of sorted unique segments as a std::pair from a vector
+/// with segments ordered {firstIdx1, firstIdx2, secondIdx1, secondIdx2}, etc.
+/// \param[in] a_segments A vector of segments in odd/even indices.
+/// \return A sorted vector of segments as std::pairs.
 //------------------------------------------------------------------------------
 template <typename T>
-std::vector<std::pair<T, T>> iGetUniqueSegments(const std::vector<T>& segments)
+std::vector<std::pair<T, T>> iGetUniqueSegments(const std::vector<T>& a_segments)
 {
   std::vector<std::pair<T, T>> segs;
-  for (size_t i = 0; i < segments.size(); i += 2)
+  for (size_t i = 0; i < a_segments.size(); i += 2)
   {
-    T a = segments[i];
-    T b = segments[i + 1];
+    T a = a_segments[i];
+    T b = a_segments[i + 1];
     if (a < b)
       segs.push_back(std::pair<T, T>(a, b));
     else
@@ -803,15 +817,18 @@ Pt3d gmComputePolygonCentroid(const VecPt3d& pts)
   return centroid;
 } // gmComputePolygonCentroid
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Merge possibly duplicate segments into a unique polygon.
+/// \param[in] a_segments The segments ordered {firstIdx1, firstIdx2,
+/// secondIdx1, secondIdx2}, etc.
+/// \param[out] a_polygon Output polygon with points ordered CCW.
 //------------------------------------------------------------------------------
-void iMergeSegmentsToPoly(const VecPt3d& segments, VecPt3d& polygon)
+void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
 {
-  if (segments.empty())
+  if (a_segments.empty())
     return;
 
-  VecPt3d points = iGetUniquePoints(segments);
-  std::vector<std::pair<Pt3d, Pt3d>> segs = iGetUniqueSegments(segments);
+  VecPt3d points = iGetUniquePoints(a_segments);
+  std::vector<std::pair<Pt3d, Pt3d>> segs = iGetUniqueSegments(a_segments);
 
   // if any point is on any other segment split up the segment
   for (auto pIt = points.begin(); pIt != points.end(); ++pIt)
@@ -838,32 +855,32 @@ void iMergeSegmentsToPoly(const VecPt3d& segments, VecPt3d& polygon)
   auto segIt = std::unique(segs.begin(), segs.end());
   segs.resize(segIt - segs.begin());
 
-  iBuildPolygon(segs, polygon);
+  iBuildPolygon(segs, a_polygon);
 
-  if (polygon.size() > 3 && polygon.front() == polygon.back())
+  if (a_polygon.size() > 3 && a_polygon.front() == a_polygon.back())
   {
-    polygon.pop_back();
-    double area = gmPolygonArea(&polygon[0], (int)polygon.size());
+    a_polygon.pop_back();
+    double area = gmPolygonArea(&a_polygon[0], (int)a_polygon.size());
     if (area < 0)
-      std::reverse(polygon.begin(), polygon.end());
+      std::reverse(a_polygon.begin(), a_polygon.end());
   }
   else
   {
     XM_ASSERT(0);
-    polygon.clear();
+    a_polygon.clear();
   }
 } // iMergeSegmentsToPoly
 //------------------------------------------------------------------------------
-/// \brief Is face a side face?
+/// \brief Determines if a cell face is a vertical side face.
 /// \param[in] a_xmUGrid The UGrid.
 /// \param[in] a_cellIdx The cell index.
 /// \param[in] a_faceIdx The face index.
 /// \return True if the face is a vertical side face (points with same X and Y).
 //------------------------------------------------------------------------------
-bool iIsSideFace(const XmUGrid& a_xmUGrid, int cellIdx, int a_faceIdx)
+bool iIsSideFace(const XmUGrid& a_xmUGrid, int a_cellIdx, int a_faceIdx)
 {
   VecInt facePts;
-  a_xmUGrid.GetCell3dFacePoints(cellIdx, a_faceIdx, facePts);
+  a_xmUGrid.GetCell3dFacePoints(a_cellIdx, a_faceIdx, facePts);
 
   // if any face point has same x and y as any other face point then
   // the face is a side face
@@ -883,8 +900,9 @@ bool iIsSideFace(const XmUGrid& a_xmUGrid, int cellIdx, int a_faceIdx)
   return false;
 } // iIsSideFace
 //------------------------------------------------------------------------------
-/// \brief Is connected top or bottom face (connected to lower idx top, higher
-/// bottom).
+/// \brief Determine face orientation by using cell index of connected face.
+/// Top face is connected to lower index, bottom face to higher index.
+/// \param[in] a_xmUGrid The UGrid.
 /// \param[in] a_cellIdx The cell index.
 /// \param[in] a_faceIdx The face index.
 /// \return The orientation of the face (TOP, BOTTOM, UNKNOWN).
@@ -899,8 +917,10 @@ XmUGridFaceOrientation iConnectedTopOrBottom(const XmUGrid& a_xmUGrid, int a_cel
   return XMU_ORIENTATION_UNKNOWN;
 } // iConnectedTopOrBottom
 //------------------------------------------------------------------------------
-/// \brief Get orientation from normal of a given 3D cell face from the sign of
-/// the area.
+/// \brief Determine top or bottom face orientation using area. Since faces are
+/// ordered CCW looking in, the top face area is positive and the bottom
+/// negative.
+/// \param[in] a_xmUGrid The UGrid.
 /// \param[in] a_cellIdx The cell index.
 /// \param[in] a_faceIdx The face index.
 /// \return The orientation of the face (TOP, BOTTOM, UNKNOWN).
@@ -922,7 +942,10 @@ XmUGridFaceOrientation iGetOrientationFromArea(const XmUGrid& a_xmUGrid,
   return XMU_ORIENTATION_UNKNOWN;
 } // iGetOrientationFromArea
 //------------------------------------------------------------------------------
-/// \brief Find the orientation of a given 3D cell face.
+/// \brief Find the orientation of a given 3D cell face. Check first for side
+/// face, then top or bottom based on connected face, or top or bottom based on
+/// area calculation.
+/// \param[in] a_xmUGrid The UGrid.
 /// \param[in] a_cellIdx The cell index.
 /// \param[in] a_faceIdx The face index.
 /// \return The orientation of the face (TOP, BOTTOM, SIDE, UNKNOWN).
@@ -951,6 +974,7 @@ XmUGridFaceOrientation iFaceOrientationWithFail(const XmUGrid& a_xmUGrid,
 } // iFaceOrientationWithFail
 //------------------------------------------------------------------------------
 /// \brief Find vertical orientation of a given 3D cell face from opposing face.
+/// \param[in] a_xmUGrid The UGrid.
 /// \param[in] a_cellIdx The cell index.
 /// \param[in] a_faceIdx The face index.
 /// \return The orientation of the face (TOP, BOTTOM, UNKNOWN).
@@ -992,6 +1016,7 @@ XmUGridFaceOrientation iVerticalOrientationFromOpposing(const XmUGrid& a_xmUGrid
 } // iVerticalOrientationFromOpposing
 //------------------------------------------------------------------------------
 /// \brief Find the orientation of a given 3D cell face.
+/// \param[in] a_xmUGrid The UGrid.
 /// \param[in] a_cellIdx The cell index.
 /// \param[in] a_faceIdx The face index.
 /// \return The orientation of the face (TOP, BOTTOM, SIDE, UNKNOWN).
@@ -1355,7 +1380,7 @@ void XmUGridImpl::GetCellLocations(const int a_cellIdx, VecPt3d& a_cellLocations
   a_cellLocations = GetPointsLocations(ptIdxs);
 } // XmUGridImpl::GetCellPoints
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------
 /// \brief Get the cell type of a specified cell.
 /// \param[in] a_cellIdx the index of the cell
 /// \return The type of the specified cell or -1 if invalid.
@@ -2014,7 +2039,7 @@ int XmUGridImpl::GetCell3dFacePointCount(const int a_cellIdx, const int a_faceId
     return -1;
   }
 
-  int cellType(GetCellType(a_cellIdx));
+  int cellType = GetCellType(a_cellIdx);
   switch (cellType)
   {
   case XMU_POLYHEDRON:
@@ -2025,7 +2050,7 @@ int XmUGridImpl::GetCell3dFacePointCount(const int a_cellIdx, const int a_faceId
     if (cellstream != nullptr)
     {
       auto currItem = cellstream;
-      int cellType = *currItem++;
+      cellType = *currItem++;
       int numFaces = *currItem++;
       for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
       {
@@ -2855,11 +2880,11 @@ bool XmUGridImpl::GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_seg
   if (facePts.empty())
     return false;
 
-  size_t column1Begin, column1End;
+  int column1Begin, column1End;
   if (!iGetNextFaceColumn(*this, facePts, 0, column1Begin, column1End))
     return false;
 
-  size_t column2Begin, column2End;
+  int column2Begin, column2End;
   if (!iGetNextFaceColumn(*this, facePts, column1End, column2Begin, column2End))
     return false;
 
