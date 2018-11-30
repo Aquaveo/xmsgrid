@@ -6,6 +6,7 @@ var classxms_1_1_xm_u_grid =
     [ "GetCell3dFaceAdjacentCell", "classxms_1_1_xm_u_grid.html#a15628550e1b02ae974f0d4948f4e9912", null ],
     [ "GetCell3dFaceAdjacentCell", "classxms_1_1_xm_u_grid.html#a1a8edc40d0386aac81162b18d57368b0", null ],
     [ "GetCell3dFaceCount", "classxms_1_1_xm_u_grid.html#acad05ff1b6cc4352dc7ba150a315dde0", null ],
+    [ "GetCell3dFaceOrientation", "classxms_1_1_xm_u_grid.html#afc440eea2b974d32c4aa8e33007c5f0c", null ],
     [ "GetCell3dFacePointCount", "classxms_1_1_xm_u_grid.html#a8a8b79f7bd67deba4a12a36b39ec8858", null ],
     [ "GetCell3dFacePoints", "classxms_1_1_xm_u_grid.html#aba063b951d106385dc680be3f7942731", null ],
     [ "GetCell3dFacePoints", "classxms_1_1_xm_u_grid.html#aa56e589cf053ede93c849b977c408cd2", null ],
@@ -54,5 +55,6 @@ var classxms_1_1_xm_u_grid =
     [ "SetCellstream", "classxms_1_1_xm_u_grid.html#af4757d88c6874cf636b968827e62c184", null ],
     [ "SetLocations", "classxms_1_1_xm_u_grid.html#a097f42fb1696612e316a576d5dd79083", null ],
     [ "SetPointLocation", "classxms_1_1_xm_u_grid.html#ad738abdda85a724b7677fac67f663539", null ],
-    [ "SetUnmodified", "classxms_1_1_xm_u_grid.html#acbc96a0841007f895e8169cd1c310e35", null ]
+    [ "SetUnmodified", "classxms_1_1_xm_u_grid.html#acbc96a0841007f895e8169cd1c310e35", null ],
+    [ "SetUseCache", "classxms_1_1_xm_u_grid.html#abe7ce5b7fefbfd545fb3da579528b21c", null ]
 ];

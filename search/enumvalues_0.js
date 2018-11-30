@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['debug',['debug',['https://aquaveo.github.io/xmscore/namespacexmlog.html#a7f66c92bb821241cbb29fb07d7bce588a42797ff955c778a8a9e21bdd5580a92e',1,'xmlog']]]
+  ['needs_5fcalculation',['NEEDS_CALCULATION',['../classxms_1_1_xm_u_grid_impl.html#a063c57c4185e1646128d2ff0b9aea66ca608b3d3fe801a049e476384b632bc6a0',1,'xms::XmUGridImpl']]]
 ];

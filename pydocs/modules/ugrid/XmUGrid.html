@@ -201,6 +201,20 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="xmsgrid_py.ugrid.XmUGrid.get_cell3d_face_orientation">
+<code class="descname">get_cell3d_face_orientation</code><span class="sig-paren">(</span><em>self: xmsgrid_py.ugrid.XmUGrid</em>, <em>cell_idx: int</em>, <em>face_idx: int</em><span class="sig-paren">)</span> &#x2192; xms::XmUGridFaceOrientation<a class="headerlink" href="#xmsgrid_py.ugrid.XmUGrid.get_cell3d_face_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the orientation of the face of a vertically prismatic cell.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">cell_idx (int): The index of the cell.</p>
+<p class="last">face_idx (int): The face index of the cell.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>xmugrid_face_orientation_enum: The orientation of the face.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="xmsgrid_py.ugrid.XmUGrid.get_cell3d_face_point_count">
 <code class="descname">get_cell3d_face_point_count</code><span class="sig-paren">(</span><em>self: xmsgrid_py.ugrid.XmUGrid</em>, <em>cell_idx: int</em>, <em>face_idx: int</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#xmsgrid_py.ugrid.XmUGrid.get_cell3d_face_point_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of face points for a given cell and face.</p>
@@ -626,6 +640,16 @@ looking in)] repeated for each face.</p>
 <dt id="xmsgrid_py.ugrid.XmUGrid.set_unmodified">
 <code class="descname">set_unmodified</code><span class="sig-paren">(</span><em>self: xmsgrid_py.ugrid.XmUGrid</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#xmsgrid_py.ugrid.XmUGrid.set_unmodified" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the UGrid unmodified.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xmsgrid_py.ugrid.XmUGrid.set_use_cache">
+<code class="descname">set_use_cache</code><span class="sig-paren">(</span><em>self: xmsgrid_py.ugrid.XmUGrid</em>, <em>arg0: bool</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#xmsgrid_py.ugrid.XmUGrid.set_use_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn on or off use of caching to speed up some operations.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>use_cache (bool): Flag to determine if caching will be used.</dd>
+</dl>
 </dd></dl>
 
 <dl class="class">

@@ -121,9 +121,11 @@ var NAVTREE =
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
+        [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", null ],
-        [ "Variables", "functions_vars.html", null ]
+        [ "Variables", "functions_vars.html", null ],
+        [ "Enumerations", "functions_enum.html", null ],
+        [ "Enumerator", "functions_eval.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -139,7 +141,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_xm_convex_hull_8cpp.html",
-"classxms_1_1_xm_u_grid_impl.html#a0ec8140212d29927620c6010fd5fa8f1"
+"classxms_1_1_xm_u_grid_impl.html#a01973db2557667f57acd11fc1c5af393"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

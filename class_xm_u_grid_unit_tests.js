@@ -1,6 +1,7 @@
 var class_xm_u_grid_unit_tests =
 [
     [ "testCell3dFaceFunctions", "class_xm_u_grid_unit_tests.html#aa80efbd54ce772c637dc76f41176f32a", null ],
+    [ "testCell3dFunctionCaching", "class_xm_u_grid_unit_tests.html#aad8fbd811c9adb8e731e4d41133f6230", null ],
     [ "testCellEdgeAdjacentCellFunctions", "class_xm_u_grid_unit_tests.html#aa118ce2f164bd551986c80b1d6a27a1f", null ],
     [ "testCellEdges", "class_xm_u_grid_unit_tests.html#aa9a555c44558cf7e26637161a6e587dd", null ],
     [ "testCellFunctions", "class_xm_u_grid_unit_tests.html#aa04937d86269192d53cf353366f6fdd5", null ],
@@ -8,6 +9,7 @@ var class_xm_u_grid_unit_tests =
     [ "testEdgeAdjacentCells", "class_xm_u_grid_unit_tests.html#a018edbf128d35d7b7b26f0df7d7431e6", null ],
     [ "testGetCell3dFaceAdjacentCell", "class_xm_u_grid_unit_tests.html#ad0716e5ca692e4d3f3f01d9e70c9d42c", null ],
     [ "testGetCell3dFaceCount", "class_xm_u_grid_unit_tests.html#a24af8a3e33913422fe3ad15c0e092583", null ],
+    [ "testGetCell3dFaceOrientationConcaveCell", "class_xm_u_grid_unit_tests.html#a17d270a72f90ec49c8783aa5173d3aa4", null ],
     [ "testGetCell3dFacePointCount", "class_xm_u_grid_unit_tests.html#aa64c5e0c1cb6b4c7d215e9353c8eb94e", null ],
     [ "testGetCell3dFacePoints", "class_xm_u_grid_unit_tests.html#a4b745c672b7c2efbc42ecdc8bf6f6035", null ],
     [ "testGetCellAdjacentCells", "class_xm_u_grid_unit_tests.html#af64a6531be327452cc4a1ad83990acf5", null ],

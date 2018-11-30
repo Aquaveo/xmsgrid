@@ -529,6 +529,13 @@
       <arglist>()=0</arglist>
     </member>
     <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>SetUseCache</name>
+      <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
+      <anchor>abe7ce5b7fefbfd545fb3da579528b21c</anchor>
+      <arglist>(bool a_useCache)=0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
       <type>virtual int</type>
       <name>GetPointCount</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
@@ -864,6 +871,13 @@
       <anchor>a1a8edc40d0386aac81162b18d57368b0</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx, int &amp;a_neighborCell, int &amp;a_neighborFace) const =0</arglist>
     </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual XmUGridFaceOrientation</type>
+      <name>GetCell3dFaceOrientation</name>
+      <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
+      <anchor>afc440eea2b974d32c4aa8e33007c5f0c</anchor>
+      <arglist>(int a_cellIdx, int a_faceIdx) const =0</arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static BSHP&lt; XmUGrid &gt;</type>
       <name>New</name>
@@ -928,6 +942,13 @@
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>aef492cc16d1627d6738d739eb0715aee</anchor>
       <arglist>() override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>SetUseCache</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a34f681f73b06c6182b804de4f7e828a5</anchor>
+      <arglist>(bool a_useCache) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
@@ -1272,6 +1293,32 @@
       <anchor>a71f6e717cb390605927b80f31f615d5a</anchor>
       <arglist>(const int a_cellIdx, const int a_faceIdx, int &amp;a_neighborCell, int &amp;a_neighborFace) const override</arglist>
     </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual XmUGridFaceOrientation</type>
+      <name>GetCell3dFaceOrientation</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>ad6da550e854dfbb7b565a1ca7dddd978</anchor>
+      <arglist>(int a_cellIdx, int a_faceIdx) const override</arglist>
+    </member>
+    <member kind="enumeration" protection="private">
+      <type></type>
+      <name>XmUGridCacheHolder</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a063c57c4185e1646128d2ff0b9aea66c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue" protection="private">
+      <name>NEEDS_CALCULATION</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a063c57c4185e1646128d2ff0b9aea66ca608b3d3fe801a049e476384b632bc6a0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue" protection="private">
+      <name>NEEDS_CALCULATION</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a063c57c4185e1646128d2ff0b9aea66ca608b3d3fe801a049e476384b632bc6a0</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function" protection="private">
       <type>void</type>
       <name>UpdateLinks</name>
@@ -1306,6 +1353,13 @@
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>a456aa05765a4760f5bf049bb74cb585a</anchor>
       <arglist>(const int a_cellIdx, const int a_changedPtIdx, const Pt3d &amp;a_newPosition) const</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>bool</type>
+      <name>IsValidCellIdx</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a8d88be6f40691b7c91a58ec64c6ffe80</anchor>
+      <arglist>(const int a_cellIdx) const</arglist>
     </member>
     <member kind="function" protection="private">
       <type>int</type>
@@ -1353,8 +1407,8 @@
       <type>bool</type>
       <name>GetCellXySegments</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a1a2fe07e003610af5213172cb8eaa68e</anchor>
-      <arglist>(int cellIdx, VecPt3d &amp;segments) const</arglist>
+      <anchor>a511559caac8d5a84e69a1f8865ea2895</anchor>
+      <arglist>(int cellIdx, VecPt3d &amp;a_segments) const</arglist>
     </member>
     <member kind="function" protection="private">
       <type>void</type>
@@ -1383,6 +1437,41 @@
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>a347945682633bfac0879e20ff18d0cc5</anchor>
       <arglist>(int a_cellIdx, int a_faceIdx, VecPt3d &amp;a_segments) const</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>CalculateCacheValues</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>af33a11a9617da87d751bdb50c98e3db0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>ClearCacheValues</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a6474fa0178a7f2c86f75118791a7dd0b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>int</type>
+      <name>GetCell3dFaceCountNoCache</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a659b5e4dd8659b458e1b21dfc1a87a1a</anchor>
+      <arglist>(const int a_cellIdx) const</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>int</type>
+      <name>GetCell3dFaceAdjacentCellNoCache</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a2a717f1a9f42230612d42f2a03c4dbaa</anchor>
+      <arglist>(const int a_cellIdx, const int a_faceIdx) const</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>XmUGridFaceOrientation</type>
+      <name>GetCell3dFaceOrientationNoCache</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>afb5d36285f4da085c49d6d62658525b0</anchor>
+      <arglist>(int a_cellIdx, int a_faceIdx) const</arglist>
     </member>
     <member kind="function" protection="private" static="yes">
       <type>static int</type>
@@ -1452,6 +1541,48 @@
       <name>m_modified</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
       <anchor>a64fc398df8d76becf856bbbd48669ef6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>m_useCache</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a93c18aa3a2d29b9b455e9d8c75a50aed</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>VecInt</type>
+      <name>m_numberOfFaces</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>ac93711d0f88770cd061a315226743199</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>VecInt</type>
+      <name>m_cellFaceOffset</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>adad40b59e2a7b8270be1b1e304089e49</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>VecInt</type>
+      <name>m_faceOrientation</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a720a8128eafe6e5a9871659a1e973359</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>VecInt</type>
+      <name>m_faceNeighbor</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>ac35eccf00a94559ea6b5f39cbc41cbaa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>VecInt</type>
+      <name>m_cellDimensionCounts</name>
+      <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
+      <anchor>a8dddb36d5519ee8a76d61f39ad6be47b</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -1663,6 +1794,20 @@
       <name>testCell3dFaceFunctions</name>
       <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
       <anchor>aa80efbd54ce772c637dc76f41176f32a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testGetCell3dFaceOrientationConcaveCell</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>a17d270a72f90ec49c8783aa5173d3aa4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testCell3dFunctionCaching</name>
+      <anchorfile>class_xm_u_grid_unit_tests.html</anchorfile>
+      <anchor>aad8fbd811c9adb8e731e4d41133f6230</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
