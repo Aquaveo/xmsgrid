@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file XmConvexHull.h
+/// \file
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
 /// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
@@ -28,10 +28,11 @@ class XmUGrid;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Tests for ConvexHull functions.
-class XmUGridConvexHullTests : public CxxTest::TestSuite
+class XmGeometryUnitTests : public CxxTest::TestSuite
 {
 public:
   void testConvexHull();
-}; // XmUGridConvexHullTests
+  void testDoLineSegmentsCross();
+}; // XmGeometryUnitTests
 
 #endif

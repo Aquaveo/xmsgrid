@@ -28,8 +28,8 @@
 #include <xmscore/stl/set.h>
 
 // 6. Non-shared code headers
+#include <xmsgrid/ugrid/detail/XmGeometry.h>
 #include <xmsgrid/ugrid/XmEdge.h>
-#include <xmsgrid/ugrid/XmConvexHull.h>
 #include <xmsgrid/ugrid/XmUGridUtils.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -106,7 +106,7 @@ public:
   virtual int GetCellDimension(const int a_cellIdx) const override;
   virtual void GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const override;
 
-  virtual const VecInt& GetCellStream() const override;
+  virtual const VecInt& GetCellstream() const override;
   virtual bool SetCellstream(const VecInt& a_cellstream) override;
   virtual bool GetCellCellstream(const int a_cellIdx, VecInt& a_cellstream) const override;
 
@@ -209,7 +209,7 @@ private:
   };
 
   VecPt3d m_points;                 ///< UGrid points
-  VecInt m_cellstream;              ///< UGrid cell stream. @see SetCellstream, GetCellStream
+  VecInt m_cellstream;              ///< UGrid cell stream. @see SetCellstream, GetCellstream
   VecInt m_cellIdxToStreamIdx;      ///< Indexes for each cell in the cell stream
   VecInt m_pointsToCells;           ///< Array of points cells (goes from pointIdx to list
                                     ///< of cells)
@@ -1459,10 +1459,10 @@ void XmUGridImpl::GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) 
 /// \brief Get cell stream vector for the entire UGrid.
 /// \return constant reference to the cell stream vector
 //------------------------------------------------------------------------------
-const VecInt& XmUGridImpl::GetCellStream() const
+const VecInt& XmUGridImpl::GetCellstream() const
 {
   return m_cellstream;
-} // XmUGridImpl::GetCellStream
+} // XmUGridImpl::GetCellstream
 //------------------------------------------------------------------------------
 /// \brief Set the ugrid cells for the entire UGrid using a cell stream.
 /// \param[in] a_cellstream cells defined as follows:
@@ -3003,7 +3003,7 @@ XmUGridFaceOrientation XmUGridImpl::GetCell3dFaceOrientationNoCache(int a_cellId
 ///
 /// Location refers to the actual 3d coordinates of one or more of those points.
 ///
-/// GetCellStream refers to a single flat vector of integers that defines the cells.
+/// GetCellstream refers to a single flat vector of integers that defines the cells.
 /// The cellstream for each cell begins with an integer that defines the cell
 /// type.  For most cell types, the next integer specifies the number of points
 /// in the cell (even though that number never varies for all cells of most
@@ -3031,7 +3031,7 @@ XmUGridFaceOrientation XmUGridImpl::GetCell3dFaceOrientationNoCache(int a_cellId
 /// dimension 2.  Those that represent solids have dimension 3. (All of these
 /// cell types can exist in 3 dimensional space.)
 ///
-/// Functions that just have one word, like GetLocations(), GetCellStream(),
+/// Functions that just have one word, like GetLocations(), GetCellstream(),
 /// or GetExtents() return properties of the entire XmUGrid.
 /// Those that return properties of a particular cell will begin with the word
 /// "Cell" (and have a_cellIdx as their first argument) and end with type of
@@ -3618,7 +3618,7 @@ void XmUGridUnitTests::testUGridStreams()
   VecPt3d points = emptyUGrid->GetLocations();
   TS_ASSERT_EQUALS(0, points.size());
 
-  VecInt cellstream = emptyUGrid->GetCellStream();
+  VecInt cellstream = emptyUGrid->GetCellstream();
   TS_ASSERT(XmUGrid::IsValidCellstream(cellstream));
   TS_ASSERT_EQUALS(0, cellstream.size());
 
@@ -3647,7 +3647,7 @@ void XmUGridUnitTests::testUGridStreams()
   ugrid->SetUnmodified();
   TS_ASSERT(!ugrid->GetModified());
   TS_ASSERT(ugrid->SetCellstream(cellstream));
-  VecInt cellstreamOut = ugrid->GetCellStream();
+  VecInt cellstreamOut = ugrid->GetCellstream();
   TS_ASSERT_EQUALS(cellstream, cellstreamOut);
   TS_ASSERT(ugrid->GetModified());
 
@@ -5082,8 +5082,8 @@ void XmUGridUnitTests::testCellstreamFunctions()
     return;
   }
 
-  // Test GetCellStream
-  VecInt cellstream = ugrid->GetCellStream();
+  // Test GetCellstream
+  VecInt cellstream = ugrid->GetCellstream();
   VecInt expectedCellstream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2,
                                XMU_QUAD, 4, 3, 6, 7, 4, XMU_QUAD, 4, 4, 7, 8, 5};
   TS_ASSERT_EQUALS(expectedCellstream, cellstream);
@@ -5360,7 +5360,7 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
                            XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP}};
   BSHP<XmUGrid> newXmUGrid = TEST_XmUBuildHexahedronUgrid(2, 4, 2);
   xmUGrid->SetLocations(newXmUGrid->GetLocations());
-  xmUGrid->SetCellstream(newXmUGrid->GetCellStream());
+  xmUGrid->SetCellstream(newXmUGrid->GetCellstream());
   for (int i = 0; i < 4; ++i)
   {
     xmUGrid->SetUseCache(useCacheValues[i]);
@@ -5397,7 +5397,7 @@ void XmUGridUnitTests::testLargeUGridLinkSpeed()
 
   {
     boost::timer::cpu_timer timer;
-    BSHP<XmUGrid> ugrid = XmUGrid::New(grid->GetLocations(), grid->GetCellStream());
+    BSHP<XmUGrid> ugrid = XmUGrid::New(grid->GetLocations(), grid->GetCellstream());
     TS_FAIL(timer.format());
   }
 

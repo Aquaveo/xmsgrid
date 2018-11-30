@@ -1,6 +1,6 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file XmConvexHull.h
+/// \file
 /// \brief Code to calculate the convex hull of a set of points in two dimensions.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
@@ -36,5 +36,12 @@ class XmUGrid;
 //----- Function prototypes ----------------------------------------------------
 std::vector<Pt3d> ConvexHull(std::vector<Pt3d> a_points);
 VecInt ConvexHullWithIndices(const VecInt& a_points, BSHP<XmUGrid> a_ugrid);
+
+bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
+                         const std::pair<Pt3d, Pt3d>& a_segment2);
+bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
+                         const Pt3d& a_segment1Point2,
+                         const Pt3d& a_segment2Point1,
+                         const Pt3d& a_segment2Point2);
 
 } // namespace xms

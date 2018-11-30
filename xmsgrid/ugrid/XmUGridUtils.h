@@ -37,14 +37,4 @@ class XmUGrid;
 BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath);
 void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePath);
 
-// Utility functions
-double cross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B);
-
-bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
-                         const std::pair<Pt3d, Pt3d>& a_segment2);
-bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
-                         const Pt3d& a_segment1Point2,
-                         const Pt3d& a_segment2Point1,
-                         const Pt3d& a_segment2Point2);
-
 } // namespace xms

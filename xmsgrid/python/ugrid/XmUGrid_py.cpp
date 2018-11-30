@@ -406,7 +406,7 @@ void initXmUGrid(py::module &m) {
             iterable: Constant reference to the cell stream vector.
     )pydoc";
     xmUg.def("get_cellstream", [](xms::XmUGrid &self) -> py::iterable {
-            return xms::PyIterFromVecInt(self.GetCellStream());
+            return xms::PyIterFromVecInt(self.GetCellstream());
         }, get_cellstream_doc);
   // ---------------------------------------------------------------------------
   // function: set_cellstream
