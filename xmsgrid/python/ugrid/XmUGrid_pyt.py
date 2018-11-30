@@ -42,12 +42,12 @@ class TestUGridPointFunctions(unittest.TestCase):
                  UGrid.xmugrid_celltype_enum.XMU_VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
                  UGrid.xmugrid_celltype_enum.XMU_HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
                  UGrid.xmugrid_celltype_enum.XMU_POLYHEDRON, 6,
-                 4, 8, 9, 14, 13,
-                 4, 8, 9, 24, 23,
-                 4, 9, 14, 29, 24,
-                 4, 13, 14, 29, 28,
-                 4, 8, 13, 28, 23,
-                 4, 23, 24, 29, 28,
+                 4, 9, 8, 13, 14, # Bottom face with 4 points : 9, 8, 13, 14
+                 4, 8, 9, 24, 23, # Front face with 4 points : 8, 9, 24, 23
+                 4, 9, 14, 29, 24, # Right face with 4 points : 9, 14, 29, 28
+                 4, 14, 13, 28, 29, # Back face with 4 points : 14, 13, 28, 29
+                 4, 8, 13, 28, 23, # Left face with 4 points : 13, 8, 23, 28
+                 4, 23, 24, 29, 28, # Top face with 4 points : 23, 24, 29, 28
                  UGrid.xmugrid_celltype_enum.XMU_WEDGE, 6, 3, 4, 18, 8, 9, 23,
                  UGrid.xmugrid_celltype_enum.XMU_PYRAMID, 5, 5, 6, 11, 10, 20)
         xu = UGrid(points, cells)
@@ -870,43 +870,43 @@ class TestUGridPointFunctions(unittest.TestCase):
             for face_idx in range(0, ugrid3d.get_cell3d_face_count(cell_idx)):
                 orientation.append(ugrid3d.get_cell3d_face_orientation(cell_idx, face_idx))
 
-        expected_orientation = [XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM, # Tetra
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+        expected_orientation = [UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM, # Tetra
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
                                 # Voxel
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
                                 # Hexahedron
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
                                 # Polyhedron
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
                                 # Wedge
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
                                 # Pyramid
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                                XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE ]
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                                UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE ]
 
         self.assertEqual(expected_orientation, orientation)
 
@@ -924,7 +924,7 @@ class TestUGridPointFunctions(unittest.TestCase):
                 (1619710.0815, 6134182.8542, -10), (1619693.1618, 6134208.2547, -10),
                 (1619645.5529, 6134438.0278, -10), (1619774.9993, 6134371.9982, -10))
         elements = (
-            XmUGrid.xmugrid_celltype_enum.XMU_POLYHEDRON,
+            UGrid.xmugrid_celltype_enum.XMU_POLYHEDRON,
             13, # number of faces
             11, 5, 10, 2, 0, 1, 3, 6, 9, 8, 7, 4, # top
             11, 16, 15, 18, 19, 20, 17, 14, 12, 11, 13, 21, # bottom
@@ -940,23 +940,23 @@ class TestUGridPointFunctions(unittest.TestCase):
             4, 7, 18, 15, 4,
             4, 4, 1, 16, 5)
 
-        ugrid = XmUGrid(nodes, elements)
+        ugrid = UGrid(nodes, elements)
         actual = []
         for face_idx in range(0, ugrid.get_cell3d_face_count(0)):
             actual.append(ugrid.get_cell3d_face_orientation(0, face_idx))
-        expected = [ XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                     XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE ]
+        expected = [ UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                     UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE ]
         self.assertEqual(expected, actual)
 
     def test_cell3d_function_caching(self):
@@ -964,18 +964,18 @@ class TestUGridPointFunctions(unittest.TestCase):
 
         expected_neighbors = (( -1, -1, -1,  1, -1, -1 ),
                               ( -1, -1,  0, -1, -1, -1 ))
-        expected_orientations = ((XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
-                                 (XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
+        expected_orientations = ((UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
+                                 (UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
 
         # test four times, to fill the cache, read from the cache, turn off the cache,
         # and turn on the cache
@@ -994,24 +994,24 @@ class TestUGridPointFunctions(unittest.TestCase):
         expected_neighbors =  (( -1, -1, -1,  1, -1, -1 ),
                                ( -1, -1,  0,  2, -1, -1 ),
                                ( -1, -1,  1, -1, -1, -1 ))
-        expected_orientations = ((XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
-                                 (XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
-                                 (XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
-                                  XmUGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
+        expected_orientations = ((UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
+                                 (UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP),
+                                 (UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_SIDE,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_BOTTOM,
+                                  UGrid.xmugrid_faceorientation_enum.XMU_ORIENTATION_TOP))
         new_ugrid = self.get_hexahedron_ugrid(2, 4, 2, (0, 0, 0))
         ugrid.set_locations(new_ugrid.get_locations())
         ugrid.set_cellstream(new_ugrid.get_cellstream())
