@@ -1,8 +1,6 @@
 var dir_a4f80c8107f4df91c21d011369fb1e1d =
 [
-    [ "XmConvexHull.cpp", "_xm_convex_hull_8cpp.html", "_xm_convex_hull_8cpp" ],
-    [ "XmConvexHull.h", "_xm_convex_hull_8h.html", "_xm_convex_hull_8h" ],
-    [ "XmConvexHull.t.h", "_xm_convex_hull_8t_8h_source.html", null ],
+    [ "detail", "dir_b74a6b048d98566b51178763857c83fe.html", "dir_b74a6b048d98566b51178763857c83fe" ],
     [ "XmEdge.cpp", "_xm_edge_8cpp.html", "_xm_edge_8cpp" ],
     [ "XmEdge.h", "_xm_edge_8h_source.html", null ],
     [ "XmEdge.t.h", "_xm_edge_8t_8h.html", [

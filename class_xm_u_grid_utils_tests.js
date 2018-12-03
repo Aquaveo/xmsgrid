@@ -1,6 +1,5 @@
 var class_xm_u_grid_utils_tests =
 [
-    [ "testDoLineSegmentsCross", "class_xm_u_grid_utils_tests.html#abdb6587684de536f93a0905e482d089e", null ],
     [ "testLinear2dWriteThenRead", "class_xm_u_grid_utils_tests.html#a227b7f77870cc134ba5f2f990c21394a", null ],
     [ "testLinear3dWriteThenRead", "class_xm_u_grid_utils_tests.html#a3d076a2cc5eb610df6af33d449dfe2a3", null ],
     [ "testReadBasicUGrid", "class_xm_u_grid_utils_tests.html#a7be71d4f80017a95dd49dbadb4cd65dd", null ],

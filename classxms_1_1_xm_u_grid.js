@@ -29,7 +29,7 @@ var classxms_1_1_xm_u_grid =
     [ "GetCellPointCount", "classxms_1_1_xm_u_grid.html#a114e30713605c5fe8affd578232aacda", null ],
     [ "GetCellPoints", "classxms_1_1_xm_u_grid.html#a768d1f03936ec142895b4c89ba305a0a", null ],
     [ "GetCellPoints", "classxms_1_1_xm_u_grid.html#ac69f3687dec8cc12956ace0049e8dac9", null ],
-    [ "GetCellStream", "classxms_1_1_xm_u_grid.html#ab26fd6b8caeabeecde13a7c7f8b40343", null ],
+    [ "GetCellstream", "classxms_1_1_xm_u_grid.html#a06104da983f629140cdba388cc69b34f", null ],
     [ "GetCellType", "classxms_1_1_xm_u_grid.html#a1cdc6b0ed97cfbef84d2529b14c79f0d", null ],
     [ "GetDimensionCounts", "classxms_1_1_xm_u_grid.html#a7eb4afae2e77ddf6a7fedfcee18a72e7", null ],
     [ "GetEdgeAdjacentCells", "classxms_1_1_xm_u_grid.html#a5eac64030b549a8805147908ae5b738e", null ],

@@ -2,7 +2,7 @@ var hierarchy =
 [
     [ "TestSuite", null, [
       [ "XmEdgeUnitTests", "class_xm_edge_unit_tests.html", null ],
-      [ "XmUGridConvexHullTests", "class_xm_u_grid_convex_hull_tests.html", null ],
+      [ "XmGeometryUnitTests", "class_xm_geometry_unit_tests.html", null ],
       [ "XmUGridUnitTests", "class_xm_u_grid_unit_tests.html", null ],
       [ "XmUGridUtilsTests", "class_xm_u_grid_utils_tests.html", null ]
     ] ],

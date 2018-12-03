@@ -1,47 +1,83 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
   <compound kind="file">
-    <name>XmConvexHull.cpp</name>
-    <path>/home/conan/xmsgrid/ugrid/</path>
-    <filename>_xm_convex_hull_8cpp</filename>
-    <includes id="_xm_convex_hull_8h" name="XmConvexHull.h" local="no" imported="no">xmsgrid/ugrid/XmConvexHull.h</includes>
+    <name>XmGeometry.cpp</name>
+    <path>/home/conan/xmsgrid/ugrid/detail/</path>
+    <filename>_xm_geometry_8cpp</filename>
+    <includes id="_xm_geometry_8h" name="XmGeometry.h" local="no" imported="no">xmsgrid/ugrid/detail/XmGeometry.h</includes>
     <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
+    <includes id="_xm_geometry_8t_8h" name="XmGeometry.t.h" local="no" imported="no">xmsgrid/ugrid/detail/XmGeometry.t.h</includes>
     <namespace>xms</namespace>
     <member kind="function">
-      <type>std::vector&lt; Pt3d &gt;</type>
+      <type>VecPt3d</type>
       <name>ConvexHull</name>
       <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a1973dbb5cf1431334a569f565b1c7d13</anchor>
-      <arglist>(std::vector&lt; Pt3d &gt; a_points)</arglist>
+      <anchor>a8bf3a5f5a2e5003c8de8e44a75fa9cde</anchor>
+      <arglist>(const std::vector&lt; Pt3&lt; double &gt;&gt; &amp;a_points)</arglist>
     </member>
     <member kind="function">
       <type>VecInt</type>
       <name>ConvexHullWithIndices</name>
       <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
-      <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+      <anchor>a8d5547f30586a0da0391aa281a4ef559</anchor>
+      <arglist>(const std::vector&lt; int &gt; &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>aea9cf0b2bb6a3c1fc4d36d6defebecfe</anchor>
+      <arglist>(const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment1, const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment2)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ac3978b6fc01a80623f117b8642e64f85</anchor>
+      <arglist>(const Pt3&lt; double &gt; &amp;a_segment1Point1, const Pt3&lt; double &gt; &amp;a_segment1Point2, const Pt3&lt; double &gt; &amp;a_segment2Point1, const Pt3&lt; double &gt; &amp;a_segment2Point2)</arglist>
     </member>
   </compound>
   <compound kind="file">
-    <name>XmConvexHull.h</name>
-    <path>/home/conan/xmsgrid/ugrid/</path>
-    <filename>_xm_convex_hull_8h</filename>
+    <name>XmGeometry.h</name>
+    <path>/home/conan/xmsgrid/ugrid/detail/</path>
+    <filename>_xm_geometry_8h</filename>
     <namespace>xms</namespace>
     <member kind="function">
-      <type>std::vector&lt; Pt3d &gt;</type>
+      <type>VecPt3d</type>
       <name>ConvexHull</name>
       <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a1973dbb5cf1431334a569f565b1c7d13</anchor>
-      <arglist>(std::vector&lt; Pt3d &gt; a_points)</arglist>
+      <anchor>a8bf3a5f5a2e5003c8de8e44a75fa9cde</anchor>
+      <arglist>(const std::vector&lt; Pt3&lt; double &gt;&gt; &amp;a_points)</arglist>
     </member>
     <member kind="function">
       <type>VecInt</type>
       <name>ConvexHullWithIndices</name>
       <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
-      <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+      <anchor>a8d5547f30586a0da0391aa281a4ef559</anchor>
+      <arglist>(const std::vector&lt; int &gt; &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
     </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>aea9cf0b2bb6a3c1fc4d36d6defebecfe</anchor>
+      <arglist>(const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment1, const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment2)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ac3978b6fc01a80623f117b8642e64f85</anchor>
+      <arglist>(const Pt3&lt; double &gt; &amp;a_segment1Point1, const Pt3&lt; double &gt; &amp;a_segment1Point2, const Pt3&lt; double &gt; &amp;a_segment2Point1, const Pt3&lt; double &gt; &amp;a_segment2Point2)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>XmGeometry.t.h</name>
+    <path>/home/conan/xmsgrid/ugrid/detail/</path>
+    <filename>_xm_geometry_8t_8h</filename>
+    <class kind="class">XmGeometryUnitTests</class>
+    <namespace>xms</namespace>
   </compound>
   <compound kind="file">
     <name>XmEdge.cpp</name>
@@ -69,7 +105,7 @@
     <path>/home/conan/xmsgrid/ugrid/</path>
     <filename>_xm_u_grid_8cpp</filename>
     <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
-    <includes id="_xm_convex_hull_8h" name="XmConvexHull.h" local="no" imported="no">xmsgrid/ugrid/XmConvexHull.h</includes>
+    <includes id="_xm_geometry_8h" name="XmGeometry.h" local="no" imported="no">xmsgrid/ugrid/detail/XmGeometry.h</includes>
     <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
     <includes id="_xm_u_grid_8t_8h" name="XmUGrid.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.t.h</includes>
     <class kind="class">xms::XmUGridImpl</class>
@@ -315,27 +351,6 @@
       <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
     </member>
-    <member kind="function">
-      <type>double</type>
-      <name>cross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a19d9cf623f58dfd2c0f07818b00c3ef0</anchor>
-      <arglist>(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ae637b67d3f1510d9d944bbf58b357f96</anchor>
-      <arglist>(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a65c87e21852eec5a00868110b3cdc729</anchor>
-      <arglist>(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>XmUGridUtils.h</name>
@@ -355,27 +370,6 @@
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>cross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a19d9cf623f58dfd2c0f07818b00c3ef0</anchor>
-      <arglist>(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ae637b67d3f1510d9d944bbf58b357f96</anchor>
-      <arglist>(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a65c87e21852eec5a00868110b3cdc729</anchor>
-      <arglist>(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -501,6 +495,24 @@
       <name>testIsEquivalent</name>
       <anchorfile>class_xm_edge_unit_tests.html</anchorfile>
       <anchor>a692a8037d9755b7e5a6966f97c0cfd33</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>XmGeometryUnitTests</name>
+    <filename>class_xm_geometry_unit_tests.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>testConvexHull</name>
+      <anchorfile>class_xm_geometry_unit_tests.html</anchorfile>
+      <anchor>a0a46d1422bef14f571b2265655a25b48</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testDoLineSegmentsCross</name>
+      <anchorfile>class_xm_geometry_unit_tests.html</anchorfile>
+      <anchor>a2b0c287752ece2befba276583c7869c3</anchor>
       <arglist>()</arglist>
     </member>
   </compound>
@@ -698,9 +710,9 @@
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual const VecInt &amp;</type>
-      <name>GetCellStream</name>
+      <name>GetCellstream</name>
       <anchorfile>classxms_1_1_xm_u_grid.html</anchorfile>
-      <anchor>ab26fd6b8caeabeecde13a7c7f8b40343</anchor>
+      <anchor>a06104da983f629140cdba388cc69b34f</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -908,17 +920,6 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>XmUGridConvexHullTests</name>
-    <filename>class_xm_u_grid_convex_hull_tests.html</filename>
-    <member kind="function">
-      <type>void</type>
-      <name>testConvexHull</name>
-      <anchorfile>class_xm_u_grid_convex_hull_tests.html</anchorfile>
-      <anchor>a9932d57a000ebc02420243211c67858c</anchor>
-      <arglist>()</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
     <name>xms::XmUGridImpl</name>
     <filename>classxms_1_1_xm_u_grid_impl.html</filename>
     <base>xms::XmUGrid</base>
@@ -1120,9 +1121,9 @@
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual const VecInt &amp;</type>
-      <name>GetCellStream</name>
+      <name>GetCellstream</name>
       <anchorfile>classxms_1_1_xm_u_grid_impl.html</anchorfile>
-      <anchor>a01973db2557667f57acd11fc1c5af393</anchor>
+      <anchor>a6b8383b51fe5dedc41211ba9f81d234b</anchor>
       <arglist>() const override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
@@ -1823,13 +1824,6 @@
     <filename>class_xm_u_grid_utils_tests.html</filename>
     <member kind="function">
       <type>void</type>
-      <name>testDoLineSegmentsCross</name>
-      <anchorfile>class_xm_u_grid_utils_tests.html</anchorfile>
-      <anchor>abdb6587684de536f93a0905e482d089e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
       <name>testWriteEmptyUGrid</name>
       <anchorfile>class_xm_u_grid_utils_tests.html</anchorfile>
       <anchor>ae129def9be2e32d8c6d83d78c9c37ae7</anchor>
@@ -1941,18 +1935,32 @@
       <arglist></arglist>
     </member>
     <member kind="function">
-      <type>std::vector&lt; Pt3d &gt;</type>
+      <type>VecPt3d</type>
       <name>ConvexHull</name>
       <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a1973dbb5cf1431334a569f565b1c7d13</anchor>
-      <arglist>(std::vector&lt; Pt3d &gt; a_points)</arglist>
+      <anchor>a8bf3a5f5a2e5003c8de8e44a75fa9cde</anchor>
+      <arglist>(const std::vector&lt; Pt3&lt; double &gt;&gt; &amp;a_points)</arglist>
     </member>
     <member kind="function">
       <type>VecInt</type>
       <name>ConvexHullWithIndices</name>
       <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ac022fbaa831f7fc3362547238bad840a</anchor>
-      <arglist>(const VecInt &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+      <anchor>a8d5547f30586a0da0391aa281a4ef559</anchor>
+      <arglist>(const std::vector&lt; int &gt; &amp;a_points, BSHP&lt; XmUGrid &gt; a_ugrid)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>aea9cf0b2bb6a3c1fc4d36d6defebecfe</anchor>
+      <arglist>(const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment1, const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment2)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>DoLineSegmentsCross</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ac3978b6fc01a80623f117b8642e64f85</anchor>
+      <arglist>(const Pt3&lt; double &gt; &amp;a_segment1Point1, const Pt3&lt; double &gt; &amp;a_segment1Point2, const Pt3&lt; double &gt; &amp;a_segment2Point1, const Pt3&lt; double &gt; &amp;a_segment2Point2)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -2058,27 +2066,6 @@
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>cross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a19d9cf623f58dfd2c0f07818b00c3ef0</anchor>
-      <arglist>(const Pt3d &amp;a_origin, const Pt3d &amp;a_A, const Pt3d &amp;a_B)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>ae637b67d3f1510d9d944bbf58b357f96</anchor>
-      <arglist>(const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment1, const std::pair&lt; Pt3d, Pt3d &gt; &amp;a_segment2)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>DoLineSegmentsCross</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a65c87e21852eec5a00868110b3cdc729</anchor>
-      <arglist>(const Pt3d &amp;a_segment1Point1, const Pt3d &amp;a_segment1Point2, const Pt3d &amp;a_segment2Point1, const Pt3d &amp;a_segment2Point2)</arglist>
     </member>
   </compound>
   <compound kind="page">
