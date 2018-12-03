@@ -58,7 +58,7 @@ double iCross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
   return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
 } // cross
 
-}
+} // namespace {
 
 //------------------------------------------------------------------------------
 /// \brief Returns the convex hull of a set of points
@@ -67,30 +67,31 @@ double iCross(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
 /// \note a convex hull is the minimum set of points which contains (not connects)
 ///   all of the points in a set and is convex.
 //------------------------------------------------------------------------------
-std::vector<Pt3d> ConvexHull(std::vector<Pt3d> a_points)
+VecPt3d ConvexHull(const std::vector<Pt3<double>>& a_points)
 {
-  size_t n = a_points.size(), j = 0;
+  VecPt3d points = a_points;
+  size_t n = points.size(), j = 0;
   if (n <= 3)
-    return a_points;
-  std::vector<Pt3d> convexHull(2 * n);
+    return points;
+  VecPt3d convexHull(2 * n);
 
   // Sort points lexicographically
-  sort(a_points.begin(), a_points.end());
+  sort(points.begin(), points.end());
 
   // Build lower hull
   for (size_t i = 0; i < n; ++i)
   {
-    while (j >= 2 && iCross(convexHull[j - 2], convexHull[j - 1], a_points[i]) <= 0)
+    while (j >= 2 && iCross(convexHull[j - 2], convexHull[j - 1], points[i]) <= 0)
       j--;
-    convexHull[j++] = a_points[i];
+    convexHull[j++] = points[i];
   }
 
   // Build upper hull
   for (size_t i = n - 1, t = j + 1; i > 0; --i)
   {
-    while (j >= t && iCross(convexHull[j - 2], convexHull[j - 1], a_points[i - 1]) <= 0)
+    while (j >= t && iCross(convexHull[j - 2], convexHull[j - 1], points[i - 1]) <= 0)
       j--;
-    convexHull[j++] = a_points[i - 1];
+    convexHull[j++] = points[i - 1];
   }
 
   convexHull.resize(j - 1);
@@ -104,14 +105,14 @@ std::vector<Pt3d> ConvexHull(std::vector<Pt3d> a_points)
 /// \note a convex hull is the minimum set of points which contains (not connects)
 ///   all of the points in a set and is convex.
 //------------------------------------------------------------------------------
-VecInt ConvexHullWithIndices(const VecInt& a_points, BSHP<XmUGrid> a_ugrid)
+VecInt ConvexHullWithIndices(const std::vector<int>& a_points, BSHP<XmUGrid> a_ugrid)
 {
-  std::vector<Pt3d> points3d(a_points.size());
+  VecPt3d points3d(a_points.size());
   for (int i = 0; i < a_points.size(); ++i)
   {
     points3d.push_back(a_ugrid->GetPointLocation(a_points[i]));
   }
-  std::vector<Pt3d> convexHull = ConvexHull(points3d);
+  VecPt3d convexHull = ConvexHull(points3d);
   VecInt returnPoints(convexHull.size());
   for (int i(0); i < convexHull.size(); i++)
   {
@@ -132,8 +133,8 @@ VecInt ConvexHullWithIndices(const VecInt& a_points, BSHP<XmUGrid> a_ugrid)
 /// \param[in] a_segment2: The second line segment
 /// \return true if the line segments intersect
 //------------------------------------------------------------------------------
-bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
-                         const std::pair<Pt3d, Pt3d>& a_segment2)
+bool DoLineSegmentsCross(const std::pair<Pt3<double>, Pt3<double>>& a_segment1,
+                         const std::pair<Pt3<double>, Pt3<double>>& a_segment2)
 {
   return DoLineSegmentsCross(a_segment1.first, a_segment1.second, a_segment2.first,
                              a_segment2.second);
@@ -147,10 +148,10 @@ bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
 /// \param[in] a_segment2Point2: Second point 3d of line segment 2
 /// \return true if the line segments cross
 //------------------------------------------------------------------------------
-bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
-                         const Pt3d& a_segment1Point2,
-                         const Pt3d& a_segment2Point1,
-                         const Pt3d& a_segment2Point2)
+bool DoLineSegmentsCross(const Pt3<double>& a_segment1Point1,
+                         const Pt3<double>& a_segment1Point2,
+                         const Pt3<double>& a_segment2Point1,
+                         const Pt3<double>& a_segment2Point2)
 {
   // Boundary case checks
   // Any of the points from line segment 1 are the same as any points from line segment 2
@@ -192,9 +193,9 @@ using namespace xms;
 //------------------------------------------------------------------------------
 void XmGeometryUnitTests::testConvexHull()
 {
-  std::vector<Pt3d> inputPoints;
-  std::vector<Pt3d> expectedHull;
-  std::vector<Pt3d> hull;
+  VecPt3d inputPoints;
+  VecPt3d expectedHull;
+  VecPt3d hull;
   // Pyramid
   expectedHull = {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 0.0}, {0.0, 1.0, 0.0}};
   for (int i = 0; i < 2; ++i)

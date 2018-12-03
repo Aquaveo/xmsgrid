@@ -34,14 +34,14 @@ class XmUGrid;
 //----- Structs / Classes ------------------------------------------------------
 
 //----- Function prototypes ----------------------------------------------------
-std::vector<Pt3d> ConvexHull(std::vector<Pt3d> a_points);
-VecInt ConvexHullWithIndices(const VecInt& a_points, BSHP<XmUGrid> a_ugrid);
+std::vector<Pt3d> ConvexHull(const std::vector<Pt3<double>>& a_points);
+VecInt ConvexHullWithIndices(const std::vector<int>& a_points, BSHP<XmUGrid> a_ugrid);
 
-bool DoLineSegmentsCross(const std::pair<Pt3d, Pt3d>& a_segment1,
-                         const std::pair<Pt3d, Pt3d>& a_segment2);
-bool DoLineSegmentsCross(const Pt3d& a_segment1Point1,
-                         const Pt3d& a_segment1Point2,
-                         const Pt3d& a_segment2Point1,
-                         const Pt3d& a_segment2Point2);
+bool DoLineSegmentsCross(const std::pair<Pt3<double>, Pt3<double>>& a_segment1,
+                         const std::pair<Pt3<double>, Pt3<double>>& a_segment2);
+bool DoLineSegmentsCross(const Pt3<double>& a_segment1Point1,
+                         const Pt3<double>& a_segment1Point2,
+                         const Pt3<double>& a_segment2Point1,
+                         const Pt3<double>& a_segment2Point2);
 
 } // namespace xms
