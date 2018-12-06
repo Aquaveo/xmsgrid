@@ -7,7 +7,11 @@
 XmsGrid |version|
 *****************
 
+<<<<<<< HEAD
 **Last Updated:** January 14, 2019
+=======
+**Last Updated:** December 5, 2018
+>>>>>>> fix pydocs
 
 The xmsgrid library is a grid library for other aquaveo products. This library contains classes used to create grids.
 
