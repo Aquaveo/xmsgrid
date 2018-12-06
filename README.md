@@ -1,9 +1,13 @@
-[![Build Status](https://travis-ci.org/Aquaveo/xmsgrid.svg?branch=master)](https://travis-ci.org/Aquaveo/xmsgrid)
-[![Build status](https://ci.appveyor.com/api/projects/status/tkgmhrs31cc4l3ph?svg=true)](https://ci.appveyor.com/project/Aquaveo/xmsgrid)
-
 XMSGrid
 ========
 Grid library for XMS products
+
+Master Branch Status
+--------------------
+
+[![Build Status](https://travis-ci.org/Aquaveo/xmsgrid.svg?branch=master)](https://travis-ci.org/Aquaveo/xmsgrid)
+
+[![Build status](https://ci.appveyor.com/api/projects/status/tkgmhrs31cc4l3ph?svg=true)](https://ci.appveyor.com/project/Aquaveo/xmsgrid)
 
 Prerequisites
 --------------
@@ -18,4 +22,6 @@ See xmscore build [instructions](https://github.com/Aquaveo/xmscore/wiki/Buildin
 Documentation
 -------------
 
-See: [xmsgrid documentation](https://aquaveo.github.io/xmsgrid/)
+[C++ Documentation](https://aquaveo.github.io/xmsgrid/)
+
+[Python Documentation](https://aquaveo.github.io/xmsgrid/pydocs)
