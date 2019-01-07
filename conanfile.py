@@ -10,7 +10,7 @@ class XmsgridConan(ConanFile):
     """XMSGrid Conanfile"""
     name = "xmsgrid"
     #version = None
-    license = "XMSNG Software License"
+    license = "BSD2"
     url = "https://github.com/Aquaveo/xmsgrid"
     description = "Grid library for XMS products"
     settings = "os", "compiler", "build_type", "arch"
