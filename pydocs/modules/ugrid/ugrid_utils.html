@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>XmUGridUtils &mdash; XmsGrid Library  documentation</title>
+  <title>ugrid_utils &mdash; XmsGrid Library  documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="XmUGrid" href="XmUGrid.html" /> 
+    <link rel="prev" title="UGrid" href="UGrid.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -56,6 +56,10 @@
           
             
             
+              <div class="version">
+                2.0.1
+              </div>
+            
           
 
           
@@ -80,9 +84,9 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../../modules.html">Modules</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../../modules.html#ugrid">Ugrid</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="XmUGrid.html">XmUGrid</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">XmUGridUtils</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../modules.html#module-xmsgrid.ugrid">Ugrid</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="UGrid.html">UGrid</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ugrid_utils</a></li>
 </ul>
 </li>
 </ul>
@@ -134,13 +138,13 @@
         
           <li><a href="../../modules.html">Modules</a> &raquo;</li>
         
-      <li>XmUGridUtils</li>
+      <li>ugrid_utils</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/modules/ugrid/XmUGridUtils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/modules/ugrid/ugrid_utils.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -153,8 +157,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="xmugridutils">
-<h1>XmUGridUtils<a class="headerlink" href="#xmugridutils" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-xmsgrid.ugrid.ugrid_utils">
+<span id="ugrid-utils"></span><h1>ugrid_utils<a class="headerlink" href="#module-xmsgrid.ugrid.ugrid_utils" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file">
+<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">read_ugrid_from_ascii_file</code><span class="sig-paren">(</span><em>file_path: unicode</em><span class="sig-paren">)</span> &#x2192; xmsgrid.ugrid.UGrid<a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read XmUGrid from an ASCII file.</p>
+<dl class="docutils">
+<dt>Args: </dt>
+<dd>file_path (str): Filename to read including path, file name, and extension.</dd>
+<dt>Returns:</dt>
+<dd>XmUGrid: The UGrid that was read from the file.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file">
+<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">write_ugrid_to_ascii_file</code><span class="sig-paren">(</span><em>ugrid: xmsgrid.ugrid.UGrid</em>, <em>file_path: unicode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write an XmUGrid to an ASCII file.</p>
+<dl class="docutils">
+<dt>Args: </dt>
+<dd><p class="first">ugrid (XmUGrid): The XmUGrid to write to file.</p>
+<p class="last">file_path (str): Filename to write including path, file name, and extension.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -166,7 +194,7 @@
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="XmUGrid.html" class="btn btn-neutral" title="XmUGrid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="UGrid.html" class="btn btn-neutral" title="UGrid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -200,6 +228,7 @@
         <script type="text/javascript" src="../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
     
 
   

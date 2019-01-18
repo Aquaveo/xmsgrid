@@ -9,11 +9,11 @@ These are the modules currently exposed to python from the xmsgrid library
 Ugrid
 =====
 
-.. automodule:: xmsgrid_py.ugrid
+.. automodule:: xmsgrid.ugrid
 
 
 .. toctree::
    :maxdepth: 1
    
-   modules/ugrid/XmUGrid
-   modules/ugrid/XmUGridUtils
+   modules/ugrid/UGrid
+   modules/ugrid/ugrid_utils
