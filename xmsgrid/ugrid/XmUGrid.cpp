@@ -14,8 +14,6 @@
 
 // 3. Standard library headers
 #include <cmath>
-#include <set>
-#include <unordered_set>
 
 // 4. External library headers
 #include <boost/container/flat_set.hpp>
@@ -26,11 +24,11 @@
 #include <xmscore/misc/XmLog.h>
 #include <xmscore/misc/xmstype.h>
 #include <xmscore/stl/set.h>
+#include <xmsgrid/geometry/geoms.h>
 
 // 6. Non-shared code headers
 #include <xmsgrid/ugrid/detail/XmGeometry.h>
 #include <xmsgrid/ugrid/XmEdge.h>
-#include <xmsgrid/ugrid/XmUGridUtils.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -648,174 +646,6 @@ std::vector<std::pair<T, T>> iGetUniqueSegments(const std::vector<T>& a_segments
   segs.resize(segIt - segs.begin());
   return segs;
 } // iGetUniqueSegments
-//------------------------------------------------------------------------------
-/// \brief  Returns true if the points are equal to within gmXyTol().
-/// \param x1 x of point 1.
-/// \param y1 y of point 1.
-/// \param x2 x of point 2.
-/// \param y2 y of point 2.
-/// \param tolerance tolerance.
-/// \return true if equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXY(double x1, double y1, double x2, double y2, double tolerance)
-{
-  double dx = fabs(x1 - x2);
-  double dy = fabs(y1 - y2);
-  if (dx > tolerance || dy > tolerance)
-    return false;
-  else if (sqrt(dx * dx + dy * dy) <= tolerance)
-    return true;
-  else
-    return false;
-} // gmEqualPointsXY
-//------------------------------------------------------------------------------
-/// \brief   Determines if a point (x,y) is on the line defined by p1 and
-///          p2. Assumes p1 and p2 aren't the same.
-/// \param p1 first location defining a line
-/// \param p2 second location defining a line
-/// \param x x coord of point to test
-/// \param y y coord of point to test
-/// \param tol tolerance for geometric comparison
-/// \return  Returns true if the GetPointLocation is on the line passing through
-///          p1 and p2 within the tolerance passed.
-/// \note: you should always be careful to consider the case when p1 and
-///          p2 are very close to each other but not to x,y.  in that case this
-///          test will almost always fail because it will be more susceptible to
-///          roundoff error.  if you need to know if three points are colinear
-///          you should use the gmColinear function.
-//------------------------------------------------------------------------------
-bool gmOnLineWithTol(const Pt3d& p1,
-                     const Pt3d& p2,
-                     const double x,
-                     const double y,
-                     const double tol)
-{
-  // compute vector components
-  double dx = p2.x - p1.x;
-  double dy = p2.y - p1.y;
-  double mag = sqrt((dx * dx) + (dy * dy));
-  // check for extremely small segment
-  if (mag <= tol)
-    return gmEqualPointsXY(p1.x, p1.y, x, y, 1.0e-7);
-  else
-  {
-    double a = -dy / mag;
-    double b = dx / mag;
-    double c = -a * p2.x - b * p2.y;
-    // compute distance from line to (x,y)
-    double d = a * x + b * y + c;
-    return fabs(d) <= tol;
-  }
-} // gmOnLineWithTol
-//------------------------------------------------------------------------------
-/// \brief   Compute 2d planview projection of area of polygon.
-/// \param pts locations defining the polygon
-/// \param npoints number of pts
-/// \return Area of the polygon.
-///
-/// CCW = positive area, CW = negative. Don't repeat the last point.
-//------------------------------------------------------------------------------
-double gmPolygonArea(const Pt3d* pts, size_t npoints)
-{
-  size_t id;
-  double area = 0.0;
-
-  if (npoints < 3)
-    return area;
-
-  /* original method with precision errors
-  for (id = 0; id < npoints; id++)
-  {
-    if (id != (npoints - 1))
-    {
-      area += (pts[id].x * pts[id + 1].y);
-      area -= (pts[id].y * pts[id + 1].x);
-    }
-    else
-    {
-      area += (pts[id].x * pts[0].y);
-      area -= (pts[id].y * pts[0].x);
-    }
-  }
-  area /= 2.0;
-  */
-
-  // AKZ 2/15/2018
-  // I changed the implementation to translate the polygon
-  //   so that the first point is at the origin
-  // Reduces round off error due to large coordinates
-  // Reduces the number of computations because the first and last
-  //   computations in the loop would be 0.0
-  VecDbl x, y;
-  double x0 = pts[0].x;
-  double y0 = pts[0].y;
-  for (id = 1; id < npoints; id++)
-  {
-    x.push_back((pts[id].x - x0));
-    y.push_back((pts[id].y - y0));
-  }
-  for (id = 0; id < npoints - 2; id++)
-  {
-    area += (x[id] * y[id + 1]);
-    area -= (y[id] * x[id + 1]);
-  }
-  area /= 2.0;
-
-  return (area);
-} // gmPolygonArea
-//------------------------------------------------------------------------------
-/// \brief Computes the plan view centroid of a non-self-intersecting polygon.
-/// \param[in] pts Locations.
-/// \return Centroid.
-//------------------------------------------------------------------------------
-Pt3d gmComputePolygonCentroid(const VecPt3d& pts)
-{
-  Pt3d centroid;
-  if (pts.empty())
-    return centroid;
-  // get offset to use in calculation below to fix precision issues
-  double xMax = XM_DBL_LOWEST, yMax = XM_DBL_LOWEST, xMin = XM_DBL_HIGHEST, yMin = XM_DBL_HIGHEST;
-  size_t i = 0;
-  for (i = 0; i < pts.size(); ++i)
-  {
-    double x = pts[i].x;
-    double y = pts[i].y;
-    xMax = (x > xMax) ? x : xMax;
-    yMax = (y > yMax) ? y : yMax;
-    xMin = (x < xMin) ? x : xMin;
-    yMin = (y < yMin) ? y : yMin;
-  }
-  double xOffset = (xMax + xMin) / 2.0;
-  double yOffset = (yMax + yMin) / 2.0;
-  // For all vertices except last
-  double signedArea = 0.0;
-  for (i = 0; i < pts.size() - 1; ++i)
-  {
-    double x0 = pts[i].x - xOffset;
-    double y0 = pts[i].y - yOffset;
-    double x1 = pts[i + 1].x - xOffset;
-    double y1 = pts[i + 1].y - yOffset;
-    double a = x0 * y1 - x1 * y0;
-    signedArea += a;
-    centroid.x += (x0 + x1) * a;
-    centroid.y += (y0 + y1) * a;
-  }
-  // Do last vertex
-  double x0 = pts[i].x - xOffset;
-  double y0 = pts[i].y - yOffset;
-  double x1 = pts[0].x - xOffset;
-  double y1 = pts[0].y - yOffset;
-  double a = x0 * y1 - x1 * y0;
-  signedArea += a;
-  centroid.x += (x0 + x1) * a;
-  centroid.y += (y0 + y1) * a;
-  signedArea *= 0.5;
-  centroid.x /= (6.0 * signedArea);
-  centroid.y /= (6.0 * signedArea);
-  centroid.x += xOffset;
-  centroid.y += yOffset;
-  return centroid;
-} // gmComputePolygonCentroid
 //------------------------------------------------------------------------------
 /// \brief Merge possibly duplicate segments into a unique polygon.
 /// \param[in] a_segments The segments ordered {firstIdx1, firstIdx2,

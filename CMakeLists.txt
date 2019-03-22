@@ -83,6 +83,10 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsgrid_sources
+  xmsgrid/geometry/geoms.cpp
+  xmsgrid/geometry/GmPolygon.cpp
+  xmsgrid/matrices/matrix.cpp
+  xmsgrid/triangulate/triangles.cpp
   xmsgrid/ugrid/XmEdge.cpp
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
@@ -90,6 +94,11 @@ set(xmsgrid_sources
 )
 
 set(xmsgrid_headers
+  xmsgrid/geometry/geoms.h
+  xmsgrid/geometry/GmBoostTypes.h
+  xmsgrid/geometry/GmPolygon.h
+  xmsgrid/matrices/matrix.h
+  xmsgrid/triangulate/triangles.h
   xmsgrid/ugrid/XmEdge.h
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
@@ -116,6 +125,8 @@ if (BUILD_TESTING)
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources
+   xmsgrid/geometry/geoms.t.h
+   xmsgrid/geometry/GmPolygon.t.h
    xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
