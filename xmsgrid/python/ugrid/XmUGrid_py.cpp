@@ -68,20 +68,21 @@ py::iterable PyIterFromVecXmEdge(const std::vector<xms::XmEdge>& a_edges)
 
 void initXmUGrid(py::module &m) {
     // XmUGrid Class
-    const char* xmUGrid_doc = R"pydoc(
-        Class is a grid geometry library.
-    )pydoc";
-    py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUg(m, "UGrid",
-                                                                   xmUGrid_doc);
+    py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUg(m, "UGrid");
 
-
-    //Init
+  // ---------------------------------------------------------------------------
+  // function: init
+  // ---------------------------------------------------------------------------
     xmUg.def(py::init([]() {
             return boost::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New());
         }));
-  // ---------------------------------------------------------------------------
-  // function: init
-  // ---------------------------------------------------------------------------       
+    const char* ugrid_init_doc = R"pydoc(
+        UGrid Initilizer
+
+        Args:
+            pts (iterable): Points that make up the ugrid
+            cellstream (iterable): A cell stream for the grid
+    )pydoc";
     xmUg.def(py::init([](py::iterable pts, py::iterable cellstream) {
             boost::shared_ptr<xms::VecPt3d> points = 
                 xms::VecPt3dFromPyIter(pts);
@@ -89,7 +90,7 @@ void initXmUGrid(py::module &m) {
                 xms::VecIntFromPyIter(cellstream);
             return boost::shared_ptr<xms::XmUGrid>(
                 xms::XmUGrid::New(*points, *_cellstream));
-        }));
+        }), ugrid_init_doc, py::arg("pts"), py::arg("cellstream"));
   // Misc Functions
   // ---------------------------------------------------------------------------
   // function: get_modified
@@ -167,6 +168,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             point_idx (int): The index of the point.
+
         Returns:
             iterable: The point or an initialize point if the index is invalid.
     )pydoc";
@@ -182,8 +184,8 @@ void initXmUGrid(py::module &m) {
 
         Args:
             point_idx (int): The index of the point.
-
             location (iterable): The new location of the specified point.
+
         Returns:
             bool: Whether the point was successfully set.
     )pydoc";
@@ -199,6 +201,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             point_idx (int): The index of the point.
+
         Returns:
             iterable: The location of the point with Z set to 0.0.
     )pydoc";
@@ -247,7 +250,8 @@ void initXmUGrid(py::module &m) {
         Get the cells that are associated with the specified point.
 
         Args:
-            point_idx (int): The index of the point. 
+            point_idx (int): The index of the point.
+
         Returns:
             iterable: A vector of the cell indices associated with this point.
     )pydoc";
@@ -283,6 +287,7 @@ void initXmUGrid(py::module &m) {
           Args:
               point_idx (int): The index of the point.
               new_location (iterable): The proposed new location of the point.
+
           Returns:
               bool: Whether the change would be valid.
       )pydoc";
@@ -440,6 +445,7 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
+
         Returns:
             iterable: Contains whether it was successfull or not and the cellstream for the specified point..
     )pydoc";
@@ -528,7 +534,6 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
-
             edge_idx (int): The index of the edge.
 
         Returns:
@@ -547,7 +552,6 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
-
             edge_idx (int): The index of the edge.
 
         Returns:
@@ -567,7 +571,6 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
-
             edge_idx (int): The index of the edge.
 
         Returns:
@@ -672,7 +675,6 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The cell.
-
             face_idx (int): The face.
 
         Returns:
@@ -690,7 +692,6 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
-
             face_idx (int): The face index of the cell.
 
         Returns:
@@ -725,7 +726,6 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
-            
             face_idx (int): The face index of the cell.
 
         Returns:
@@ -744,7 +744,6 @@ void initXmUGrid(py::module &m) {
 
         Args:
             cell_idx (int): The index of the cell.
-
             face_idx (int): The face index of the cell.
 
         Returns:
