@@ -42,75 +42,23 @@ namespace xms
 
 //----- Class / Function definitions -------------------------------------------
 
-namespace
-{
 //------------------------------------------------------------------------------
-/// \brief Save an XmUGrid ASCII text to output stream.
-/// \param[in] a_ugrid: the UGrid to save
-/// \param[in] a_outStream: the stream to write
+/// \brief Read XmUGrid from an ASCII file.
+/// \param[in] a_filePath: filename to read including path, file name, and
+/// extension
+/// \return the UGrid that was read from the file
 //------------------------------------------------------------------------------
-void iWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
+BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
 {
-  a_outStream << "ASCII XmUGrid Version 1.0\n";
-
-  // number of points
-  const VecPt3d& points = a_ugrid->GetLocations();
-  a_outStream << "NUM_POINTS " << points.size() << "\n";
-
-  // points
-  for (size_t i = 0; i < points.size(); ++i)
-  {
-    const Pt3d& p = points[i];
-    a_outStream << "  POINT " << STRstd(p.x) << " " << STRstd(p.y) << " " << STRstd(p.z) << "\n";
-  }
-
-  // number of cell stream items
-  const VecInt& cellstream = a_ugrid->GetCellstream();
-  int cellstreamSize = (int)cellstream.size();
-  a_outStream << "NUM_CELL_ITEMS " << cellstreamSize << "\n";
-
-  // cells
-  int currIdx = 0;
-  while (currIdx < cellstreamSize)
-  {
-    int cellType = cellstream[currIdx++];
-    int numItems = cellstream[currIdx++];
-    a_outStream << "  CELL " << cellType;
-    if (cellType == -1)
-    {
-      currIdx += numItems;
-    }
-    else if (cellType == XMU_POLYHEDRON)
-    {
-      int numFaces = numItems;
-      a_outStream << " " << numFaces;
-      for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
-      {
-        numItems = cellstream[currIdx++];
-        a_outStream << "\n    " << numItems;
-        for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
-        {
-          a_outStream << " " << cellstream[currIdx++];
-        }
-      }
-    }
-    else
-    {
-      a_outStream << " " << numItems;
-      for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
-      {
-        a_outStream << " " << cellstream[currIdx++];
-      }
-    }
-    a_outStream << "\n";
-  }
-} // iWriteUGridToAsciiFile
+  std::ifstream inFile(a_filePath);
+  return XmReadUGridFromStream(inFile);
+} // XmReadUGridFromAsciiFile
 //------------------------------------------------------------------------------
 /// \brief Read an XmUGrid from ASCII text from an input stream.
 /// \param[in] a_inStream: the stream to read
 /// \return the UGrid
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> iReadUGridFromAsciiFile(std::istream& a_inStream)
+BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
 {
   if (a_inStream.eof())
   {
@@ -190,21 +138,7 @@ BSHP<XmUGrid> iReadUGridFromAsciiFile(std::istream& a_inStream)
 
   BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
   return ugrid;
-} // iReadUGridFromAsciiFile
-
-} // namespace
-
-//------------------------------------------------------------------------------
-/// \brief Read XmUGrid from an ASCII file.
-/// \param[in] a_filePath: filename to read including path, file name, and
-/// extension
-/// \return the UGrid that was read from the file
-//------------------------------------------------------------------------------
-BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
-{
-  std::ifstream inFile(a_filePath);
-  return iReadUGridFromAsciiFile(inFile);
-} // XmReadUGridFromAsciiFile
+} // XmReadUGridFromStream
 //------------------------------------------------------------------------------
 /// \brief Write an XmUGrid to an ASCII file.
 /// \param[in] a_ugrid: The UGrid to write to the file
@@ -214,8 +148,70 @@ BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
 void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePath)
 {
   std::ofstream outFile(a_filePath);
-  iWriteUGridToAsciiFile(a_ugrid, outFile);
+  XmWriteUGridToStream(a_ugrid, outFile);
 } // XmWriteUGridToAsciiFile
+
+//------------------------------------------------------------------------------
+/// \brief Save an XmUGrid ASCII text to output stream.
+/// \param[in] a_ugrid: the UGrid to save
+/// \param[in] a_outStream: the stream to write
+//------------------------------------------------------------------------------
+void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
+{
+  a_outStream << "ASCII XmUGrid Version 1.0\n";
+
+  // number of points
+  const VecPt3d& points = a_ugrid->GetLocations();
+  a_outStream << "NUM_POINTS " << points.size() << "\n";
+
+  // points
+  for (size_t i = 0; i < points.size(); ++i)
+  {
+    const Pt3d& p = points[i];
+    a_outStream << "  POINT " << STRstd(p.x) << " " << STRstd(p.y) << " " << STRstd(p.z) << "\n";
+  }
+
+  // number of cell stream items
+  const VecInt& cellstream = a_ugrid->GetCellstream();
+  int cellstreamSize = (int)cellstream.size();
+  a_outStream << "NUM_CELL_ITEMS " << cellstreamSize << "\n";
+
+  // cells
+  int currIdx = 0;
+  while (currIdx < cellstreamSize)
+  {
+    int cellType = cellstream[currIdx++];
+    int numItems = cellstream[currIdx++];
+    a_outStream << "  CELL " << cellType;
+    if (cellType == -1)
+    {
+      currIdx += numItems;
+    }
+    else if (cellType == XMU_POLYHEDRON)
+    {
+      int numFaces = numItems;
+      a_outStream << " " << numFaces;
+      for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+      {
+        numItems = cellstream[currIdx++];
+        a_outStream << "\n    " << numItems;
+        for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
+        {
+          a_outStream << " " << cellstream[currIdx++];
+        }
+      }
+    }
+    else
+    {
+      a_outStream << " " << numItems;
+      for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
+      {
+        a_outStream << " " << cellstream[currIdx++];
+      }
+    }
+    a_outStream << "\n";
+  }
+} // XmWriteUGridToStream
 
 } // namespace xms
 
@@ -238,7 +234,7 @@ void XmUGridUtilsTests::testWriteEmptyUGrid()
 {
   BSHP<XmUGrid> ugrid = XmUGrid::New();
   std::ostringstream output;
-  iWriteUGridToAsciiFile(ugrid, output);
+  XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
     "ASCII XmUGrid Version 1.0\n"
@@ -253,7 +249,7 @@ void XmUGridUtilsTests::testWriteBasicUGrid()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGrid1Left90Tri();
   std::ostringstream output;
-  iWriteUGridToAsciiFile(ugrid, output);
+  XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
     "ASCII XmUGrid Version 1.0\n"
@@ -273,7 +269,7 @@ void XmUGridUtilsTests::testWritePolyhedronUGrid()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGridHexagonalPolyhedron();
   std::ostringstream output;
-  iWriteUGridToAsciiFile(ugrid, output);
+  XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
     "ASCII XmUGrid Version 1.0\n"
@@ -305,7 +301,7 @@ void XmUGridUtilsTests::testWriteLinear2dCells()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGrid2dLinear();
   std::ostringstream output;
-  iWriteUGridToAsciiFile(ugrid, output);
+  XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
     "ASCII XmUGrid Version 1.0\n"
@@ -341,7 +337,7 @@ void XmUGridUtilsTests::testWriteLinear3dCells()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGrid3dLinear();
   std::ostringstream output;
-  iWriteUGridToAsciiFile(ugrid, output);
+  XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
     "ASCII XmUGrid Version 1.0\n"
@@ -402,7 +398,7 @@ void XmUGridUtilsTests::testReadEmptyUGridAsciiFile()
     "NUM_CELL_ITEMS 0\n";
   std::istringstream input;
   input.str(inputText);
-  BSHP<XmUGrid> ugrid = iReadUGridFromAsciiFile(input);
+  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
   if (!ugrid)
     TS_FAIL("Failed to read UGrid.");
 
@@ -425,7 +421,7 @@ void XmUGridUtilsTests::testReadBasicUGrid()
     "  CELL 5 3 0 1 2\n";
   std::istringstream input;
   input.str(inputText);
-  BSHP<XmUGrid> ugrid = iReadUGridFromAsciiFile(input);
+  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
   if (!ugrid)
     TS_FAIL("Failed to read UGrid.");
 
@@ -460,7 +456,7 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
     "    4 4 7 6 5\n";
   std::istringstream input;
   input.str(inputText);
-  BSHP<XmUGrid> ugrid = iReadUGridFromAsciiFile(input);
+  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
   if (!ugrid)
     TS_FAIL("Failed to read UGrid.");
 
@@ -477,12 +473,12 @@ void XmUGridUtilsTests::testLinear2dWriteThenRead()
 
   // write
   std::ostringstream output;
-  iWriteUGridToAsciiFile(ugridBase, output);
+  XmWriteUGridToStream(ugridBase, output);
 
   // read
   std::istringstream input;
   input.str(output.str());
-  BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
+  BSHP<XmUGrid> ugridOut = XmReadUGridFromStream(input);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
@@ -496,12 +492,12 @@ void XmUGridUtilsTests::testLinear3dWriteThenRead()
 
   // write
   std::ostringstream output;
-  iWriteUGridToAsciiFile(ugridBase, output);
+  XmWriteUGridToStream(ugridBase, output);
 
   // read
   std::istringstream input;
   input.str(output.str());
-  BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
+  BSHP<XmUGrid> ugridOut = XmReadUGridFromStream(input);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
@@ -516,12 +512,12 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
   // write
   std::string outFileName(TestFilesPath() + "3d_grid_linear.xmugrid");
   std::ofstream output(outFileName);
-  iWriteUGridToAsciiFile(ugridBase, output);
+  XmWriteUGridToStream(ugridBase, output);
   output.close();
 
   // read
   std::ifstream input(TestFilesPath() + "3d_grid_linear.xmugrid");
-  BSHP<XmUGrid> ugridOut = iReadUGridFromAsciiFile(input);
+  BSHP<XmUGrid> ugridOut = XmReadUGridFromStream(input);
   input.close();
   if (!ugridOut)
   {
