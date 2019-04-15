@@ -37,6 +37,6 @@ class XmUGrid;
 BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath);
 BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_istream);
 void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePath);
-void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_istream);
+void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_ostream);
 
 } // namespace xms
