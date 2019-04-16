@@ -141,7 +141,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_xm_edge_8cpp.html",
-"classxms_1_1_xm_u_grid_impl.html#a063c57c4185e1646128d2ff0b9aea66c"
+"classxms_1_1_xm_u_grid.html#afae1758d8433f3a9112aa0a5661505b8"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

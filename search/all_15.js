@@ -23,6 +23,7 @@ var searchData=
   ['xmlog_2et_2eh',['XmLog.t.h',['https://aquaveo.github.io/xmscore/_xm_log_8t_8h.html',1,'']]],
   ['xmlogunittests',['XmLogUnitTests',['https://aquaveo.github.io/xmscore/class_xm_log_unit_tests.html',1,'']]],
   ['xmreadugridfromasciifile',['XmReadUGridFromAsciiFile',['../namespacexms.html#a92b5c5c0a9e2455db6d671eb7134a76e',1,'xms']]],
+  ['xmreadugridfromstream',['XmReadUGridFromStream',['../namespacexms.html#a9d5b4a9ea7c259666b64babd5e190cf8',1,'xms']]],
   ['xms',['xms',['../namespacexms.html',1,'']]],
   ['xmstype_2eh',['xmstype.h',['https://aquaveo.github.io/xmscore/xmstype_8h.html',1,'']]],
   ['xmugrid',['XmUGrid',['../classxms_1_1_xm_u_grid.html',1,'xms::XmUGrid'],['../classxms_1_1_xm_u_grid.html#a2830cab0aca6c776321d58294dbc2208',1,'xms::XmUGrid::XmUGrid()']]],
@@ -39,5 +40,6 @@ var searchData=
   ['xmugridutils_2eh',['XmUGridUtils.h',['../_xm_u_grid_utils_8h.html',1,'']]],
   ['xmugridutils_2et_2eh',['XmUGridUtils.t.h',['../_xm_u_grid_utils_8t_8h.html',1,'']]],
   ['xmugridutilstests',['XmUGridUtilsTests',['../class_xm_u_grid_utils_tests.html',1,'']]],
-  ['xmwriteugridtoasciifile',['XmWriteUGridToAsciiFile',['../namespacexms.html#aad684d8d566604305a00cc4d875dd51e',1,'xms']]]
+  ['xmwriteugridtoasciifile',['XmWriteUGridToAsciiFile',['../namespacexms.html#aad684d8d566604305a00cc4d875dd51e',1,'xms']]],
+  ['xmwriteugridtostream',['XmWriteUGridToStream',['../namespacexms.html#adcf5db1fd47ba0560a24e9ae63b942df',1,'xms']]]
 ];

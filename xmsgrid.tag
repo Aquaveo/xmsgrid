@@ -345,11 +345,25 @@
       <arglist>(const std::string &amp;a_filePath)</arglist>
     </member>
     <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>XmReadUGridFromStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a9d5b4a9ea7c259666b64babd5e190cf8</anchor>
+      <arglist>(std::istream &amp;a_inStream)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>XmWriteUGridToAsciiFile</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>adcf5db1fd47ba0560a24e9ae63b942df</anchor>
+      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -365,11 +379,25 @@
       <arglist>(const std::string &amp;a_filePath)</arglist>
     </member>
     <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>XmReadUGridFromStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a9d5b4a9ea7c259666b64babd5e190cf8</anchor>
+      <arglist>(std::istream &amp;a_inStream)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>XmWriteUGridToAsciiFile</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>adcf5db1fd47ba0560a24e9ae63b942df</anchor>
+      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -2061,11 +2089,25 @@
       <arglist>(const std::string &amp;a_filePath)</arglist>
     </member>
     <member kind="function">
+      <type>BSHP&lt; XmUGrid &gt;</type>
+      <name>XmReadUGridFromStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a9d5b4a9ea7c259666b64babd5e190cf8</anchor>
+      <arglist>(std::istream &amp;a_inStream)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>XmWriteUGridToAsciiFile</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>adcf5db1fd47ba0560a24e9ae63b942df</anchor>
+      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
     </member>
   </compound>
   <compound kind="page">
