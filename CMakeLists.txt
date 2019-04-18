@@ -158,30 +158,32 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if(IS_PYTHON_BUILD)
-    pybind11_add_module(xmsgrid
+    pybind11_add_module(_xmsgrid
       ${xmsgrid_py} ${xmsgrid_py_headers}
     )
-    target_include_directories(xmsgrid
+    target_include_directories(_xmsgrid
         PRIVATE
           ${EXT_LIBS}
           ${PYTHON_INCLUDE_DIRS}
     )
-    target_link_libraries(xmsgrid
+    target_link_libraries(_xmsgrid
       PRIVATE
         ${EXT_LIBS}
         ${PROJECT_NAME}
     )
-    set_target_properties(xmsgrid PROPERTIES
+    set_target_properties(_xmsgrid PROPERTIES
       LINKER_LANGUAGE CXX
     )
 
     # Install recipe
     install(
-      TARGETS xmsgrid
-      ARCHIVE DESTINATION "site-packages"
-      LIBRARY DESTINATION "site-packages"
+      TARGETS _xmsgrid
+      ARCHIVE DESTINATION "_package/xmsgrid"
+      LIBRARY DESTINATION "_package/xmsgrid"
     )
 
+    install(DIRECTORY "_package/" DESTINATION "_package"
+             FILES_MATCHING PATTERN "*.py")
 endif()
 
 
