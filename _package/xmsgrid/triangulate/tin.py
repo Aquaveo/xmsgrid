@@ -1,0 +1,2 @@
+class Tin:
+    pass
