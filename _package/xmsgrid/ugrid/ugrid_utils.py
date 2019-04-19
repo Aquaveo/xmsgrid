@@ -1,4 +1,5 @@
 from .._xmsgrid.ugrid import ugrid_utils as ugu
+from .ugrid import UGrid
 
 
 def read_ugrid_from_ascii_file(file_name):
@@ -11,7 +12,7 @@ def read_ugrid_from_ascii_file(file_name):
     Returns:
         A ugrid read from a file
     """
-    return ugu.read_ugrid_from_ascii_file(file_name)
+    return UGrid(instance=ugu.read_ugrid_from_ascii_file(file_name))
 
 
 def write_ugrid_to_ascii_file(ugrid, file_name):
@@ -22,4 +23,4 @@ def write_ugrid_to_ascii_file(ugrid, file_name):
         ugrid: UGrid to write to a file
         file_name: File to write UGrid to
     """
-    ugu.write_ugrid_to_ascii_file(ugrid, file_name)
+    ugu.write_ugrid_to_ascii_file(ugrid._instance, file_name)

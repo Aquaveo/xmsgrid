@@ -5,13 +5,19 @@ class UGrid:
 
     """
 
+    cell_type_enum = XmUGrid.ugrid_celltype_enum
+    face_orientation_enum = XmUGrid.ugrid_faceorientation_enum
+
     def __init__(self, points=None, cellstream=None, **kwargs):
         if 'instance' not in kwargs:
-            if not points:
-                raise ValueError('points is a required arguments.')
-            if not cellstream:
-                raise ValueError('cellstream is a required argument.')
-            self._instance = XmUGrid(points, cellstream)
+            if points is None and cellstream is None:
+                self._instance = XmUGrid()
+            elif points is None:
+                raise ValueError("Cannot create ugrid with cellstream and no points")
+            elif cellstream is None:
+                self._instance = XmUGrid(points, [])
+            else:
+                self._instance = XmUGrid(points, cellstream)
         else:
             self._instance = kwargs['instance']
 
@@ -32,7 +38,7 @@ class UGrid:
 
     @locations.setter
     def locations(self, locations):
-        return self._instance.SetLocations(locations)
+        self._instance.SetLocations(locations)
 
     @property
     def cellstream(self):
@@ -40,8 +46,8 @@ class UGrid:
         return self._instance.GetCellstream()
 
     @cellstream.setter
-    def cellstream(self, cellstream):
-        self._instance.SetCellstream(cellstream)
+    def cellstream(self, _cellstream):
+        self._instance.SetCellstream(_cellstream)
 
     @property
     def extents(self):
@@ -73,8 +79,6 @@ class UGrid:
         """
         self._instance.SetUseCache(use_cache)
 
-    #TODO is_valid_cellstream
-
     def get_point_location(self, point_idx):
         """
         Get location of a single point
@@ -85,7 +89,7 @@ class UGrid:
         Returns:
             A tuple point location of the point at point_idx
         """
-        return self._instance.GetLocation(point_idx)
+        return self._instance.GetPointLocation(point_idx)
 
     def set_point_location(self, point_idx, location):
         """
@@ -96,9 +100,9 @@ class UGrid:
             location:
 
         Returns:
-
+            bool if successful
         """
-        return self._instance.GetLocation(point_idx, location)
+        return self._instance.SetPointLocation(point_idx, location)
 
     def get_point_xy0(self, point_idx):
         """
@@ -468,3 +472,19 @@ class UGrid:
 
         """
         return self._instance.GetCell3dFaceOrientation(cell_idx, face_idx)
+
+    # @staticmethod
+    # def _get_cell_type_enum(_enum_string):
+    #     _reverse_dictionary = {v: k for k, v in XmUGrid.ugrid_celltype_enum.__members__.items()}
+    #     if _enum_string not in _reverse_dictionary:
+    #         raise ValueError('cell type not supported: {}'.format(_enum_string))
+    #     else:
+    #         return _reverse_dictionary[_enum_string]
+    #
+    # @staticmethod
+    # def _get_face_orientation_enum(_enum_string):
+    #     _reverse_dictionary = {v: k for k, v in XmUGrid.ugrid_faceorientation_enum.__members__.items()}
+    #     if _enum_string not in _reverse_dictionary:
+    #         raise ValueError('face orientation not supported: {} - {}'.format(_enum_string, _reverse_dictionary))
+    #     else:
+    #         return _reverse_dictionary[_enum_string]
