@@ -83,6 +83,27 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsgrid_sources
+  # Geometry
+  xmsgrid/geometry/geoms.cpp
+  xmsgrid/geometry/GmExtents.cpp
+  xmsgrid/geometry/GmMultiPolyIntersectionSorterTerse.cpp
+  xmsgrid/geometry/GmMultiPolyIntersector.cpp
+  xmsgrid/geometry/GmPolygon.cpp
+  xmsgrid/geometry/GmPolyLinePtRedistributer.cpp
+  xmsgrid/geometry/GmPtSearch.cpp
+  xmsgrid/geometry/GmTriSearch.cpp
+  # Matrices
+  xmsgrid/matrices/matrix.cpp
+  # Triangulate
+  xmsgrid/triangulate/TrBreaklineAdder.cpp
+  xmsgrid/triangulate/triangles.cpp
+  xmsgrid/triangulate/TrTin.cpp
+  xmsgrid/triangulate/TrTriangulator.cpp
+  xmsgrid/triangulate/TrTriangulatorPoints.cpp
+  xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.cpp
+  xmsgrid/triangulate/detail/triangulate.cpp
+  xmsgrid/triangulate/detail/TrOuterTriangleDeleter.cpp
+  # UGrid
   xmsgrid/ugrid/XmEdge.cpp
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
@@ -90,6 +111,30 @@ set(xmsgrid_sources
 )
 
 set(xmsgrid_headers
+  # Geometry
+  xmsgrid/geometry/geoms.h
+  xmsgrid/geometry/GmBoostTypes.h
+  xmsgrid/geometry/GmExtents.h
+  xmsgrid/geometry/GmMultiPolyIntersectionSorter.h
+  xmsgrid/geometry/GmMultiPolyIntersectionSorterTerse.h
+  xmsgrid/geometry/GmMultiPolyIntersector.h
+  xmsgrid/geometry/GmMultiPolyIntersectorData.h
+  xmsgrid/geometry/GmPolygon.h
+  xmsgrid/geometry/GmPolyLinePtRedistributer.h
+  xmsgrid/geometry/GmPtSearch.h
+  xmsgrid/geometry/GmTriSearch.h
+  # Matrices
+  xmsgrid/matrices/matrix.h
+  # Triangulate
+  xmsgrid/triangulate/TrBreaklineAdder.h
+  xmsgrid/triangulate/triangles.h
+  xmsgrid/triangulate/TrTin.h
+  xmsgrid/triangulate/TrTriangulator.h
+  xmsgrid/triangulate/TrTriangulatorPoints.h
+  xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.h
+  xmsgrid/triangulate/detail/triangulate.h
+  xmsgrid/triangulate/detail/TrOuterTriangleDeleter.h
+  # Ugrid
   xmsgrid/ugrid/XmEdge.h
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
@@ -99,6 +144,12 @@ set(xmsgrid_headers
 # Pybind11 sources
 set(xmsgrid_py
   xmsgrid/python/xmsgrid_py.cpp
+  # Geometry
+  xmsgrid/python/geometry/geometry_py.cpp
+  xmsgrid/python/geometry/GmTriSearch_py.cpp
+  # Triangulate
+  xmsgrid/python/triangulate/triangulate_py.cpp
+  xmsgrid/python/triangulate/TrTin_py.cpp
   #UGrid
   xmsgrid/python/ugrid/ugrid_py.cpp
   xmsgrid/python/ugrid/XmEdge_py.cpp
@@ -107,6 +158,10 @@ set(xmsgrid_py
 )
 
 set(xmsgrid_py_headers
+  # Geometry
+  xmsgrid/python/geometry/geometry_py.h
+  # Triangulate
+  xmsgrid/python/triangulate/triangulate_py.h
   xmsgrid/python/ugrid/ugrid_py.h
 )
 
@@ -116,6 +171,21 @@ if (BUILD_TESTING)
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources
+   # Geometry
+   xmsgrid/geometry/geoms.t.h
+   xmsgrid/geometry/GmExtents.t.h
+   xmsgrid/geometry/GmMultiPolyIntersector.t.h
+   xmsgrid/geometry/GmPolygon.t.h
+   xmsgrid/geometry/GmPolyLinePtRedistributer.t.h
+   xmsgrid/geometry/GmPtSearch.t.h
+   xmsgrid/geometry/GmTriSearch.t.h
+   # Triangulate
+   xmsgrid/triangulate/TrBreaklineAdder.t.h
+   xmsgrid/triangulate/TrTin.t.h
+   xmsgrid/triangulate/TrTriangulatorPoints.t.h
+   xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.t.h
+   xmsgrid/triangulate/detail/TrOuterTriangleDeleter.t.h
+   # UGrid
    xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h

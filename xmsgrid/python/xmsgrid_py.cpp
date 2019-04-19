@@ -7,6 +7,8 @@
 
 //----- Included files ---------------------------------------------------------
 #include <pybind11/pybind11.h>
+#include <xmsgrid/python/geometry/geometry_py.h>
+#include <xmsgrid/python/triangulate/triangulate_py.h>
 #include <xmsgrid/python/ugrid/ugrid_py.h>
 
 //----- Namespace declaration --------------------------------------------------
@@ -22,14 +24,14 @@ namespace py = pybind11;
 PYBIND11_MODULE(_xmsgrid, m) {
     m.doc() = "Python bindings for xmsgrid"; // optional module docstring
     m.attr("__version__") = XMS_VERSION;
-
-    const char* misc_doc = R"pydoc(
-        Xmsgrid is a grid geometry library used in xms libraries and products. 
-        The library supports unstructured grids with 0D, 1D, 2D and 3D elements. 
-        Contains functions to read and write unstructered grids.
-    )pydoc"; 
+    // Triangulate module
+    py::module modTriangulate = m.def_submodule("triangulate");
+    initTriangulate(modTriangulate);
+    // Geometry module
+    py::module modGeometry = m.def_submodule("geometry");
+    initGeometry(modGeometry);
     // UGrid module
-    py::module modUGrid = m.def_submodule("ugrid", misc_doc);
+    py::module modUGrid = m.def_submodule("ugrid");
     initUGrid(modUGrid);
 }
 

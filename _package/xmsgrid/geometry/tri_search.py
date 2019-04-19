@@ -27,7 +27,7 @@ class TriSearch:
     @property
     def triangle_activity(self):
         """Activity of the triangles"""
-        return self._instance.GetPtActivity()
+        return self._instance.GetTriActivity()
 
     @triangle_activity.setter
     def triangle_activity(self, activity):
@@ -78,9 +78,9 @@ class TriSearch:
         Returns:
             The indices to triangles whose envelope intersects with the input envelope.
         """
-        return self._instance.TriEnvelopesOverop(min_point, max_point)
+        return self._instance.TriEnvelopesOverlap(min_point, max_point)
 
-    def interp_weights(self, point, indices, weights):
+    def interp_weights(self, point):
         """
         Use the stored triangles to get interpolation weights for a point.
 
@@ -88,9 +88,9 @@ class TriSearch:
             point (iterable): location that is interpolated to.
 
         Returns:
-            A tuple of triangle point indices and triangle point weights or None if the point is not any triangle
+            A tuple of a flag if it was successful, triangle point indices and triangle point weights.
         """
-        return self._instance.TriContainingPt(point)
+        return self._instance.InterpWeights(point)
 
     def interp_weights_triangle_index(self, point):
         """
@@ -99,6 +99,6 @@ class TriSearch:
             point (iterable): location that is interpolated to.
 
         Returns:
-            A tuple of the triangle containing the point, triangle point indices and triangle point weights or None if the point is not any triangle
+            A tuple of a flag if it was successful, triangle containing the point, triangle point indices and triangle point weights or None if the point is not any triangle
         """
-        return self._instance.TriContainingPt(point)
+        return self._instance.InterpWeightsTriangleIdx(point)

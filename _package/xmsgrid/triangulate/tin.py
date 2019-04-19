@@ -7,18 +7,19 @@ class Tin:
 
     def __init__(self, points=None, triangles=None, **kwargs):
         if 'instance' not in kwargs:
-            if not points:
+            if points is None:
                 raise ValueError('points is a required arguments.')
-            if not triangles:
-                raise ValueError('triangles is a required argument.')
-            self._instance = TrTin(points, triangles)
+            if triangles is None:
+                self._instance = TrTin(points)
+            else:
+                self._instance = TrTin(points, triangles)
         else:
             self._instance = kwargs['instance']
 
     @property
     def points(self):
         """Points in the tin"""
-        return self._instance.Points()
+        return self._instance.Points
 
     @points.setter
     def points(self, _points):
@@ -27,7 +28,7 @@ class Tin:
     @property
     def triangles(self):
         """Triangles defining the tin"""
-        return self._instance.Triangles()
+        return self._instance.Triangles
 
     @triangles.setter
     def triangles(self, _triangles):
@@ -36,7 +37,7 @@ class Tin:
     @property
     def triangles_adjacent_to_points(self):
         """Triangles adjacent to points"""
-        return self._instance.TrianglesAdjacentToPoints()
+        return self._instance.TrianglesAdjacentToPoints
 
     @triangles_adjacent_to_points.setter
     def triangles_adjacent_to_points(self, _triangles_adjacent_to_points):
@@ -45,17 +46,17 @@ class Tin:
     @property
     def number_of_points(self):
         """Number of points in the tin"""
-        return self._instance.NumPoints()
+        return self._instance.NumPoints
 
     @property
     def number_of_triangles(self):
         """Number of triangles in the tin"""
-        return self._instance.NumTriangles()
+        return self._instance.NumTriangles
 
     @property
-    def boundary_points(self, boundary_points):
+    def boundary_points(self):
         """Indices of all points on any boundary, in no particular order"""
-        return self._instance.GetBoundaryPoints(boundary_points)
+        return self._instance.GetBoundaryPoints()
 
     @property
     def boundary_polys(self):
@@ -71,6 +72,23 @@ class Tin:
         The extents of the tin
         """
         return self._instance.GetExtents()
+
+    def set_geometry(self, points, triangles, triangles_adjacent_to_points):
+        """
+        Set the geomoetry of the tin
+
+        Args:
+            points: Points in tin
+            triangles: Triangles defining tin
+            triangles_adjacent_to_points: Triangles adjacent to points
+        """
+        self._instance.SetGeometry(points, triangles, triangles_adjacent_to_points)
+
+    def triangulate(self):
+        """
+        Triangulate the tin
+        """
+        self._instance.Triangulate()
 
     def triangle_from_edge(self, point1,  point2):
         """
@@ -112,6 +130,16 @@ class Tin:
         return self._instance.LocalIndex(triangle,  point)
     
     def global_index(self, triangle_idx,  local_point):
+        """
+        Returns the global index of a point given the local index and a triangle
+
+        Args:
+            triangle_idx: triangle to search
+            local_point: local index
+
+        Returns:
+            global index of local_point in triangle_idx
+        """
         return self._instance.GlobalIndex(triangle_idx,  local_point)
     
     def vertices_are_adjacent(self, point1,  point2):
@@ -201,14 +229,14 @@ class Tin:
         """
         return self._instance.PreviousBoundaryPoint(point)
     
-    def export_tin_file(self, os):
+    def export_tin_file(self, file_name):
         """
         Export in the .tin file format.
 
         Args:
-            os (file): a file to write the tin to
+            file_name (str): a file to write the tin to
         """
-        self._instance.ExportTinFile(os)
+        self._instance.ExportTinFile(file_name)
 
     # Modifiers
     def swap_edge(self, triangle_a,  triangle_b,  check_angle=True):
