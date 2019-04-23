@@ -19,7 +19,7 @@ requires = [
     'xmscore',
 ]
 
-version = '0.0.0'
+version = '3.0.0'
 
 setup(
     python_requires='==3.6.8',
