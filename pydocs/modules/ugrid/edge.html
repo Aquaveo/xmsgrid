@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>ugrid_utils &mdash; XmsGrid Library  documentation</title>
+  <title>edge &mdash; XmsGrid Library  documentation</title>
   
 
   
@@ -35,7 +35,8 @@
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="edge" href="edge.html" /> 
+    <link rel="next" title="ugrid_utils" href="ugrid_utils.html" />
+    <link rel="prev" title="UGrid" href="UGrid.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,8 +92,8 @@
 <p class="caption"><span class="caption-text">User Interface</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="UGrid.html">UGrid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="edge.html">edge</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">ugrid_utils</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">edge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ugrid_utils.html">ugrid_utils</a></li>
 </ul>
 
             
@@ -138,13 +139,13 @@
     
       <li><a href="../../index.html">Docs</a> &raquo;</li>
         
-      <li>ugrid_utils</li>
+      <li>edge</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../../_sources/modules/ugrid/ugrid_utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/modules/ugrid/edge.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -157,38 +158,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-xmsgrid.ugrid.ugrid_utils">
-<span id="ugrid-utils"></span><h1>ugrid_utils<a class="headerlink" href="#module-xmsgrid.ugrid.ugrid_utils" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-xmsgrid.ugrid.edge">
+<span id="edge"></span><h1>edge<a class="headerlink" href="#module-xmsgrid.ugrid.edge" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file">
-<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">read_ugrid_from_ascii_file</code><span class="sig-paren">(</span><em>file_path: unicode</em><span class="sig-paren">)</span> &#x2192; xmsgrid.ugrid.UGrid<a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read XmUGrid from an ASCII file.</p>
+<dt id="xmsgrid.ugrid.edge.edges_equivalent">
+<code class="descclassname">xmsgrid.ugrid.edge.</code><code class="descname">edges_equivalent</code><span class="sig-paren">(</span><em>a_edge1: iterable</em>, <em>a_edge2: iterable</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#xmsgrid.ugrid.edge.edges_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if two edges are the same ignoring direction</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_path</strong> (<em>str</em>) – Filename to read including path, file name, and extension.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The UGrid that was read from the file.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">XmUGrid</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file">
-<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">write_ugrid_to_ascii_file</code><span class="sig-paren">(</span><em>ugrid: xmsgrid.ugrid.UGrid</em>, <em>file_path: unicode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write an XmUGrid to an ASCII file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ugrid</strong> (<em>XmUGrid</em>) – The XmUGrid to write to file.</li>
-<li><strong>file_path</strong> (<em>str</em>) – Filename to write including path, file name, and extension.</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a_edge1</strong> (<em>iterable</em>) – The first edge to compare against</li>
+<li><strong>a_edge2</strong> (<em>iterable</em>) – The second edge to compare against</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">If two edges are same when indexes are in sorted order</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
 </td>
 </tr>
 </tbody>
@@ -205,8 +194,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="ugrid_utils.html" class="btn btn-neutral float-right" title="ugrid_utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="edge.html" class="btn btn-neutral float-left" title="edge" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="UGrid.html" class="btn btn-neutral float-left" title="UGrid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

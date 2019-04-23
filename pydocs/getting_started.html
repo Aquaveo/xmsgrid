@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Modules &mdash; XmsGrid Library  documentation</title>
+  <title>Installation &mdash; XmsGrid Library  documentation</title>
   
 
   
@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="UGrid" href="modules/ugrid/UGrid.html" />
-    <link rel="prev" title="Getting Started" href="gettingstarted.html" /> 
+    <link rel="prev" title="XmsGrid 2.1.1" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                2.1.0
+                2.1.1
               </div>
             
           
@@ -84,16 +84,16 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-xmsgrid.ugrid">Ugrid</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="modules/ugrid/UGrid.html">UGrid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/ugrid/ugrid_utils.html">ugrid_utils</a></li>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
-</li>
-</ul>
-</li>
+<p class="caption"><span class="caption-text">User Interface</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/ugrid/UGrid.html">UGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/ugrid/edge.html">edge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/ugrid/ugrid_utils.html">ugrid_utils</a></li>
 </ul>
 
             
@@ -139,13 +139,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Modules</li>
+      <li>Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -158,22 +158,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="modules">
-<h1>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h1>
-<p><strong>Last Update:</strong> October 5, 2018</p>
-<p>These are the modules currently exposed to python from the xmsgrid library</p>
-<div class="section" id="module-xmsgrid.ugrid">
-<span id="ugrid"></span><h2>Ugrid<a class="headerlink" href="#module-xmsgrid.ugrid" title="Permalink to this headline">¶</a></h2>
-<p>Xmsgrid is a grid geometry library used in xms libraries and products. 
-The library supports unstructured grids with 0D, 1D, 2D and 3D elements. 
-Contains functions to read and write unstructered grids.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="modules/ugrid/UGrid.html">UGrid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/ugrid/ugrid_utils.html">ugrid_utils</a></li>
-</ul>
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>XmsGrid can be installed using <a class="reference external" href="https://www.anaconda.com/download/">Anaconda</a>.</p>
+<p>You can install XmsGrid using the <a class="reference external" href="https://www.anaconda.com/download/">conda</a> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">aquaveo</span> <span class="n">xmsgrid</span>
+</pre></div>
 </div>
+<p>This will install XmsGrid and <strong>all</strong> the needed dependencies.</p>
 </div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>The XmsGrid library contains classes for defining geometric grids that can be used in other
+Aquaveo libraries.</p>
+<p>Usage and documentation for each class can be found in the <strong>User Interface</strong> section
+of this site. There are also additional examples that can be found on the <a class="reference external" href="https://aquaveo.github.io/examples/xmsinterp/xmsinterp.html">Examples</a> page</p>
 </div>
 
 
@@ -187,7 +186,7 @@ Contains functions to read and write unstructered grids.</p>
         <a href="modules/ugrid/UGrid.html" class="btn btn-neutral float-right" title="UGrid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="gettingstarted.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="XmsGrid 2.1.1" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
