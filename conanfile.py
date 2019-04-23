@@ -59,7 +59,7 @@ class XmsgridConan(ConanFile):
                 and self.options.pybind:
             self.requires("pybind11/2.2.2@aquaveo/stable")
 
-        self.requires("xmscore/[>=2.0.0,<3.0.0]@aquaveo/stable")
+        self.requires("xmscore/[>=3.0.1,<4.0.0]@aquaveo/stable")
 
     def build(self):
         cmake = CMake(self)
@@ -100,13 +100,21 @@ class XmsgridConan(ConanFile):
                   self.run('pip install --user numpy')
                 else:
                   self.run('pip install numpy')
-                self.run('python -m unittest discover -v -p *_pyt.py -s ../xmsgrid/python', cwd="./lib")
+                self.run('python -m unittest discover -v -p *_pyt.py -s {}/xmsgrid/python'.format(
+                    os.path.join(self.build_folder)), cwd=os.path.join(self.package_folder, "_package"))
+                # Create and upload wheel to PyPi if release and windows
+                is_release = self.env.get("RELEASE_PYTHON", 'False')
+                if self.settings.os == "Windows" and is_release == 'True' and \
+                        str(self.settings.compiler.runtime) == "MD":
+                    self.run('python setup.py bdist_wheel --plat-name=win_amd64 --dist-dir {}'.format(
+                        os.path.join(self.build_folder, "dist")), cwd=os.path.join(self.package_folder, "_package"))
+                    self.run('twine upload dist/*', cwd=".")
 
     def package(self):
         self.copy("license", dst="licenses", ignore_case=True, keep_path=False)
 
     def package_info(self):
-        self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "site-packages"))
+        self.env_info.PYTHONPATH.append(os.path.join(self.package_folder, "_package"))
         if self.settings.build_type == 'Debug':
             self.cpp_info.libs = ["xmsgridlib_d"]
         else:
