@@ -23,7 +23,7 @@ class XmsgridConan(ConanFile):
     generators = "cmake"
     build_requires = "cxxtest/4.4@aquaveo/stable"
     exports = "CMakeLists.txt", "LICENSE", "test_files/*"
-    exports_sources = "xmsgrid/*", "test_files/*"
+    exports_sources = "xmsgrid/*", "test_files/*", "_package/*"
 
     def configure(self):
         # Set verion dynamically using XMS_VERSION env variable.
