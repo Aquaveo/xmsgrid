@@ -1,3 +1,5 @@
+import numpy as np
+
 from .._xmsgrid.ugrid import XmUGrid
 
 class UGrid:
@@ -20,6 +22,16 @@ class UGrid:
                 self._instance = XmUGrid(points, cellstream)
         else:
             self._instance = kwargs['instance']
+
+    def __repr__(self):
+        return "<UGrid - Number of Locations: {}, Number of Cells: {}, Extents: {}, Modified: {}>".format(
+            self.point_count, self.cell_count, str(self.extents), str(self.modified)
+        )
+
+    def __str__(self):
+        return "<UGrid - Number of Locations: {}, Number of Cells: {}, Extents: {}, Modified: {}>".format(
+            self.point_count, self.cell_count, str(self.extents), str(self.modified)
+        )
 
     @property
     def modified(self):
@@ -472,19 +484,3 @@ class UGrid:
 
         """
         return self._instance.GetCell3dFaceOrientation(cell_idx, face_idx)
-
-    # @staticmethod
-    # def _get_cell_type_enum(_enum_string):
-    #     _reverse_dictionary = {v: k for k, v in XmUGrid.ugrid_celltype_enum.__members__.items()}
-    #     if _enum_string not in _reverse_dictionary:
-    #         raise ValueError('cell type not supported: {}'.format(_enum_string))
-    #     else:
-    #         return _reverse_dictionary[_enum_string]
-    #
-    # @staticmethod
-    # def _get_face_orientation_enum(_enum_string):
-    #     _reverse_dictionary = {v: k for k, v in XmUGrid.ugrid_faceorientation_enum.__members__.items()}
-    #     if _enum_string not in _reverse_dictionary:
-    #         raise ValueError('face orientation not supported: {} - {}'.format(_enum_string, _reverse_dictionary))
-    #     else:
-    #         return _reverse_dictionary[_enum_string]

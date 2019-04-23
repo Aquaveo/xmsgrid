@@ -16,6 +16,16 @@ class Tin:
         else:
             self._instance = kwargs['instance']
 
+    def __repr__(self):
+        return "<Tin - Point Count: {}, Triangle Count: {}, Extents: {}>".format(
+            self.number_of_points, self.number_of_triangles, self.extents
+        )
+
+    def __str__(self):
+        return "<Tin - Point Count: {}, Triangle Count: {}, Extents: {}>".format(
+            self.number_of_points, self.number_of_triangles, self.extents
+        )
+
     @property
     def points(self):
         """Points in the tin"""

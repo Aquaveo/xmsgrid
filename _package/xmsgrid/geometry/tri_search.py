@@ -15,6 +15,12 @@ class TriSearch:
         else:
             self._instance = kwargs['instance']
 
+    def __repr__(self):
+        return "<xmsgrid.geometry.TriSearch>"
+
+    def __str__(self):
+        return "<xmsgrid.geometry.TriSearch>"
+
     @property
     def point_activity(self):
         """Activity of the points"""
