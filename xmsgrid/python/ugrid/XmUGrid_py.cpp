@@ -98,7 +98,9 @@ void initXmUGrid(py::module &m) {
   // ---------------------------------------------------------------------------
   // function: GetPointCount
   // ---------------------------------------------------------------------------
-    xmUg.def("GetPointCount", &xms::XmUGrid::GetPointCount);
+    xmUg.def("GetPointCount", [](xms::XmUGrid &self) -> int {
+        return self.GetPointCount();
+    });
   // ---------------------------------------------------------------------------
   // function: GetLocations
   // ---------------------------------------------------------------------------
