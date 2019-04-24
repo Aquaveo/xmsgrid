@@ -1,6 +1,6 @@
 from .._xmsgrid.triangulate import TrTin
 
-class Tin:
+class Tin(object):
     """
 
     """

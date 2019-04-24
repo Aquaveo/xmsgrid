@@ -1,7 +1,7 @@
 from .._xmsgrid.ugrid import XmUGrid
 
 
-class UGrid:
+class UGrid(object):
     """Class for representing unstructured grid geometries
 
     """
