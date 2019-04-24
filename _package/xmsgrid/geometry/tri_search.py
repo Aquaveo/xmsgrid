@@ -1,6 +1,6 @@
 from .._xmsgrid.geometry import GmTriSearch
 
-class TriSearch:
+class TriSearch(object):
     """
 
     """
