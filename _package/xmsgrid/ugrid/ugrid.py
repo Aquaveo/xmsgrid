@@ -48,8 +48,8 @@ class UGrid:
         return self._instance.GetLocations()
 
     @locations.setter
-    def locations(self, locations):
-        self._instance.SetLocations(locations)
+    def locations(self, _locations):
+        self._instance.SetLocations(_locations)
 
     @property
     def cellstream(self):

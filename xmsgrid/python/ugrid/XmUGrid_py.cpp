@@ -109,8 +109,8 @@ void initXmUGrid(py::module &m) {
   // function: SetLocations
   // ---------------------------------------------------------------------------
     xmUg.def("SetLocations", [](xms::XmUGrid &self, py::iterable locations) {
-            boost::shared_ptr<xms::VecPt3d> locs = xms::VecPt3dFromPyIter(locations);
-            self.SetLocations(*locs);
+            xms::VecPt3d locs = *xms::VecPt3dFromPyIter(locations);
+            self.SetLocations(locs);
         }, py::arg("locations"));
   // ---------------------------------------------------------------------------
   // function: GetPointLocation
