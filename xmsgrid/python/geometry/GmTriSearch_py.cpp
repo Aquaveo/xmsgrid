@@ -42,7 +42,8 @@ void initGmTriSearch(py::module &m) {
   // property: SetPtActivity
   // ---------------------------------------------------------------------------
   iGmTriSearch.def("SetPtActivity", [](xms::GmTriSearch &self, py::iterable activity) {
-        self.SetPtActivity(xms::DynamicBitsetFromPyIter(activity));
+        xms::DynBitset bit_act = xms::DynamicBitsetFromPyIter(activity);
+        self.SetPtActivity(bit_act);
   });
   // ---------------------------------------------------------------------------
   // property: GetTriActivity
@@ -54,7 +55,8 @@ void initGmTriSearch(py::module &m) {
   // property: SetTriActivity
   // ---------------------------------------------------------------------------
   iGmTriSearch.def("SetTriActivity", [](xms::GmTriSearch &self, py::iterable activity) {
-        self.SetTriActivity(xms::DynamicBitsetFromPyIter(activity));
+        xms::DynBitset bit_act = xms::DynamicBitsetFromPyIter(activity);
+        self.SetTriActivity(bit_act);
   });
   // ---------------------------------------------------------------------------
   // property: GetPoints
