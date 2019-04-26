@@ -1,11 +1,10 @@
 var searchData=
 [
-  ['_7eprogress',['~Progress',['https://aquaveo.github.io/xmscore/classxms_1_1_progress.html#a093986f04a87dda5503b097ade380029',1,'xms::Progress']]],
-  ['_7eprogresslistener',['~ProgressListener',['https://aquaveo.github.io/xmscore/classxms_1_1_progress_listener.html#a284b9861f146ecfe2ec6967288aca1d3',1,'xms::ProgressListener']]],
-  ['_7ept2',['~Pt2',['https://aquaveo.github.io/xmscore/classxms_1_1_pt2.html#a07974c1bfe87d83350b897fa8ad98e54',1,'xms::Pt2']]],
-  ['_7ept3',['~Pt3',['https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a1b4a4cb9de9e47f8e0702dd7ac6e1fa7',1,'xms::Pt3']]],
-  ['_7ept4',['~Pt4',['https://aquaveo.github.io/xmscore/classxms_1_1_pt4.html#a5cd39733ccb240f7c9c10f3569d2f2bd',1,'xms::Pt4']]],
-  ['_7esttemp2digitexponents',['~StTemp2DigitExponents',['https://aquaveo.github.io/xmscore/classxms_1_1_st_temp2_digit_exponents.html#a6c3f0dc95e653a725b26cd5557497403',1,'xms::StTemp2DigitExponents']]],
-  ['_7exmlog',['~XmLog',['https://aquaveo.github.io/xmscore/classxms_1_1_xm_log.html#acc5f8eee341aeac5b06dba422619e5d6',1,'xms::XmLog']]],
-  ['_7exmugrid',['~XmUGrid',['../classxms_1_1_xm_u_grid.html#a00ece5dcb23ebc06e2651f4a3f3695c4',1,'xms::XmUGrid']]]
+  ['union',['Union',['../classxms_1_1_gm_polygon_impl.html#ae30032a3f50f76e8698cd3279c1441db',1,'xms::GmPolygonImpl']]],
+  ['updateareatolerance',['UpdateAreaTolerance',['../classxms_1_1_tr_triangulator_points.html#a172065079973143ab239b0b983b01074',1,'xms::TrTriangulatorPoints']]],
+  ['updatecelllinks',['UpdateCellLinks',['../classxms_1_1_xm_u_grid_impl.html#a643e4add9e15493c23dc1276c52dc5d7',1,'xms::XmUGridImpl']]],
+  ['updatelinks',['UpdateLinks',['../classxms_1_1_xm_u_grid_impl.html#ad3da23ee4f06663ef4be50bb1ed461af',1,'xms::XmUGridImpl']]],
+  ['updatemessage',['UpdateMessage',['https://aquaveo.github.io/xmscore/classxms_1_1_observer.html#afb06a8401e959a1edc51a4b4f9f4107b',1,'xms::Observer::UpdateMessage()'],['https://aquaveo.github.io/xmscore/classxms_1_1_progress.html#a72d02beac23718b96d32891ed9fa7de9',1,'xms::Progress::UpdateMessage()']]],
+  ['updateminmax',['UpdateMinMax',['../classxms_1_1_gm_pt_search_impl.html#a025de6d0fd6c227670e92acef587bfb1',1,'xms::GmPtSearchImpl']]],
+  ['updatepointlinks',['UpdatePointLinks',['../classxms_1_1_xm_u_grid_impl.html#ab4e7a86c2f130d5c32db8c8b8544a57f',1,'xms::XmUGridImpl']]]
 ];

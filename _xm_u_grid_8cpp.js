@@ -1,7 +1,6 @@
 var _xm_u_grid_8cpp =
 [
     [ "XmUGridImpl", "classxms_1_1_xm_u_grid_impl.html", "classxms_1_1_xm_u_grid_impl" ],
-    [ "VecEdge", "_xm_u_grid_8cpp.html#acd21e8de7357a71eb268548c301c9f43", null ],
     [ "TEST_XmUBuild3DChevronUgrid", "_xm_u_grid_8cpp.html#a18cc668860be57dfc3d4800446ab6dfb", null ],
     [ "TEST_XmUBuildHexahedronUgrid", "_xm_u_grid_8cpp.html#a0a50a2c6d678fa5e90212d03fecd3f44", null ],
     [ "TEST_XmUBuildHexahedronUgrid", "_xm_u_grid_8cpp.html#a9b7018697957bbe8aed198fe6cf69a07", null ],

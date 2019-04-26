@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                2.1.1
+                3.0.0
               </div>
             
           
@@ -161,17 +161,15 @@
 <span id="ugrid-utils"></span><h1>ugrid_utils<a class="headerlink" href="#module-xmsgrid.ugrid.ugrid_utils" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file">
-<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">read_ugrid_from_ascii_file</code><span class="sig-paren">(</span><em>file_path: unicode</em><span class="sig-paren">)</span> &#x2192; xmsgrid.ugrid.UGrid<a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read XmUGrid from an ASCII file.</p>
+<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">read_ugrid_from_ascii_file</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a ugrid from an ascii file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_path</strong> (<em>str</em>) – Filename to read including path, file name, and extension.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> – file to read the ugrid from</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The UGrid that was read from the file.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">XmUGrid</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A ugrid read from a file</td>
 </tr>
 </tbody>
 </table>
@@ -179,15 +177,15 @@
 
 <dl class="function">
 <dt id="xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file">
-<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">write_ugrid_to_ascii_file</code><span class="sig-paren">(</span><em>ugrid: xmsgrid.ugrid.UGrid</em>, <em>file_path: unicode</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write an XmUGrid to an ASCII file.</p>
+<code class="descclassname">xmsgrid.ugrid.ugrid_utils.</code><code class="descname">write_ugrid_to_ascii_file</code><span class="sig-paren">(</span><em>ugrid</em>, <em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a ugrid to an ascii file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ugrid</strong> (<em>XmUGrid</em>) – The XmUGrid to write to file.</li>
-<li><strong>file_path</strong> (<em>str</em>) – Filename to write including path, file name, and extension.</li>
+<li><strong>ugrid</strong> – UGrid to write to a file</li>
+<li><strong>file_name</strong> – File to write UGrid to</li>
 </ul>
 </td>
 </tr>

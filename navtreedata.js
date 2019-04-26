@@ -114,7 +114,8 @@ var NAVTREE =
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Typedefs", "namespacemembers_type.html", null ],
-        [ "Enumerations", "namespacemembers_enum.html", null ]
+        [ "Enumerations", "namespacemembers_enum.html", null ],
+        [ "Enumerator", "namespacemembers_eval.html", null ]
       ] ]
     ] ],
     [ "Classes", "annotated.html", [
@@ -122,8 +123,9 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", null ],
+        [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ],
+        [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
         [ "Enumerator", "functions_eval.html", null ]
       ] ]
@@ -132,7 +134,8 @@ var NAVTREE =
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ]
+        [ "Functions", "globals_func.html", null ],
+        [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
   ] ]
@@ -140,8 +143,12 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_xm_edge_8cpp.html",
-"classxms_1_1_xm_u_grid.html#afae1758d8433f3a9112aa0a5661505b8"
+"_gm_boost_types_8h.html",
+"class_geoms_xmsng_unit_tests.html#a55f61c470b2c64974edeedda4523d500",
+"classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ab8b8a8153fae932c73a83a639f8ac7ad",
+"classxms_1_1_tr_tin_impl.html#ac145283448f45f0b1ac4e5435421a8a2",
+"functions_func_e.html",
+"md__three_d__tutorial.html#Example_GetCellDimension3d"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

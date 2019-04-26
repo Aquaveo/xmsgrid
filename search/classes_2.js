@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['impl',['impl',['https://aquaveo.github.io/xmscore/classxms_1_1_observer_1_1impl.html',1,'xms::Observer::impl'],['https://aquaveo.github.io/xmscore/structxms_1_1_xm_log_1_1_impl.html',1,'xms::XmLog::Impl']]]
+  ['fsatisfies',['fSatisfies',['../classxms_1_1f_satisfies.html',1,'xms']]],
+  ['functorsunittests',['FunctorsUnitTests',['https://aquaveo.github.io/xmscore/class_functors_unit_tests.html',1,'']]]
 ];

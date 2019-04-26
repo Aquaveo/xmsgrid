@@ -1,7 +1,14 @@
 var searchData=
 [
-  ['updatecelllinks',['UpdateCellLinks',['../classxms_1_1_xm_u_grid_impl.html#a643e4add9e15493c23dc1276c52dc5d7',1,'xms::XmUGridImpl']]],
-  ['updatelinks',['UpdateLinks',['../classxms_1_1_xm_u_grid_impl.html#ad3da23ee4f06663ef4be50bb1ed461af',1,'xms::XmUGridImpl']]],
-  ['updatemessage',['UpdateMessage',['https://aquaveo.github.io/xmscore/classxms_1_1_observer.html#afb06a8401e959a1edc51a4b4f9f4107b',1,'xms::Observer::UpdateMessage()'],['https://aquaveo.github.io/xmscore/classxms_1_1_progress.html#a72d02beac23718b96d32891ed9fa7de9',1,'xms::Progress::UpdateMessage()']]],
-  ['updatepointlinks',['UpdatePointLinks',['../classxms_1_1_xm_u_grid_impl.html#ab4e7a86c2f130d5c32db8c8b8544a57f',1,'xms::XmUGridImpl']]]
+  ['receivetriangle',['ReceiveTriangle',['../classxms_1_1_tr_triangulator_points.html#ab4fb455a7ae86c84b8e29b5d03db916d',1,'xms::TrTriangulatorPoints']]],
+  ['redistpolylinewithnumseg',['RedistPolyLineWithNumSeg',['../classxms_1_1_gm_poly_line_pt_redistributer_impl.html#a9d3e8de1f6238353c11aa3e72f136696',1,'xms::GmPolyLinePtRedistributerImpl']]],
+  ['redistribute',['Redistribute',['../classxms_1_1_gm_poly_line_pt_redistributer_impl.html#a0fc65a7270b63dd43103de7051d82f44',1,'xms::GmPolyLinePtRedistributerImpl']]],
+  ['removecornertouches',['RemoveCornerTouches',['../classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ac86036c81726449c8121c1a05fd73db3',1,'xms::GmMultiPolyIntersectionSorterTerse']]],
+  ['removeduplicateedges',['RemoveDuplicateEdges',['../classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a1ef5deaea8e21cd99a88376758bc6c64',1,'xms::GmMultiPolyIntersectionSorterTerse']]],
+  ['removelongthintrianglesonperimeter',['RemoveLongThinTrianglesOnPerimeter',['../classxms_1_1_tr_tin_impl.html#a6539e41ceec60374722e504d8e38dfb2',1,'xms::TrTinImpl']]],
+  ['removepts',['RemovePts',['../classxms_1_1_tr_auto_fix_four_triangle_pts_impl.html#a8c1abb56f3123fc5a41e7ac155e4a886',1,'xms::TrAutoFixFourTrianglePtsImpl']]],
+  ['removetris',['RemoveTris',['../classxms_1_1_tr_auto_fix_four_triangle_pts_impl.html#a94350c394e0cab1a5491210257567dff',1,'xms::TrAutoFixFourTrianglePtsImpl']]],
+  ['renumberpts',['RenumberPts',['../classxms_1_1_tr_auto_fix_four_triangle_pts_impl.html#aae03f8c6f46aea41f01595b0e83d565a',1,'xms::TrAutoFixFourTrianglePtsImpl']]],
+  ['renumbertris',['RenumberTris',['../classxms_1_1_tr_auto_fix_four_triangle_pts_impl.html#a1c685b02542d9985b962f6dfc04be6c5',1,'xms::TrAutoFixFourTrianglePtsImpl']]],
+  ['replacetriangle',['ReplaceTriangle',['../classxms_1_1_tr_auto_fix_four_triangle_pts_impl.html#a4ddad45d4285e669efb1e7b5881ad957',1,'xms::TrAutoFixFourTrianglePtsImpl']]]
 ];

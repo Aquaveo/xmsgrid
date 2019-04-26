@@ -1,10 +1,19 @@
 var searchData=
 [
-  ['elapsedtimeinseconds',['ElapsedTimeInSeconds',['https://aquaveo.github.io/xmscore/classxms_1_1_observer_1_1impl.html#a771e88ca3833f7216df22bb69ba996bf',1,'xms::Observer::impl']]],
-  ['endoperation',['EndOperation',['https://aquaveo.github.io/xmscore/classxms_1_1_observer_1_1impl.html#a149ecbc4f1ee7fbd718da8f9b88c5fd2',1,'xms::Observer::impl::EndOperation()'],['https://aquaveo.github.io/xmscore/classxms_1_1_observer.html#a6ab39e266617c93fb0720f23efa723e0',1,'xms::Observer::EndOperation()']]],
-  ['environment_2eh',['environment.h',['https://aquaveo.github.io/xmscore/environment_8h.html',1,'']]],
-  ['errcount',['ErrCount',['https://aquaveo.github.io/xmscore/classxms_1_1_xm_log.html#a20ed692af6d8c0100c02f314c6395379',1,'xms::XmLog']]],
-  ['error',['error',['https://aquaveo.github.io/xmscore/namespacexmlog.html#a7f66c92bb821241cbb29fb07d7bce588a6c90100ca9f6986351a3a437374735c1',1,'xmlog']]],
-  ['estimatedtimeremaininginsec',['EstimatedTimeRemainingInSec',['https://aquaveo.github.io/xmscore/classxms_1_1_observer_1_1impl.html#a4eaed90dc0e25cf1119fc449aea1fcf6',1,'xms::Observer::impl']]],
-  ['etestmessagingstate',['ETestMessagingState',['https://aquaveo.github.io/xmscore/classxms_1_1_e_test_messaging_state.html',1,'xms::ETestMessagingState'],['https://aquaveo.github.io/xmscore/classxms_1_1_e_test_messaging_state.html#a90828ce997911657701af863ffde668c',1,'xms::ETestMessagingState::ETestMessagingState()']]]
+  ['debug',['debug',['https://aquaveo.github.io/xmscore/namespacexmlog.html#a7f66c92bb821241cbb29fb07d7bce588a42797ff955c778a8a9e21bdd5580a92e',1,'xmlog']]],
+  ['defaultvalwasset',['DefaultValWasSet',['https://aquaveo.github.io/xmscore/classxms_1_1_e_test_messaging_state.html#adc5d8d8b958ecb0f95a901c9b819054e',1,'xms::ETestMessagingState']]],
+  ['delete',['Delete',['https://aquaveo.github.io/xmscore/classxms_1_1_shared_singleton.html#a76f7a809ade5852f0b238b22149c3a6e',1,'xms::SharedSingleton::Delete()'],['https://aquaveo.github.io/xmscore/classxms_1_1_singleton.html#a626d4977e56e0f37c7d369834f4b235d',1,'xms::Singleton::Delete()'],['https://aquaveo.github.io/xmscore/classxms_1_1_singleton.html#a626d4977e56e0f37c7d369834f4b235d',1,'Singleton&lt; XmLog &gt;::Delete()'],['../classxms_1_1_tr_outer_triangle_deleter_impl.html#ae68038220e16a9ad8cfb09088ec18b05',1,'xms::TrOuterTriangleDeleterImpl::Delete()']]],
+  ['deleteadjacenttriangle',['DeleteAdjacentTriangle',['../classxms_1_1_tr_tin_impl.html#a472a843922d633fdf17061006fce3868',1,'xms::TrTinImpl']]],
+  ['deletepoints',['DeletePoints',['../classxms_1_1_tr_tin_impl.html#af26463b8da49e0aa9bf2577468c28182',1,'xms::TrTinImpl']]],
+  ['deletetriangles',['DeleteTriangles',['../classxms_1_1_tr_tin_impl.html#a0a160157240d033a400f55c730bb18f6',1,'xms::TrTinImpl']]],
+  ['deque_2eh',['deque.h',['https://aquaveo.github.io/xmscore/deque_8h.html',1,'']]],
+  ['dimensionfromcelltype',['DimensionFromCellType',['../classxms_1_1_xm_u_grid_impl.html#ab402b9ad4de156cd3fcb726dbb6daba5',1,'xms::XmUGridImpl']]],
+  ['dir',['dir',['../structxms_1_1_barycentric_vals.html#acb8bf1c437d7b0141c565730738b297a',1,'xms::BarycentricVals']]],
+  ['do_5fgrouping',['do_grouping',['https://aquaveo.github.io/xmscore/classxms_1_1_st_comma_numpunct.html#a17aeaec77523b6b019d5e373451ff383',1,'xms::StCommaNumpunct']]],
+  ['do_5fthousands_5fsep',['do_thousands_sep',['https://aquaveo.github.io/xmscore/classxms_1_1_st_comma_numpunct.html#a0015f37da2fd4be987636209b8c8c727',1,'xms::StCommaNumpunct']]],
+  ['doedgescrosswithpointchange',['DoEdgesCrossWithPointChange',['../classxms_1_1_xm_u_grid_impl.html#a7c8c0c2ec2226d4a7460d65ab7994330',1,'xms::XmUGridImpl']]],
+  ['dolinesegmentscross',['DoLineSegmentsCross',['../namespacexms.html#aea9cf0b2bb6a3c1fc4d36d6defebecfe',1,'xms::DoLineSegmentsCross(const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment1, const std::pair&lt; Pt3&lt; double &gt;, Pt3&lt; double &gt;&gt; &amp;a_segment2)'],['../namespacexms.html#ac3978b6fc01a80623f117b8642e64f85',1,'xms::DoLineSegmentsCross(const Pt3&lt; double &gt; &amp;a_segment1Point1, const Pt3&lt; double &gt; &amp;a_segment1Point2, const Pt3&lt; double &gt; &amp;a_segment2Point1, const Pt3&lt; double &gt; &amp;a_segment2Point2)']]],
+  ['dotest',['DoTest',['../class_gm_point_in_poly_unit_tests.html#aad892797953c9679e60aacab95c59a27',1,'GmPointInPolyUnitTests']]],
+  ['dynbitset_2ecpp',['DynBitset.cpp',['https://aquaveo.github.io/xmscore/_dyn_bitset_8cpp.html',1,'']]],
+  ['dynbitset_2eh',['DynBitset.h',['https://aquaveo.github.io/xmscore/_dyn_bitset_8h.html',1,'']]]
 ];

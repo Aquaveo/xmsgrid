@@ -1,5 +1,9 @@
 var searchData=
 [
-  ['value_5ftype',['value_type',['https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#af2484d57712d9ac194506cec5538b241',1,'xms::Pt3']]],
-  ['vecedge',['VecEdge',['../namespacexms.html#acd21e8de7357a71eb268548c301c9f43',1,'xms']]]
+  ['gmbstbox3d',['GmBstBox3d',['../namespacexms.html#af7ac61e434c47abf90a1349336f7e8b7',1,'xms']]],
+  ['gmbstline3d',['GmBstLine3d',['../namespacexms.html#a9bb6715848b64f01474619d28cd619d9',1,'xms']]],
+  ['gmbstpoly2d',['GmBstPoly2d',['../namespacexms.html#a93e3d438c33ced49f413cd84323982d5',1,'xms']]],
+  ['gmbstpoly3d',['GmBstPoly3d',['../namespacexms.html#a05c9c43c740eaf5b56f436ec992dca5f',1,'xms']]],
+  ['gmbstpt2d',['GmBstPt2d',['../namespacexms.html#a5f1677620ca85b6bcc1065b757f3e337',1,'xms']]],
+  ['gmbstring3d',['GmBstRing3d',['../namespacexms.html#a4d04b2e2f10cd613e47211b9ac69784e',1,'xms']]]
 ];
