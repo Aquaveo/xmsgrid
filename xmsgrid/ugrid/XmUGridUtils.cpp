@@ -150,7 +150,6 @@ void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePat
   std::ofstream outFile(a_filePath);
   XmWriteUGridToStream(a_ugrid, outFile);
 } // XmWriteUGridToAsciiFile
-
 //------------------------------------------------------------------------------
 /// \brief Save an XmUGrid ASCII text to output stream.
 /// \param[in] a_ugrid: the UGrid to save
@@ -158,10 +157,19 @@ void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePat
 //------------------------------------------------------------------------------
 void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
 {
+  XmWriteUGridToStream(*a_ugrid, a_outStream);
+} // XmWriteUGridToStream
+//------------------------------------------------------------------------------
+/// \brief Save an XmUGrid ASCII text to output stream.
+/// \param[in] a_ugrid: the UGrid to save
+/// \param[in] a_outStream: the stream to write
+//------------------------------------------------------------------------------
+void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream)
+{
   a_outStream << "ASCII XmUGrid Version 1.0\n";
 
   // number of points
-  const VecPt3d& points = a_ugrid->GetLocations();
+  const VecPt3d& points = a_ugrid.GetLocations();
   a_outStream << "NUM_POINTS " << points.size() << "\n";
 
   // points
@@ -172,7 +180,7 @@ void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
   }
 
   // number of cell stream items
-  const VecInt& cellstream = a_ugrid->GetCellstream();
+  const VecInt& cellstream = a_ugrid.GetCellstream();
   int cellstreamSize = (int)cellstream.size();
   a_outStream << "NUM_CELL_ITEMS " << cellstreamSize << "\n";
 
