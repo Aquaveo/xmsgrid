@@ -30,6 +30,7 @@ class XmUGrid;
 class XmUGridUnitTests : public CxxTest::TestSuite
 {
 public:
+  void testOperators();
   void testUGridStreams();
   void testGetSetPoint();
   void testGetCellCellstream();
