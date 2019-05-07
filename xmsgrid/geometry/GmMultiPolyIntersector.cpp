@@ -1836,6 +1836,7 @@ void GmMultiPolyIntersectorUnitTests::testSmsCase1() {
 /// \brief Test a large number of polygons for speed.
 //------------------------------------------------------------------------------
 void GmMultiPolyIntersector2IntermediateTests::testLargeNumPolys() {
+#ifndef _DEBUG
   // TS_FAIL("GmMultiPolyIntersectorUnitTests::testHuge");
 
   // Like testAlongEdgesInsideToInside but with many more polygons
@@ -1857,12 +1858,13 @@ void GmMultiPolyIntersector2IntermediateTests::testLargeNumPolys() {
                             {24.0, -24.0, 0.0}};
   iRunTest(6, -6, 24, -24, pts, polys, expectedIds, expectedTvals,
            expectedPoints);
-
+#endif
 } // GmMultiPolyIntersector2IntermediateTests::testLargeNumPolys
 //------------------------------------------------------------------------------
 /// \brief This test can be used for speed comparisons.
 //------------------------------------------------------------------------------
 void GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments() {
+#ifndef _DEBUG
   // TS_FAIL("GmMultiPolyIntersectorUnitTests::testHuge");
 
   // Like testAlongEdgesInsideToInside but with many more polygons
@@ -1891,7 +1893,7 @@ void GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments() {
     // Don't need to check that the values are correct. That is done in
     // testLargeNumPolys
   }
-
+#endif
 } // GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments
 
   //} // namespace xms
