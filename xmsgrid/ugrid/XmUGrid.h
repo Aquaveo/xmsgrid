@@ -15,7 +15,6 @@
 // 4. External library headers
 
 // 5. Shared code headers
-#include <xmscore/misc/base_macros.h>
 #include <xmscore/misc/boost_defines.h>
 #include <xmscore/stl/vector.h>
 
@@ -144,83 +143,83 @@ public:
 
   void SetLocations(const VecPt3d& a_locations);
 
-  Pt3d GetPointLocation(const int a_pointIdx) const;
+  Pt3d GetPointLocation(int a_pointIdx) const;
 
-  bool SetPointLocation(const int a_pointIdx, const Pt3d& a_location);
+  bool SetPointLocation(int a_pointIdx, const Pt3d& a_location);
 
-  Pt3d GetPointXy0(const int a_pointIdx) const;
+  Pt3d GetPointXy0(int a_pointIdx) const;
 
   VecPt3d GetPointsLocations(const VecInt& a_points) const;
 
   void GetExtents(Pt3d& a_min, Pt3d& a_max) const;
 
-  VecInt GetPointAdjacentCells(const int a_pointIdx) const;
+  VecInt GetPointAdjacentCells(int a_pointIdx) const;
 
-  void GetPointAdjacentCells(const int a_pointIdx, VecInt& a_adjacentCells) const;
+  void GetPointAdjacentCells(int a_pointIdx, VecInt& a_adjacentCells) const;
 
   VecInt GetPointsAdjacentCells(const VecInt& a_points) const;
 
   void GetPointsAdjacentCells(const VecInt& a_pointIdxs, VecInt& a_adjacentCellIdxs) const;
 
-  void GetPointsAdjacentCells(const int a_pointIdx1,
-                              const int a_pointIdx2,
+  void GetPointsAdjacentCells(int a_pointIdx1,
+                              int a_pointIdx2,
                               VecInt& a_adjacentCellIdxs) const;
 
-  bool IsValidPointChange(const int a_changedPtIdx, const Pt3d& a_newPosition) const;
+  bool IsValidPointChange(int a_changedPtIdx, const Pt3d& a_newPosition) const;
 
   // Cells
 
   int GetCellCount() const;
 
-  int GetCellPointCount(const int a_cellIdx) const;
+  int GetCellPointCount(int a_cellIdx) const;
 
-  VecInt GetCellPoints(const int a_cellIdx) const;
+  VecInt GetCellPoints(int a_cellIdx) const;
 
-  bool GetCellPoints(const int a_cellIdx, VecInt& a_cellPoints) const;
+  bool GetCellPoints(int a_cellIdx, VecInt& a_cellPoints) const;
 
-  void GetCellLocations(const int a_cellIdx, VecPt3d& a_cellLocations) const;
+  void GetCellLocations(int a_cellIdx, VecPt3d& a_cellLocations) const;
 
-  XmUGridCellType GetCellType(const int a_cellIdx) const;
+  XmUGridCellType GetCellType(int a_cellIdx) const;
 
   std::vector<int> GetDimensionCounts() const;
 
-  int GetCellDimension(const int a_cellIdx) const;
+  int GetCellDimension(int a_cellIdx) const;
 
-  void GetCellExtents(const int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const;
+  void GetCellExtents(int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const;
 
   const VecInt& GetCellstream() const;
 
   bool SetCellstream(const VecInt& a_cellstream);
 
-  bool GetCellCellstream(const int a_cellIdx, VecInt& a_cellstream) const;
+  bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
 
-  VecInt GetCellAdjacentCells(const int a_cellIdx) const;
+  VecInt GetCellAdjacentCells(int a_cellIdx) const;
 
-  void GetCellAdjacentCells(const int a_cellIdx, VecInt& a_cellNeighbors) const;
+  void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
 
   bool GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const;
 
   bool GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const;
 
-  int GetCellEdgeCount(const int a_cellIdx) const;
+  int GetCellEdgeCount(int a_cellIdx) const;
 
-  XmEdge GetCellEdge(const int a_cellIdx, const int a_edgeIdx) const;
+  XmEdge GetCellEdge(int a_cellIdx, int a_edgeIdx) const;
 
-  VecInt GetCellEdgeAdjacentCells(const int a_cellIdx, const int a_edgeIdx) const;
+  VecInt GetCellEdgeAdjacentCells(int a_cellIdx, int a_edgeIdx) const;
 
-  void GetCellEdgeAdjacentCells(const int a_cellIdx,
-                                const int a_edgeIdx,
+  void GetCellEdgeAdjacentCells(int a_cellIdx,
+                                int a_edgeIdx,
                                 VecInt& a_adjacentCellIdxs) const;
 
-  int GetCell2dEdgeAdjacentCell(const int a_cellIdx, const int a_edgeIdx) const;
+  int GetCell2dEdgeAdjacentCell(int a_cellIdx, int a_edgeIdx) const;
 
   void GetEdgeAdjacentCells(const XmEdge& a_edge, VecInt& a_adjacentCellIdxs) const;
 
   VecInt GetEdgeAdjacentCells(const XmEdge& a_edge) const;
 
-  std::vector<XmEdge> GetCellEdges(const int a_cellIdx) const;
+  std::vector<XmEdge> GetCellEdges(int a_cellIdx) const;
 
-  void GetCellEdges(const int a_cellIdx, std::vector<XmEdge>& a_edges) const;
+  void GetCellEdges(int a_cellIdx, std::vector<XmEdge>& a_edges) const;
 
   void GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const;
 
@@ -228,19 +227,19 @@ public:
 
   // Faces
 
-  int GetCell3dFaceCount(const int a_cellIdx) const;
-  int GetCell3dFacePointCount(const int a_cellIdx, const int a_faceIdx) const;
+  int GetCell3dFaceCount(int a_cellIdx) const;
+  int GetCell3dFacePointCount(int a_cellIdx, int a_faceIdx) const;
 
-  VecInt GetCell3dFacePoints(const int a_cellIdx, const int a_faceIdx) const;
+  VecInt GetCell3dFacePoints(int a_cellIdx, int a_faceIdx) const;
 
-  void GetCell3dFacePoints(const int a_cellIdx, const int a_faceIdx, VecInt& a_facePtIdxs) const;
+  void GetCell3dFacePoints(int a_cellIdx, int a_faceIdx, VecInt& a_facePtIdxs) const;
 
-  VecInt2d GetCell3dFacesPoints(const int a_cellIdx) const;
+  VecInt2d GetCell3dFacesPoints(int a_cellIdx) const;
 
-  int GetCell3dFaceAdjacentCell(const int a_cellIdx, const int a_faceIdx) const;
+  int GetCell3dFaceAdjacentCell(int a_cellIdx, int a_faceIdx) const;
 
-  bool GetCell3dFaceAdjacentCell(const int a_cellIdx,
-                                 const int a_faceIdx,
+  bool GetCell3dFaceAdjacentCell(int a_cellIdx,
+                                 int a_faceIdx,
                                  int& a_neighborCell,
                                  int& a_neighborFace) const;
 
@@ -257,23 +256,23 @@ BSHP<xms::XmUGrid> TEST_XmUGridSimpleQuad();
 BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGrid3dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGridHexagonalPolyhedron();
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows, const int a_cols);
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(const int a_rows,
-                                          const int a_cols,
+BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols);
+BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows,
+                                          int a_cols,
                                           const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows,
-                                                const int a_cols,
-                                                const int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(const int a_rows,
-                                                const int a_cols,
-                                                const int a_lays,
+BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
+                                                int a_cols,
+                                                int a_lays);
+BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
+                                                int a_cols,
+                                                int a_lays,
                                                 const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
-                                                const int a_cols,
-                                                const int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(const int a_rows,
-                                                const int a_cols,
-                                                const int a_lays,
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
+                                                int a_cols,
+                                                int a_lays);
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
+                                                int a_cols,
+                                                int a_lays,
                                                 const xms::Pt3d& a_origin);
 BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid();
 
