@@ -153,6 +153,8 @@ public:
 
   void GetExtents(Pt3d& a_min, Pt3d& a_max) const;
 
+  int GetPointAdjacentCellCount(int a_pointIdx) const;
+
   VecInt GetPointAdjacentCells(int a_pointIdx) const;
 
   void GetPointAdjacentCells(int a_pointIdx, VecInt& a_adjacentCells) const;
@@ -161,9 +163,7 @@ public:
 
   void GetPointsAdjacentCells(const VecInt& a_pointIdxs, VecInt& a_adjacentCellIdxs) const;
 
-  void GetPointsAdjacentCells(int a_pointIdx1,
-                              int a_pointIdx2,
-                              VecInt& a_adjacentCellIdxs) const;
+  void GetPointsAdjacentCells(int a_pointIdx1, int a_pointIdx2, VecInt& a_adjacentCellIdxs) const;
 
   bool IsValidPointChange(int a_changedPtIdx, const Pt3d& a_newPosition) const;
 
@@ -207,9 +207,7 @@ public:
 
   VecInt GetCellEdgeAdjacentCells(int a_cellIdx, int a_edgeIdx) const;
 
-  void GetCellEdgeAdjacentCells(int a_cellIdx,
-                                int a_edgeIdx,
-                                VecInt& a_adjacentCellIdxs) const;
+  void GetCellEdgeAdjacentCells(int a_cellIdx, int a_edgeIdx, VecInt& a_adjacentCellIdxs) const;
 
   int GetCell2dEdgeAdjacentCell(int a_cellIdx, int a_edgeIdx) const;
 
@@ -247,7 +245,7 @@ public:
 
 private:
   class Impl;
-  std::unique_ptr<Impl> m_impl; ///< imlementation
+  std::unique_ptr<Impl> m_impl; ///< implementation
 };
 
 //----- Function prototypes ----------------------------------------------------
@@ -257,19 +255,13 @@ BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGrid3dLinear();
 BSHP<xms::XmUGrid> TEST_XmUGridHexagonalPolyhedron();
 BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols);
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows,
-                                          int a_cols,
-                                          const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
-                                                int a_cols,
-                                                int a_lays);
+BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, const xms::Pt3d& a_origin);
+BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_cols, int a_lays);
 BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
                                                 int a_cols,
                                                 int a_lays,
                                                 const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
-                                                int a_cols,
-                                                int a_lays);
+BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_cols, int a_lays);
 BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
                                                 int a_cols,
                                                 int a_lays,
