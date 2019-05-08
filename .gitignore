@@ -4,6 +4,7 @@
 *.pyc
 build/
 test_package/build/
+test_files/3d_grid_linear.xmugrid
 
 # IDE Files
 .*.swp
