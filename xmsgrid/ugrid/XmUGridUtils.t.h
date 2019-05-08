@@ -37,6 +37,8 @@ public:
 
   void testWriteThenReadUGridFile();
   void testWriteThenReadUGridFileToAscii();
+
+  void testReadVersion1Dot0File();
 }; // XmUGridReaderTests
 
 #endif
