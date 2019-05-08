@@ -18,6 +18,7 @@
 // 4. External library headers
 
 // 5. Shared code headers
+#include <xmscore/dataio/daStreamIo.h>
 #include <xmscore/misc/StringUtil.h>
 #include <xmscore/misc/XmLog.h>
 #include <xmscore/stl/vector.h>
@@ -65,78 +66,95 @@ BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
     return nullptr;
   }
 
-  std::string line;
-  std::getline(a_inStream, line);
-  if (line != "ASCII XmUGrid Version 1.0")
+  if (!daReadNamedLine(a_inStream, "ASCII XmUGrid Version 1.0"))
   {
-    XM_LOG(xmlog::error, "Unsupported file version or file type: " + line);
+    XM_LOG(xmlog::error, "Unsupported file version or file type.");
     return nullptr;
   }
 
-  std::string cardName;
-  VecPt3d points;
-  VecInt cells;
-  while (!a_inStream.eof())
+  int pointCount;
+  if (!daReadIntLine(a_inStream, "NUM_POINTS", pointCount))
   {
-    cardName = "";
+    XM_LOG(xmlog::error, "Unable to read XmUGrid point count.");
+    return nullptr;
+  }
+
+  VecPt3d locations;
+  locations.reserve(pointCount);
+  for (int pointIdx = 0; pointIdx < pointCount; ++pointIdx)
+  {
+    Pt3d point;
+    if (!daRead3DoubleLine(a_inStream, "POINT", point.x, point.y, point.z))
+    {
+      XM_LOG(xmlog::error, "Unable to read XmUGrid point.");
+      return nullptr;
+    }
+    locations.push_back(point);
+  }
+
+  int cellStreamSize;
+  if (!daReadIntLine(a_inStream, "NUM_CELL_ITEMS", cellStreamSize))
+  {
+    XM_LOG(xmlog::error, "Unable to read XmUGrid cells.");
+    return nullptr;
+  }
+
+  VecInt cellstream;
+  cellstream.reserve(cellStreamSize);
+  while ((int)cellstream.size() < cellStreamSize && !a_inStream.eof())
+  {
+    std::string cardName;
     a_inStream >> cardName;
-    if (cardName == "NUM_POINTS")
+    if (cardName == "CELL")
     {
-      int numPoints;
-      a_inStream >> numPoints;
-      points.reserve(numPoints);
-    }
-    else if (cardName == "POINT")
-    {
-      Pt3d pt;
-      a_inStream >> pt.x >> pt.y >> pt.z;
-      points.push_back(pt);
-    }
-    else if (cardName == "NUM_CELL_ITEMS")
-    {
-      int numCellItems;
-      a_inStream >> numCellItems;
-      cells.reserve(numCellItems);
-    }
-    else if (cardName == "CELL")
-    {
+      std::string line;
+      if (!daReadLine(a_inStream, line))
+        return nullptr;
       int cellType;
-      a_inStream >> cellType;
-      cells.push_back(cellType);
+      if (!daReadIntFromLine(line, cellType))
+        return nullptr;
+      cellstream.push_back(cellType);
       if (cellType == XMU_POLYHEDRON)
       {
         int numFaces;
-        a_inStream >> numFaces;
-        cells.push_back(numFaces);
+        daReadIntFromLine(line, numFaces);
+        cellstream.push_back(numFaces);
         for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
         {
+          if (!daReadLine(a_inStream, line))
+            return nullptr;
           int numPoints;
-          a_inStream >> numPoints;
-          cells.push_back(numPoints);
+          daReadIntFromLine(line, numPoints);
+          cellstream.push_back(numPoints);
           for (int i = 0; i < numPoints; ++i)
           {
             int ptIdx;
-            a_inStream >> ptIdx;
-            cells.push_back(ptIdx);
+            daReadIntFromLine(line, ptIdx);
+            cellstream.push_back(ptIdx);
           }
         }
       }
       else
       {
         int numPoints;
-        a_inStream >> numPoints;
-        cells.push_back(numPoints);
+        daReadIntFromLine(line, numPoints);
+        cellstream.push_back(numPoints);
         for (int i = 0; i < numPoints; ++i)
         {
           int ptIdx;
-          a_inStream >> ptIdx;
-          cells.push_back(ptIdx);
+          daReadIntFromLine(line, ptIdx);
+          cellstream.push_back(ptIdx);
         }
       }
     }
+    else
+    {
+      XM_LOG(xmlog::error, "Unable to read XmUGrid cell.");
+      return nullptr;
+    }
   }
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+  BSHP<XmUGrid> ugrid = XmUGrid::New(locations, cellstream);
   return ugrid;
 } // XmReadUGridFromStream
 //------------------------------------------------------------------------------
@@ -560,6 +578,6 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
-  //! [snip_test_WriteReadAscii]
+//! [snip_test_WriteReadAscii]
 
 #endif
