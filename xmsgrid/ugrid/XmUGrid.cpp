@@ -814,7 +814,7 @@ void XmUGrid::Impl::GetPointsAdjacentCells(const int* a_pointIdxs,
     {
       a_commonCellIdxs.erase(a_commonCellIdxs.begin() + remove[j]);
     }
-    if (a_commonCellIdxs.size() == 0)
+    if (a_commonCellIdxs.empty())
       break;
   }
 } // XmUGrid::Impl::GetPointsAdjacentCells
@@ -1154,12 +1154,12 @@ bool XmUGrid::Impl::GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) co
 //------------------------------------------------------------------------------
 bool XmUGrid::Impl::GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const
 {
-  VecPt3d pts;
+  VecPt3d polyPoints;
   bool retVal = true;
   Pt3d centroid = Pt3d(0.0, 0.0, 0.0);
-  if (GetCellPlanViewPolygon(a_cellIdx, pts))
+  if (GetCellPlanViewPolygon(a_cellIdx, polyPoints))
   {
-    centroid = gmComputePolygonCentroid(pts);
+    centroid = gmComputePolygonCentroid(polyPoints);
   }
   else if (!IsValidCellIdx(a_cellIdx))
   {
@@ -1167,13 +1167,13 @@ bool XmUGrid::Impl::GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const
   }
   else
   {
-    VecPt3d pts;
-    GetCellLocations(a_cellIdx, pts);
-    for (Pt3d& pt : pts)
+    VecPt3d cellPoints;
+    GetCellLocations(a_cellIdx, cellPoints);
+    for (Pt3d& pt : cellPoints)
     {
       centroid += pt;
     }
-    centroid /= (double)pts.size();
+    centroid /= (double)cellPoints.size();
   }
   a_centroid = centroid;
   return retVal;
@@ -1611,9 +1611,7 @@ int XmUGrid::Impl::GetCell3dFacePointCount(int a_cellIdx, int a_faceIdx) const
   }
 
   int cellType = GetCellType(a_cellIdx);
-  switch (cellType)
-  {
-  case XMU_POLYHEDRON:
+  if (cellType == XMU_POLYHEDRON)
   {
     const int* cellstream;
     int length;
@@ -1621,7 +1619,7 @@ int XmUGrid::Impl::GetCell3dFacePointCount(int a_cellIdx, int a_faceIdx) const
     if (cellstream != nullptr)
     {
       auto currItem = cellstream;
-      cellType = *currItem++;
+      currItem++; // skip cell type
       int numFaces = *currItem++;
       for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
       {
@@ -1633,18 +1631,14 @@ int XmUGrid::Impl::GetCell3dFacePointCount(int a_cellIdx, int a_faceIdx) const
         currItem += numFacePoints;
       }
     }
-    break;
   }
-
-  default:
+  else
   {
     const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
     if (a_faceIdx >= 0 && a_faceIdx < (int)faceTable.size())
     {
       return (int)faceTable[a_faceIdx].size();
     }
-    break;
-  }
   }
 
   return 0;
@@ -1971,7 +1965,7 @@ void XmUGrid::Impl::UpdatePointLinks()
       // auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
 
       // for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
-      for (std::_Simple_types<int>::value_type& cellPoint : cellPoints)
+      for (auto cellPoint : cellPoints)
       {
         m_pointIdxToPointsToCells[cellPoint] += 1;
       }
@@ -2026,7 +2020,7 @@ void XmUGrid::Impl::UpdatePointLinks()
       // auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
 
       // for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
-      for (std::_Simple_types<int>::value_type& cellPoint : cellPoints)
+      for (auto cellPoint : cellPoints)
       {
         int countIdx = m_pointIdxToPointsToCells[cellPoint];
         int& count = m_pointsToCells[countIdx]; // point's cell count
@@ -2342,7 +2336,7 @@ void XmUGrid::Impl::GetUniqueEdgesFromPolyhedronCellstream(
 bool XmUGrid::Impl::GetPlanViewPolygon2d(int a_cellIdx, VecPt3d& a_polygon) const
 {
   GetCellLocations(a_cellIdx, a_polygon);
-  if (a_polygon.size() > 0)
+  if (!a_polygon.empty())
   {
     return true;
   }
