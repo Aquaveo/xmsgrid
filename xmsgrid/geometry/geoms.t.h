@@ -34,7 +34,8 @@ public:
   void test_gmComputeCentroid();
 
   void test_gmPointInPolygon2D_Speed();
-
+  void testConvexHull();
+  void testDoLineSegmentsCross();
 }; // class GeomsXmsngUnitTests
 
 ////////////////////////////////////////////////////////////////////////////////

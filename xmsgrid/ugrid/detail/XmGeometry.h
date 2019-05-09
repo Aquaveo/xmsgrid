@@ -34,11 +34,18 @@ class XmUGrid;
 //----- Structs / Classes ------------------------------------------------------
 
 //----- Function prototypes ----------------------------------------------------
+
+// !!!Deprecated!!!
 std::vector<Pt3d> ConvexHull(const std::vector<Pt3<double>>& a_points);
+
+// !!!Deprecated!!!
 VecInt ConvexHullWithIndices(const std::vector<int>& a_points, BSHP<XmUGrid> a_ugrid);
 
+// !!!Deprecated!!!
 bool DoLineSegmentsCross(const std::pair<Pt3<double>, Pt3<double>>& a_segment1,
                          const std::pair<Pt3<double>, Pt3<double>>& a_segment2);
+
+// !!!Deprecated!!!
 bool DoLineSegmentsCross(const Pt3<double>& a_segment1Point1,
                          const Pt3<double>& a_segment1Point2,
                          const Pt3<double>& a_segment2Point1,

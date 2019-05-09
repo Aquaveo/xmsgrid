@@ -184,7 +184,6 @@ if (BUILD_TESTING)
    xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
-   xmsgrid/ugrid/detail/XmGeometry.t.h
  )
 
  find_package(CxxTest)

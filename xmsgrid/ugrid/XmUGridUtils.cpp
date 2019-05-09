@@ -48,7 +48,7 @@ namespace xms
 namespace
 {
 typedef boost::bimap<std::string, int> CellNameToType;
-// makes string int value pairs for enum
+/// makes string int value pairs for enum
 #define ENUM_TO_XMU_PAIR(A_ENUM)                                             \
   {                                                                          \
     cellNameToInt.insert(CellNameToType::value_type(#A_ENUM, XMU_##A_ENUM)); \
@@ -736,7 +736,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
 } // XmUGridUtilsTests::testWriteThenReadUGridFile
 //! [snip_test_WriteReadAscii]
 //------------------------------------------------------------------------------
-/// \biref
+/// \brief
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testReadVersion1Dot0File()
 {

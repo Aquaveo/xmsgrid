@@ -94,6 +94,7 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
                                     double tol);
 bool gmCounterClockwiseTri(const Pt3d& vtx0, const Pt3d& vtx1, const Pt3d& vtx2);
 double gmCross2D(const double& dx1, const double& dy1, const double& dx2, const double& dy2);
+double gmCross2D(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B);
 double gmAngleBetween2DVectors(double dxp, double dyp, double dxn, double dyn);
 double gmAngleBetween2DVectors(double dxp,
                                double dyp,
@@ -123,6 +124,7 @@ Turn_enum gmTurn(const Pt3d& a_v1, const Pt3d& a_v2, const Pt3d& a_v3, double a_
 Pt3d gmComputeCentroid(const VecPt3d& a_points);
 Pt3d gmComputePolygonCentroid(const VecPt3d& pts);
 bool gmLinesIntersect(const Pt3d& one1, const Pt3d& one2, const Pt3d& two1, const Pt3d& two2);
+bool gmLinesCross(const Pt3d& one1, const Pt3d& one2, const Pt3d& two1, const Pt3d& two2);
 int gmPointInPolygon2D(const Pt3d*, size_t, double, double);
 int gmPointInPolygon2D(const Pt3d*, size_t, double, double);
 int gmPointInPolygon2D(const Pt3d*, size_t, Pt3d);
@@ -194,5 +196,6 @@ int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
                                       const Pt3d& a_t2,
                                       Pt3d& a_IntersectPt);
 double gm2DDistanceToLineWithTol(const Pt3d* pt1, const Pt3d* pt2, double x, double y, double tol);
+void gmGetConvexHull(const VecPt3d& a_pts, VecPt3d& a_hull, bool a_includeOn = false);
 
 } // namespace xms
