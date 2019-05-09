@@ -50,9 +50,12 @@ namespace xms
 class XmUGrid::Impl
 {
 public:
+  /// Default constructor.
   Impl() = default;
+  /// Default copy constructor.
   Impl(const Impl&) = default;
 
+  /// Default assignment operator.
   Impl& operator=(const Impl&) = default;
 
   // Misc
@@ -599,12 +602,6 @@ void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
 /// \brief Implementation for XmUGrid which provides geometry for an
 ///        unstructured grid.
 ////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------
-/// \brief Default constructor.
-//------------------------------------------------------------------------------
-// XmUGrid::Impl()
-//{
-//} // XmUGrid::Impl
 //------------------------------------------------------------------------------
 /// \brief Returns the modified flag. Gets set when points or cells get changed.
 /// \return the modified flag
@@ -1304,7 +1301,7 @@ bool XmUGrid::Impl::DoEdgesCrossWithPointChange(int a_changedPtIdx,
   {
     for (const auto& unChangedEdge : unChangedEdges)
     {
-      if (DoLineSegmentsCross(changedEdge, unChangedEdge))
+      if (gmLinesCross(changedEdge.first, changedEdge.second, unChangedEdge.first, unChangedEdge.second))
         return true;
     }
   }
@@ -2367,7 +2364,7 @@ bool XmUGrid::Impl::GetPlanViewPolygon3d(int a_cellIdx, VecPt3d& a_polygon) cons
       cellPoints[i] = GetPointLocation(uniquePoints[i]);
       cellPoints[i].z = 0.0; // Insist that our z values are 0.0 for plan view
     }
-    a_polygon = ConvexHull(cellPoints);
+    gmGetConvexHull(cellPoints, a_polygon, false);
     return true;
   }
   return false;

@@ -41,6 +41,20 @@ namespace xms
 
 //----- Internal function prototypes -------------------------------------------
 
+namespace
+{
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool isRightTurn(Turn_enum turn, bool includeCollinear)
+{
+  if (includeCollinear)
+    return turn == TURN_RIGHT || turn == TURN_COLINEAR_180;
+  else
+    return turn == TURN_RIGHT;
+} // isRightTurn
+}
+
 //------------------------------------------------------------------------------
 /// \brief finds if a point is in or on a box in 2d
 /// \param[in] a_bMin Min x,y of first box
@@ -567,6 +581,17 @@ double gmCross2D(const double& dx1, const double& dy1, const double& dx2, const 
   return (dx1 * dy2) - (dx2 * dy1);
 } // gmCross2D
 //------------------------------------------------------------------------------
+/// \brief 2D cross product of two points
+/// \param[in] a_origin: origin point for the "vectors"
+/// \param[in] a_A: first vector
+/// \param[in] a_B: second vector
+/// \return the cross product
+//------------------------------------------------------------------------------
+double gmCross2D(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
+{
+  return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
+} // gmCross2D
+//------------------------------------------------------------------------------
 /// \brief Returns the angle (0-2PI) in radians between the edges p and n
 ///        based on a ccw rotation from p to n.
 /// \param[in] dxp: x of vector p.
@@ -976,6 +1001,44 @@ bool gmLinesIntersect(const Pt3d& one1, const Pt3d& one2, const Pt3d& two1, cons
     return false;
   return true;
 } // gmLinesIntersect
+//------------------------------------------------------------------------------
+/// \brief Determine whether 2 line segments cross. The segments may touch at
+/// the end points.
+/// \param[in] a_segment1Point1: First point 3d of line segment 1
+/// \param[in] a_segment1Point2: Second point 3d of line segment 1
+/// \param[in] a_segment2Point1: First point 3d of line segment 2
+/// \param[in] a_segment2Point2: Second point 3d of line segment 2
+/// \return true if the line segments cross
+//------------------------------------------------------------------------------
+bool gmLinesCross(const Pt3d& a_segment1Point1,
+                  const Pt3d& a_segment1Point2,
+                  const Pt3d& a_segment2Point1,
+                  const Pt3d& a_segment2Point2)
+{
+  // Boundary case checks
+  // Any of the points from line segment 1 are the same as any points from line segment 2
+  if ((a_segment1Point1 == a_segment2Point1 || a_segment1Point1 == a_segment2Point2) &&
+      (a_segment1Point2 == a_segment2Point1 || a_segment1Point2 == a_segment2Point2))
+    return true;
+
+  // The segments AB and CD intersect if and only if both of the following are true:
+  //
+  // A and B lie on different sides of the line through C and D
+  // C and D lie on different sides of the line through A and B
+  // These two conditions can be tested for using the notion of a scalar cross product(formulas
+  // below).
+
+  // is true if and only if the scalar cross products CA->=CD-> and CB->=CD-> have opposite signs.
+  // is true if and only if the scalar cross products AC->=AB-> and AD->=AB-> have opposite signs.
+
+  // Conclusion: the line segments intersect if and only if both are negative
+  double result1 = gmCross2D(a_segment2Point1, a_segment1Point1, a_segment2Point2);
+  double result2 = gmCross2D(a_segment2Point1, a_segment1Point2, a_segment2Point2);
+  double result3 = gmCross2D(a_segment1Point1, a_segment2Point1, a_segment1Point2);
+  double result4 = gmCross2D(a_segment2Point1, a_segment2Point2, a_segment1Point2);
+
+  return (result1 * result2 < 0 && result3 * result4 < 0);
+} // gmLinesCross
 //------------------------------------------------------------------------------
 /// \brief   Determines whether (a_x, a_y) is inside=1, on=0, or
 ///          outside=-1 the polygon defined by the given vertices.
@@ -2137,6 +2200,64 @@ double gm2DDistanceToLineWithTol(const Pt3d* a_pt1,
 
   return dist;
 } // gm2DDistanceToLineWithTol
+//------------------------------------------------------------------------------
+/// \brief Calculate convex hull using Monotone chain aka Andrew's algorithm.
+/// \param[in] a_pts The input points.
+/// \param[out] a_hull The convex hull polygon. First point is NOT repeated.
+/// \param[in] a_includeOn Should points on the hull's line segments be included?
+//------------------------------------------------------------------------------
+void gmGetConvexHull(const VecPt3d& a_pts, VecPt3d& a_hull, bool a_includeOn /*=false*/)
+{
+  a_hull.clear();
+
+  // copy points with only x/y values
+  VecPt3d points(a_pts);
+  for (size_t i = 0; i < points.size(); ++i)
+    points[i].z = 0.0;
+
+  // sort and remove duplicates
+  std::sort(points.begin(), points.end());
+  auto end = std::unique(points.begin(), points.end());
+  size_t size = end - points.begin();
+  points.resize(size);
+
+  if (size < 3)
+  {
+    a_hull = points;
+    return;
+  }
+
+  // build lower hull
+  VecPt3d lower;
+  for (auto p = points.begin(); p != points.end(); ++p)
+  {
+    size_t lsize = lower.size();
+    while (lsize > 1 && isRightTurn(gmTurn(lower[lsize - 2], lower[lsize - 1], *p), !a_includeOn))
+    {
+      lower.pop_back();
+      lsize = lower.size();
+    }
+    lower.push_back(*p);
+  }
+  lower.pop_back();
+
+  // build upper hull
+  VecPt3d upper;
+  for (auto p = points.rbegin(); p != points.rend(); ++p)
+  {
+    size_t usize = upper.size();
+    while (usize > 1 && isRightTurn(gmTurn(upper[usize - 2], upper[usize - 1], *p), !a_includeOn))
+    {
+      upper.pop_back();
+      usize = upper.size();
+    }
+    upper.push_back(*p);
+  }
+  upper.pop_back();
+
+  a_hull = lower;
+  a_hull.insert(a_hull.end(), upper.begin(), upper.end());
+} // gmGetConvexHull
 
 } // namespace xms
 
@@ -2387,6 +2508,95 @@ void GeomsXmsngUnitTests::test_gmPointInPolygon2D_Speed()
   tester.DoTest();
 #endif
 } // GeomsXmsngUnitTests::test_gmPointInPolygon2D_Speed
+//------------------------------------------------------------------------------
+/// \brief Test building a convex hull
+//------------------------------------------------------------------------------
+void GeomsXmsngUnitTests::testConvexHull()
+{
+  using namespace xms;
+  VecPt3d inputPoints;
+  VecPt3d expectedHull;
+  VecPt3d hull;
+  // Pyramid
+  expectedHull = {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 0.0}, {0.0, 1.0, 0.0}};
+  for (int i = 0; i < 2; ++i)
+  {
+    for (int j = 0; j < 2; ++j)
+    {
+      inputPoints.push_back(Pt3d(i, j));
+    }
+  }
+  inputPoints.push_back(Pt3d(.5, .5));
+  gmGetConvexHull(inputPoints, hull);
+  TS_ASSERT_EQUALS(expectedHull, hull);
+
+  // bounds test
+  expectedHull.clear();
+  inputPoints.clear();
+  gmGetConvexHull(inputPoints, hull);
+  TS_ASSERT_EQUALS(expectedHull, hull);
+} // GeomsXmsngUnitTests::TestConvexHull
+//------------------------------------------------------------------------------
+/// \brief Test determining if two lines intersect
+//------------------------------------------------------------------------------
+void GeomsXmsngUnitTests::testDoLineSegmentsCross()
+{
+  using namespace xms;
+  // Test 1 Segments do not intersect
+  {
+    Pt3d point1(1, 2);
+    Pt3d point2(1, 4);
+    Pt3d point3(2, 1);
+    Pt3d point4(4, 1);
+    bool expected = false;
+    TS_ASSERT_EQUALS(expected, gmLinesCross(point1, point2, point3, point4));
+  }
+  // Test 2 Segments that do intersect (generic)
+  {
+    Pt3d point1(2, 2);
+    Pt3d point2(4, 4);
+    Pt3d point3(2, 4);
+    Pt3d point4(4, 2);
+    bool expected = true;
+    TS_ASSERT_EQUALS(expected, gmLinesCross(point1, point2, point3, point4));
+  }
+  // Test 3 Colinear
+  {
+    Pt3d point1(1, 5);
+    Pt3d point2(1, 8);
+    Pt3d point3(1, 5);
+    Pt3d point4(1, 8);
+    bool expected = true;
+    TS_ASSERT_EQUALS(expected, gmLinesCross(point1, point2, point3, point4));
+  }
+  // Test 4 T intersection (false because it does not cross)
+  {
+    Pt3d point1(6, 2);
+    Pt3d point2(6, 4);
+    Pt3d point3(5, 4);
+    Pt3d point4(7, 4);
+    bool expected = false;
+    TS_ASSERT_EQUALS(expected, gmLinesCross(point1, point2, point3, point4));
+  }
+  // Test 5 L intersection (which is allowed for valid shapes, so return false)
+  {
+    Pt3d point1(2, 5);
+    Pt3d point2(2, 8);
+    Pt3d point3(2, 8);
+    Pt3d point4(4, 8);
+    bool expected = false;
+    TS_ASSERT_EQUALS(expected, gmLinesCross(point1, point2, point3, point4));
+  }
+  // Test 6 Near miss
+  {
+    Pt3d point1(5, 5);
+    Pt3d point2(7, 5);
+    Pt3d point3(5, 6);
+    Pt3d point4(5, 8);
+    bool expected = false;
+    TS_ASSERT_EQUALS(expected, gmLinesCross(point1, point2, point3, point4));
+  }
+} // GeomsXmsngUnitTests::testDoLineSegmentsCross
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class GeomsXmsngIntermediateTests
@@ -2450,7 +2660,5 @@ void GeomsXmsngIntermediateTests::test_gmPointInPolygon2D()
     TS_ASSERT_EQUALS(gmPointInPolygon2D(&poly[0], poly.size(), Pt3d(15, -5, 0)), -1); // 24
   }
 } // GeomsXmsngIntermediateTests::test_gmPointInPolygon2D
-
-  //} // namespace xms
 
 #endif
