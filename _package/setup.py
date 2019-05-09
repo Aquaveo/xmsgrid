@@ -25,7 +25,7 @@ setup(
     python_requires='==3.6.8',
     name='xmsgrid',
     version=version,
-    packages=find_packages(),
+    packages=['xms.grid'],
     include_package_data=True,
     license='BSD 2-Clause License',
     description='',
@@ -35,4 +35,5 @@ setup(
     dependency_links=[
         'https://aquapi.aquaveo.com/aquaveo/stable'
     ],
+)
 )

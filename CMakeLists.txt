@@ -248,8 +248,8 @@ if(IS_PYTHON_BUILD)
     # Install recipe
     install(
       TARGETS _xmsgrid
-      ARCHIVE DESTINATION "_package/xmsgrid"
-      LIBRARY DESTINATION "_package/xmsgrid"
+      ARCHIVE DESTINATION "_package/xms/grid"
+      LIBRARY DESTINATION "_package/xms/grid"
     )
 
     install(DIRECTORY "_package/" DESTINATION "_package"
