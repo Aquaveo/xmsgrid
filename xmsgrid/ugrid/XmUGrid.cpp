@@ -3906,52 +3906,52 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
       for (int j = 0; j < a_cols - 1; ++j)
       {
         int pt0 = j + a_cols * i + layOffset;
-        int pt1 = j + a_cols * (i + 1) + layOffset;
-        int pt2 = j + 1 + a_cols * (i + 1) + layOffset;
-        int pt3 = j + 1 + a_cols * i + layOffset;
-        int pt4 = j + a_cols * i + layOffset + numInLayer;
-        int pt5 = j + a_cols * (i + 1) + layOffset + numInLayer;
-        int pt6 = j + 1 + a_cols * (i + 1) + layOffset + numInLayer;
-        int pt7 = j + 1 + a_cols * i + layOffset + numInLayer;
+        int pt1 = j + 1 + a_cols * i + layOffset;
+        int pt2 = j + a_cols * (i + 1) + layOffset;
+        int pt3 = j + 1 + a_cols * (i + 1) + layOffset;
+        int pt4 = pt0 + numInLayer;
+        int pt5 = pt1 + numInLayer;
+        int pt6 = pt2 + numInLayer;
+        int pt7 = pt3 + numInLayer;
 
         cells.push_back(XMU_POLYHEDRON);
         cells.push_back(6);
-        // top
-        cells.push_back(4);
-        cells.push_back(pt0);
-        cells.push_back(pt1);
-        cells.push_back(pt2);
-        cells.push_back(pt3);
         // front
         cells.push_back(4);
-        cells.push_back(pt0);
-        cells.push_back(pt1);
-        cells.push_back(pt5);
+        cells.push_back(pt2);
+        cells.push_back(pt6);
         cells.push_back(pt7);
+        cells.push_back(pt3);
         // right
         cells.push_back(4);
         cells.push_back(pt1);
-        cells.push_back(pt3);
-        cells.push_back(pt7);
         cells.push_back(pt5);
+        cells.push_back(pt7);
+        cells.push_back(pt3);
         // back
         cells.push_back(4);
-        cells.push_back(pt3);
-        cells.push_back(pt2);
-        cells.push_back(pt6);
-        cells.push_back(pt7);
+        cells.push_back(pt0);
+        cells.push_back(pt1);
+        cells.push_back(pt5);
+        cells.push_back(pt4);
         // left
         cells.push_back(4);
-        cells.push_back(pt2);
         cells.push_back(pt0);
         cells.push_back(pt4);
         cells.push_back(pt6);
+        cells.push_back(pt2);
+        // top
+        cells.push_back(4);
+        cells.push_back(pt0);
+        cells.push_back(pt2);
+        cells.push_back(pt3);
+        cells.push_back(pt1);
         // bottom
         cells.push_back(4);
+        cells.push_back(pt4);
+        cells.push_back(pt5);
         cells.push_back(pt7);
         cells.push_back(pt6);
-        cells.push_back(pt5);
-        cells.push_back(pt4);
       }
     }
   }
@@ -5698,11 +5698,11 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()
   TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 4));
   TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
   xmUGrid = TEST_XmUBuildPolyhedronUgrid(2, 2, 2, Pt3d());
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 0));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 0));
   TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
   TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
   TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 3));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 4));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 4));
   TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
 } // XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons
 //------------------------------------------------------------------------------
