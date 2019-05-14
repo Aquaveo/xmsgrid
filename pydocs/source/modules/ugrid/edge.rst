@@ -2,5 +2,5 @@
 edge
 ****
 
-.. automodule:: xmsgrid.ugrid.edge
+.. automodule:: xms.grid.ugrid.edge
    :members:

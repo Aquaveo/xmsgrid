@@ -1,7 +1,7 @@
 import os
 import unittest
 import numpy as np
-import xmsgrid.triangulate as xt
+import xms.grid.triangulate as xt
 
 
 class TestTrTin(unittest.TestCase):

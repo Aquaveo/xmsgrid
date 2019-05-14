@@ -1,6 +1,6 @@
 """Test UGrid_py.cpp"""
 import unittest
-from xmsgrid.ugrid import UGrid
+from xms.grid.ugrid import UGrid
 
 
 class TestUGridPointFunctions(unittest.TestCase):
@@ -1030,7 +1030,7 @@ class TestUGridCellTypeEnum(unittest.TestCase):
     """CellType enum tests"""
 
     def test_ugrid_celltype_enum(self):
-        from xmsgrid.ugrid import UGrid
+        from xms.grid.ugrid import UGrid
         self.assertEqual("ugrid_celltype_enum.INVALID_CELL_TYPE",
                          str(UGrid.cell_type_enum.INVALID_CELL_TYPE))
         self.assertEqual("ugrid_celltype_enum.EMPTY_CELL", str(UGrid.cell_type_enum.EMPTY_CELL))
@@ -1125,7 +1125,7 @@ class TestUGridFaceOrientationEnum(unittest.TestCase):
     """FaceOrientation enum tests"""
 
     def test_ugrid_faceorientation_enum(self):
-        from xmsgrid.ugrid import UGrid
+        from xms.grid.ugrid import UGrid
         self.assertEqual("ugrid_faceorientation_enum.ORIENTATION_UNKNOWN",
                          str(UGrid.face_orientation_enum.ORIENTATION_UNKNOWN))
         self.assertEqual("ugrid_faceorientation_enum.ORIENTATION_SIDE",

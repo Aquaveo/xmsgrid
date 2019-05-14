@@ -16,10 +16,10 @@ class TriSearch(object):
             self._instance = kwargs['instance']
 
     def __repr__(self):
-        return "<xmsgrid.geometry.TriSearch>"
+        return "<xms.grid.geometry.TriSearch>"
 
     def __str__(self):
-        return "<xmsgrid.geometry.TriSearch>"
+        return "<xms.grid.geometry.TriSearch>"
 
     @property
     def point_activity(self):

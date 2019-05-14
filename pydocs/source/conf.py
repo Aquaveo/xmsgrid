@@ -26,7 +26,7 @@ author = 'aquaveo'
 
 # The short X.Y version
 import xmsgrid
-version = xmsgrid.__version__
+version = xms.grid__version__
 # The full version, including alpha/beta/rc tags
 release = ''
 

@@ -4,7 +4,7 @@ UGrid
 
 A class to contain grid geometry.
 
-.. autoclass:: xmsgrid.ugrid.UGrid
+.. autoclass:: xms.grid.ugrid.UGrid
    :members:
 
    .. automethod:: __init__

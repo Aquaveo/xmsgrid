@@ -8,7 +8,8 @@
 ********************************************************************************
 """
 import os
-from setuptools import setup, find_packages
+from xms import grid
+from setuptools import setup
 
 
 # allow setup.py to be run from any path
@@ -19,7 +20,7 @@ requires = [
     'xmscore',
 ]
 
-version = '3.0.1'
+version = grid.__version__
 
 setup(
     python_requires='==3.6.8',
