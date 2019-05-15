@@ -14,7 +14,20 @@ class Tin(object):
             else:
                 self._instance = TrTin(points, triangles)
         else:
+            if not isinstance(kwargs['instance'], TrTin):
+                raise ValueError('"instance" must be of type _xmsgrid.triangulate.TrTin')
             self._instance = kwargs['instance']
+
+    def __eq__(self, other):
+        other_instance = getattr(other, '_instance', None)
+        if not other_instance or not isinstance(other_instance, TrTin):
+            print("not instance or no value")
+            return False
+        return other_instance == self._instance
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return not result
 
     def __repr__(self):
         return "<Tin - Point Count: {}, Triangle Count: {}, Extents: {}>".format(

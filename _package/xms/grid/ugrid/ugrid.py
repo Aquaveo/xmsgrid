@@ -20,7 +20,20 @@ class UGrid(object):
             else:
                 self._instance = XmUGrid(points, cellstream)
         else:
+            if not isinstance(kwargs['instance'], XmUGrid):
+                raise ValueError('"instance" must be of type _xmsgrid.ugrid.XmUGrid')
             self._instance = kwargs['instance']
+
+    def __eq__(self, other):
+        other_instance = getattr(other, '_instance', None)
+        if not other_instance or not isinstance(other_instance, XmUGrid):
+            print("not instance or no value")
+            return False
+        return other_instance == self._instance
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return not result
 
     def __repr__(self):
         return "<UGrid - Number of Locations: {}, Number of Cells: {}, Extents: {}, Modified: {}>".format(

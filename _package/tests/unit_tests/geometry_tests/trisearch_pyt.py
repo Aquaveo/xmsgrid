@@ -1,5 +1,5 @@
 import unittest
-import xmsgrid
+from xms import grid
 
 
 class TestTriSearch(unittest.TestCase):
@@ -10,13 +10,13 @@ class TestTriSearch(unittest.TestCase):
 
     def test_create_class(self):
         """Test creating class"""
-        tri_search = xms.grid.geometry.TriSearch(self.pts, self.tris)
+        tri_search = grid.geometry.TriSearch(self.pts, self.tris)
         self.assertIsInstance(tri_search,
-                              xms.grid.geometry.TriSearch)
+                              grid.geometry.TriSearch)
 
     def test_interp_weights(self):
         """Test interp_weights"""
-        tri_search = xms.grid.geometry.TriSearch(self.pts, self.tris)
+        tri_search = grid.geometry.TriSearch(self.pts, self.tris)
         pt = (0.5, 0.2, 0)
 
         result, idx, wts = tri_search.interp_weights(pt)
@@ -30,7 +30,7 @@ class TestTriSearch(unittest.TestCase):
 
     def test_interp_weights_triangle_idx(self):
         """Test interp_weights_triangle_idx"""
-        tri_search = xms.grid.geometry.TriSearch(self.pts, self.tris)
+        tri_search = grid.geometry.TriSearch(self.pts, self.tris)
         pt = (0.25, 0.75, 0)
 
         result, tri_idx, idx, wts = \
@@ -48,7 +48,7 @@ class TestTriSearch(unittest.TestCase):
 
     def test_interp_weights_triangle_idx_outside(self):
         """Test interp_weights_triangle_idx outside"""
-        tri_search = xms.grid.geometry.TriSearch(self.pts, self.tris)
+        tri_search = grid.geometry.TriSearch(self.pts, self.tris)
         pt = (0, 1.25, 0)
 
         result, tri_idx, idx, wts = \
@@ -66,7 +66,7 @@ class TestTriSearch(unittest.TestCase):
 
     def test_pt_activity(self):
         """Test pt_activity"""
-        tri_search = xms.grid.geometry.TriSearch(self.pts, self.tris)
+        tri_search = grid.geometry.TriSearch(self.pts, self.tris)
         wrong_size = [True for i in range(0, 6)]
         tri_search.point_activity = wrong_size
         pt = (0.5, 0.2, 0)
@@ -80,7 +80,7 @@ class TestTriSearch(unittest.TestCase):
 
     def test_tri_activity(self):
         """Test tri_activity"""
-        tri_search = xms.grid.geometry.TriSearch(self.pts, self.tris)
+        tri_search = grid.geometry.TriSearch(self.pts, self.tris)
         pt1 = (0.5, 0.2, 0)
         pt2 = (0.5, 0.5, 0)  # Right on the border of the first two triangles
 
@@ -105,7 +105,7 @@ class TestTriSearch(unittest.TestCase):
         (-19.550000000000001, 29.379999999999999, 9))
         tris = (2, 0, 1)
 
-        tri_search = xms.grid.geometry.TriSearch(pts, tris)
+        tri_search = grid.geometry.TriSearch(pts, tris)
 
         self.assertEqual(0, tri_search.triangle_containing_point(pt))
 
@@ -115,7 +115,7 @@ class TestTriSearch(unittest.TestCase):
         pts = ((0, 0, 7), (1, 0, 8), (1, 1, 9))
         tris = (2, 0 , 1)
 
-        tri_search = xms.grid.geometry.TriSearch(pts, tris)
+        tri_search = grid.geometry.TriSearch(pts, tris)
 
         self.assertEqual(0, tri_search.triangle_containing_point(pt))
 

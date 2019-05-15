@@ -13,7 +13,20 @@ class TriSearch(object):
                 raise ValueError('triangles is a required argument.')
             self._instance = GmTriSearch(points, triangles)
         else:
+            if not isinstance(kwargs['instance'], GmTriSearch):
+                raise ValueError('"instance" must be of type _xmsgrid.geometry.GmTriSearch')
             self._instance = kwargs['instance']
+
+    def __eq__(self, other):
+        other_instance = getattr(other, '_instance', None)
+        if not other_instance or not isinstance(other_instance, GmTriSearch):
+            print("not instance or no value")
+            return False
+        return other_instance == self._instance
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return not result
 
     def __repr__(self):
         return "<xms.grid.geometry.TriSearch>"
