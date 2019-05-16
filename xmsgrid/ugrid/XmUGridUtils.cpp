@@ -187,12 +187,11 @@ bool iReadPointsVersion1(std::istream& a_inStream, VecPt3d& locations)
 //------------------------------------------------------------------------------
 bool iReadPointsVersion2(std::istream& a_inStream, VecPt3d& locations)
 {
-  bool success = true;
   int pointCount;
   if (!daReadIntLine(a_inStream, "NUM_POINTS", pointCount))
   {
     XM_LOG(xmlog::error, "Unable to read XmUGrid point count.");
-    success = false;
+    return false;
   }
 
   locations.reserve(pointCount);
@@ -209,9 +208,9 @@ bool iReadPointsVersion2(std::istream& a_inStream, VecPt3d& locations)
     Pt3d point;
     int readPointIdx = -1;
     bool success = daReadStringFromLine(pointLine, pointValue);
-    success = pointValue == "POINT";
+    success = success && pointValue == "POINT";
     success = success && daReadIntFromLine(pointLine, readPointIdx);
-    success = readPointIdx == pointIdx;
+    success = success && readPointIdx == pointIdx;
     success = success && daReadDoubleFromLine(pointLine, point.x);
     success = success && daReadDoubleFromLine(pointLine, point.y);
     success = success && daReadDoubleFromLine(pointLine, point.z);
