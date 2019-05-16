@@ -53,6 +53,11 @@ public:
   /// Default constructor.
   Impl() = default;
   /// Default copy constructor.
+  Impl(const VecPt3d& a_locations,
+          const VecInt& a_cellstream,
+          const VecInt& a_cellIdxToStreamIdx,
+          const VecInt& a_pointsToCells,
+          const VecInt& a_pointIdxToPointsToCells);
   Impl(const Impl&) = default;
 
   Impl& operator=(const Impl&) = default;
@@ -171,7 +176,7 @@ private:
                                                       int a_numCellItems,
                                                       int& a_currIdx,
                                                       VecInt& a_uniqueGetCellPoints,
-                                                      VecInt& a_cellMask);
+                                                      VecInt& a_pointLastUsedIdx);
   static bool GetUniquePointsFromPolyhedronSingleCellstream(const VecInt& a_cellstream,
                                                             VecInt& a_cellPoints);
   static void GetUniqueEdgesFromPolyhedronCellstream(
@@ -189,7 +194,7 @@ private:
   bool DoEdgesCrossWithPointChange(int a_changedPtIdx,
                                    const Pt3d& a_newPosition,
                                    const std::vector<XmEdge>& a_edges) const;
-  void GetExtentsFromPoints(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max) const;
+  void GetExtentsFromPoints(const VecPt3d& a_locations, Pt3d& a_min, Pt3d& a_max) const;
   bool GetFaceXySegments(int a_cellIdx, int a_faceIdx, VecPt3d& a_segments) const; // plan view
 
   void CalculateCacheValues() const;
@@ -212,7 +217,7 @@ private:
     NEEDS_CALCULATION = -2 ///< Cached value needs to be calculated
   };
 
-  VecPt3d m_points;                 ///< UGrid points
+  VecPt3d m_locations;              ///< UGrid point locations
   VecInt m_cellstream;              ///< UGrid cell stream. @see SetCellstream, GetCellstream
   VecInt m_cellIdxToStreamIdx;      ///< Indexes for each cell in the cell stream
   VecInt m_pointsToCells;           ///< Array of points cells (goes from pointIdx to list
@@ -602,6 +607,26 @@ void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
 ///        unstructured grid.
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
+/// \brief 
+/// \param a_locations 
+/// \param a_cellstream 
+/// \param a_cellIdxToStreamIdx 
+/// \param a_pointsToCells 
+/// \param a_pointIdxToPointsToCells 
+//------------------------------------------------------------------------------
+XmUGrid::Impl::Impl(const VecPt3d& a_locations,
+  const VecInt& a_cellstream,
+  const VecInt& a_cellIdxToStreamIdx,
+  const VecInt& a_pointsToCells,
+  const VecInt& a_pointIdxToPointsToCells)
+: m_locations(a_locations)
+, m_cellstream(a_cellstream)
+, m_cellIdxToStreamIdx(a_cellIdxToStreamIdx)
+, m_pointsToCells(a_pointsToCells)
+, m_pointIdxToPointsToCells(a_pointIdxToPointsToCells)
+{
+} // XmUGrid::Impl::Impl
+//------------------------------------------------------------------------------
 /// \brief Returns the modified flag. Gets set when points or cells get changed.
 /// \return the modified flag
 //------------------------------------------------------------------------------
@@ -639,7 +664,7 @@ void XmUGrid::Impl::SetUseCache(bool a_useCache)
 //------------------------------------------------------------------------------
 int XmUGrid::Impl::GetPointCount() const
 {
-  return (int)m_points.size();
+  return (int)m_locations.size();
 } // XmUGrid::Impl::GetPointCount
 //------------------------------------------------------------------------------
 /// \brief Get vector of UGrid points.
@@ -647,7 +672,7 @@ int XmUGrid::Impl::GetPointCount() const
 //------------------------------------------------------------------------------
 const VecPt3d& XmUGrid::Impl::GetLocations() const
 {
-  return m_points;
+  return m_locations;
 } // XmUGrid::Impl::GetLocations
 //------------------------------------------------------------------------------
 /// \brief Set UGrid points.
@@ -655,7 +680,7 @@ const VecPt3d& XmUGrid::Impl::GetLocations() const
 //------------------------------------------------------------------------------
 void XmUGrid::Impl::SetLocations(const VecPt3d& a_locations)
 {
-  m_points = a_locations;
+  m_locations = a_locations;
   SetModified();
 } // XmUGrid::Impl::SetLocations
 //------------------------------------------------------------------------------
@@ -665,8 +690,8 @@ void XmUGrid::Impl::SetLocations(const VecPt3d& a_locations)
 //------------------------------------------------------------------------------
 Pt3d XmUGrid::Impl::GetPointLocation(int a_pointIdx) const
 {
-  if (a_pointIdx >= 0 && a_pointIdx < m_points.size())
-    return m_points[a_pointIdx];
+  if (a_pointIdx >= 0 && a_pointIdx < m_locations.size())
+    return m_locations[a_pointIdx];
   return Pt3d();
 } // XmUGrid::Impl::GetPointLocation
 //------------------------------------------------------------------------------
@@ -677,9 +702,9 @@ Pt3d XmUGrid::Impl::GetPointLocation(int a_pointIdx) const
 //------------------------------------------------------------------------------
 bool XmUGrid::Impl::SetPointLocation(int a_pointIdx, const Pt3d& a_location)
 {
-  if (a_pointIdx >= 0 && a_pointIdx < m_points.size())
+  if (a_pointIdx >= 0 && a_pointIdx < m_locations.size())
   {
-    m_points[a_pointIdx] = a_location;
+    m_locations[a_pointIdx] = a_location;
     SetModified();
     return true;
   }
@@ -720,7 +745,7 @@ VecPt3d XmUGrid::Impl::GetPointsLocations(const VecInt& a_points) const
 //------------------------------------------------------------------------------
 void XmUGrid::Impl::GetExtents(Pt3d& a_min, Pt3d& a_max) const
 {
-  GetExtentsFromPoints(m_points, a_min, a_max);
+  GetExtentsFromPoints(m_locations, a_min, a_max);
 } // XmUGrid::Impl::GetExtents
 
 //------------------------------------------------------------------------------
@@ -730,7 +755,7 @@ void XmUGrid::Impl::GetExtents(Pt3d& a_min, Pt3d& a_max) const
 //------------------------------------------------------------------------------
 int XmUGrid::Impl::GetPointAdjacentCellCount(int a_pointIdx) const
 {
-  if (a_pointIdx < 0 || a_pointIdx >= m_points.size())
+  if (a_pointIdx < 0 || a_pointIdx >= m_locations.size())
     return 0;
   int numCells = m_pointsToCells[m_pointIdxToPointsToCells[a_pointIdx]];
   return numCells;
@@ -1234,7 +1259,7 @@ bool XmUGrid::Impl::IsValidCellIdx(int a_cellIdx) const
 bool XmUGrid::Impl::IsValidPointChange(int a_changedPtIdx, const Pt3d& a_newPosition) const
 {
   bool validChange = false;
-  if (a_changedPtIdx >= 0 && a_changedPtIdx < m_points.size())
+  if (a_changedPtIdx >= 0 && a_changedPtIdx < m_locations.size())
   {
     validChange = true;
     VecInt affectedCells = GetPointAdjacentCells(a_changedPtIdx);
@@ -1931,14 +1956,14 @@ void XmUGrid::Impl::UpdateCellLinks()
 void XmUGrid::Impl::UpdatePointLinks()
 {
   m_pointIdxToPointsToCells.clear();
-  m_pointIdxToPointsToCells.resize(m_points.size(), 0);
+  m_pointIdxToPointsToCells.resize(m_locations.size(), 0);
   m_pointsToCells.clear();
 
   // get number of cells for each point
   int numStreamItems = (int)m_cellstream.size();
   int cellIdx = 0;
   int currIdx = 0;
-  VecInt cellPointMask(m_points.size(), -1);
+  VecInt pointLastUsedIdx(m_locations.size(), -1);
   VecInt cellPoints;
   while (currIdx < numStreamItems)
   {
@@ -1955,11 +1980,13 @@ void XmUGrid::Impl::UpdatePointLinks()
     if (cellType == XMU_POLYHEDRON)
     {
       GetUniquePointsFromPolyhedronCellstream(m_cellstream, numCellItems, currIdx, cellPoints,
-                                              cellPointMask);
+                                              pointLastUsedIdx);
 
       // Deemed to be slower than flat set-- Left only as a warning to others!
       // std::stable_sort(cellPoints.begin(), cellPoints.end());
       // auto uniqueEnd = std::unique(cellPoints.begin(), cellPoints.end());
+
+      // flat set deemed to be slower than marking when a point was last used (pointLastUsedIdx)
 
       // for (auto pt = cellPoints.begin(); pt != uniqueEnd; ++pt)
       for (auto cellPoint : cellPoints)
@@ -1994,7 +2021,7 @@ void XmUGrid::Impl::UpdatePointLinks()
   cellIdx = 0;
   currIdx = 0;
   m_pointsToCells.resize(currCount, 0);
-  std::fill(cellPointMask.begin(), cellPointMask.end(), -1);
+  std::fill(pointLastUsedIdx.begin(), pointLastUsedIdx.end(), -1);
   while (currIdx < numStreamItems)
   {
     // get cell type
@@ -2010,7 +2037,7 @@ void XmUGrid::Impl::UpdatePointLinks()
     if (cellType == XMU_POLYHEDRON)
     {
       GetUniquePointsFromPolyhedronCellstream(m_cellstream, numCellItems, currIdx, cellPoints,
-                                              cellPointMask);
+                                              pointLastUsedIdx);
 
       // Deemed to be slower than flat set-- Left only as a warning to others!
       // std::stable_sort(cellPoints.begin(), cellPoints.end());
@@ -2221,7 +2248,8 @@ int XmUGrid::Impl::GetNumberOfPolyhedronEdges(int a_cellIdx) const
 ///       the number of points in the first face. This variable will be updated
 ///       to the cell type of the next cell.
 /// \param[out] a_uniqueGetCellPoints the unique points of the polyhedron
-/// \param[out] a_cellMask a list of integers representing the last time a point was found
+/// \param[out] a_pointLastUsedIdx a list of integers representing when a point
+///  was last found while reading the stream.
 /// \note: This function does NOT verify cellstream size!!  This function
 ///      needs to be efficient!
 //------------------------------------------------------------------------------
@@ -2229,7 +2257,7 @@ void XmUGrid::Impl::GetUniquePointsFromPolyhedronCellstream(const VecInt& a_cell
                                                             int a_numCellItems,
                                                             int& a_currIdx,
                                                             VecInt& a_uniqueGetCellPoints,
-                                                            VecInt& a_cellMask)
+                                                            VecInt& a_pointLastUsedIdx)
 {
   int stable = a_currIdx;
   a_uniqueGetCellPoints.clear();
@@ -2240,9 +2268,9 @@ void XmUGrid::Impl::GetUniquePointsFromPolyhedronCellstream(const VecInt& a_cell
     for (int ptIdx = 0; ptIdx < numFacePoints; ++ptIdx)
     {
       int pt = a_cellstream[a_currIdx++];
-      if (a_cellMask[pt] < stable)
+      if (a_pointLastUsedIdx[pt] < stable)
       {
-        a_cellMask[pt] = stable;
+        a_pointLastUsedIdx[pt] = stable;
         a_uniqueGetCellPoints.push_back(pt);
       }
     }
@@ -2420,15 +2448,15 @@ bool XmUGrid::Impl::GetCellXySegments(int a_cellIdx, VecPt3d& a_segments) const
 //------------------------------------------------------------------------------
 /// \brief Function to get the extents from a list of points. Will be removed after geometry library
 /// is built.
-/// \param[in] a_points The point locations to get the extents of.
+/// \param[in] a_locations The point locations to get the extents of.
 /// \param[out] a_min Minimum point location.
 /// \param[out] a_max Maximum point location.
 //------------------------------------------------------------------------------
-void XmUGrid::Impl::GetExtentsFromPoints(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max) const
+void XmUGrid::Impl::GetExtentsFromPoints(const VecPt3d& a_locations, Pt3d& a_min, Pt3d& a_max) const
 {
   a_min.x = a_min.y = a_min.z = xms::XM_DBL_HIGHEST;
   a_max.x = a_max.y = a_max.z = xms::XM_DBL_LOWEST;
-  for (const Pt3d& pt : a_points)
+  for (const Pt3d& pt : a_locations)
   {
     gmAddToExtents(pt, a_min, a_max);
   }
@@ -2862,14 +2890,14 @@ BSHP<XmUGrid> XmUGrid::New()
 } // XmUGrid::New
 //------------------------------------------------------------------------------
 /// \brief Create a new XmUGrid.
-/// \param[in] a_points the UGrid points
+/// \param[in] a_locations the UGrid points
 /// \param[in] a_cellstream the UGrid cell stream
 /// \return the new XmUGrid.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> XmUGrid::New(const VecPt3d& a_points, const VecInt& a_cellstream)
+BSHP<XmUGrid> XmUGrid::New(const VecPt3d& a_locations, const VecInt& a_cellstream)
 {
   BSHP<XmUGrid> ugrid = XmUGrid::New();
-  ugrid->SetLocations(a_points);
+  ugrid->SetLocations(a_locations);
   ugrid->SetCellstream(a_cellstream);
   return ugrid;
 } // XmUGrid::New
@@ -2897,6 +2925,26 @@ XmUGrid::XmUGrid(XmUGrid&& a_xmUGrid)
 : XmUGrid()
 {
   Swap(a_xmUGrid);
+} // XmUGrid::XmUGrid
+//------------------------------------------------------------------------------
+/// \brief Construct with links already built.
+/// \param a_locations the UGrid points
+/// \param a_cellstream  the UGrid cell stream
+/// \param a_cellIdxToStreamIdx an array giving the index of the start of each
+/// cell in the cell stream. There is also an extra item at the end used to
+/// determine the length of the stream for the last cell.
+/// \param a_pointsToCells 
+/// \param a_pointIdxToPointsToCells an array giving the index of the start of
+/// each point in the a_pointsToCells stream. There is also an extra item at the
+/// end used to determine the length of entries for the last cell.
+//------------------------------------------------------------------------------
+XmUGrid::XmUGrid(const VecPt3d& a_locations,
+  const VecInt& a_cellstream,
+  const VecInt& a_cellIdxToStreamIdx,
+  const VecInt& a_pointsToCells,
+  const VecInt& a_pointIdxToPointsToCells)
+  : m_impl(new Impl(a_locations, a_cellstream, a_cellIdxToStreamIdx, a_pointsToCells,a_pointIdxToPointsToCells))
+{
 } // XmUGrid::XmUGrid
 //------------------------------------------------------------------------------
 /// \brief Destructor

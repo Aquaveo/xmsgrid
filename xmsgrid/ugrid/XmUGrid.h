@@ -116,11 +116,17 @@ enum XmUGridFaceOrientation {
 class XmUGrid
 {
 public:
-  static BSHP<XmUGrid> New(const VecPt3d& a_points, const VecInt& a_cellstream);
+  static BSHP<XmUGrid> New(const VecPt3d& a_locations, const VecInt& a_cellstream);
   static BSHP<XmUGrid> New();
   XmUGrid();
+  XmUGrid(const VecPt3d& a_locations, const VecInt& a_cellstream);
   XmUGrid(const XmUGrid& a_xmUGrid);
   XmUGrid(XmUGrid&& a_xmUGrid);
+  XmUGrid(const VecPt3d& a_locations,
+          const VecInt& a_cellstream,
+          const VecInt& a_cellIdxToStreamIdx,
+          const VecInt& a_pointsToCells,
+          const VecInt& a_pointIdxToPointsToCells);
   ~XmUGrid();
 
   XmUGrid& operator=(XmUGrid a_xmUGrid);
@@ -242,6 +248,15 @@ public:
                                  int& a_neighborFace) const;
 
   XmUGridFaceOrientation GetCell3dFaceOrientation(int a_cellIdx, int a_faceIdx) const;
+
+  // IO Support
+
+  class CacheItemHandler
+  {
+    virtual void HandleIntArray(const char* a_name, const VecInt& a_values);
+  };
+
+  void IterateCacheItems(CacheItemHandler& a_handler) const;
 
 private:
   class Impl;
