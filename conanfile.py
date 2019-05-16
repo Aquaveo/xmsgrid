@@ -59,7 +59,7 @@ class XmsgridConan(ConanFile):
                 and self.options.pybind:
             self.requires("pybind11/2.2.2@aquaveo/stable")
 
-        self.requires("xmscore/[>=3.0.2,<4.0.0]@aquaveo/stable")
+        self.requires("xmscore/[>=3.0.4,<4.0.0]@aquaveo/stable")
 
     def build(self):
         cmake = CMake(self)
@@ -107,11 +107,16 @@ class XmsgridConan(ConanFile):
                 if is_release == 'True' and ((self.settings.os == "Macos" or self.settings.os == "Linux")
                                              or (self.settings.os == "Windows" and
                                              str(self.settings.compiler.runtime) == "MD")):
-                    plat_names = {'Windows': 'win_amd64', 'Linux': 'linux_x86_64', "Macos": 'macosx'}
+                    devpi_url = self.env.get("AQUAPI_URL", 'NO_URL')
+                    devpi_username = self.env.get("AQUAPI_USERNAME", 'NO_USERNAME')
+                    devpi_password = self.env.get("AQUAPI_PASSWORD", 'NO_PASSWORD')
+                    self.run('devpi use {}'.format(devpi_url))
+                    self.run('devpi login {} --password {}'.format(devpi_username, devpi_password))
+                    plat_names = {'Windows': 'win_amd64', 'Linux': 'linux_x86_64', "Macos": 'macosx-10.6-intel'}
                     self.run('python setup.py bdist_wheel --plat-name={} --dist-dir {}'.format(
                         plat_names[str(self.settings.os)],
                         os.path.join(self.build_folder, "dist")), cwd=os.path.join(self.package_folder, "_package"))
-                    self.run('twine upload dist/*', cwd=".")
+                    self.run('devpi upload --from-dir {}'.format(os.path.join(self.build_folder, "dist")), cwd=".")
 
     def package(self):
         self.copy("license", dst="licenses", ignore_case=True, keep_path=False)

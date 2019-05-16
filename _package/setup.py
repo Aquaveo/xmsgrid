@@ -8,7 +8,7 @@
 ********************************************************************************
 """
 import os
-from xms import grid
+from xms.grid import __version__
 from setuptools import setup
 
 
@@ -20,21 +20,22 @@ requires = [
     'xmscore',
 ]
 
-version = grid.__version__
+version = __version__
 
 setup(
-    python_requires='==3.6.8',
+    python_requires='==3.6.*',
     name='xmsgrid',
     version=version,
-    packages=['xms.grid'],
+    packages=['xms.grid', 'xms.grid.geometry', 'xms.grid.triangulate',
+              'xms.grid.ugrid',],
     include_package_data=True,
     license='BSD 2-Clause License',
     description='',
     author='Aquaveo',
     install_requires=requires,
-    package_data={'': ['*.pyd']},
+    package_data={'': ['*.pyd', '*.so']},
+    test_suite='tests',
     dependency_links=[
-        'https://aquapi.aquaveo.com/aquaveo/stable'
+        'https://public.aquapi.aquaveo.com/aquaveo/stable'
     ],
-)
 )
