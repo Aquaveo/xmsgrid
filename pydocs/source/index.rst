@@ -35,7 +35,6 @@ Index
 **User Interface**
 
 * :doc:`modules/ugrid/UGrid`
-* :doc:`modules/ugrid/edge`
 * :doc:`modules/ugrid/ugrid_utils`
 
 .. toctree::
@@ -44,7 +43,6 @@ Index
    :caption: User Interface
 
    modules/ugrid/UGrid.rst
-   modules/ugrid/edge.rst
    modules/ugrid/ugrid_utils.rst
 
 Acknowledgements
