@@ -24,3 +24,16 @@ def write_ugrid_to_ascii_file(ugrid, file_name):
         file_name: File to write UGrid to
     """
     ugu.write_ugrid_to_ascii_file(ugrid._instance, file_name)
+
+
+def edges_equivalent(edge1, edge2):
+    """
+    Check if two edges are equivalent
+    Args:
+        edge1 (iterable): The first edge
+        edge2 (iterable): The second edge
+
+    Returns:
+        True if edges are equal, False otherwise
+    """
+    return ugu.edges_equivalent(edge1, edge2)

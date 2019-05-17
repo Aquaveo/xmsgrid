@@ -148,7 +148,6 @@ set(xmsgrid_py
   xmsgrid/python/triangulate/TrTin_py.cpp
   #UGrid
   xmsgrid/python/ugrid/ugrid_py.cpp
-  xmsgrid/python/ugrid/XmEdge_py.cpp
   xmsgrid/python/ugrid/XmUGrid_py.cpp
   xmsgrid/python/ugrid/XmUGridUtils_py.cpp
 )
