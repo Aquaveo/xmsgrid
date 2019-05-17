@@ -21,7 +21,8 @@ class UGrid(object):
                 self._instance = XmUGrid(points, cellstream)
         else:
             if not isinstance(kwargs['instance'], XmUGrid):
-                raise ValueError('"instance" must be of type _xmsgrid.ugrid.XmUGrid')
+                raise ValueError('"instance" must be of type _xmsgrid.ugrid.XmUGrid not {}'.format(
+                    type(kwargs['instance'])))
             self._instance = kwargs['instance']
 
     def __eq__(self, other):
