@@ -116,17 +116,34 @@ enum XmUGridFaceOrientation {
 class XmUGrid
 {
 public:
+  typedef std::pair<const char*, VecInt*> IntArray;
+  typedef std::vector<IntArray> IntArrays;
+  typedef std::pair<const char*, const VecInt*> ConstIntArray;
+  typedef std::vector<ConstIntArray> ConstIntArrays;
+
+  class IoReader
+  {
+  public:
+    virtual bool ReadLocations(VecPt3d& a_locations) = 0;
+    virtual bool ReadCellstream(VecInt& a_cellstream) = 0;
+    virtual bool ReadIntArrays(IntArrays& a_intArrays) = 0;
+  };
+
+  class IoWriter
+  {
+  public:
+    virtual bool WriteLocations(const VecPt3d& a_locations) = 0;
+    virtual bool WriteCellstream(const VecInt& a_cellstream) = 0;
+    virtual bool WriteIntArrays(ConstIntArrays& a_intArrays) = 0;
+  };
+
   static BSHP<XmUGrid> New(const VecPt3d& a_locations, const VecInt& a_cellstream);
+  static BSHP<XmUGrid> New(IoReader& a_ioReader);
   static BSHP<XmUGrid> New();
   XmUGrid();
-  XmUGrid(const VecPt3d& a_locations, const VecInt& a_cellstream);
+  XmUGrid(const IoReader& a_ioHandler);
   XmUGrid(const XmUGrid& a_xmUGrid);
   XmUGrid(XmUGrid&& a_xmUGrid);
-  XmUGrid(const VecPt3d& a_locations,
-          const VecInt& a_cellstream,
-          const VecInt& a_cellIdxToStreamIdx,
-          const VecInt& a_pointsToCells,
-          const VecInt& a_pointIdxToPointsToCells);
   ~XmUGrid();
 
   XmUGrid& operator=(XmUGrid a_xmUGrid);
@@ -251,12 +268,7 @@ public:
 
   // IO Support
 
-  class CacheItemHandler
-  {
-    virtual void HandleIntArray(const char* a_name, const VecInt& a_values);
-  };
-
-  void IterateCacheItems(CacheItemHandler& a_handler) const;
+  bool WriteXmUGrid(IoWriter& a_ioWriter) const;
 
 private:
   class Impl;

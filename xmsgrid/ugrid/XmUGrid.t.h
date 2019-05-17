@@ -63,6 +63,7 @@ public:
   void testGetCell3dFaceOrientationHexahedrons();
   void testGetCell3dFaceOrientationConcaveCell();
   void testCell3dFunctionCaching();
+  void testWriteAndRead();
   void testLargeUGridLinkSpeed();
 }; // XmUGridUnitTests
 
