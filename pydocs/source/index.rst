@@ -36,6 +36,8 @@ Index
 
 * :doc:`modules/ugrid/UGrid`
 * :doc:`modules/ugrid/ugrid_utils`
+* :doc:`modules/geometry/TriSearch`
+* :doc:`modules/triangulate/Tin`
 
 .. toctree::
    :maxdepth: 1
@@ -44,6 +46,8 @@ Index
 
    modules/ugrid/UGrid.rst
    modules/ugrid/ugrid_utils.rst
+   modules/geometry/TriSearch.rst
+   modules/triangulate/Tin.rst
 
 Acknowledgements
 ================
