@@ -99,8 +99,8 @@ VecInt ConvexHullWithIndices(const std::vector<int>& a_points, BSHP<XmUGrid> a_u
 bool DoLineSegmentsCross(const std::pair<Pt3<double>, Pt3<double>>& a_segment1,
                          const std::pair<Pt3<double>, Pt3<double>>& a_segment2)
 {
-  return gmLinesCross(a_segment1.first, a_segment1.second, a_segment2.first,
-                             a_segment2.second);;
+  return gmLinesCross(a_segment1.first, a_segment1.second, a_segment2.first, a_segment2.second);
+  ;
 } // DoLineSegmentsCross
 
 //------------------------------------------------------------------------------

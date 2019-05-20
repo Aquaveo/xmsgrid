@@ -27,18 +27,16 @@ public:
   void testWritePolyhedronUGrid();
   void testWriteLinear2dCells();
   void testWriteLinear3dCells();
-
   void testReadEmptyUGridAsciiFile();
   void testReadBasicUGrid();
   void testReadPolyhedronUGrid();
-
   void testLinear2dWriteThenRead();
   void testLinear3dWriteThenRead();
-
   void testWriteThenReadUGridFile();
   void testWriteThenReadUGridFileToAscii();
-
   void testReadVersion1Dot0File();
+  void testWriteThenReadUGridBinary();
+  void testCellStringToEnum();
 }; // XmUGridReaderTests
 
 #endif

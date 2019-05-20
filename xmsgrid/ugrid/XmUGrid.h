@@ -27,6 +27,8 @@ namespace xms
 {
 //----- Forward declarations ---------------------------------------------------
 class XmEdge;
+class XmUGridReader;
+class XmUGridWriter;
 
 //----- Constants / Enumerations -----------------------------------------------
 
@@ -116,32 +118,11 @@ enum XmUGridFaceOrientation {
 class XmUGrid
 {
 public:
-  typedef std::pair<const char*, VecInt*> IntArray;
-  typedef std::vector<IntArray> IntArrays;
-  typedef std::pair<const char*, const VecInt*> ConstIntArray;
-  typedef std::vector<ConstIntArray> ConstIntArrays;
-
-  class IoReader
-  {
-  public:
-    virtual bool ReadLocations(VecPt3d& a_locations) = 0;
-    virtual bool ReadCellstream(VecInt& a_cellstream) = 0;
-    virtual bool ReadIntArrays(IntArrays& a_intArrays) = 0;
-  };
-
-  class IoWriter
-  {
-  public:
-    virtual bool WriteLocations(const VecPt3d& a_locations) = 0;
-    virtual bool WriteCellstream(const VecInt& a_cellstream) = 0;
-    virtual bool WriteIntArrays(ConstIntArrays& a_intArrays) = 0;
-  };
-
   static BSHP<XmUGrid> New(const VecPt3d& a_locations, const VecInt& a_cellstream);
-  static BSHP<XmUGrid> New(IoReader& a_ioReader);
+  static BSHP<XmUGrid> New(XmUGridReader& a_ioReader);
   static BSHP<XmUGrid> New();
   XmUGrid();
-  XmUGrid(const IoReader& a_ioHandler);
+  XmUGrid(const XmUGridReader& a_ioHandler);
   XmUGrid(const XmUGrid& a_xmUGrid);
   XmUGrid(XmUGrid&& a_xmUGrid);
   ~XmUGrid();
@@ -151,124 +132,71 @@ public:
 
   // Misc
   bool GetModified() const;
-
   void SetUnmodified();
-
   void SetUseCache(bool a_useCache);
-
   static bool IsValidCellstream(const VecInt& a_cellstream);
 
   // Points
-
   int GetPointCount() const;
-
   const VecPt3d& GetLocations() const;
-
   void SetLocations(const VecPt3d& a_locations);
-
   Pt3d GetPointLocation(int a_pointIdx) const;
-
   bool SetPointLocation(int a_pointIdx, const Pt3d& a_location);
-
   Pt3d GetPointXy0(int a_pointIdx) const;
-
   VecPt3d GetPointsLocations(const VecInt& a_points) const;
-
   void GetExtents(Pt3d& a_min, Pt3d& a_max) const;
-
   int GetPointAdjacentCellCount(int a_pointIdx) const;
-
   VecInt GetPointAdjacentCells(int a_pointIdx) const;
-
   void GetPointAdjacentCells(int a_pointIdx, VecInt& a_adjacentCells) const;
-
   VecInt GetPointsAdjacentCells(const VecInt& a_points) const;
-
   void GetPointsAdjacentCells(const VecInt& a_pointIdxs, VecInt& a_adjacentCellIdxs) const;
-
   void GetPointsAdjacentCells(int a_pointIdx1, int a_pointIdx2, VecInt& a_adjacentCellIdxs) const;
-
   bool IsValidPointChange(int a_changedPtIdx, const Pt3d& a_newPosition) const;
 
   // Cells
-
   int GetCellCount() const;
-
   int GetCellPointCount(int a_cellIdx) const;
-
   VecInt GetCellPoints(int a_cellIdx) const;
-
   bool GetCellPoints(int a_cellIdx, VecInt& a_cellPoints) const;
-
   void GetCellLocations(int a_cellIdx, VecPt3d& a_cellLocations) const;
-
   XmUGridCellType GetCellType(int a_cellIdx) const;
-
   std::vector<int> GetDimensionCounts() const;
-
   int GetCellDimension(int a_cellIdx) const;
-
   void GetCellExtents(int a_cellIdx, Pt3d& a_min, Pt3d& a_max) const;
-
   const VecInt& GetCellstream() const;
-
   bool SetCellstream(const VecInt& a_cellstream);
-
   bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
-
   VecInt GetCellAdjacentCells(int a_cellIdx) const;
-
   void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
-
   bool GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const;
-
   bool GetCellCentroid(int a_cellIdx, Pt3d& a_centroid) const;
-
   int GetCellEdgeCount(int a_cellIdx) const;
-
   XmEdge GetCellEdge(int a_cellIdx, int a_edgeIdx) const;
-
   VecInt GetCellEdgeAdjacentCells(int a_cellIdx, int a_edgeIdx) const;
-
   void GetCellEdgeAdjacentCells(int a_cellIdx, int a_edgeIdx, VecInt& a_adjacentCellIdxs) const;
-
   int GetCell2dEdgeAdjacentCell(int a_cellIdx, int a_edgeIdx) const;
-
   void GetEdgeAdjacentCells(const XmEdge& a_edge, VecInt& a_adjacentCellIdxs) const;
-
   VecInt GetEdgeAdjacentCells(const XmEdge& a_edge) const;
-
   std::vector<XmEdge> GetCellEdges(int a_cellIdx) const;
-
   void GetCellEdges(int a_cellIdx, std::vector<XmEdge>& a_edges) const;
-
   void GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const;
-
   void GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const;
 
   // Faces
-
   int GetCell3dFaceCount(int a_cellIdx) const;
   int GetCell3dFacePointCount(int a_cellIdx, int a_faceIdx) const;
-
   VecInt GetCell3dFacePoints(int a_cellIdx, int a_faceIdx) const;
-
   void GetCell3dFacePoints(int a_cellIdx, int a_faceIdx, VecInt& a_facePtIdxs) const;
-
   VecInt2d GetCell3dFacesPoints(int a_cellIdx) const;
-
   int GetCell3dFaceAdjacentCell(int a_cellIdx, int a_faceIdx) const;
-
   bool GetCell3dFaceAdjacentCell(int a_cellIdx,
                                  int a_faceIdx,
                                  int& a_neighborCell,
                                  int& a_neighborFace) const;
-
   XmUGridFaceOrientation GetCell3dFaceOrientation(int a_cellIdx, int a_faceIdx) const;
 
   // IO Support
-
-  bool WriteXmUGrid(IoWriter& a_ioWriter) const;
+  bool WriteXmUGrid(XmUGridWriter& a_ioWriter) const;
 
 private:
   class Impl;

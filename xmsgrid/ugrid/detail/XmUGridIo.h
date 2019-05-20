@@ -1,7 +1,7 @@
 #pragma once
 //------------------------------------------------------------------------------
-/// \file XmUGridUtils.h
-/// \brief Contains IO functions as well as several utility functions for XmUGrid
+/// \file XmUGrid.h
+/// \brief Contains the XmUGrid Class and supporting data types.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
 /// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
@@ -10,11 +10,11 @@
 //----- Included files ---------------------------------------------------------
 
 // 3. Standard library headers
+#include <memory>
 
 // 4. External library headers
 
 // 5. Shared code headers
-#include <xmscore/misc/boost_defines.h>
 #include <xmscore/stl/vector.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -25,19 +25,34 @@
 namespace xms
 {
 //----- Forward declarations ---------------------------------------------------
-class XmUGrid;
 
 //----- Constants / Enumerations -----------------------------------------------
 
 //----- Structs / Classes ------------------------------------------------------
 
-//----- Function prototypes ----------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+class XmUGridReader
+{
+public:
+  typedef std::pair<const char*, VecInt*> IntArray;
+  typedef std::vector<IntArray> IntArrays;
 
-// IO
-BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath);
-BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_istream);
-void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePath);
-void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream);
-void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream, bool a_binary = false);
+  virtual ~XmUGridReader() = default;
+  virtual bool ReadLocations(VecPt3d& a_locations) = 0;
+  virtual bool ReadCellstream(VecInt& a_cellstream) = 0;
+  virtual bool ReadIntArrays(IntArrays& a_intArrays) = 0;
+};
+
+class XmUGridWriter
+{
+public:
+  typedef std::pair<const char*, const VecInt*> ConstIntArray;
+  typedef std::vector<ConstIntArray> ConstIntArrays;
+
+  virtual ~XmUGridWriter() = default;
+  virtual bool WriteLocations(const VecPt3d& a_locations) = 0;
+  virtual bool WriteCellstream(const VecInt& a_cellstream) = 0;
+  virtual bool WriteIntArrays(ConstIntArrays& a_intArrays) = 0;
+};
 
 } // namespace xms

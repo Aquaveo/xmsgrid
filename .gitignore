@@ -12,6 +12,7 @@ test_files/3d_grid_linear.xmugrid
 .lvimrc
 .idea
 .vscode
+cmake-build-debug/
 
 # Prerequisites
 *.d

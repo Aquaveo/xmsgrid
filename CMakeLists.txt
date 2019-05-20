@@ -104,6 +104,7 @@ set(xmsgrid_sources
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
   xmsgrid/ugrid/detail/XmGeometry.cpp
+  xmsgrid/ugrid/detail/XmUGridIo.cpp
 )
 
 set(xmsgrid_headers
@@ -135,6 +136,7 @@ set(xmsgrid_headers
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
   xmsgrid/ugrid/detail/XmGeometry.h
+  xmsgrid/ugrid/detail/XmUGridIo.h
 )
 
 # Pybind11 sources
@@ -184,6 +186,7 @@ if (BUILD_TESTING)
    xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
+   xmsgrid/ugrid/detail/XmUGridIo.t.h
  )
 
  find_package(CxxTest)
