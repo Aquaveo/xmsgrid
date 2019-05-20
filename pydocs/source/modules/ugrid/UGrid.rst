@@ -7,4 +7,5 @@ A class to contain grid geometry.
 .. autoclass:: xms.grid.ugrid.UGrid
    :members:
 
-   .. automethod:: __init__
+   .. attribute:: xms.grid.ugrid.UGrid.cell_type_enum
+      Represent the vtk type of a cell

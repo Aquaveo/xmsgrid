@@ -1,10 +1,7 @@
 from .._xmsgrid.ugrid import XmUGrid
 
-
 class UGrid(object):
-    """Class for representing unstructured grid geometries
-
-    """
+    """Class for representing unstructured grid geometries"""
 
     cell_type_enum = XmUGrid.ugrid_celltype_enum
     face_orientation_enum = XmUGrid.ugrid_faceorientation_enum
