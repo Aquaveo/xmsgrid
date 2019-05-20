@@ -2366,6 +2366,13 @@
       <anchor>adcf5db1fd47ba0560a24e9ae63b942df</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
     </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ab7e35a02bf354662441212141a4a91e3</anchor>
+      <arglist>(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>XmUGridUtils.h</name>
@@ -2399,6 +2406,13 @@
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>adcf5db1fd47ba0560a24e9ae63b942df</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ab7e35a02bf354662441212141a4a91e3</anchor>
+      <arglist>(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -8303,6 +8317,13 @@
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>adcf5db1fd47ba0560a24e9ae63b942df</anchor>
       <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>ab7e35a02bf354662441212141a4a91e3</anchor>
+      <arglist>(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream)</arglist>
     </member>
   </compound>
   <compound kind="page">

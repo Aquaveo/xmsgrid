@@ -1,5 +1,7 @@
 var NAVTREEINDEX1 =
 {
+"class_geoms_xmsng_unit_tests.html":[5,0,2],
+"class_geoms_xmsng_unit_tests.html#a3c7aa86a05eb6c65edbfd2739adae675":[5,0,2,2],
 "class_geoms_xmsng_unit_tests.html#a55f61c470b2c64974edeedda4523d500":[5,0,2,1],
 "class_geoms_xmsng_unit_tests.html#a6221ee23de11b511e5920baa908cb6a3":[5,0,2,0],
 "class_gm_extents3d_unit_tests.html":[5,0,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX1 =
 "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a484addfe624bb88f1980496ccb922692":[5,0,0,6,10],
 "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a6b310a7f9545a6629edbc8250eefcb24":[5,0,0,6,5],
 "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a7bacf816a4c3b4eae33cd5a36007655a":[5,0,0,6,12],
-"classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a9cd8f532b56f11e5600f2910051daaff":[5,0,0,6,4],
-"classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#aab32ba927a9062f1c95c5a2e1bedb62d":[5,0,0,6,9],
-"classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ab19ab5f34e20a4cce4d5ef18e6e914f3":[5,0,0,6,2]
+"classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a9cd8f532b56f11e5600f2910051daaff":[5,0,0,6,4]
 };

@@ -1,0 +1,558 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tin &mdash; XmsGrid Library  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="TriSearch" href="../geometry/TriSearch.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> XmsGrid Library
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html#usage">Usage</a></li>
+</ul>
+<p class="caption"><span class="caption-text">User Interface</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../ugrid/UGrid.html">UGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ugrid/ugrid_utils.html">ugrid_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/TriSearch.html">TriSearch</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tin</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">XmsGrid Library</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Tin</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/modules/triangulate/Tin.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tin">
+<h1>Tin<a class="headerlink" href="#tin" title="Permalink to this headline">¶</a></h1>
+<p>Class to encapsulate a tin made simply of arrays of points,
+triangles and adjacency information. Also methods to manipulate it.</p>
+<dl class="class">
+<dt id="xms.grid.triangulate.Tin">
+<em class="property">class </em><code class="descclassname">xms.grid.triangulate.</code><code class="descname">Tin</code><span class="sig-paren">(</span><em>points=None</em>, <em>triangles=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="xms.grid.triangulate.Tin.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>points=None</em>, <em>triangles=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.adjacent_triangle">
+<code class="descname">adjacent_triangle</code><span class="sig-paren">(</span><em>triangle_index</em>, <em>edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.adjacent_triangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the adjacent triangle from a triangle index and an edge</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triangle_index</strong> – index of the triangle</p></li>
+<li><p><strong>edge_idx</strong> – index of the edge</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The triangle adjance to the triangle at the index or None if there isn’t one</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.boundary_points">
+<code class="descname">boundary_points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.boundary_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indices of all points on any boundary, in no particular order</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.boundary_polys">
+<code class="descname">boundary_polys</code><a class="headerlink" href="#xms.grid.triangulate.Tin.boundary_polys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exterior boundary and all interior voids as polygons of 0-based point indices. First point is not
+repeated as the last point.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.build_triangles_adjacent_to_points">
+<code class="descname">build_triangles_adjacent_to_points</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.build_triangles_adjacent_to_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build array of triangles adjacent to points.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the tin of all points, triangles, and triangles adjacent to points.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.common_edge_index">
+<code class="descname">common_edge_index</code><span class="sig-paren">(</span><em>triangle</em>, <em>adjacent_triangle</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.common_edge_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find common edge between triangle and neighbor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triangle</strong> – triangle index</p></li>
+<li><p><strong>adjacent_triangle</strong> – adjacent triangle index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>local index of the edge between the triange and adjacent_triangle if it exists, None otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.delete_points">
+<code class="descname">delete_points</code><span class="sig-paren">(</span><em>points</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.delete_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a list of points, update and renumber.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>points</strong> – Points to be deleted</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.delete_triangles">
+<code class="descname">delete_triangles</code><span class="sig-paren">(</span><em>triangles</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.delete_triangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a list of triangles, update and renumber.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>triangles</strong> – Triangle to be deleted</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.export_tin_file">
+<code class="descname">export_tin_file</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.export_tin_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export in the .tin file format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – a file to write the tin to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.extents">
+<code class="descname">extents</code><a class="headerlink" href="#xms.grid.triangulate.Tin.extents" title="Permalink to this definition">¶</a></dt>
+<dd><p>The extents of the tin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.global_index">
+<code class="descname">global_index</code><span class="sig-paren">(</span><em>triangle_idx</em>, <em>local_point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.global_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the global index of a point given the local index and a triangle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triangle_idx</strong> – triangle to search</p></li>
+<li><p><strong>local_point</strong> – local index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>global index of local_point in triangle_idx</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.local_index">
+<code class="descname">local_index</code><span class="sig-paren">(</span><em>triangle</em>, <em>point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.local_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns index (0-2) of point within triangle given global index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triangle</strong> – triangle index</p></li>
+<li><p><strong>point</strong> – global point index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>local index of the point in the triangle, or None if it is not part of the triangle</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.next_boundary_point">
+<code class="descname">next_boundary_point</code><span class="sig-paren">(</span><em>point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.next_boundary_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the next point CW from point on the boundary. CCW if in an inside hole.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> (<em>int</em>) – The starting point</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The point index or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.number_of_points">
+<code class="descname">number_of_points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.number_of_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of points in the tin</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.number_of_triangles">
+<code class="descname">number_of_triangles</code><a class="headerlink" href="#xms.grid.triangulate.Tin.number_of_triangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of triangles in the tin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.optimize_triangulation">
+<code class="descname">optimize_triangulation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.optimize_triangulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swaps triangle edges until they are a Delauney triangulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if modified, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.points">
+<code class="descname">points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Points in the tin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.previous_boundary_point">
+<code class="descname">previous_boundary_point</code><span class="sig-paren">(</span><em>point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.previous_boundary_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the previous point CCW from point on the boundary. CW if in an inside hole.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point</strong> (<em>int</em>) – The starting point</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The point index or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.remove_long_thin_triangles_on_perimeter">
+<code class="descname">remove_long_thin_triangles_on_perimeter</code><span class="sig-paren">(</span><em>ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.remove_long_thin_triangles_on_perimeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes long thin triangles on the boundary of the tin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ratio</strong> – The ratio of one edge length compared to the sum of the other two edge lengths.  If the length ratio of a triangle is greater then or equal to this given ratio, the triangle is deleted.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.set_geometry">
+<code class="descname">set_geometry</code><span class="sig-paren">(</span><em>points</em>, <em>triangles</em>, <em>triangles_adjacent_to_points</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.set_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the geomoetry of the tin</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> – Points in tin</p></li>
+<li><p><strong>triangles</strong> – Triangles defining tin</p></li>
+<li><p><strong>triangles_adjacent_to_points</strong> – Triangles adjacent to points</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.swap_edge">
+<code class="descname">swap_edge</code><span class="sig-paren">(</span><em>triangle_a</em>, <em>triangle_b</em>, <em>check_angle=True</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.swap_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swap edges if triangles combine to form convex quad.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>triangle_a</strong> – First triangle</p></li>
+<li><p><strong>triangle_b</strong> – Second triangle</p></li>
+<li><p><strong>check_angle</strong> – Dont swap very thin triangles</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if successful False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.triangle_adjacent_to_edge">
+<code class="descname">triangle_adjacent_to_edge</code><span class="sig-paren">(</span><em>point1</em>, <em>point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_adjacent_to_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives triangle on the right side of the edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point1</strong> – first point of the edge</p></li>
+<li><p><strong>point2</strong> – second point of the edge</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The triangle adjacent to the edge.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.triangle_area">
+<code class="descname">triangle_area</code><span class="sig-paren">(</span><em>triangle</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate and return the area of a triangle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>triangle</strong> (<em>int</em>) – Triangle index (0-based).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The area</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.triangle_centroid">
+<code class="descname">triangle_centroid</code><span class="sig-paren">(</span><em>triangle</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate and return the centroid of a triangle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>triangle</strong> (<em>int</em>) – Triangle index (0-based).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The centroid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.triangle_from_edge">
+<code class="descname">triangle_from_edge</code><span class="sig-paren">(</span><em>point1</em>, <em>point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_from_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the triangle with the edge defined by an edge</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point1</strong> – first point of edge</p></li>
+<li><p><strong>point2</strong> – second point of edge</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Triangle from an edge</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.triangles">
+<code class="descname">triangles</code><a class="headerlink" href="#xms.grid.triangulate.Tin.triangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triangles defining the tin</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xms.grid.triangulate.Tin.triangles_adjacent_to_points">
+<code class="descname">triangles_adjacent_to_points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.triangles_adjacent_to_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triangles adjacent to points</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.triangulate">
+<code class="descname">triangulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Triangulate the tin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.triangulate.Tin.vertices_are_adjacent">
+<code class="descname">vertices_are_adjacent</code><span class="sig-paren">(</span><em>point1</em>, <em>point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.vertices_are_adjacent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if vertices form an edge of a triangle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point1</strong> – first point index</p></li>
+<li><p><strong>point2</strong> – second point index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if points form a triangle edge, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../geometry/TriSearch.html" class="btn btn-neutral float-left" title="TriSearch" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, aquaveo
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

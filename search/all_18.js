@@ -42,5 +42,5 @@ var searchData=
   ['xmugridutils_2et_2eh',['XmUGridUtils.t.h',['../_xm_u_grid_utils_8t_8h.html',1,'']]],
   ['xmugridutilstests',['XmUGridUtilsTests',['../class_xm_u_grid_utils_tests.html',1,'']]],
   ['xmwriteugridtoasciifile',['XmWriteUGridToAsciiFile',['../namespacexms.html#aad684d8d566604305a00cc4d875dd51e',1,'xms']]],
-  ['xmwriteugridtostream',['XmWriteUGridToStream',['../namespacexms.html#adcf5db1fd47ba0560a24e9ae63b942df',1,'xms']]]
+  ['xmwriteugridtostream',['XmWriteUGridToStream',['../namespacexms.html#adcf5db1fd47ba0560a24e9ae63b942df',1,'xms::XmWriteUGridToStream(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)'],['../namespacexms.html#ab7e35a02bf354662441212141a4a91e3',1,'xms::XmWriteUGridToStream(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream)']]]
 ];

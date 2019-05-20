@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                3.0.1
+                3.0.2
               </div>
             
           
@@ -91,8 +91,9 @@
 <p class="caption"><span class="caption-text">User Interface</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/ugrid/UGrid.html">UGrid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules/ugrid/edge.html">edge</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules/ugrid/ugrid_utils.html">ugrid_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/geometry/TriSearch.html">TriSearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/triangulate/Tin.html">Tin</a></li>
 </ul>
 
             
@@ -160,6 +161,8 @@
 
 <div class="genindex-jumpbox">
  <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
@@ -168,10 +171,14 @@
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
  
@@ -179,7 +186,33 @@
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.__init__">__init__() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.__init__">__init__() (xms.grid.geometry.TriSearch method)</a>
+
+      <ul>
+        <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.__init__">(xms.grid.triangulate.Tin method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.adjacent_triangle">adjacent_triangle() (xms.grid.triangulate.Tin method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.boundary_points">boundary_points (xms.grid.triangulate.Tin attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.boundary_polys">boundary_polys (xms.grid.triangulate.Tin attribute)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.build_triangles_adjacent_to_points">build_triangles_adjacent_to_points() (xms.grid.triangulate.Tin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -187,13 +220,21 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.cell_count">cell_count (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.cell_count">cell_count (xms.grid.ugrid.UGrid attribute)</a>
 </li>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.cell_type_enum">cell_type_enum (xms.grid.ugrid.UGrid attribute)</a>
+
+      <ul>
+        <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.xms.grid.ugrid.UGrid.cell_type_enum">(xms.grid.ugrid.UGrid.xms.grid.ugrid.UGrid attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.cell_type_enum">cell_type_enum (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.cellstream">cellstream (xms.grid.ugrid.UGrid attribute)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.cellstream">cellstream (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.clear">clear() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.common_edge_index">common_edge_index() (xms.grid.triangulate.Tin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -201,7 +242,13 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.dimension_counts">dimension_counts (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.delete_points">delete_points() (xms.grid.triangulate.Tin method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.delete_triangles">delete_triangles() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.dimension_counts">dimension_counts (xms.grid.ugrid.UGrid attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -209,15 +256,25 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.extents">extents (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/ugrid/ugrid_utils.html#xms.grid.ugrid.ugrid_utils.edges_equivalent">edges_equivalent() (in module xms.grid.ugrid.ugrid_utils)</a>
 </li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.export_tin_file">export_tin_file() (xms.grid.triangulate.Tin method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.extents">extents (xms.grid.triangulate.Tin attribute)</a>
+
+      <ul>
+        <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.extents">(xms.grid.ugrid.UGrid attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.face_orientation_enum">face_orientation_enum (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.face_orientation_enum">face_orientation_enum (xms.grid.ugrid.UGrid attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -225,67 +282,69 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_2d_edge_adjacent_cell">get_cell_2d_edge_adjacent_cell() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_2d_edge_adjacent_cell">get_cell_2d_edge_adjacent_cell() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_3d_face_adjacent_cell">get_cell_3d_face_adjacent_cell() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_3d_face_adjacent_cell">get_cell_3d_face_adjacent_cell() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_3d_face_count">get_cell_3d_face_count() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_3d_face_count">get_cell_3d_face_count() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_3d_face_orientation">get_cell_3d_face_orientation() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_3d_face_orientation">get_cell_3d_face_orientation() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_3d_face_point_count">get_cell_3d_face_point_count() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_3d_face_point_count">get_cell_3d_face_point_count() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_3d_face_points">get_cell_3d_face_points() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_3d_face_points">get_cell_3d_face_points() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_3d_faces_points">get_cell_3d_faces_points() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_3d_faces_points">get_cell_3d_faces_points() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_adjacent_cells">get_cell_adjacent_cells() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_adjacent_cells">get_cell_adjacent_cells() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_cellstream">get_cell_cellstream() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_cellstream">get_cell_cellstream() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_centroid">get_cell_centroid() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_centroid">get_cell_centroid() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_dimension">get_cell_dimension() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_dimension">get_cell_dimension() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_edge">get_cell_edge() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_edge">get_cell_edge() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_edge_adjacent_cells">get_cell_edge_adjacent_cells() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_edge_adjacent_cells">get_cell_edge_adjacent_cells() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_edge_count">get_cell_edge_count() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_edge_count">get_cell_edge_count() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_edges">get_cell_edges() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_edges">get_cell_edges() (xms.grid.ugrid.UGrid method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_extents">get_cell_extents() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_extents">get_cell_extents() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_locations">get_cell_locations() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_locations">get_cell_locations() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_plan_view_polygon">get_cell_plan_view_polygon() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_plan_view_polygon">get_cell_plan_view_polygon() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_point_count">get_cell_point_count() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_point_count">get_cell_point_count() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_points">get_cell_points() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_points">get_cell_points() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cell_type">get_cell_type() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cell_type">get_cell_type() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_cells_adjacent_to_edge">get_cells_adjacent_to_edge() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_cells_adjacent_to_edge">get_cells_adjacent_to_edge() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_edge_adjacent_cells">get_edge_adjacent_cells() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_edge_adjacent_cells">get_edge_adjacent_cells() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_point_adjacent_cells">get_point_adjacent_cells() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_point_adjacent_cells">get_point_adjacent_cells() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_point_adjacent_locations">get_point_adjacent_locations() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_point_adjacent_locations">get_point_adjacent_locations() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_point_adjacent_points">get_point_adjacent_points() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_point_adjacent_points">get_point_adjacent_points() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_point_location">get_point_location() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_point_location">get_point_location() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_point_xy0">get_point_xy0() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_point_xy0">get_point_xy0() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_points_adjacent_cells">get_points_adjacent_cells() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_points_adjacent_cells">get_points_adjacent_cells() (xms.grid.ugrid.UGrid method)</a>
 </li>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.get_points_locations">get_points_locations() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.get_points_locations">get_points_locations() (xms.grid.ugrid.UGrid method)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.global_index">global_index() (xms.grid.triangulate.Tin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -293,7 +352,13 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.is_valid_point_change">is_valid_point_change() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.interp_weights">interp_weights() (xms.grid.geometry.TriSearch method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.interp_weights_triangle_index">interp_weights_triangle_index() (xms.grid.geometry.TriSearch method)</a>
+</li>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.is_valid_point_change">is_valid_point_change() (xms.grid.ugrid.UGrid method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -301,7 +366,11 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.locations">locations (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.local_index">local_index() (xms.grid.triangulate.Tin method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.locations">locations (xms.grid.ugrid.UGrid attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -309,7 +378,29 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.modified">modified (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.modified">modified (xms.grid.ugrid.UGrid attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.next_boundary_point">next_boundary_point() (xms.grid.triangulate.Tin method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.number_of_points">number_of_points (xms.grid.triangulate.Tin attribute)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.number_of_triangles">number_of_triangles (xms.grid.triangulate.Tin attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.optimize_triangulation">optimize_triangulation() (xms.grid.triangulate.Tin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -317,7 +408,19 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.point_count">point_count (xmsgrid.ugrid.UGrid attribute)</a>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.point_activity">point_activity (xms.grid.geometry.TriSearch attribute)</a>
+</li>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.point_count">point_count (xms.grid.ugrid.UGrid attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.points">points (xms.grid.geometry.TriSearch attribute)</a>
+
+      <ul>
+        <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.points">(xms.grid.triangulate.Tin attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.previous_boundary_point">previous_boundary_point() (xms.grid.triangulate.Tin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -325,7 +428,11 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/ugrid_utils.html#xmsgrid.ugrid.ugrid_utils.read_ugrid_from_ascii_file">read_ugrid_from_ascii_file() (in module xmsgrid.ugrid.ugrid_utils)</a>
+      <li><a href="modules/ugrid/ugrid_utils.html#xms.grid.ugrid.ugrid_utils.read_ugrid_from_ascii_file">read_ugrid_from_ascii_file() (in module xms.grid.ugrid.ugrid_utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.remove_long_thin_triangles_on_perimeter">remove_long_thin_triangles_on_perimeter() (xms.grid.triangulate.Tin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -333,11 +440,53 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.set_point_location">set_point_location() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.set_geometry">set_geometry() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.set_point_location">set_point_location() (xms.grid.ugrid.UGrid method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.set_unmodified">set_unmodified() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.set_unmodified">set_unmodified() (xms.grid.ugrid.UGrid method)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.swap_edge">swap_edge() (xms.grid.triangulate.Tin method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin">Tin (class in xms.grid.triangulate)</a>
+</li>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.triangle_activity">triangle_activity (xms.grid.geometry.TriSearch attribute)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.triangle_adjacent_to_edge">triangle_adjacent_to_edge() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.triangle_area">triangle_area() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.triangle_centroid">triangle_centroid() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.triangle_containing_point">triangle_containing_point() (xms.grid.geometry.TriSearch method)</a>
+</li>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.triangle_envelopes_overlap">triangle_envelopes_overlap() (xms.grid.geometry.TriSearch method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.triangle_envelops_containing_point">triangle_envelops_containing_point() (xms.grid.geometry.TriSearch method)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.triangle_from_edge">triangle_from_edge() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch.triangles">triangles (xms.grid.geometry.TriSearch attribute)</a>
+
+      <ul>
+        <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.triangles">(xms.grid.triangulate.Tin attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.triangles_adjacent_to_points">triangles_adjacent_to_points (xms.grid.triangulate.Tin attribute)</a>
+</li>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.triangulate">triangulate() (xms.grid.triangulate.Tin method)</a>
+</li>
+      <li><a href="modules/geometry/TriSearch.html#xms.grid.geometry.TriSearch">TriSearch (class in xms.grid.geometry)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -345,11 +494,19 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid">UGrid (class in xmsgrid.ugrid)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid">UGrid (class in xms.grid.ugrid)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/UGrid.html#xmsgrid.ugrid.UGrid.use_cache">use_cache() (xmsgrid.ugrid.UGrid method)</a>
+      <li><a href="modules/ugrid/UGrid.html#xms.grid.ugrid.UGrid.use_cache">use_cache() (xms.grid.ugrid.UGrid method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/triangulate/Tin.html#xms.grid.triangulate.Tin.vertices_are_adjacent">vertices_are_adjacent() (xms.grid.triangulate.Tin method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -357,7 +514,7 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/ugrid_utils.html#xmsgrid.ugrid.ugrid_utils.write_ugrid_to_ascii_file">write_ugrid_to_ascii_file() (in module xmsgrid.ugrid.ugrid_utils)</a>
+      <li><a href="modules/ugrid/ugrid_utils.html#xms.grid.ugrid.ugrid_utils.write_ugrid_to_ascii_file">write_ugrid_to_ascii_file() (in module xms.grid.ugrid.ugrid_utils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -365,7 +522,7 @@
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/ugrid/ugrid_utils.html#module-xmsgrid.ugrid.ugrid_utils">xmsgrid.ugrid.ugrid_utils (module)</a>
+      <li><a href="modules/ugrid/ugrid_utils.html#module-xms.grid.ugrid.ugrid_utils">xms.grid.ugrid.ugrid_utils (module)</a>
 </li>
   </ul></td>
 </tr></table>

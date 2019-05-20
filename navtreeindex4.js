@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"functions_func_c.html":[5,2,1,2],
+"functions_func_d.html":[5,2,1,3],
 "functions_func_e.html":[5,2,1,4],
 "functions_func_f.html":[5,2,1,5],
 "functions_func_g.html":[5,2,1,6],
@@ -247,7 +249,5 @@ var NAVTREEINDEX4 =
 "md__three_d__tutorial.html#Example_GetCell3dFaceAdjacentCell3d":[2,0,28],
 "md__three_d__tutorial.html#Example_GetCell3dFaceCount3d":[2,0,25],
 "md__three_d__tutorial.html#Example_GetCell3dFacePoints3d":[2,0,26],
-"md__three_d__tutorial.html#Example_GetCell3dFacesPoints3d":[2,0,27],
-"md__three_d__tutorial.html#Example_GetCellAdjacentCells3d":[2,0,20],
-"md__three_d__tutorial.html#Example_GetCellCellstream3d":[2,0,19]
+"md__three_d__tutorial.html#Example_GetCell3dFacesPoints3d":[2,0,27]
 };

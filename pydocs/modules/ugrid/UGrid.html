@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="edge" href="edge.html" />
+    <link rel="next" title="ugrid_utils" href="ugrid_utils.html" />
     <link rel="prev" title="Installation" href="../../getting_started.html" /> 
 </head>
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                3.0.1
+                3.0.2
               </div>
             
           
@@ -92,8 +92,9 @@
 <p class="caption"><span class="caption-text">User Interface</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">UGrid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="edge.html">edge</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ugrid_utils.html">ugrid_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry/TriSearch.html">TriSearch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../triangulate/Tin.html">Tin</a></li>
 </ul>
 
             
@@ -162,668 +163,585 @@
 <h1>UGrid<a class="headerlink" href="#ugrid" title="Permalink to this headline">¶</a></h1>
 <p>A class to contain grid geometry.</p>
 <dl class="class">
-<dt id="xmsgrid.ugrid.UGrid">
-<em class="property">class </em><code class="descclassname">xmsgrid.ugrid.</code><code class="descname">UGrid</code><span class="sig-paren">(</span><em>points=None</em>, <em>cellstream=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid">
+<em class="property">class </em><code class="descclassname">xms.grid.ugrid.</code><code class="descname">UGrid</code><span class="sig-paren">(</span><em>points=None</em>, <em>cellstream=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for representing unstructured grid geometries</p>
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>points=None</em>, <em>cellstream=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>x.__init__(…) initializes x; see help(type(x)) for signature</p>
-</dd></dl>
+<dl class="attribute">
+<dt id="xms.grid.ugrid.UGrid.xms.grid.ugrid.UGrid.cell_type_enum">
+<code class="descclassname">xms.grid.ugrid.UGrid.</code><code class="descname">cell_type_enum</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.xms.grid.ugrid.UGrid.cell_type_enum" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">Represent the vtk type of a cell</code></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.cell_count">
-<code class="descname">cell_count</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.cell_count" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.cell_count">
+<code class="descname">cell_count</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.cell_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of cells in the UGrid</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.cell_type_enum">
-<code class="descname">cell_type_enum</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.cell_type_enum" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">xmsgrid._xmsgrid.ugrid.XmUGrid.ugrid_celltype_enum</span></code></p>
+<dt id="xms.grid.ugrid.UGrid.cell_type_enum">
+<code class="descname">cell_type_enum</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.cell_type_enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">xms.grid._xmsgrid.ugrid.XmUGrid.ugrid_celltype_enum</span></code></p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.cellstream">
-<code class="descname">cellstream</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.cellstream" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.cellstream">
+<code class="descname">cellstream</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.cellstream" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get cell stream vector for the entire UGrid</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.dimension_counts">
-<code class="descname">dimension_counts</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.dimension_counts" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.dimension_counts">
+<code class="descname">dimension_counts</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.dimension_counts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Count all number of the cells with each dimension (0, 1, 2, 3)</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.extents">
-<code class="descname">extents</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.extents" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.extents">
+<code class="descname">extents</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.extents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get extents of the entire UGrid</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.face_orientation_enum">
-<code class="descname">face_orientation_enum</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.face_orientation_enum" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">xmsgrid._xmsgrid.ugrid.XmUGrid.ugrid_faceorientation_enum</span></code></p>
+<dt id="xms.grid.ugrid.UGrid.face_orientation_enum">
+<code class="descname">face_orientation_enum</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.face_orientation_enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">xms.grid._xmsgrid.ugrid.XmUGrid.ugrid_faceorientation_enum</span></code></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_2d_edge_adjacent_cell">
-<code class="descname">get_cell_2d_edge_adjacent_cell</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_2d_edge_adjacent_cell" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.get_cell_2d_edge_adjacent_cell">
+<code class="descname">get_cell_2d_edge_adjacent_cell</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_2d_edge_adjacent_cell" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the index of the adjacent cells (that shares the same cell edge)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the edge</li>
-<li><strong>edge_idx</strong> (<em>int</em>) – The edge index in the cell</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the edge</p></li>
+<li><p><strong>edge_idx</strong> (<em>int</em>) – The edge index in the cell</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of cell indices of the cells adjacent to the edge</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_3d_face_adjacent_cell">
-<code class="descname">get_cell_3d_face_adjacent_cell</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_3d_face_adjacent_cell" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the cell face neighbors for given cell and face index</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</li>
-<li><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The cell index of the cell adjacent to the face_idx face of cell_idx</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_3d_face_count">
-<code class="descname">get_cell_3d_face_count</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_3d_face_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of cell faces for given cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The number of cell faces in the cell</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_3d_face_orientation">
-<code class="descname">get_cell_3d_face_orientation</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_3d_face_orientation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the orientation of the face of a vertically prismatic cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</li>
-<li><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The face orientation enum of the face</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_3d_face_point_count">
-<code class="descname">get_cell_3d_face_point_count</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_3d_face_point_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of face points for a given cell and face</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</li>
-<li><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The number of points in the cell face</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_3d_face_points">
-<code class="descname">get_cell_3d_face_points</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_3d_face_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the cell face for given cell and face index</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</li>
-<li><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of point indices of the points that define the cell face</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_3d_faces_points">
-<code class="descname">get_cell_3d_faces_points</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_3d_faces_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the faces of a cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of lists of point indices of the points that define the cell’s faces</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_adjacent_cells">
-<code class="descname">get_cell_adjacent_cells</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_adjacent_cells" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the cells neighboring a cell (cells associated with any of it’s points)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell to find neighboring cells of</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of integer cell indices of the cells adjacent to cell_idx</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_cellstream">
-<code class="descname">get_cell_cellstream</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_cellstream" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get cell stream list for a single cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of integers representing the cell - [cell type, number of points, pt_index_1, …, pt_index_n]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_centroid">
-<code class="descname">get_cell_centroid</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_centroid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the centroid location of a cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Tuple point location of the cell’s center</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_dimension">
-<code class="descname">get_cell_dimension</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_dimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the dimension of the specified cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The number of dimensions of the cell</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_edge">
-<code class="descname">get_cell_edge</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_edge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a specified edge of a cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the edge</li>
-<li><strong>edge_idx</strong> (<em>int</em>) – The edge index in the cell</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Tuple of point indices of the points that define the edge</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_edge_adjacent_cells">
-<code class="descname">get_cell_edge_adjacent_cells</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_edge_adjacent_cells" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the indices of the adjacent cells (that shares the same cell edge)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the edge</li>
-<li><strong>edge_idx</strong> (<em>int</em>) – The edge index in the cell</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of cell indices of the cells adjacent to the edge</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_edge_count">
-<code class="descname">get_cell_edge_count</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_edge_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of edges for a cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The number of edges in the cell</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_edges">
-<code class="descname">get_cell_edges</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the edges of a cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of 2-tuple of point indices that define the cell’s edges</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_extents">
-<code class="descname">get_cell_extents</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_extents" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the extents of the given cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Tuple of point locations of the minimum and maximum extents of the UGrid</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_locations">
-<code class="descname">get_cell_locations</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_locations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get locations of cell points</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of tuple point locations of the points that define the cell</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_plan_view_polygon">
-<code class="descname">get_cell_plan_view_polygon</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_plan_view_polygon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the plan view polygon of a specified cell</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell to get plan view polygon for</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
-<dt>Tuple of bool (False if plan view polygon could not be created) and a list of tuple point locations</dt>
-<dd>defining the plan view polygon.</dd>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of cell indices of the cells adjacent to the edge</p>
+</dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_point_count">
-<code class="descname">get_cell_point_count</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_point_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the number of cell points (including polyhedron)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Number of points in the cell</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_points">
-<code class="descname">get_cell_points</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the points of a cell (including polyhedron)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of point indices of the points that define the cell</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cell_type">
-<code class="descname">get_cell_type</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cell_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a cell’s type</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The cell’s type enum</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_cells_adjacent_to_edge">
-<code class="descname">get_cells_adjacent_to_edge</code><span class="sig-paren">(</span><em>point1</em>, <em>point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_cells_adjacent_to_edge" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get cells adjacent to both points</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>point1</strong> (<em>int</em>) – The index of the edge’s first point</li>
-<li><strong>point2</strong> (<em>int</em>) – The index of the edge’s second point</li>
+<dt id="xms.grid.ugrid.UGrid.get_cell_3d_face_adjacent_cell">
+<code class="descname">get_cell_3d_face_adjacent_cell</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_3d_face_adjacent_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the cell face neighbors for given cell and face index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</p></li>
+<li><p><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">List of cell indices of cells adjacent to the edge defined by point1 and point2</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The cell index of the cell adjacent to the face_idx face of cell_idx</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_edge_adjacent_cells">
-<code class="descname">get_edge_adjacent_cells</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_edge_adjacent_cells" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.get_cell_3d_face_count">
+<code class="descname">get_cell_3d_face_count</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_3d_face_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of cell faces for given cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of cell faces in the cell</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_3d_face_orientation">
+<code class="descname">get_cell_3d_face_orientation</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_3d_face_orientation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the orientation of the face of a vertically prismatic cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</p></li>
+<li><p><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The face orientation enum of the face</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_3d_face_point_count">
+<code class="descname">get_cell_3d_face_point_count</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_3d_face_point_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of face points for a given cell and face</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</p></li>
+<li><p><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of points in the cell face</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_3d_face_points">
+<code class="descname">get_cell_3d_face_points</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>face_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_3d_face_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the cell face for given cell and face index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the face</p></li>
+<li><p><strong>face_idx</strong> (<em>int</em>) – The index of the face in the cell</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of point indices of the points that define the cell face</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_3d_faces_points">
+<code class="descname">get_cell_3d_faces_points</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_3d_faces_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the faces of a cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of lists of point indices of the points that define the cell’s faces</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_adjacent_cells">
+<code class="descname">get_cell_adjacent_cells</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_adjacent_cells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the cells neighboring a cell (cells associated with any of it’s points)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell to find neighboring cells of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of integer cell indices of the cells adjacent to cell_idx</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_cellstream">
+<code class="descname">get_cell_cellstream</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_cellstream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get cell stream list for a single cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of integers representing the cell - [cell type, number of points, pt_index_1, …, pt_index_n]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_centroid">
+<code class="descname">get_cell_centroid</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_centroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the centroid location of a cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple point location of the cell’s center</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_dimension">
+<code class="descname">get_cell_dimension</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_dimension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dimension of the specified cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of dimensions of the cell</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_edge">
+<code class="descname">get_cell_edge</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a specified edge of a cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the edge</p></li>
+<li><p><strong>edge_idx</strong> (<em>int</em>) – The edge index in the cell</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple of point indices of the points that define the edge</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_edge_adjacent_cells">
+<code class="descname">get_cell_edge_adjacent_cells</code><span class="sig-paren">(</span><em>cell_idx</em>, <em>edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_edge_adjacent_cells" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the indices of the adjacent cells (that shares the same cell edge)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>edge</strong> – Tuple of two point locations that define an edge</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of cell indices that are adjacent to the edge</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_point_adjacent_cells">
-<code class="descname">get_point_adjacent_cells</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_point_adjacent_cells" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get cells adjacent to a point</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point_idx</strong> (<em>int</em>) – The index of the point to find adjacent cells of</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of cell indices of cells adjacent to point_idx</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_point_adjacent_locations">
-<code class="descname">get_point_adjacent_locations</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_point_adjacent_locations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a point gets point locations attached to the point by an edges</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point_idx</strong> (<em>int</em>) – The index of the point to find adjacent point locations for</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of tuple point locations of points that are attached to point_idx by an edge</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_point_adjacent_points">
-<code class="descname">get_point_adjacent_points</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_point_adjacent_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a point gets point indices attached to the point by an edge</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point_idx</strong> (<em>int</em>) – The index of the point to find adjacent point indices for</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of point indices that are attached to point_idx by an edge</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_point_location">
-<code class="descname">get_point_location</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_point_location" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get location of a single point</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point_idx</strong> (<em>int</em>) – The index of the point</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple point location of the point at point_idx</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_point_xy0">
-<code class="descname">get_point_xy0</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_point_xy0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get x, y location of a single point with z set to 0.0</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point_idx</strong> (<em>int</em>) – The index of the point</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple point location of point_idx</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_points_adjacent_cells">
-<code class="descname">get_points_adjacent_cells</code><span class="sig-paren">(</span><em>point_indices</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_points_adjacent_cells" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get adjacent cells common to a set of points</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point_indices</strong> – The indices of the points to find adjacent cells of</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of cell indices of cells adjacent to point_indices</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.get_points_locations">
-<code class="descname">get_points_locations</code><span class="sig-paren">(</span><em>point_indices</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.get_points_locations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get locations of multiple points</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>point_indices</strong> – The indices of the points</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of tuple point locations of the point_indices</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.is_valid_point_change">
-<code class="descname">is_valid_point_change</code><span class="sig-paren">(</span><em>point_idx</em>, <em>new_position</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.is_valid_point_change" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine whether adjacent cells are valid after a point is moved.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>point_idx</strong> (<em>int</em>) – The index of the point to check change</li>
-<li><strong>new_position</strong> – Tuple location of the point’s new location</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell containing the edge</p></li>
+<li><p><strong>edge_idx</strong> (<em>int</em>) – The edge index in the cell</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if the point change is valid, False otherwise</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of cell indices of the cells adjacent to the edge</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_edge_count">
+<code class="descname">get_cell_edge_count</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_edge_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of edges for a cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of edges in the cell</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_edges">
+<code class="descname">get_cell_edges</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the edges of a cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of 2-tuple of point indices that define the cell’s edges</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_extents">
+<code class="descname">get_cell_extents</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_extents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the extents of the given cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple of point locations of the minimum and maximum extents of the UGrid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_locations">
+<code class="descname">get_cell_locations</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get locations of cell points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of tuple point locations of the points that define the cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_plan_view_polygon">
+<code class="descname">get_cell_plan_view_polygon</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_plan_view_polygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the plan view polygon of a specified cell</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell to get plan view polygon for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Tuple of bool (False if plan view polygon could not be created) and a list of tuple point locations</dt><dd><p>defining the plan view polygon.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_point_count">
+<code class="descname">get_cell_point_count</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_point_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of cell points (including polyhedron)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Number of points in the cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_points">
+<code class="descname">get_cell_points</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the points of a cell (including polyhedron)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of point indices of the points that define the cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cell_type">
+<code class="descname">get_cell_type</code><span class="sig-paren">(</span><em>cell_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cell_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a cell’s type</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_idx</strong> (<em>int</em>) – The index of the cell</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The cell’s type enum</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_cells_adjacent_to_edge">
+<code class="descname">get_cells_adjacent_to_edge</code><span class="sig-paren">(</span><em>point1</em>, <em>point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_cells_adjacent_to_edge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get cells adjacent to both points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point1</strong> (<em>int</em>) – The index of the edge’s first point</p></li>
+<li><p><strong>point2</strong> (<em>int</em>) – The index of the edge’s second point</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of cell indices of cells adjacent to the edge defined by point1 and point2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_edge_adjacent_cells">
+<code class="descname">get_edge_adjacent_cells</code><span class="sig-paren">(</span><em>edge</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_edge_adjacent_cells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the indices of the adjacent cells (that shares the same cell edge)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>edge</strong> – Tuple of two point locations that define an edge</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of cell indices that are adjacent to the edge</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_point_adjacent_cells">
+<code class="descname">get_point_adjacent_cells</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_point_adjacent_cells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get cells adjacent to a point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point_idx</strong> (<em>int</em>) – The index of the point to find adjacent cells of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of cell indices of cells adjacent to point_idx</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_point_adjacent_locations">
+<code class="descname">get_point_adjacent_locations</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_point_adjacent_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a point gets point locations attached to the point by an edges</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point_idx</strong> (<em>int</em>) – The index of the point to find adjacent point locations for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of tuple point locations of points that are attached to point_idx by an edge</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_point_adjacent_points">
+<code class="descname">get_point_adjacent_points</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_point_adjacent_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a point gets point indices attached to the point by an edge</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point_idx</strong> (<em>int</em>) – The index of the point to find adjacent point indices for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of point indices that are attached to point_idx by an edge</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_point_location">
+<code class="descname">get_point_location</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_point_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get location of a single point</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point_idx</strong> (<em>int</em>) – The index of the point</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple point location of the point at point_idx</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_point_xy0">
+<code class="descname">get_point_xy0</code><span class="sig-paren">(</span><em>point_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_point_xy0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get x, y location of a single point with z set to 0.0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point_idx</strong> (<em>int</em>) – The index of the point</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tuple point location of point_idx</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_points_adjacent_cells">
+<code class="descname">get_points_adjacent_cells</code><span class="sig-paren">(</span><em>point_indices</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_points_adjacent_cells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get adjacent cells common to a set of points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point_indices</strong> – The indices of the points to find adjacent cells of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of cell indices of cells adjacent to point_indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.get_points_locations">
+<code class="descname">get_points_locations</code><span class="sig-paren">(</span><em>point_indices</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.get_points_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get locations of multiple points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>point_indices</strong> – The indices of the points</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of tuple point locations of the point_indices</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="xms.grid.ugrid.UGrid.is_valid_point_change">
+<code class="descname">is_valid_point_change</code><span class="sig-paren">(</span><em>point_idx</em>, <em>new_position</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.is_valid_point_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether adjacent cells are valid after a point is moved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point_idx</strong> (<em>int</em>) – The index of the point to check change</p></li>
+<li><p><strong>new_position</strong> – Tuple location of the point’s new location</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the point change is valid, False otherwise</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.locations">
-<code class="descname">locations</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.locations" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.locations">
+<code class="descname">locations</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.locations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Point locations for ugrid</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.modified">
-<code class="descname">modified</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.modified" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.modified">
+<code class="descname">modified</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.modified" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flag if grid is modified</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xmsgrid.ugrid.UGrid.point_count">
-<code class="descname">point_count</code><a class="headerlink" href="#xmsgrid.ugrid.UGrid.point_count" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.point_count">
+<code class="descname">point_count</code><a class="headerlink" href="#xms.grid.ugrid.UGrid.point_count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Point count for ugrid</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.set_point_location">
-<code class="descname">set_point_location</code><span class="sig-paren">(</span><em>point_idx</em>, <em>location</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.set_point_location" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.set_point_location">
+<code class="descname">set_point_location</code><span class="sig-paren">(</span><em>point_idx</em>, <em>location</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.set_point_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set location of a single point</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>point_idx</strong> (<em>int</em>) – The index of the point</li>
-<li><strong>location</strong> – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point_idx</strong> (<em>int</em>) – The index of the point</p></li>
+<li><p><strong>location</strong> – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if successful</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if successful</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.set_unmodified">
-<code class="descname">set_unmodified</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.set_unmodified" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.set_unmodified">
+<code class="descname">set_unmodified</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.set_unmodified" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set grid as unmodified</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="xmsgrid.ugrid.UGrid.use_cache">
-<code class="descname">use_cache</code><span class="sig-paren">(</span><em>use_cache</em><span class="sig-paren">)</span><a class="headerlink" href="#xmsgrid.ugrid.UGrid.use_cache" title="Permalink to this definition">¶</a></dt>
+<dt id="xms.grid.ugrid.UGrid.use_cache">
+<code class="descname">use_cache</code><span class="sig-paren">(</span><em>use_cache</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.ugrid.UGrid.use_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flag if cache is being used</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>use_cache</strong> (<em>bool</em>) – flag if cache is being used</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>use_cache</strong> (<em>bool</em>) – flag if cache is being used</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -838,7 +756,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="edge.html" class="btn btn-neutral float-right" title="edge" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="ugrid_utils.html" class="btn btn-neutral float-right" title="ugrid_utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../../getting_started.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
