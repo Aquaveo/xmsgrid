@@ -28,6 +28,7 @@
 // 6. Non-shared code headers
 #include <xmsgrid/geometry/geoms.h>
 #include <xmsgrid/ugrid/detail/XmGeometry.h>
+#include <xmsgrid/ugrid/detail/XmUGridIo.h>
 #include <xmsgrid/ugrid/XmEdge.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -53,7 +54,7 @@ public:
   /// Default constructor.
   Impl() = default;
   /// Default copy constructor.
-  Impl(const VecPt3d& a_locations,
+  Impl(VecPt3d a_locations,
        VecInt a_cellstream,
        VecInt a_cellIdxToStreamIdx,
        VecInt a_pointsToCells,
@@ -146,7 +147,7 @@ public:
                                  int& a_neighborFace) const;
 
   // IO Support
-  bool WriteXmUGrid(IoWriter& a_ioWriter) const;
+  bool WriteXmUGrid(XmUGridWriter& a_ioWriter) const;
 
   XmUGridFaceOrientation GetCell3dFaceOrientation(int a_cellIdx, int a_faceIdx) const;
   XmUGridFaceOrientation FaceOrientation(int a_cellIdx, int a_faceIdx) const;
@@ -167,7 +168,7 @@ private:
                                   const Pt3d& a_newPosition) const;
   bool IsValidCellIdx(int a_cellIdx) const;
 
-  static int DimensionFromCellType(const XmUGridCellType a_cellType);
+  static int DimensionFromCellType(XmUGridCellType a_cellType);
 
   int GetNumberOfItemsForCell(int a_cellIdx) const;
 
@@ -239,7 +240,6 @@ private:
 //----- Internal functions -----------------------------------------------------
 namespace
 {
-
 const char* CELLSTREAM_OFFSETS = "CELLSTREAM_OFFSETS";
 const char* POINTS_TO_CELLS = "POINTS_TO_CELLS";
 const char* POINTS_TO_CELLS_OFFSETS = "POINTS_TO_CELLS_OFFSETS";
@@ -581,7 +581,7 @@ void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
         double tolerance = distance / 1.0e6;
         if (gmOnLineWithTol(pt1, pt2, point.x, point.y, tolerance))
         {
-          segs.push_back(std::pair<Pt3d, Pt3d>(point, pt2));
+          segs.emplace_back(point, pt2);
           segs[i].second = point;
         }
       }
@@ -615,19 +615,19 @@ void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
 ///        unstructured grid.
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
-/// \brief 
-/// \param a_locations 
-/// \param a_cellstream 
-/// \param a_cellIdxToStreamIdx 
-/// \param a_pointsToCells 
-/// \param a_pointIdxToPointsToCells 
+/// \brief
+/// \param a_locations
+/// \param a_cellstream
+/// \param a_cellIdxToStreamIdx
+/// \param a_pointsToCells
+/// \param a_pointIdxToPointsToCells
 //------------------------------------------------------------------------------
-XmUGrid::Impl::Impl(const VecPt3d& a_locations,
+XmUGrid::Impl::Impl(VecPt3d a_locations,
                     VecInt a_cellstream,
                     VecInt a_cellIdxToStreamIdx,
                     VecInt a_pointsToCells,
                     VecInt a_pointIdxToPointsToCells)
-: m_locations(a_locations)
+: m_locations(std::move(a_locations))
 , m_cellstream(std::move(a_cellstream))
 , m_cellIdxToStreamIdx(std::move(a_cellIdxToStreamIdx))
 , m_pointsToCells(std::move(a_pointsToCells))
@@ -969,9 +969,9 @@ bool XmUGrid::Impl::GetCellPoints(int a_cellIdx, VecInt& a_cellPoints) const
 } // XmUGrid::Impl::GetCellPoints
 
 //------------------------------------------------------------------------------
-/// \brief
-/// \param a_cellIdx
-/// \param a_cellLocations
+/// \brief Get locations of cell points.
+/// \param[in] a_cellIdx the index of the cell
+/// \param[out] a_cellLocations The locations of the cell points
 //------------------------------------------------------------------------------
 void XmUGrid::Impl::GetCellLocations(int a_cellIdx, VecPt3d& a_cellLocations) const
 {
@@ -1316,18 +1316,16 @@ bool XmUGrid::Impl::DoEdgesCrossWithPointChange(int a_changedPtIdx,
   {
     if (edge.GetFirst() == a_changedPtIdx)
     {
-      changedEdges.push_back(
-        std::pair<Pt3d, Pt3d>(a_newPosition, GetPointLocation(edge.GetSecond())));
+      changedEdges.emplace_back(a_newPosition, GetPointLocation(edge.GetSecond()));
     }
     else if (edge.GetSecond() == a_changedPtIdx)
     {
-      changedEdges.push_back(
-        std::pair<Pt3d, Pt3d>(GetPointLocation(edge.GetFirst()), a_newPosition));
+      changedEdges.emplace_back(GetPointLocation(edge.GetFirst()), a_newPosition);
     }
     else
     {
-      unChangedEdges.push_back(std::pair<Pt3d, Pt3d>(GetPointLocation(edge.GetFirst()),
-                                                     GetPointLocation(edge.GetSecond())));
+      unChangedEdges.emplace_back(GetPointLocation(edge.GetFirst()),
+                                  GetPointLocation(edge.GetSecond()));
     }
   }
   for (const auto& changedEdge : changedEdges)
@@ -1512,7 +1510,8 @@ int XmUGrid::Impl::GetCell2dEdgeAdjacentCell(int a_cellIdx, int a_edgeIdx) const
   }
   else
   {
-    assert("This is a 2D Function!");
+    // This is a 2D Function!
+    XM_ASSERT(0);
     return -1;
   }
 } // XmUGrid::Impl::GetCell2dEdgeAdjacentCell
@@ -1850,13 +1849,13 @@ bool XmUGrid::Impl::GetCell3dFaceAdjacentCell(int a_cellIdx,
 /// \brief Write an XmUGrid.
 /// \param a_ioWriter The writer.
 //------------------------------------------------------------------------------
-bool XmUGrid::Impl::WriteXmUGrid(IoWriter& a_ioWriter) const
+bool XmUGrid::Impl::WriteXmUGrid(XmUGridWriter& a_ioWriter) const
 {
   bool success = a_ioWriter.WriteLocations(m_locations);
   success = success && a_ioWriter.WriteCellstream(m_cellstream);
   if (success)
   {
-    ConstIntArrays intArrays;
+    XmUGridWriter::ConstIntArrays intArrays;
     intArrays.emplace_back(CELLSTREAM_OFFSETS, &m_cellIdxToStreamIdx);
     intArrays.emplace_back(POINTS_TO_CELLS, &m_pointsToCells);
     intArrays.emplace_back(POINTS_TO_CELLS_OFFSETS, &m_pointIdxToPointsToCells);
@@ -1966,8 +1965,8 @@ void XmUGrid::Impl::UpdateCellLinks()
       int numFaces = numPoints;
       for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
       {
-        int numPoints = m_cellstream[currIdx++];
-        currIdx += numPoints;
+        int numFacePoints = m_cellstream[currIdx++];
+        currIdx += numFacePoints;
       }
     }
     else
@@ -2104,7 +2103,7 @@ void XmUGrid::Impl::UpdatePointLinks()
 /// \param[in] a_cellType the cell type
 /// \return the dimension of the cell type
 //------------------------------------------------------------------------------
-int XmUGrid::Impl::DimensionFromCellType(const XmUGridCellType a_cellType)
+int XmUGrid::Impl::DimensionFromCellType(XmUGridCellType a_cellType)
 {
   switch (a_cellType)
   {
@@ -2934,7 +2933,7 @@ BSHP<XmUGrid> XmUGrid::New(const VecPt3d& a_locations, const VecInt& a_cellstrea
 /// \param a_ioReader The reader
 /// \return the new XmUGrid.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> XmUGrid::New(IoReader& a_ioReader)
+BSHP<XmUGrid> XmUGrid::New(XmUGridReader& a_ioReader)
 {
   VecPt3d locations;
   bool success = a_ioReader.ReadLocations(locations);
@@ -2942,20 +2941,19 @@ BSHP<XmUGrid> XmUGrid::New(IoReader& a_ioReader)
   VecInt cellstream;
   success = success && a_ioReader.ReadCellstream(cellstream);
 
-  IntArrays intArrays;
+  XmUGridReader::IntArrays intArrays;
   success = success && a_ioReader.ReadIntArrays(intArrays);
 
   BSHP<XmUGrid> xmUGrid;
   if (success)
   {
-    if (intArrays.size() == 3 &&
-        intArrays[0].first == std::string(CELLSTREAM_OFFSETS) &&
+    if (intArrays.size() == 3 && intArrays[0].first == std::string(CELLSTREAM_OFFSETS) &&
         intArrays[1].first == std::string(POINTS_TO_CELLS) &&
         intArrays[2].first == std::string(POINTS_TO_CELLS_OFFSETS))
     {
       xmUGrid = New();
       xmUGrid->m_impl.reset(new Impl(locations, cellstream, *intArrays[0].second,
-                            *intArrays[1].second, *intArrays[2].second));
+                                     *intArrays[1].second, *intArrays[2].second));
     }
     else
     {
@@ -3705,7 +3703,7 @@ XmUGridFaceOrientation XmUGrid::GetCell3dFaceOrientation(int a_cellIdx, int a_fa
 /// \brief Write an XmUGrid.
 /// \param a_ioWriter The writer.
 //------------------------------------------------------------------------------
-bool XmUGrid::WriteXmUGrid(IoWriter& a_ioWriter) const
+bool XmUGrid::WriteXmUGrid(XmUGridWriter& a_ioWriter) const
 {
   return m_impl->WriteXmUGrid(a_ioWriter);
 } // XmUGrid::WriteXmUGrid
@@ -4089,15 +4087,6 @@ BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
 #include <xmsgrid/ugrid/XmUGrid.t.h>
 
 using namespace xms;
-
-//------------------------------------------------------------------------------
-/// \brief Path to test files.
-/// \return Returns path to test files.
-//------------------------------------------------------------------------------
-std::string TestFilesPath()
-{
-  return std::string(XMS_TEST_PATH);
-} // TestFilesPath
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGridUnitTests
@@ -5919,62 +5908,6 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
     }
   }
 } // XmUGridUnitTests::testCell3dFunctionCaching
-
-class TestIoWriter : public XmUGrid::IoWriter
-{
-public:
-    virtual bool WriteLocations(const VecPt3d& a_locations)
-    { m_locations = a_locations;return true;}
-    virtual bool WriteCellstream(const VecInt& a_cellstream)
-    { m_cellstream = a_cellstream;return true;}
-    virtual bool WriteIntArrays(XmUGrid::ConstIntArrays& a_intArrays)
-    {
-      for (auto& intArray : a_intArrays)
-      {
-        m_intNames.push_back(intArray.first);
-        m_intArrays.push_back(*intArray.second);
-      }
-      return true;
-    }
-
-  VecPt3d m_locations;
-  VecInt m_cellstream;
-  std::vector<const char*> m_intNames;
-  VecInt2d m_intArrays;
-};
-
-class TestIoReader : public XmUGrid::IoReader
-{
-public:
-  TestIoReader(TestIoWriter& a_writer) : m_writer(a_writer) {}
-  virtual bool ReadLocations(VecPt3d& a_locations)
-  { a_locations = m_writer.m_locations; return true;}
-  virtual bool ReadCellstream(VecInt& a_cellstream)
-  { a_cellstream = m_writer.m_cellstream; return true;}
-  virtual bool ReadIntArrays(XmUGrid::IntArrays& a_intArrays)
-  {
-    for (size_t i = 0; i < m_writer.m_intNames.size(); ++i)
-    {
-      a_intArrays.emplace_back(m_writer.m_intNames[i], &m_writer.m_intArrays[i]);
-    }
-    return true;
-  }
-
-  TestIoWriter& m_writer;
-};
-//------------------------------------------------------------------------------
-/// \brief Test IO support functions for reading and writing an XmUGrid.
-//------------------------------------------------------------------------------
-void XmUGridUnitTests::testWriteAndRead()
-{
-  BSHP<XmUGrid> original = TEST_XmUBuildHexahedronUgrid(2, 3, 4);
-  TestIoWriter ioWriter;
-  original->WriteXmUGrid(ioWriter);
-  TestIoReader ioReader(ioWriter);
-  BSHP<XmUGrid> fromReader = XmUGrid::New(ioReader);
-  TS_ASSERT_EQUALS(original->GetLocations(), fromReader->GetLocations());
-  TS_ASSERT_EQUALS(original->GetCellstream(), fromReader->GetCellstream());
-} // XmUGridUnitTests::testWriteAndRead
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------

@@ -16,6 +16,11 @@
 #include <fstream>
 
 // 4. External library headers
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/insert_linebreaks.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/archive/iterators/ostream_iterator.hpp>
 #include <boost/bimap.hpp>
 
 // 5. Shared code headers
@@ -24,9 +29,10 @@
 #include <xmscore/misc/XmError.h>
 #include <xmscore/misc/XmLog.h>
 #include <xmscore/stl/vector.h>
-#include <xmsgrid/ugrid/XmUGrid.h>
 
 // 6. Non-shared code headers
+#include <xmsgrid/ugrid/detail/XmUGridIo.h>
+#include <xmsgrid/ugrid/XmUGrid.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -47,13 +53,65 @@ namespace xms
 
 namespace
 {
-typedef boost::bimap<std::string, int> CellNameToType;
-/// makes string int value pairs for enum
-#define ENUM_TO_XMU_PAIR(A_ENUM)                                             \
-  {                                                                          \
-    cellNameToInt.insert(CellNameToType::value_type(#A_ENUM, XMU_##A_ENUM)); \
-  }
 
+typedef boost::bimap<std::string, int> CellNameToType;
+
+class XmUGridReaderVersion2 : public XmUGridReader
+{
+public:
+  explicit XmUGridReaderVersion2(std::istream& a_inStream, bool a_binary = false);
+  bool ReadLocations(VecPt3d& a_locations) final;
+  bool ReadCellstream(VecInt& a_cellstream) final;
+  bool ReadIntArrays(IntArrays& a_intArrays) final;
+
+private:
+  std::istream& m_inStream;
+  bool m_binary;
+};
+
+class XmUGridWriterVersion2 : public XmUGridWriter
+{
+public:
+  explicit XmUGridWriterVersion2(std::ostream& a_outStream, bool a_binary = false);
+  bool WriteLocations(const VecPt3d& a_locations) final;
+  bool WriteCellstream(const VecInt& a_cellstream) final;
+  bool WriteIntArrays(ConstIntArrays& a_intArrays) final;
+
+private:
+  std::ostream& m_outStream;
+  bool m_binary;
+};
+
+void iWriteBase64Bytes(std::ostream& a_outStream, const char* a_bytes, int a_bytesLength)
+{
+  using namespace boost::archive::iterators;
+  typedef base64_from_binary<transform_width<const char*, 6, 8>> base64_text;
+
+  std::copy(base64_text(a_bytes), base64_text(a_bytes + a_bytesLength),
+            ostream_iterator<char>(a_outStream));
+  a_outStream << '\n';
+} // iWriteBase64Bytes
+
+void iReadBase64Bytes(std::istream& a_inStream, char* a_bytes)
+{
+  using namespace boost::archive::iterators;
+  typedef transform_width<binary_from_base64<const char*>, 8, 6> base64_dec;
+
+  std::string s;
+  daReadLine(a_inStream, s);
+  unsigned int size = s.size();
+
+  if (size && s[size - 1] == '=')
+  {
+    --size;
+    if (size && s[size - 1] == '=')
+      --size;
+  }
+  if (size != 0)
+  {
+    std::copy(base64_dec(s.data()), base64_dec(s.data() + size), a_bytes);
+  }
+} // iReadBase64Bytes
 //------------------------------------------------------------------------------
 /// \brief Get a bi-map from a cell type string to a cell type integer.
 /// \return The bi-map from a cell type string to a cell type integer.
@@ -63,59 +121,63 @@ const CellNameToType& iCellTypeStringIntPair()
   static CellNameToType cellNameToInt;
   if (cellNameToInt.empty())
   {
-    ENUM_TO_XMU_PAIR(INVALID_CELL_TYPE);
-    ENUM_TO_XMU_PAIR(EMPTY_CELL);
-    ENUM_TO_XMU_PAIR(VERTEX);
-    ENUM_TO_XMU_PAIR(POLY_VERTEX);
-    ENUM_TO_XMU_PAIR(LINE);
-    ENUM_TO_XMU_PAIR(POLY_LINE);
-    ENUM_TO_XMU_PAIR(TRIANGLE);
-    ENUM_TO_XMU_PAIR(TRIANGLE_STRIP);
-    ENUM_TO_XMU_PAIR(POLYGON);
-    ENUM_TO_XMU_PAIR(PIXEL);
-    ENUM_TO_XMU_PAIR(QUAD);
-    ENUM_TO_XMU_PAIR(TETRA);
-    ENUM_TO_XMU_PAIR(VOXEL);
-    ENUM_TO_XMU_PAIR(HEXAHEDRON);
-    ENUM_TO_XMU_PAIR(WEDGE);
-    ENUM_TO_XMU_PAIR(PYRAMID);
-    ENUM_TO_XMU_PAIR(PENTAGONAL_PRISM);
-    ENUM_TO_XMU_PAIR(HEXAGONAL_PRISM);
-    ENUM_TO_XMU_PAIR(QUADRATIC_EDGE);
-    ENUM_TO_XMU_PAIR(QUADRATIC_TRIANGLE);
-    ENUM_TO_XMU_PAIR(QUADRATIC_QUAD);
-    ENUM_TO_XMU_PAIR(QUADRATIC_POLYGON);
-    ENUM_TO_XMU_PAIR(QUADRATIC_TETRA);
-    ENUM_TO_XMU_PAIR(QUADRATIC_HEXAHEDRON);
-    ENUM_TO_XMU_PAIR(QUADRATIC_WEDGE);
-    ENUM_TO_XMU_PAIR(QUADRATIC_PYRAMID);
-    ENUM_TO_XMU_PAIR(BIQUADRATIC_QUAD);
-    ENUM_TO_XMU_PAIR(TRIQUADRATIC_HEXAHEDRON);
-    ENUM_TO_XMU_PAIR(QUADRATIC_LINEAR_QUAD);
-    ENUM_TO_XMU_PAIR(QUADRATIC_LINEAR_WEDGE);
-    ENUM_TO_XMU_PAIR(BIQUADRATIC_QUADRATIC_WEDGE);
-    ENUM_TO_XMU_PAIR(BIQUADRATIC_QUADRATIC_HEXAHEDRON);
-    ENUM_TO_XMU_PAIR(BIQUADRATIC_TRIANGLE);
-    ENUM_TO_XMU_PAIR(CUBIC_LINE);
-    ENUM_TO_XMU_PAIR(CONVEX_POINT_SET);
-    ENUM_TO_XMU_PAIR(POLYHEDRON);
-    ENUM_TO_XMU_PAIR(PARAMETRIC_CURVE);
-    ENUM_TO_XMU_PAIR(PARAMETRIC_SURFACE);
-    ENUM_TO_XMU_PAIR(PARAMETRIC_TRI_SURFACE);
-    ENUM_TO_XMU_PAIR(PARAMETRIC_QUAD_SURFACE);
-    ENUM_TO_XMU_PAIR(PARAMETRIC_TETRA_REGION);
-    ENUM_TO_XMU_PAIR(PARAMETRIC_HEX_REGION);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_EDGE);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_TRIANGLE);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_QUAD);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_POLYGON);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_TETRAHEDRON);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_WEDGE);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_PYRAMID);
-    ENUM_TO_XMU_PAIR(HIGHER_ORDER_HEXAHEDRON);
+    // clang-format off
+    cellNameToInt.insert(CellNameToType::value_type("INVALID_CELL_TYPE", XMU_INVALID_CELL_TYPE));
+    cellNameToInt.insert(CellNameToType::value_type("EMPTY_CELL", XMU_EMPTY_CELL));
+    cellNameToInt.insert(CellNameToType::value_type("VERTEX", XMU_VERTEX));
+    cellNameToInt.insert(CellNameToType::value_type("POLY_VERTEX", XMU_POLY_VERTEX));
+    cellNameToInt.insert(CellNameToType::value_type("LINE", XMU_LINE));
+    cellNameToInt.insert(CellNameToType::value_type("POLY_LINE", XMU_POLY_LINE));
+    cellNameToInt.insert(CellNameToType::value_type("TRIANGLE", XMU_TRIANGLE));
+    cellNameToInt.insert(CellNameToType::value_type("TRIANGLE_STRIP", XMU_TRIANGLE_STRIP));
+    cellNameToInt.insert(CellNameToType::value_type("POLYGON", XMU_POLYGON));
+    cellNameToInt.insert(CellNameToType::value_type("PIXEL", XMU_PIXEL));
+    cellNameToInt.insert(CellNameToType::value_type("QUAD", XMU_QUAD));
+    cellNameToInt.insert(CellNameToType::value_type("TETRA", XMU_TETRA));
+    cellNameToInt.insert(CellNameToType::value_type("VOXEL", XMU_VOXEL));
+    cellNameToInt.insert(CellNameToType::value_type("HEXAHEDRON", XMU_HEXAHEDRON));
+    cellNameToInt.insert(CellNameToType::value_type("WEDGE", XMU_WEDGE));
+    cellNameToInt.insert(CellNameToType::value_type("PYRAMID", XMU_PYRAMID));
+    cellNameToInt.insert(CellNameToType::value_type("PENTAGONAL_PRISM", XMU_PENTAGONAL_PRISM));
+    cellNameToInt.insert(CellNameToType::value_type("HEXAGONAL_PRISM", XMU_HEXAGONAL_PRISM));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_EDGE", XMU_QUADRATIC_EDGE));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_TRIANGLE", XMU_QUADRATIC_TRIANGLE));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_QUAD", XMU_QUADRATIC_QUAD));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_POLYGON", XMU_QUADRATIC_POLYGON));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_TETRA", XMU_QUADRATIC_TETRA));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_HEXAHEDRON", XMU_QUADRATIC_HEXAHEDRON));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_WEDGE", XMU_QUADRATIC_WEDGE));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_PYRAMID", XMU_QUADRATIC_PYRAMID));
+    cellNameToInt.insert(CellNameToType::value_type("BIQUADRATIC_QUAD", XMU_BIQUADRATIC_QUAD));
+    cellNameToInt.insert(CellNameToType::value_type("TRIQUADRATIC_HEXAHEDRON", XMU_TRIQUADRATIC_HEXAHEDRON));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_LINEAR_QUAD", XMU_QUADRATIC_LINEAR_QUAD));
+    cellNameToInt.insert(CellNameToType::value_type("QUADRATIC_LINEAR_WEDGE", XMU_QUADRATIC_LINEAR_WEDGE));
+    cellNameToInt.insert(CellNameToType::value_type("BIQUADRATIC_QUADRATIC_WEDGE", XMU_BIQUADRATIC_QUADRATIC_WEDGE));
+    cellNameToInt.insert(CellNameToType::value_type("BIQUADRATIC_QUADRATIC_HEXAHEDRON", XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON));
+    cellNameToInt.insert(CellNameToType::value_type("BIQUADRATIC_TRIANGLE", XMU_BIQUADRATIC_TRIANGLE));
+    cellNameToInt.insert(CellNameToType::value_type("CUBIC_LINE", XMU_CUBIC_LINE));
+    cellNameToInt.insert(CellNameToType::value_type("CONVEX_POINT_SET", XMU_CONVEX_POINT_SET));
+    cellNameToInt.insert(CellNameToType::value_type("POLYHEDRON", XMU_POLYHEDRON));
+    cellNameToInt.insert(CellNameToType::value_type("PARAMETRIC_CURVE", XMU_PARAMETRIC_CURVE));
+    cellNameToInt.insert(CellNameToType::value_type("PARAMETRIC_SURFACE", XMU_PARAMETRIC_SURFACE));
+    cellNameToInt.insert(CellNameToType::value_type("PARAMETRIC_TRI_SURFACE", XMU_PARAMETRIC_TRI_SURFACE));
+    cellNameToInt.insert(CellNameToType::value_type("PARAMETRIC_QUAD_SURFACE", XMU_PARAMETRIC_QUAD_SURFACE));
+    cellNameToInt.insert(CellNameToType::value_type("PARAMETRIC_TETRA_REGION", XMU_PARAMETRIC_TETRA_REGION));
+    cellNameToInt.insert(CellNameToType::value_type("PARAMETRIC_HEX_REGION", XMU_PARAMETRIC_HEX_REGION));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_EDGE", XMU_HIGHER_ORDER_EDGE));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_TRIANGLE", XMU_HIGHER_ORDER_TRIANGLE));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_QUAD", XMU_HIGHER_ORDER_QUAD));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_POLYGON", XMU_HIGHER_ORDER_POLYGON));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_TETRAHEDRON", XMU_HIGHER_ORDER_TETRAHEDRON));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_WEDGE", XMU_HIGHER_ORDER_WEDGE));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_PYRAMID", XMU_HIGHER_ORDER_PYRAMID));
+    cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_HEXAHEDRON", XMU_HIGHER_ORDER_HEXAHEDRON));
+    // clang-format on
+    std::cout << '\n';
   }
+
   return cellNameToInt;
-} // coCellTypesToNumeric
+} // iCellTypeStringIntPair
 
 //------------------------------------------------------------------------------
 /// \brief Get string for given cell type.
@@ -180,59 +242,12 @@ bool iReadPointsVersion1(std::istream& a_inStream, VecPt3d& locations)
 } // iReadPointsVersion1
 
 //------------------------------------------------------------------------------
-/// \brief Read points for version 1 XmUGrid file.
-/// \param a_inStream The stream to read from.
-/// \param locations The read locations.
-/// \return True on success.
-//------------------------------------------------------------------------------
-bool iReadPointsVersion2(std::istream& a_inStream, VecPt3d& locations)
-{
-  int pointCount;
-  if (!daReadIntLine(a_inStream, "NUM_POINTS", pointCount))
-  {
-    XM_LOG(xmlog::error, "Unable to read XmUGrid point count.");
-    return false;
-  }
-
-  locations.reserve(pointCount);
-  std::string pointLine;
-  std::string pointValue;
-  for (int pointIdx = 0; pointIdx < pointCount; ++pointIdx)
-  {
-    if (!daReadLine(a_inStream, pointLine))
-    {
-      XM_LOG(xmlog::error, "Unable to read XmUGrid point.");
-      return false;
-    }
-
-    Pt3d point;
-    int readPointIdx = -1;
-    bool success = daReadStringFromLine(pointLine, pointValue);
-    success = success && pointValue == "POINT";
-    success = success && daReadIntFromLine(pointLine, readPointIdx);
-    success = success && readPointIdx == pointIdx;
-    success = success && daReadDoubleFromLine(pointLine, point.x);
-    success = success && daReadDoubleFromLine(pointLine, point.y);
-    success = success && daReadDoubleFromLine(pointLine, point.z);
-    if (!success)
-    {
-      XM_LOG(xmlog::error, "Unable to read XmUGrid point.");
-      return false;
-    }
-
-    locations.push_back(point);
-  }
-
-  return true;
-} // iReadPointsVersion2
-
-//------------------------------------------------------------------------------
 /// \brief Read a line for cell stream size for an XmUGrid file.
 /// \param a_inStream The stream to read from.
 /// \param cellStreamSize The number of values in the cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellStreamSize(std::istream& a_inStream, int& cellStreamSize)
+bool iReadCellStreamSizeVersion1(std::istream& a_inStream, int& cellStreamSize)
 {
   if (!daReadIntLine(a_inStream, "NUM_CELL_ITEMS", cellStreamSize))
   {
@@ -240,7 +255,23 @@ bool iReadCellStreamSize(std::istream& a_inStream, int& cellStreamSize)
     return false;
   }
   return true;
-} // iReadCellStreamSize
+} // iReadCellStreamSizeVersion1
+
+//------------------------------------------------------------------------------
+/// \brief Read a line for cell stream size for an XmUGrid file.
+/// \param a_inStream The stream to read from.
+/// \param cellStreamSize The number of values in the cell stream.
+/// \return True on success.
+//------------------------------------------------------------------------------
+bool iReadCellStreamSizeVersion2(std::istream& a_inStream, int& cellStreamSize)
+{
+  if (!daReadIntLine(a_inStream, "CELL_STREAM", cellStreamSize))
+  {
+    XM_LOG(xmlog::error, "Unable to read XmUGrid cells.");
+    return false;
+  }
+  return true;
+} // iReadCellStreamSizeVersion1
 
 //------------------------------------------------------------------------------
 /// \brief Read line contents for a version 1 "CELL" line.
@@ -329,15 +360,16 @@ bool iReadCellLineVersion2(std::istream& a_inStream,
 /// \param a_cellstream The output cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellStream(std::istream& a_inStream,
-                     std::string& a_cellLine,
-                     int a_cellType,
-                     VecInt& a_cellstream)
+bool iReadCellStreamVersion1(std::istream& a_inStream,
+                             std::string& a_cellLine,
+                             int a_cellType,
+                             VecInt& a_cellstream)
 {
   a_cellstream.push_back(a_cellType);
   if (a_cellType == XMU_POLYHEDRON)
   {
     int numFaces;
+    std::string faceString;
     daReadIntFromLine(a_cellLine, numFaces);
     a_cellstream.push_back(numFaces);
     for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
@@ -345,8 +377,9 @@ bool iReadCellStream(std::istream& a_inStream,
       if (!daReadLine(a_inStream, a_cellLine))
       {
         XM_LOG(xmlog::error, "Unable to read cell stream.");
-        return true;
+        return false;
       }
+
       int numPoints;
       daReadIntFromLine(a_cellLine, numPoints);
       a_cellstream.push_back(numPoints);
@@ -371,7 +404,76 @@ bool iReadCellStream(std::istream& a_inStream,
     }
   }
   return true;
-}
+} // iReadCellStreamVersion1
+
+//------------------------------------------------------------------------------
+/// \brief
+/// \param a_inStream The stream to read from.
+/// \param a_cellLine The line to read from.
+/// \param a_cellType The cell type.
+/// \param a_cellstream The output cell stream.
+/// \return True on success.
+//------------------------------------------------------------------------------
+bool iReadCellStreamVersion2(std::istream& a_inStream,
+                             std::string& a_cellLine,
+                             int a_cellType,
+                             VecInt& a_cellstream)
+{
+  a_cellstream.push_back(a_cellType);
+  if (a_cellType == XMU_POLYHEDRON)
+  {
+    int numFaces;
+    std::string faceString;
+    daReadIntFromLine(a_cellLine, numFaces);
+    a_cellstream.push_back(numFaces);
+    for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+    {
+      if (!daReadLine(a_inStream, a_cellLine))
+      {
+        XM_LOG(xmlog::error, "Unable to read cell stream.");
+        return false;
+      }
+
+      daReadStringFromLine(a_cellLine, faceString);
+      if (faceString != "FACE")
+      {
+        XM_LOG(xmlog::error, "Unable to read cell stream.");
+        return false;
+      }
+
+      int faceIdxRead;
+      daReadIntFromLine(a_cellLine, faceIdxRead);
+      if (faceIdxRead != faceIdx)
+      {
+        XM_LOG(xmlog::error, "Unable to read cell stream.");
+        return false;
+      }
+
+      int numPoints;
+      daReadIntFromLine(a_cellLine, numPoints);
+      a_cellstream.push_back(numPoints);
+      for (int i = 0; i < numPoints; ++i)
+      {
+        int ptIdx;
+        daReadIntFromLine(a_cellLine, ptIdx);
+        a_cellstream.push_back(ptIdx);
+      }
+    }
+  }
+  else
+  {
+    int numPoints;
+    daReadIntFromLine(a_cellLine, numPoints);
+    a_cellstream.push_back(numPoints);
+    for (int i = 0; i < numPoints; ++i)
+    {
+      int ptIdx;
+      daReadIntFromLine(a_cellLine, ptIdx);
+      a_cellstream.push_back(ptIdx);
+    }
+  }
+  return true;
+} // iReadCellStreamVersion2
 
 //------------------------------------------------------------------------------
 /// \brief Read the cells for a version 1 XmUGrid file.
@@ -382,7 +484,7 @@ bool iReadCellStream(std::istream& a_inStream,
 bool iReadCellsVersion1(std::istream& a_inStream, VecInt& cellstream)
 {
   int cellStreamSize;
-  if (!iReadCellStreamSize(a_inStream, cellStreamSize))
+  if (!iReadCellStreamSizeVersion1(a_inStream, cellStreamSize))
     return false;
 
   cellstream.reserve(cellStreamSize);
@@ -401,7 +503,7 @@ bool iReadCellsVersion1(std::istream& a_inStream, VecInt& cellstream)
     if (!iReadCellLineVersion1(a_inStream, cellLine, cellType))
       return false;
 
-    if (!iReadCellStream(a_inStream, cellLine, cellType, cellstream))
+    if (!iReadCellStreamVersion1(a_inStream, cellLine, cellType, cellstream))
       return false;
   }
 
@@ -417,7 +519,7 @@ bool iReadCellsVersion1(std::istream& a_inStream, VecInt& cellstream)
 bool iReadCellsVersion2(std::istream& a_inStream, VecInt& cellstream)
 {
   int cellStreamSize;
-  if (!iReadCellStreamSize(a_inStream, cellStreamSize))
+  if (!iReadCellStreamSizeVersion2(a_inStream, cellStreamSize))
     return false;
 
   cellstream.reserve(cellStreamSize);
@@ -437,15 +539,226 @@ bool iReadCellsVersion2(std::istream& a_inStream, VecInt& cellstream)
     if (!iReadCellLineVersion2(a_inStream, cellIdx, cellLine, cellType))
       return false;
 
-    if (!iReadCellStream(a_inStream, cellLine, cellType, cellstream))
+    if (!iReadCellStreamVersion2(a_inStream, cellLine, cellType, cellstream))
       return false;
     ++cellIdx;
   }
 
   return true;
 } // iReadCellsVersion2
+//------------------------------------------------------------------------------
+/// \brief Write XmUGrid cell stream as text.
+/// \param a_outStream The output stream.
+/// \param a_ugrid The UGrid.
+//------------------------------------------------------------------------------
+void iWriteCellStream(std::ostream& a_outStream, const VecInt& a_cellstream)
+{ // number of cell stream items
+  int cellstreamSize = (int)a_cellstream.size();
+  a_outStream << "CELL_STREAM " << cellstreamSize << "\n";
 
-} // namespace {
+  // cells
+  int currIdx = 0;
+  int cellIdx = 0;
+  while (currIdx < cellstreamSize)
+  {
+    int cellType = a_cellstream[currIdx++];
+    std::string cellTypeString = iStringFromCellType(cellType);
+    int numItems = a_cellstream[currIdx++];
+    a_outStream << "  CELL " << cellIdx << " ";
+    if (!cellTypeString.empty())
+    {
+      a_outStream << cellTypeString;
+    }
+    else
+    {
+      std::ostringstream err;
+      err << "Unknow cell type (" << cellType << ").";
+      XM_LOG(xmlog::error, err.str());
+      return;
+    }
+    if (cellType == -1)
+    {
+      currIdx += numItems;
+    }
+    else if (cellType == XMU_POLYHEDRON)
+    {
+      int numFaces = numItems;
+      a_outStream << " " << numFaces;
+      for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+      {
+        numItems = a_cellstream[currIdx++];
+        a_outStream << "\n    FACE " << faceIdx << " " << numItems;
+        for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
+        {
+          a_outStream << " " << a_cellstream[currIdx++];
+        }
+      }
+    }
+    else
+    {
+      a_outStream << " " << numItems;
+      for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
+      {
+        a_outStream << " " << a_cellstream[currIdx++];
+      }
+    }
+    a_outStream << "\n";
+    ++cellIdx;
+  }
+} // iWriteCellStream
+////////////////////////////////////////////////////////////////////////////////
+/// \class XmUGridReaderVersion2
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief Constructor.
+/// \param a_inStream The input stream.
+//------------------------------------------------------------------------------
+XmUGridReaderVersion2::XmUGridReaderVersion2(std::istream& a_inStream, bool a_binary /*= false*/)
+: m_inStream(a_inStream)
+, m_binary(a_binary)
+{
+} // XmUGridReaderVersion2::XmUGridReaderVersion2
+//------------------------------------------------------------------------------
+/// \brief Read XmUGrid locations.
+/// \param a_locations The locations.
+//------------------------------------------------------------------------------
+bool XmUGridReaderVersion2::ReadLocations(VecPt3d& a_locations)
+{
+  if (m_binary)
+  {
+    int locationsCount;
+    bool success = daReadIntLine(m_inStream, "LOCATIONS", locationsCount);
+    if (locationsCount > 0)
+    {
+      a_locations.resize(locationsCount);
+      iReadBase64Bytes(m_inStream, (char*)&a_locations[0]);
+    }
+    return true;
+  }
+  else
+  {
+    return daReadVecPt3d(m_inStream, "LOCATIONS", a_locations);
+  }
+} // XmUGridReaderVersion2::WriteLocations
+//------------------------------------------------------------------------------
+/// \brief Read XmUGrid cell stream.
+/// \param a_cellstream The cell stream.
+//------------------------------------------------------------------------------
+bool XmUGridReaderVersion2::ReadCellstream(VecInt& a_cellstream)
+{
+  if (m_binary)
+  {
+    int cellStreamCount;
+    bool success = daReadIntLine(m_inStream, "CELL_STREAM", cellStreamCount);
+    if (cellStreamCount > 0)
+    {
+      a_cellstream.resize(cellStreamCount);
+      iReadBase64Bytes(m_inStream, (char*)&a_cellstream[0]);
+    }
+    return success;
+  }
+  else
+  {
+    return iReadCellsVersion2(m_inStream, a_cellstream);
+  }
+} // XmUGridReaderVersion2::ReadCellstream
+//------------------------------------------------------------------------------
+/// \brief Read XmUGrid private integer arrays.
+/// \param a_intArrays The private integer arrays.
+//------------------------------------------------------------------------------
+bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
+{
+  bool success = true;
+  if (m_binary)
+  {
+    for (auto& intArray : a_intArrays)
+    {
+      int count;
+      success = daReadIntLine(m_inStream, "CELL_STREAM", count);
+      if (count > 0)
+      {
+        VecInt& intVec = *intArray.second;
+        intVec.resize(count);
+        iReadBase64Bytes(m_inStream, (char*)&intVec[0]);
+      }
+    }
+  }
+  return success;
+} // XmUGridReaderVersion2::WriteIntArrays
+////////////////////////////////////////////////////////////////////////////////
+/// \class XmUGridWriterVersion2
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief Constructor.
+/// \param a_outStream The output stream.
+//------------------------------------------------------------------------------
+XmUGridWriterVersion2::XmUGridWriterVersion2(std::ostream& a_outStream, bool a_binary /* = false */)
+: m_outStream(a_outStream)
+, m_binary(a_binary)
+{
+} // XmUGridWriterVersion2::XmUGridWriterVersion2
+//------------------------------------------------------------------------------
+/// \brief Write XmUGrid locations.
+/// \param a_locations The locations.
+//------------------------------------------------------------------------------
+bool XmUGridWriterVersion2::WriteLocations(const VecPt3d& a_locations)
+{
+  if (m_binary)
+  {
+    int arraySize = (int)a_locations.size();
+    daWriteIntLine(m_outStream, "LOCATIONS", arraySize);
+    if (arraySize > 0)
+      iWriteBase64Bytes(m_outStream, (const char*)&a_locations[0],
+                        arraySize * sizeof(VecPt3d::value_type));
+  }
+  else
+  {
+    daWriteVecPt3d(m_outStream, "LOCATIONS", a_locations);
+  }
+  return true;
+} // XmUGridWriterVersion2::WriteLocations
+//------------------------------------------------------------------------------
+/// \brief Write XmUGrid cell stream.
+/// \param a_cellstream The cell stream.
+//------------------------------------------------------------------------------
+bool XmUGridWriterVersion2::WriteCellstream(const VecInt& a_cellstream)
+{
+  if (m_binary)
+  {
+    int arraySize = (int)a_cellstream.size();
+    daWriteIntLine(m_outStream, "CELL_STREAM", arraySize);
+    if (arraySize > 0)
+      iWriteBase64Bytes(m_outStream, (const char*)&a_cellstream[0],
+                        arraySize * sizeof(VecInt::value_type));
+  }
+  else
+  {
+    iWriteCellStream(m_outStream, a_cellstream);
+  }
+  return true;
+} // XmUGridWriterVersion2::WriteCellstream
+//------------------------------------------------------------------------------
+/// \brief Write XmUGrid private integer arrays.
+/// \param a_intArrays The private integer arrays.
+//------------------------------------------------------------------------------
+bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
+{
+  bool success = true;
+  if (m_binary)
+  {
+    for (auto& intArray : a_intArrays)
+    {
+      const VecInt& vecInts = *intArray.second;
+      int arraySize = (int)vecInts.size();
+      daWriteIntLine(m_outStream, intArray.first, arraySize);
+      if (arraySize > 0)
+        iWriteBase64Bytes(m_outStream, (const char*)&vecInts[0], arraySize * sizeof(int));
+    }
+  }
+  return success;
+} // XmUGridWriterVersion2::WriteIntArrays
+
+} // namespace
 
 //------------------------------------------------------------------------------
 /// \brief Read XmUGrid from an ASCII file.
@@ -479,6 +792,7 @@ BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
   }
 
   int version;
+  bool binary = false;
   if (versionString == "ASCII XmUGrid Version 1.0")
   {
     version = 1;
@@ -487,31 +801,32 @@ BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
   {
     version = 2;
   }
+  else if (versionString == "Binary XmUGrid Version 2")
+  {
+    version = 2;
+    binary = true;
+  }
   else
   {
     XM_LOG(xmlog::error, "Unsupported file version or file type.");
     return nullptr;
   }
 
-  VecPt3d locations;
-  VecInt cellstream;
   if (version == 1)
   {
+    VecPt3d locations;
     if (version == 1 && !iReadPointsVersion1(a_inStream, locations))
       return nullptr;
+    VecInt cellstream;
     if (version == 1 && !iReadCellsVersion1(a_inStream, cellstream))
       return nullptr;
-  }
-  else
-  {
-    if (!iReadPointsVersion2(a_inStream, locations))
-      return nullptr;
-    if (!iReadCellsVersion2(a_inStream, cellstream))
-      return nullptr;
+    BSHP<XmUGrid> xmUGrid = XmUGrid::New(locations, cellstream);
+    return xmUGrid;
   }
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(locations, cellstream);
-  return ugrid;
+  XmUGridReaderVersion2 reader(a_inStream, binary);
+  BSHP<XmUGrid> xmUGrid = XmUGrid::New(reader);
+  return xmUGrid;
 } // XmReadUGridFromStream
 //------------------------------------------------------------------------------
 /// \brief Write an XmUGrid to an ASCII file.
@@ -538,76 +853,16 @@ void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
 /// \param[in] a_ugrid: the UGrid to save
 /// \param[in] a_outStream: the stream to write
 //------------------------------------------------------------------------------
-void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream)
+void XmWriteUGridToStream(const XmUGrid& a_ugrid,
+                          std::ostream& a_outStream,
+                          bool a_binary /*= true*/)
 {
-  a_outStream << "ASCII XmUGrid Version 2\n";
-
-  // number of points
-  const VecPt3d& points = a_ugrid.GetLocations();
-  a_outStream << "NUM_POINTS " << points.size() << "\n";
-
-  // points
-  for (size_t i = 0; i < points.size(); ++i)
-  {
-    const Pt3d& p = points[i];
-    a_outStream << "  POINT " << i << " " << STRstd(p.x) << " " << STRstd(p.y) << " " << STRstd(p.z)
-                << "\n";
-  }
-
-  // number of cell stream items
-  const VecInt& cellstream = a_ugrid.GetCellstream();
-  int cellstreamSize = (int)cellstream.size();
-  a_outStream << "NUM_CELL_ITEMS " << cellstreamSize << "\n";
-
-  // cells
-  int currIdx = 0;
-  int cellIdx = 0;
-  while (currIdx < cellstreamSize)
-  {
-    int cellType = cellstream[currIdx++];
-    std::string cellTypeString = iStringFromCellType(cellType);
-    int numItems = cellstream[currIdx++];
-    a_outStream << "  CELL " << cellIdx << " ";
-    if (!cellTypeString.empty())
-    {
-      a_outStream << cellTypeString;
-    }
-    else
-    {
-      std::ostringstream err;
-      err << "Unknow cell type (" << cellType << ").";
-      XM_LOG(xmlog::error, err.str());
-      return;
-    }
-    if (cellType == -1)
-    {
-      currIdx += numItems;
-    }
-    else if (cellType == XMU_POLYHEDRON)
-    {
-      int numFaces = numItems;
-      a_outStream << " " << numFaces;
-      for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
-      {
-        numItems = cellstream[currIdx++];
-        a_outStream << "\n    " << numItems;
-        for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
-        {
-          a_outStream << " " << cellstream[currIdx++];
-        }
-      }
-    }
-    else
-    {
-      a_outStream << " " << numItems;
-      for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
-      {
-        a_outStream << " " << cellstream[currIdx++];
-      }
-    }
-    a_outStream << "\n";
-    ++cellIdx;
-  }
+  if (a_binary)
+    a_outStream << "Binary XmUGrid Version 2\n";
+  else
+    a_outStream << "ASCII XmUGrid Version 2\n";
+  XmUGridWriterVersion2 writer(a_outStream, a_binary);
+  a_ugrid.WriteXmUGrid(writer);
 } // XmWriteUGridToStream
 
 } // namespace xms
@@ -619,6 +874,18 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream)
 using namespace xms;
 #include <xmsgrid/ugrid/XmUGrid.t.h>
 #include <xmsgrid/ugrid/XmUGridUtils.t.h>
+
+namespace
+{
+//------------------------------------------------------------------------------
+/// \brief Path to test files.
+/// \return Returns path to test files.
+//------------------------------------------------------------------------------
+std::string TestFilesPath()
+{
+  return std::string(XMS_TEST_PATH);
+} // TestFilesPath
+} // namespace
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGridUtilsTests
@@ -635,8 +902,8 @@ void XmUGridUtilsTests::testWriteEmptyUGrid()
 
   std::string outputBase =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 0\n"
-    "NUM_CELL_ITEMS 0\n";
+    "LOCATIONS 0\n"
+    "CELL_STREAM 0\n";
   TS_ASSERT_EQUALS(outputBase, output.str());
 } // XmUGridReaderTests::testWriteEmptyUGrid
 //------------------------------------------------------------------------------
@@ -650,11 +917,11 @@ void XmUGridUtilsTests::testWriteBasicUGrid()
 
   std::string outputBase =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 3\n"
+    "LOCATIONS 3\n"
     "  POINT 0 0.0 0.0 0.0\n"
     "  POINT 1 20.0 0.0 0.0\n"
     "  POINT 2 0.0 20.0 0.0\n"
-    "NUM_CELL_ITEMS 5\n"
+    "CELL_STREAM 5\n"
     "  CELL 0 TRIANGLE 3 0 1 2\n";
   TS_ASSERT_EQUALS(outputBase, output.str());
 } // XmUGridUtilsTests::testWriteBasicUGrid
@@ -669,7 +936,7 @@ void XmUGridUtilsTests::testWritePolyhedronUGrid()
 
   std::string outputBase =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 8\n"
+    "LOCATIONS 8\n"
     "  POINT 0 0.0 0.0 10.0\n"
     "  POINT 1 10.0 0.0 10.0\n"
     "  POINT 2 10.0 10.0 10.0\n"
@@ -678,14 +945,14 @@ void XmUGridUtilsTests::testWritePolyhedronUGrid()
     "  POINT 5 10.0 0.0 0.0\n"
     "  POINT 6 10.0 10.0 0.0\n"
     "  POINT 7 0.0 10.0 0.0\n"
-    "NUM_CELL_ITEMS 32\n"
+    "CELL_STREAM 32\n"
     "  CELL 0 POLYHEDRON 6\n"
-    "    4 0 1 2 3\n"
-    "    4 4 5 7 2\n"
-    "    4 5 6 2 1\n"
-    "    4 6 7 3 2\n"
-    "    4 7 4 0 3\n"
-    "    4 4 7 6 5\n";
+    "    FACE 0 4 0 1 2 3\n"
+    "    FACE 1 4 4 5 7 2\n"
+    "    FACE 2 4 5 6 2 1\n"
+    "    FACE 3 4 6 7 3 2\n"
+    "    FACE 4 4 7 4 0 3\n"
+    "    FACE 5 4 4 7 6 5\n";
   TS_ASSERT_EQUALS(outputBase, output.str());
 } // XmUGridUtilsTests::testWritePolyhedronUGrid
 //------------------------------------------------------------------------------
@@ -700,7 +967,7 @@ void XmUGridUtilsTests::testWriteLinear2dCells()
 
   std::string outputBase =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 14\n"
+    "LOCATIONS 14\n"
     "  POINT 0 0.0 0.0 0.0\n"
     "  POINT 1 10.0 0.0 0.0\n"
     "  POINT 2 20.0 0.0 0.0\n"
@@ -715,7 +982,7 @@ void XmUGridUtilsTests::testWriteLinear2dCells()
     "  POINT 11 20.0 20.0 0.0\n"
     "  POINT 12 30.0 20.0 0.0\n"
     "  POINT 13 40.0 20.0 0.0\n"
-    "NUM_CELL_ITEMS 34\n"
+    "CELL_STREAM 34\n"
     "  CELL 0 QUAD 4 0 1 6 5\n"
     "  CELL 1 PIXEL 4 1 2 6 7\n"
     "  CELL 2 TRIANGLE 3 2 3 7\n"
@@ -736,7 +1003,7 @@ void XmUGridUtilsTests::testWriteLinear3dCells()
 
   std::string outputBase =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 30\n"
+    "LOCATIONS 30\n"
     "  POINT 0 0.0 0.0 0.0\n"
     "  POINT 1 10.0 0.0 0.0\n"
     "  POINT 2 20.0 0.0 0.0\n"
@@ -767,17 +1034,17 @@ void XmUGridUtilsTests::testWriteLinear3dCells()
     "  POINT 27 20.0 20.0 10.0\n"
     "  POINT 28 30.0 20.0 10.0\n"
     "  POINT 29 40.0 20.0 10.0\n"
-    "NUM_CELL_ITEMS 73\n"
+    "CELL_STREAM 73\n"
     "  CELL 0 TETRA 4 0 1 5 15\n"
     "  CELL 1 VOXEL 8 1 2 6 7 16 17 21 22\n"
     "  CELL 2 HEXAHEDRON 8 2 3 8 7 17 18 23 22\n"
     "  CELL 3 POLYHEDRON 6\n"
-    "    4 9 8 13 14\n"
-    "    4 8 9 24 23\n"
-    "    4 9 14 29 24\n"
-    "    4 14 13 28 29\n"
-    "    4 8 13 28 23\n"
-    "    4 23 24 29 28\n"
+    "    FACE 0 4 9 8 13 14\n"
+    "    FACE 1 4 8 9 24 23\n"
+    "    FACE 2 4 9 14 29 24\n"
+    "    FACE 3 4 14 13 28 29\n"
+    "    FACE 4 4 8 13 28 23\n"
+    "    FACE 5 4 23 24 29 28\n"
     "  CELL 4 WEDGE 6 3 4 18 8 9 23\n"
     "  CELL 5 PYRAMID 5 5 6 11 10 20\n";
   std::string outputString = output.str();
@@ -790,8 +1057,8 @@ void XmUGridUtilsTests::testReadEmptyUGridAsciiFile()
 {
   std::string inputText =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 0\n"
-    "NUM_CELL_ITEMS 0\n";
+    "LOCATIONS 0\n"
+    "CELL_STREAM 0\n";
   std::istringstream input;
   input.str(inputText);
   BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
@@ -808,11 +1075,11 @@ void XmUGridUtilsTests::testReadBasicUGrid()
 {
   std::string inputText =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 3\n"
+    "LOCATIONS 3\n"
     "  POINT 0 0.0 0.0 0.0\n"
     "  POINT 1 20.0 0.0 0.0\n"
     "  POINT 2 0.0 20.0 0.0\n"
-    "NUM_CELL_ITEMS 5\n"
+    "CELL_STREAM 5\n"
     "  CELL 0 TRIANGLE 3 0 1 2\n";
   std::istringstream input;
   input.str(inputText);
@@ -833,7 +1100,7 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
 {
   std::string inputText =
     "ASCII XmUGrid Version 2\n"
-    "NUM_POINTS 8\n"
+    "LOCATIONS 8\n"
     "  POINT 0 0.0 0.0 10.0\n"
     "  POINT 1 10.0 0.0 10.0\n"
     "  POINT 2 10.0 10.0 10.0\n"
@@ -842,14 +1109,14 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
     "  POINT 5 10.0 0.0 0.0\n"
     "  POINT 6 10.0 10.0 0.0\n"
     "  POINT 7 0.0 10.0 0.0\n"
-    "NUM_CELL_ITEMS 32\n"
+    "CELL_STREAM 32\n"
     "  CELL 0 POLYHEDRON 6\n"
-    "    4 0 1 2 3\n"
-    "    4 4 5 7 2\n"
-    "    4 5 6 2 1\n"
-    "    4 6 7 3 2\n"
-    "    4 7 4 0 3\n"
-    "    4 4 7 6 5\n";
+    "    FACE 0 4 0 1 2 3\n"
+    "    FACE 1 4 4 5 7 2\n"
+    "    FACE 2 4 5 6 2 1\n"
+    "    FACE 3 4 6 7 3 2\n"
+    "    FACE 4 4 7 4 0 3\n"
+    "    FACE 5 4 4 7 6 5\n";
   std::istringstream input;
   input.str(inputText);
   BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
@@ -1009,5 +1276,162 @@ void XmUGridUtilsTests::testReadVersion1Dot0File()
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugrid->GetCellstream());
 } // XmUGridUtilsTests::testReadVersion1Dot0File
+//------------------------------------------------------------------------------
+/// \brief Test writing then reading an XmUGrid binary file.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testWriteThenReadUGridBinary()
+{
+  BSHP<XmUGrid> ugridOut = TEST_XmUGrid3dLinear();
+  std::ostringstream output;
+  bool binary = true;
+  XmWriteUGridToStream(*ugridOut, output, binary);
+
+  std::string outputBase =
+    "Binary XmUGrid Version 2\n"
+    "LOCATIONS 30\n"
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANEAAAAAAAAAAAAAAAAAAAA"
+    "AAAAAAAAAAPkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAREAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkQAAAAAAA"
+    "AAAAAAAAAAAAJEAAAAAAAAAkQAAAAAAAAAAAAAAAAAAANEAAAAAAAAAkQAAAAAAAAAAAAAAAAAAAPkAAAAAAAAAkQAAAAA"
+    "AAAAAAAAAAAAAAREAAAAAAAAAkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0QAAAAAAAAAAAAAAAAAAAJEAAAAAAAAA0QAAA"
+    "AAAAAAAAAAAAAAAANEAAAAAAAAA0QAAAAAAAAAAAAAAAAAAAPkAAAAAAAAA0QAAAAAAAAAAAAAAAAAAAREAAAAAAAAA0QA"
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACRAAAAAAAAAJEAAAAAAAAAAAAAAAAAAACRAAAAAAAAANEAAAAAAAAAA"
+    "AAAAAAAAACRAAAAAAAAAPkAAAAAAAAAAAAAAAAAAACRAAAAAAAAAREAAAAAAAAAAAAAAAAAAACRAAAAAAAAAAAAAAAAAAA"
+    "AkQAAAAAAAACRAAAAAAAAAJEAAAAAAAAAkQAAAAAAAACRAAAAAAAAANEAAAAAAAAAkQAAAAAAAACRAAAAAAAAAPkAAAAAA"
+    "AAAkQAAAAAAAACRAAAAAAAAAREAAAAAAAAAkQAAAAAAAACRAAAAAAAAAAAAAAAAAAAA0QAAAAAAAACRAAAAAAAAAJEAAAA"
+    "AAAAA0QAAAAAAAACRAAAAAAAAANEAAAAAAAAA0QAAAAAAAACRAAAAAAAAAPkAAAAAAAAA0QAAAAAAAACRAAAAAAAAAREAA"
+    "AAAAAAA0QAAAAAAAACRA\n"
+    "CELL_STREAM 73\n"
+    "CgAAAAQAAAAAAAAAAQAAAAUAAAAPAAAACwAAAAgAAAABAAAAAgAAAAYAAAAHAAAAEAAAABEAAAAVAAAAFgAAAAwAAAAIAA"
+    "AAAgAAAAMAAAAIAAAABwAAABEAAAASAAAAFwAAABYAAAAqAAAABgAAAAQAAAAJAAAACAAAAA0AAAAOAAAABAAAAAgAAAAJ"
+    "AAAAGAAAABcAAAAEAAAACQAAAA4AAAAdAAAAGAAAAAQAAAAOAAAADQAAABwAAAAdAAAABAAAAAgAAAANAAAAHAAAABcAAA"
+    "AEAAAAFwAAABgAAAAdAAAAHAAAAA0AAAAGAAAAAwAAAAQAAAASAAAACAAAAAkAAAAXAAAADgAAAAUAAAAFAAAABgAAAAsA"
+    "AAAKAAAAFAAAAA\n"
+    "CELLSTREAM_OFFSETS 7\n"
+    "AAAAAAYAAAAQAAAAGgAAADoAAABCAAAASQAAAA\n"
+    "POINTS_TO_CELLS 70\n"
+    "AQAAAAAAAAACAAAAAAAAAAEAAAACAAAAAQAAAAIAAAACAAAAAgAAAAQAAAABAAAABAAAAAIAAAAAAAAABQAAAAIAAAABAA"
+    "AABQAAAAIAAAABAAAAAgAAAAMAAAACAAAAAwAAAAQAAAACAAAAAwAAAAQAAAABAAAABQAAAAEAAAAFAAAAAAAAAAEAAAAD"
+    "AAAAAQAAAAMAAAABAAAAAAAAAAEAAAABAAAAAgAAAAEAAAACAAAAAgAAAAIAAAAEAAAAAAAAAAEAAAAFAAAAAQAAAAEAAA"
+    "ACAAAAAQAAAAIAAAADAAAAAgAAAAMAAAAEAAAAAQAAAAMAAAAAAAAAAAAAAAAAAAABAAAAAwAAAAEAAAADAAAAAAAAAA\n"
+    "POINTS_TO_CELLS_OFFSETS 31\n"
+    "AAAAAAIAAAAFAAAACAAAAAsAAAANAAAAEAAAABMAAAAWAAAAGgAAAB0AAAAfAAAAIQAAACIAAAAkAAAAJgAAACgAAAAqAA"
+    "AALQAAADAAAAAxAAAAMwAAADUAAAA4AAAAPAAAAD4AAAA/AAAAQAAAAEEAAABDAAAARQAAAA\n";
+  std::string outputString = output.str();
+  TS_ASSERT_EQUALS(outputBase, outputString);
+
+  std::istringstream input(outputString);
+  BSHP<XmUGrid> ugridIn = XmReadUGridFromStream(input);
+  if (!ugridIn)
+    TS_FAIL("Failed to read UGrid.");
+  TS_ASSERT_EQUALS(ugridOut->GetLocations(), ugridIn->GetLocations());
+  TS_ASSERT_EQUALS(ugridOut->GetCellstream(), ugridIn->GetCellstream());
+}
+
+void XmUGridUtilsTests::testCellStringToEnum()
+{
+  TS_ASSERT_EQUALS("INVALID_CELL_TYPE", iStringFromCellType(XMU_INVALID_CELL_TYPE));
+  TS_ASSERT_EQUALS("EMPTY_CELL", iStringFromCellType(XMU_EMPTY_CELL));
+  TS_ASSERT_EQUALS("VERTEX", iStringFromCellType(XMU_VERTEX));
+  TS_ASSERT_EQUALS("POLY_VERTEX", iStringFromCellType(XMU_POLY_VERTEX));
+  TS_ASSERT_EQUALS("LINE", iStringFromCellType(XMU_LINE));
+  TS_ASSERT_EQUALS("POLY_LINE", iStringFromCellType(XMU_POLY_LINE));
+  TS_ASSERT_EQUALS("TRIANGLE", iStringFromCellType(XMU_TRIANGLE));
+  TS_ASSERT_EQUALS("TRIANGLE_STRIP", iStringFromCellType(XMU_TRIANGLE_STRIP));
+  TS_ASSERT_EQUALS("POLYGON", iStringFromCellType(XMU_POLYGON));
+  TS_ASSERT_EQUALS("PIXEL", iStringFromCellType(XMU_PIXEL));
+  TS_ASSERT_EQUALS("QUAD", iStringFromCellType(XMU_QUAD));
+  TS_ASSERT_EQUALS("TETRA", iStringFromCellType(XMU_TETRA));
+  TS_ASSERT_EQUALS("VOXEL", iStringFromCellType(XMU_VOXEL));
+  TS_ASSERT_EQUALS("HEXAHEDRON", iStringFromCellType(XMU_HEXAHEDRON));
+  TS_ASSERT_EQUALS("WEDGE", iStringFromCellType(XMU_WEDGE));
+  TS_ASSERT_EQUALS("PYRAMID", iStringFromCellType(XMU_PYRAMID));
+  TS_ASSERT_EQUALS("PENTAGONAL_PRISM", iStringFromCellType(XMU_PENTAGONAL_PRISM));
+  TS_ASSERT_EQUALS("HEXAGONAL_PRISM", iStringFromCellType(XMU_HEXAGONAL_PRISM));
+  TS_ASSERT_EQUALS("QUADRATIC_EDGE", iStringFromCellType(XMU_QUADRATIC_EDGE));
+  TS_ASSERT_EQUALS("QUADRATIC_TRIANGLE", iStringFromCellType(XMU_QUADRATIC_TRIANGLE));
+  TS_ASSERT_EQUALS("QUADRATIC_QUAD", iStringFromCellType(XMU_QUADRATIC_QUAD));
+  TS_ASSERT_EQUALS("QUADRATIC_POLYGON", iStringFromCellType(XMU_QUADRATIC_POLYGON));
+  TS_ASSERT_EQUALS("QUADRATIC_TETRA", iStringFromCellType(XMU_QUADRATIC_TETRA));
+  TS_ASSERT_EQUALS("QUADRATIC_HEXAHEDRON", iStringFromCellType(XMU_QUADRATIC_HEXAHEDRON));
+  TS_ASSERT_EQUALS("QUADRATIC_WEDGE", iStringFromCellType(XMU_QUADRATIC_WEDGE));
+  TS_ASSERT_EQUALS("QUADRATIC_PYRAMID", iStringFromCellType(XMU_QUADRATIC_PYRAMID));
+  TS_ASSERT_EQUALS("BIQUADRATIC_QUAD", iStringFromCellType(XMU_BIQUADRATIC_QUAD));
+  TS_ASSERT_EQUALS("TRIQUADRATIC_HEXAHEDRON", iStringFromCellType(XMU_TRIQUADRATIC_HEXAHEDRON));
+  TS_ASSERT_EQUALS("QUADRATIC_LINEAR_QUAD", iStringFromCellType(XMU_QUADRATIC_LINEAR_QUAD));
+  TS_ASSERT_EQUALS("QUADRATIC_LINEAR_WEDGE", iStringFromCellType(XMU_QUADRATIC_LINEAR_WEDGE));
+  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_WEDGE", iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_WEDGE));
+  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_HEXAHEDRON", iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON));
+  TS_ASSERT_EQUALS("BIQUADRATIC_TRIANGLE", iStringFromCellType(XMU_BIQUADRATIC_TRIANGLE));
+  TS_ASSERT_EQUALS("CUBIC_LINE", iStringFromCellType(XMU_CUBIC_LINE));
+  TS_ASSERT_EQUALS("CONVEX_POINT_SET", iStringFromCellType(XMU_CONVEX_POINT_SET));
+  TS_ASSERT_EQUALS("POLYHEDRON", iStringFromCellType(XMU_POLYHEDRON));
+  TS_ASSERT_EQUALS("PARAMETRIC_CURVE", iStringFromCellType(XMU_PARAMETRIC_CURVE));
+  TS_ASSERT_EQUALS("PARAMETRIC_SURFACE", iStringFromCellType(XMU_PARAMETRIC_SURFACE));
+  TS_ASSERT_EQUALS("PARAMETRIC_TRI_SURFACE", iStringFromCellType(XMU_PARAMETRIC_TRI_SURFACE));
+  TS_ASSERT_EQUALS("PARAMETRIC_QUAD_SURFACE", iStringFromCellType(XMU_PARAMETRIC_QUAD_SURFACE));
+  TS_ASSERT_EQUALS("PARAMETRIC_TETRA_REGION", iStringFromCellType(XMU_PARAMETRIC_TETRA_REGION));
+  TS_ASSERT_EQUALS("PARAMETRIC_HEX_REGION", iStringFromCellType(XMU_PARAMETRIC_HEX_REGION));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_EDGE", iStringFromCellType(XMU_HIGHER_ORDER_EDGE));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_TRIANGLE", iStringFromCellType(XMU_HIGHER_ORDER_TRIANGLE));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_QUAD", iStringFromCellType(XMU_HIGHER_ORDER_QUAD));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_POLYGON", iStringFromCellType(XMU_HIGHER_ORDER_POLYGON));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_TETRAHEDRON", iStringFromCellType(XMU_HIGHER_ORDER_TETRAHEDRON));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_WEDGE", iStringFromCellType(XMU_HIGHER_ORDER_WEDGE));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_PYRAMID", iStringFromCellType(XMU_HIGHER_ORDER_PYRAMID));
+  TS_ASSERT_EQUALS("HIGHER_ORDER_HEXAHEDRON", iStringFromCellType(XMU_HIGHER_ORDER_HEXAHEDRON));
+
+  TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, iCellTypeFromString("INVALID_CELL_TYPE"));
+  TS_ASSERT_EQUALS(XMU_EMPTY_CELL, iCellTypeFromString("EMPTY_CELL"));
+  TS_ASSERT_EQUALS(XMU_VERTEX, iCellTypeFromString("VERTEX"));
+  TS_ASSERT_EQUALS(XMU_POLY_VERTEX, iCellTypeFromString("POLY_VERTEX"));
+  TS_ASSERT_EQUALS(XMU_LINE, iCellTypeFromString("LINE"));
+  TS_ASSERT_EQUALS(XMU_POLY_LINE, iCellTypeFromString("POLY_LINE"));
+  TS_ASSERT_EQUALS(XMU_TRIANGLE, iCellTypeFromString("TRIANGLE"));
+  TS_ASSERT_EQUALS(XMU_TRIANGLE_STRIP, iCellTypeFromString("TRIANGLE_STRIP"));
+  TS_ASSERT_EQUALS(XMU_POLYGON, iCellTypeFromString("POLYGON"));
+  TS_ASSERT_EQUALS(XMU_PIXEL, iCellTypeFromString("PIXEL"));
+  TS_ASSERT_EQUALS(XMU_QUAD, iCellTypeFromString("QUAD"));
+  TS_ASSERT_EQUALS(XMU_TETRA, iCellTypeFromString("TETRA"));
+  TS_ASSERT_EQUALS(XMU_VOXEL, iCellTypeFromString("VOXEL"));
+  TS_ASSERT_EQUALS(XMU_HEXAHEDRON, iCellTypeFromString("HEXAHEDRON"));
+  TS_ASSERT_EQUALS(XMU_WEDGE, iCellTypeFromString("WEDGE"));
+  TS_ASSERT_EQUALS(XMU_PYRAMID, iCellTypeFromString("PYRAMID"));
+  TS_ASSERT_EQUALS(XMU_PENTAGONAL_PRISM, iCellTypeFromString("PENTAGONAL_PRISM"));
+  TS_ASSERT_EQUALS(XMU_HEXAGONAL_PRISM, iCellTypeFromString("HEXAGONAL_PRISM"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_EDGE, iCellTypeFromString("QUADRATIC_EDGE"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_TRIANGLE, iCellTypeFromString("QUADRATIC_TRIANGLE"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_QUAD, iCellTypeFromString("QUADRATIC_QUAD"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_POLYGON, iCellTypeFromString("QUADRATIC_POLYGON"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_TETRA, iCellTypeFromString("QUADRATIC_TETRA"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_HEXAHEDRON, iCellTypeFromString("QUADRATIC_HEXAHEDRON"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_WEDGE, iCellTypeFromString("QUADRATIC_WEDGE"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_PYRAMID, iCellTypeFromString("QUADRATIC_PYRAMID"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUAD, iCellTypeFromString("BIQUADRATIC_QUAD"));
+  TS_ASSERT_EQUALS(XMU_TRIQUADRATIC_HEXAHEDRON, iCellTypeFromString("TRIQUADRATIC_HEXAHEDRON"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_LINEAR_QUAD, iCellTypeFromString("QUADRATIC_LINEAR_QUAD"));
+  TS_ASSERT_EQUALS(XMU_QUADRATIC_LINEAR_WEDGE, iCellTypeFromString("QUADRATIC_LINEAR_WEDGE"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_WEDGE, iCellTypeFromString("BIQUADRATIC_QUADRATIC_WEDGE"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON, iCellTypeFromString("BIQUADRATIC_QUADRATIC_HEXAHEDRON"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_TRIANGLE, iCellTypeFromString("BIQUADRATIC_TRIANGLE"));
+  TS_ASSERT_EQUALS(XMU_CUBIC_LINE, iCellTypeFromString("CUBIC_LINE"));
+  TS_ASSERT_EQUALS(XMU_CONVEX_POINT_SET, iCellTypeFromString("CONVEX_POINT_SET"));
+  TS_ASSERT_EQUALS(XMU_POLYHEDRON, iCellTypeFromString("POLYHEDRON"));
+  TS_ASSERT_EQUALS(XMU_PARAMETRIC_CURVE, iCellTypeFromString("PARAMETRIC_CURVE"));
+  TS_ASSERT_EQUALS(XMU_PARAMETRIC_SURFACE, iCellTypeFromString("PARAMETRIC_SURFACE"));
+  TS_ASSERT_EQUALS(XMU_PARAMETRIC_TRI_SURFACE, iCellTypeFromString("PARAMETRIC_TRI_SURFACE"));
+  TS_ASSERT_EQUALS(XMU_PARAMETRIC_QUAD_SURFACE, iCellTypeFromString("PARAMETRIC_QUAD_SURFACE"));
+  TS_ASSERT_EQUALS(XMU_PARAMETRIC_TETRA_REGION, iCellTypeFromString("PARAMETRIC_TETRA_REGION"));
+  TS_ASSERT_EQUALS(XMU_PARAMETRIC_HEX_REGION, iCellTypeFromString("PARAMETRIC_HEX_REGION"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_EDGE, iCellTypeFromString("HIGHER_ORDER_EDGE"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_TRIANGLE, iCellTypeFromString("HIGHER_ORDER_TRIANGLE"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_QUAD, iCellTypeFromString("HIGHER_ORDER_QUAD"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_POLYGON, iCellTypeFromString("HIGHER_ORDER_POLYGON"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_TETRAHEDRON, iCellTypeFromString("HIGHER_ORDER_TETRAHEDRON"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_WEDGE, iCellTypeFromString("HIGHER_ORDER_WEDGE"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_PYRAMID, iCellTypeFromString("HIGHER_ORDER_PYRAMID"));
+  TS_ASSERT_EQUALS(XMU_HIGHER_ORDER_HEXAHEDRON, iCellTypeFromString("HIGHER_ORDER_HEXAHEDRON"));
+  TS_ASSERT_EQUALS(50, iCellTypeStringIntPair().size());
+}
+// XmUGridUtilsTests::testWriteThenReadUGridBinary
 
 #endif
