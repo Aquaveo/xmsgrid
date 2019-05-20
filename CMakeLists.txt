@@ -79,6 +79,8 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsgrid_sources
+  # Data IO
+  xmsgrid/dataio/daStreamIo.cpp
   # Geometry
   xmsgrid/geometry/geoms.cpp
   xmsgrid/geometry/GmExtents.cpp
@@ -108,6 +110,8 @@ set(xmsgrid_sources
 )
 
 set(xmsgrid_headers
+  # Data IO
+  xmsgrid/dataio/daStreamIo.h
   # Geometry
   xmsgrid/geometry/geoms.h
   xmsgrid/geometry/GmBoostTypes.h
@@ -168,6 +172,8 @@ if (BUILD_TESTING)
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources
+   # Data IO
+   xmsgrid/dataio/daStreamIo.t.h
    # Geometry
    xmsgrid/geometry/geoms.t.h
    xmsgrid/geometry/GmExtents.t.h

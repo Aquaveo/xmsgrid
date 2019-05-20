@@ -22,7 +22,6 @@
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/ostream_iterator.hpp>
 #include <boost/bimap.hpp>
-#include <boost/timer/timer.hpp>
 
 // 5. Shared code headers
 #include <xmscore/dataio/daStreamIo.h>
@@ -32,7 +31,6 @@
 #include <xmscore/stl/vector.h>
 
 // 6. Non-shared code headers
-#include <xmsgrid/dataio/daStreamIo.h>
 #include <xmsgrid/ugrid/detail/XmUGridIo.h>
 #include <xmsgrid/ugrid/XmUGrid.h>
 
@@ -61,64 +59,52 @@ typedef boost::bimap<std::string, int> CellNameToType;
 class XmUGridReaderVersion2 : public XmUGridReader
 {
 public:
-  explicit XmUGridReaderVersion2(DaStreamReader& a_reader);
+  explicit XmUGridReaderVersion2(std::istream& a_inStream, bool a_binary = false);
   bool ReadLocations(VecPt3d& a_locations) final;
   bool ReadCellstream(VecInt& a_cellstream) final;
   bool ReadIntArrays(IntArrays& a_intArrays) final;
 
 private:
-  DaStreamReader& m_reader;
+  std::istream& m_inStream;
+  bool m_binary;
 };
 
 class XmUGridWriterVersion2 : public XmUGridWriter
 {
 public:
-  explicit XmUGridWriterVersion2(DaStreamWriter& a_writer);
+  explicit XmUGridWriterVersion2(std::ostream& a_outStream, bool a_binary = false);
   bool WriteLocations(const VecPt3d& a_locations) final;
   bool WriteCellstream(const VecInt& a_cellstream) final;
   bool WriteIntArrays(ConstIntArrays& a_intArrays) final;
 
 private:
-  DaStreamWriter& m_writer;
+  std::ostream& m_outStream;
+  bool m_binary;
 };
 
-inline std::size_t Base64Size(std::size_t n)
+size_t g_writeLocation = 0;
+size_t g_readLocation = 0;
+VecChar g_writeBuffer;
+
+/// Returns max chars needed to encode a base64 string
+inline
+std::size_t
+encoded_size(std::size_t n)
 {
-  return 4 * ((n + 2) / 3);
+    return 4 * ((n + 2) / 3);
 }
 
 void iWriteBase64Bytes(std::ostream& a_outStream, const char* a_bytes, int a_bytesLength)
 {
-  boost::timer::cpu_timer timer;
   using namespace boost::archive::iterators;
   typedef base64_from_binary<transform_width<const char*, 6, 8>> base64_text;
 
-  VecChar buffer(Base64Size(a_bytesLength));
-  char* begin = &buffer[0];
-  char* curr = &buffer[0];
+  g_writeBuffer.reserve(g_writeBuffer.size() + encoded_size(a_bytesLength));
+  std::back_insert_iterator< std::vector<char> > writeInserter(g_writeBuffer);
 
-  for (auto it = base64_text(a_bytes); it != base64_text(a_bytes + a_bytesLength); ++it)
-  {
-    *curr++ = *it;
-  }
-  //std::copy(base64_text(a_bytes), base64_text(a_bytes + a_bytesLength),
-  //          curr);
-  buffer.resize(curr - begin);
-
-  boost::timer::cpu_timer timer2;
-
-  curr = &buffer[0];
-  char* end = begin + buffer.size();
-  while (curr != end)
-  {
-    char* writeTo = curr + 1024*16;
-    if (writeTo > end)
-      writeTo = end;
-    a_outStream.write(curr, writeTo - curr);
-    curr = writeTo;
-  }
-  a_outStream << '\n';
-  std::cerr << "Base64 write time: " << timer.format() << '\n';
+  std::copy(base64_text(a_bytes), base64_text(a_bytes + a_bytesLength),
+            writeInserter);
+  //a_outStream << '\n';
 } // iWriteBase64Bytes
 
 void iReadBase64Bytes(std::istream& a_inStream, char* a_bytes)
@@ -127,9 +113,7 @@ void iReadBase64Bytes(std::istream& a_inStream, char* a_bytes)
   typedef transform_width<binary_from_base64<const char*>, 8, 6> base64_dec;
 
   std::string s;
-  boost::timer::cpu_timer timer1;
   daReadLine(a_inStream, s);
-  std::cerr << "Base64 read time: " << timer1.format() << '\n';
   size_t size = s.size();
 
   if (size && s[size - 1] == '=')
@@ -140,9 +124,7 @@ void iReadBase64Bytes(std::istream& a_inStream, char* a_bytes)
   }
   if (size != 0)
   {
-    boost::timer::cpu_timer timer2;
     std::copy(base64_dec(s.data()), base64_dec(s.data() + size), a_bytes);
-    std::cerr << "Convert from base64 time: " << timer2.format() << '\n';
   }
 } // iReadBase64Bytes
 //------------------------------------------------------------------------------
@@ -206,7 +188,6 @@ const CellNameToType& iCellTypeStringIntPair()
     cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_PYRAMID", XMU_HIGHER_ORDER_PYRAMID));
     cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_HEXAHEDRON", XMU_HIGHER_ORDER_HEXAHEDRON));
     // clang-format on
-    std::cout << '\n';
   }
 
   return cellNameToInt;
@@ -247,10 +228,10 @@ int iCellTypeFromString(const std::string& a_type)
 /// \param locations The read locations.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadPointsVersion1(DaStreamReader& a_reader, VecPt3d& locations)
+bool iReadPointsVersion1(std::istream& a_inStream, VecPt3d& locations)
 {
   int pointCount;
-  if (!a_reader.ReadIntLine("NUM_POINTS", pointCount))
+  if (!daReadIntLine(a_inStream, "NUM_POINTS", pointCount))
   {
     XM_LOG(xmlog::error, "Unable to read XmUGrid point count.");
     return false;
@@ -260,7 +241,7 @@ bool iReadPointsVersion1(DaStreamReader& a_reader, VecPt3d& locations)
   for (int pointIdx = 0; pointIdx < pointCount; ++pointIdx)
   {
     Pt3d point;
-    if (a_reader.Read3DoubleLine("POINT", point.x, point.y, point.z))
+    if (daRead3DoubleLine(a_inStream, "POINT", point.x, point.y, point.z))
     {
       locations.push_back(point);
     }
@@ -280,9 +261,9 @@ bool iReadPointsVersion1(DaStreamReader& a_reader, VecPt3d& locations)
 /// \param cellStreamSize The number of values in the cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellStreamSizeVersion1(DaStreamReader& a_reader, int& cellStreamSize)
+bool iReadCellStreamSizeVersion1(std::istream& a_inStream, int& cellStreamSize)
 {
-  if (!a_reader.ReadIntLine("NUM_CELL_ITEMS", cellStreamSize))
+  if (!daReadIntLine(a_inStream, "NUM_CELL_ITEMS", cellStreamSize))
   {
     XM_LOG(xmlog::error, "Unable to read XmUGrid cells.");
     return false;
@@ -296,9 +277,9 @@ bool iReadCellStreamSizeVersion1(DaStreamReader& a_reader, int& cellStreamSize)
 /// \param cellStreamSize The number of values in the cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellStreamSizeVersion2(DaStreamReader& a_reader, int& cellStreamSize)
+bool iReadCellStreamSizeVersion2(std::istream& a_inStream, int& cellStreamSize)
 {
-  if (!a_reader.ReadIntLine("CELL_STREAM", cellStreamSize))
+  if (!daReadIntLine(a_inStream, "CELL_STREAM", cellStreamSize))
   {
     XM_LOG(xmlog::error, "Unable to read XmUGrid cells.");
     return false;
@@ -313,9 +294,9 @@ bool iReadCellStreamSizeVersion2(DaStreamReader& a_reader, int& cellStreamSize)
 /// \param a_cellType The cell type.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellLineVersion1(DaStreamReader& a_reader, std::string& a_cellLine, int& a_cellType)
+bool iReadCellLineVersion1(std::istream& a_inStream, std::string& a_cellLine, int& a_cellType)
 {
-  if (!a_reader.ReadLine(a_cellLine))
+  if (!daReadLine(a_inStream, a_cellLine))
     return false;
 
   a_cellType = XMU_INVALID_CELL_TYPE;
@@ -347,11 +328,17 @@ bool iReadCellLineVersion1(DaStreamReader& a_reader, std::string& a_cellLine, in
 /// \param a_cellType The cell type.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellLineVersion2(DaStreamReader& a_reader,
+bool iReadCellLineVersion2(std::istream& a_inStream,
                            int a_cellIdx,
                            std::string& a_cellLine,
                            int& a_cellType)
 {
+  if (!daReadLine(a_inStream, a_cellLine))
+  {
+    XM_LOG(xmlog::error, "Unable to read cell line.");
+    return false;
+  }
+
   int readCellIdx = -1;
   if (!daReadIntFromLine(a_cellLine, readCellIdx) || readCellIdx != a_cellIdx)
   {
@@ -387,7 +374,7 @@ bool iReadCellLineVersion2(DaStreamReader& a_reader,
 /// \param a_cellstream The output cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellStreamVersion1(DaStreamReader& a_reader,
+bool iReadCellStreamVersion1(std::istream& a_inStream,
                              std::string& a_cellLine,
                              int a_cellType,
                              VecInt& a_cellstream)
@@ -401,7 +388,7 @@ bool iReadCellStreamVersion1(DaStreamReader& a_reader,
     a_cellstream.push_back(numFaces);
     for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
     {
-      if (!a_reader.ReadLine(a_cellLine))
+      if (!daReadLine(a_inStream, a_cellLine))
       {
         XM_LOG(xmlog::error, "Unable to read cell stream.");
         return false;
@@ -441,7 +428,7 @@ bool iReadCellStreamVersion1(DaStreamReader& a_reader,
 /// \param a_cellstream The output cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellStreamVersion2(DaStreamReader& a_reader,
+bool iReadCellStreamVersion2(std::istream& a_inStream,
                              std::string& a_cellLine,
                              int a_cellType,
                              VecInt& a_cellstream)
@@ -451,17 +438,17 @@ bool iReadCellStreamVersion2(DaStreamReader& a_reader,
   {
     int numFaces;
     std::string faceString;
-    DaStreamReader::ReadIntFromLine(a_cellLine, numFaces);
+    daReadIntFromLine(a_cellLine, numFaces);
     a_cellstream.push_back(numFaces);
     for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
     {
-      if (!a_reader.ReadLine(a_cellLine))
+      if (!daReadLine(a_inStream, a_cellLine))
       {
         XM_LOG(xmlog::error, "Unable to read cell stream.");
         return false;
       }
 
-      DaStreamReader::ReadStringFromLine(a_cellLine, faceString);
+      daReadStringFromLine(a_cellLine, faceString);
       if (faceString != "FACE")
       {
         XM_LOG(xmlog::error, "Unable to read cell stream.");
@@ -469,7 +456,7 @@ bool iReadCellStreamVersion2(DaStreamReader& a_reader,
       }
 
       int faceIdxRead;
-      DaStreamReader::ReadIntFromLine(a_cellLine, faceIdxRead);
+      daReadIntFromLine(a_cellLine, faceIdxRead);
       if (faceIdxRead != faceIdx)
       {
         XM_LOG(xmlog::error, "Unable to read cell stream.");
@@ -477,12 +464,12 @@ bool iReadCellStreamVersion2(DaStreamReader& a_reader,
       }
 
       int numPoints;
-      DaStreamReader::ReadIntFromLine(a_cellLine, numPoints);
+      daReadIntFromLine(a_cellLine, numPoints);
       a_cellstream.push_back(numPoints);
       for (int i = 0; i < numPoints; ++i)
       {
         int ptIdx;
-        DaStreamReader::ReadIntFromLine(a_cellLine, ptIdx);
+        daReadIntFromLine(a_cellLine, ptIdx);
         a_cellstream.push_back(ptIdx);
       }
     }
@@ -490,12 +477,12 @@ bool iReadCellStreamVersion2(DaStreamReader& a_reader,
   else
   {
     int numPoints;
-    DaStreamReader::ReadIntFromLine(a_cellLine, numPoints);
+    daReadIntFromLine(a_cellLine, numPoints);
     a_cellstream.push_back(numPoints);
     for (int i = 0; i < numPoints; ++i)
     {
       int ptIdx;
-      DaStreamReader::ReadIntFromLine(a_cellLine, ptIdx);
+      daReadIntFromLine(a_cellLine, ptIdx);
       a_cellstream.push_back(ptIdx);
     }
   }
@@ -508,30 +495,29 @@ bool iReadCellStreamVersion2(DaStreamReader& a_reader,
 /// \param cellstream The resulting cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellsVersion1(DaStreamReader& a_reader, VecInt& cellstream)
+bool iReadCellsVersion1(std::istream& a_inStream, VecInt& cellstream)
 {
   int cellStreamSize;
-  if (!iReadCellStreamSizeVersion1(a_reader, cellStreamSize))
+  if (!iReadCellStreamSizeVersion1(a_inStream, cellStreamSize))
     return false;
 
   cellstream.reserve(cellStreamSize);
-  while ((int)cellstream.size() < cellStreamSize)
+  while ((int)cellstream.size() < cellStreamSize && !a_inStream.eof())
   {
-    std::string cellLine;
-    a_reader.ReadLine(cellLine);
     std::string cardName;
-    DaStreamReader::ReadStringFromLine(cellLine, cardName);
+    a_inStream >> cardName;
     if (cardName != "CELL")
     {
       XM_LOG(xmlog::error, "Unable to read XmUGrid cell.");
       return false;
     }
 
+    std::string cellLine;
     int cellType;
-    if (!iReadCellLineVersion1(a_reader, cellLine, cellType))
+    if (!iReadCellLineVersion1(a_inStream, cellLine, cellType))
       return false;
 
-    if (!iReadCellStreamVersion1(a_reader, cellLine, cellType, cellstream))
+    if (!iReadCellStreamVersion1(a_inStream, cellLine, cellType, cellstream))
       return false;
   }
 
@@ -544,31 +530,30 @@ bool iReadCellsVersion1(DaStreamReader& a_reader, VecInt& cellstream)
 /// \param cellstream The resulting cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& cellstream)
+bool iReadCellsVersion2(std::istream& a_inStream, VecInt& cellstream)
 {
   int cellStreamSize;
-  if (!iReadCellStreamSizeVersion2(a_reader, cellStreamSize))
+  if (!iReadCellStreamSizeVersion2(a_inStream, cellStreamSize))
     return false;
 
   cellstream.reserve(cellStreamSize);
   int cellIdx = 0;
-  while ((int)cellstream.size() < cellStreamSize)
+  while ((int)cellstream.size() < cellStreamSize && !a_inStream.eof())
   {
-    std::string cellLine;
-    a_reader.ReadLine(cellLine);
     std::string cardName;
-    DaStreamReader::ReadStringFromLine(cellLine, cardName);
+    a_inStream >> cardName;
     if (cardName != "CELL")
     {
       XM_LOG(xmlog::error, "Unable to read XmUGrid cell.");
       return false;
     }
 
+    std::string cellLine;
     int cellType;
-    if (!iReadCellLineVersion2(a_reader, cellIdx, cellLine, cellType))
+    if (!iReadCellLineVersion2(a_inStream, cellIdx, cellLine, cellType))
       return false;
 
-    if (!iReadCellStreamVersion2(a_reader, cellLine, cellType, cellstream))
+    if (!iReadCellStreamVersion2(a_inStream, cellLine, cellType, cellstream))
       return false;
     ++cellIdx;
   }
@@ -580,13 +565,12 @@ bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& cellstream)
 /// \param a_outStream The output stream.
 /// \param a_ugrid The UGrid.
 //------------------------------------------------------------------------------
-void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
+void iWriteCellStream(std::ostream& a_outStream, const VecInt& a_cellstream)
 { // number of cell stream items
   int cellstreamSize = (int)a_cellstream.size();
-  a_writer.WriteIntLine("CELL_STREAM", cellstreamSize);
+  a_outStream << "CELL_STREAM " << cellstreamSize << "\n";
 
   // cells
-  std::ostringstream out;
   int currIdx = 0;
   int cellIdx = 0;
   while (currIdx < cellstreamSize)
@@ -594,10 +578,10 @@ void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
     int cellType = a_cellstream[currIdx++];
     std::string cellTypeString = iStringFromCellType(cellType);
     int numItems = a_cellstream[currIdx++];
-    out << "  CELL " << cellIdx << " ";
+    a_outStream << "  CELL " << cellIdx << " ";
     if (!cellTypeString.empty())
     {
-      out << cellTypeString;
+      a_outStream << cellTypeString;
     }
     else
     {
@@ -613,31 +597,28 @@ void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
     else if (cellType == XMU_POLYHEDRON)
     {
       int numFaces = numItems;
-      out << " " << numFaces;
+      a_outStream << " " << numFaces;
       for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
       {
         numItems = a_cellstream[currIdx++];
-        out << "\n    FACE " << faceIdx << " " << numItems;
+        a_outStream << "\n    FACE " << faceIdx << " " << numItems;
         for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
         {
-          out << " " << a_cellstream[currIdx++];
+          a_outStream << " " << a_cellstream[currIdx++];
         }
       }
     }
     else
     {
-      out << " " << numItems;
+      a_outStream << " " << numItems;
       for (int itemIdx = 0; itemIdx < numItems; ++itemIdx)
       {
-        out << " " << a_cellstream[currIdx++];
+        a_outStream << " " << a_cellstream[currIdx++];
       }
     }
+    a_outStream << "\n";
     ++cellIdx;
   }
-
-  std::string cellString = out.str();
-  cellString.pop_back();
-  a_writer.WriteLine(cellString);
 } // iWriteCellStream
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGridReaderVersion2
@@ -646,8 +627,9 @@ void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
 /// \brief Constructor.
 /// \param a_inStream The input stream.
 //------------------------------------------------------------------------------
-XmUGridReaderVersion2::XmUGridReaderVersion2(DaStreamReader& a_reader)
-: m_reader(a_reader)
+XmUGridReaderVersion2::XmUGridReaderVersion2(std::istream& a_inStream, bool a_binary /*= false*/)
+: m_inStream(a_inStream)
+, m_binary(a_binary)
 {
 } // XmUGridReaderVersion2::XmUGridReaderVersion2
 //------------------------------------------------------------------------------
@@ -656,7 +638,21 @@ XmUGridReaderVersion2::XmUGridReaderVersion2(DaStreamReader& a_reader)
 //------------------------------------------------------------------------------
 bool XmUGridReaderVersion2::ReadLocations(VecPt3d& a_locations)
 {
-  return m_reader.ReadVecPt3d("LOCATIONS", a_locations);
+  if (m_binary)
+  {
+    int locationsCount;
+    bool success = daReadIntLine(m_inStream, "LOCATIONS", locationsCount);
+    if (locationsCount > 0)
+    {
+      a_locations.resize(locationsCount);
+      iReadBase64Bytes(m_inStream, (char*)&a_locations[0]);
+    }
+    return true;
+  }
+  else
+  {
+    return daReadVecPt3d(m_inStream, "LOCATIONS", a_locations);
+  }
 } // XmUGridReaderVersion2::WriteLocations
 //------------------------------------------------------------------------------
 /// \brief Read XmUGrid cell stream.
@@ -664,9 +660,21 @@ bool XmUGridReaderVersion2::ReadLocations(VecPt3d& a_locations)
 //------------------------------------------------------------------------------
 bool XmUGridReaderVersion2::ReadCellstream(VecInt& a_cellstream)
 {
-  if (m_reader.IsBinary())
-    return m_reader.ReadVecInt("CELL_STREAM", a_cellstream);
-  return iReadCellsVersion2(m_reader, a_cellstream);
+  if (m_binary)
+  {
+    int cellStreamCount;
+    bool success = daReadIntLine(m_inStream, "CELL_STREAM", cellStreamCount);
+    if (cellStreamCount > 0)
+    {
+      a_cellstream.resize(cellStreamCount);
+      iReadBase64Bytes(m_inStream, (char*)&a_cellstream[0]);
+    }
+    return success;
+  }
+  else
+  {
+    return iReadCellsVersion2(m_inStream, a_cellstream);
+  }
 } // XmUGridReaderVersion2::ReadCellstream
 //------------------------------------------------------------------------------
 /// \brief Read XmUGrid private integer arrays.
@@ -675,20 +683,20 @@ bool XmUGridReaderVersion2::ReadCellstream(VecInt& a_cellstream)
 bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
 {
   bool success = true;
-  //if (m_binary)
-  //{
-  //  for (auto& intArray : a_intArrays)
-  //  {
-  //    int count;
-  //    success = daReadIntLine(m_inStream, "CELL_STREAM", count);
-  //    if (count > 0)
-  //    {
-  //      VecInt& intVec = *intArray.second;
-  //      intVec.resize(count);
-  //      iReadBase64Bytes(m_inStream, (char*)&intVec[0]);
-  //    }
-  //  }
-  //}
+  if (m_binary)
+  {
+    for (auto& intArray : a_intArrays)
+    {
+      int count;
+      success = daReadIntLine(m_inStream, "CELL_STREAM", count);
+      if (count > 0)
+      {
+        VecInt& intVec = *intArray.second;
+        intVec.resize(count);
+        iReadBase64Bytes(m_inStream, (char*)&intVec[0]);
+      }
+    }
+  }
   return success;
 } // XmUGridReaderVersion2::WriteIntArrays
 ////////////////////////////////////////////////////////////////////////////////
@@ -698,8 +706,9 @@ bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
 /// \brief Constructor.
 /// \param a_outStream The output stream.
 //------------------------------------------------------------------------------
-XmUGridWriterVersion2::XmUGridWriterVersion2(DaStreamWriter& a_writer)
-: m_writer(a_writer)
+XmUGridWriterVersion2::XmUGridWriterVersion2(std::ostream& a_outStream, bool a_binary /* = false */)
+: m_outStream(a_outStream)
+, m_binary(a_binary)
 {
 } // XmUGridWriterVersion2::XmUGridWriterVersion2
 //------------------------------------------------------------------------------
@@ -708,7 +717,18 @@ XmUGridWriterVersion2::XmUGridWriterVersion2(DaStreamWriter& a_writer)
 //------------------------------------------------------------------------------
 bool XmUGridWriterVersion2::WriteLocations(const VecPt3d& a_locations)
 {
-  m_writer.WriteVecPt3d("LOCATIONS", a_locations);
+  if (m_binary)
+  {
+    int arraySize = (int)a_locations.size();
+    daWriteIntLine(m_outStream, "LOCATIONS", arraySize);
+    if (arraySize > 0)
+      iWriteBase64Bytes(m_outStream, (const char*)&a_locations[0],
+                        arraySize * sizeof(VecPt3d::value_type));
+  }
+  else
+  {
+    daWriteVecPt3d(m_outStream, "LOCATIONS", a_locations);
+  }
   return true;
 } // XmUGridWriterVersion2::WriteLocations
 //------------------------------------------------------------------------------
@@ -717,10 +737,18 @@ bool XmUGridWriterVersion2::WriteLocations(const VecPt3d& a_locations)
 //------------------------------------------------------------------------------
 bool XmUGridWriterVersion2::WriteCellstream(const VecInt& a_cellstream)
 {
-  if (m_writer.IsBinary())
-    m_writer.WriteVecInt("CELL_STREAM", a_cellstream);
+  if (m_binary)
+  {
+    int arraySize = (int)a_cellstream.size();
+    daWriteIntLine(m_outStream, "CELL_STREAM", arraySize);
+    if (arraySize > 0)
+      iWriteBase64Bytes(m_outStream, (const char*)&a_cellstream[0],
+                        arraySize * sizeof(VecInt::value_type));
+  }
   else
-    iWriteCellStream(m_writer, a_cellstream);
+  {
+    iWriteCellStream(m_outStream, a_cellstream);
+  }
   return true;
 } // XmUGridWriterVersion2::WriteCellstream
 //------------------------------------------------------------------------------
@@ -730,18 +758,17 @@ bool XmUGridWriterVersion2::WriteCellstream(const VecInt& a_cellstream)
 bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
 {
   bool success = true;
-  //if (m_binary)
-  //{
-  //  for (auto& intArray : a_intArrays)
-  //  {
-  //    const VecInt& vecInts = *intArray.second;
-  //    int arraySize = (int)vecInts.size();
-  //    daWriteIntLine(m_outStream, intArray.first, arraySize);
-  //    std::cerr << intArray.first << '\n';
-  //    if (arraySize > 0)
-  //      iWriteBase64Bytes(m_outStream, (const char*)&vecInts[0], arraySize * sizeof(int));
-  //  }
-  //}
+  if (m_binary)
+  {
+    for (auto& intArray : a_intArrays)
+    {
+      const VecInt& vecInts = *intArray.second;
+      int arraySize = (int)vecInts.size();
+      daWriteIntLine(m_outStream, intArray.first, arraySize);
+      if (arraySize > 0)
+        iWriteBase64Bytes(m_outStream, (const char*)&vecInts[0], arraySize * sizeof(int));
+    }
+  }
   return success;
 } // XmUGridWriterVersion2::WriteIntArrays
 
@@ -801,20 +828,18 @@ BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
 
   if (version == 1)
   {
-    DaStreamReader reader(a_inStream, false);
     VecPt3d locations;
-    if (version == 1 && !iReadPointsVersion1(reader, locations))
+    if (version == 1 && !iReadPointsVersion1(a_inStream, locations))
       return nullptr;
     VecInt cellstream;
-    if (version == 1 && !iReadCellsVersion1(reader, cellstream))
+    if (version == 1 && !iReadCellsVersion1(a_inStream, cellstream))
       return nullptr;
     BSHP<XmUGrid> xmUGrid = XmUGrid::New(locations, cellstream);
     return xmUGrid;
   }
 
-  DaStreamReader reader(a_inStream, binary);
-  XmUGridReaderVersion2 gridReader(reader);
-  BSHP<XmUGrid> xmUGrid = XmUGrid::New(gridReader);
+  XmUGridReaderVersion2 reader(a_inStream, binary);
+  BSHP<XmUGrid> xmUGrid = XmUGrid::New(reader);
   return xmUGrid;
 } // XmReadUGridFromStream
 //------------------------------------------------------------------------------
@@ -850,9 +875,8 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
     a_outStream << "Binary XmUGrid Version 2\n";
   else
     a_outStream << "ASCII XmUGrid Version 2\n";
-  DaStreamWriter writer(a_outStream, a_binary);
-  XmUGridWriterVersion2 gridWriter(writer);
-  a_ugrid.WriteXmUGrid(gridWriter);
+  XmUGridWriterVersion2 writer(a_outStream, a_binary);
+  a_ugrid.WriteXmUGrid(writer);
 } // XmWriteUGridToStream
 
 } // namespace xms
@@ -1315,7 +1339,6 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
     TS_FAIL("Failed to read UGrid.");
   TS_ASSERT_EQUALS(ugridOut->GetLocations(), ugridIn->GetLocations());
   TS_ASSERT_EQUALS(ugridOut->GetCellstream(), ugridIn->GetCellstream());
-
 } // XmUGridUtilsTests::testWriteThenReadUGridBinary
 //------------------------------------------------------------------------------
 /// \brief Test conversion between cell type string and cell type enum.
@@ -1462,8 +1485,8 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
     TS_FAIL("Read time: " + timer.format());
   }
 
-  //TS_ASSERT_EQUALS(grid->GetLocations(), gridRead->GetLocations());
-  //TS_ASSERT_EQUALS(grid->GetCellstream(), gridRead->GetCellstream());
+  TS_ASSERT_EQUALS(grid->GetLocations(), gridRead->GetLocations());
+  TS_ASSERT_EQUALS(grid->GetCellstream(), gridRead->GetCellstream());
 
 #endif
 } // XmUGridUtilsTests::testLargeUGridBinarySpeed
