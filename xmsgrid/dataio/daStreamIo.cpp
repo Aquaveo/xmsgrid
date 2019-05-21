@@ -18,6 +18,12 @@
 #include <sstream>
 
 // 4. External Library Headers
+#include <boost/archive/iterators/base64_from_binary.hpp>
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/insert_linebreaks.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+#include <boost/archive/iterators/ostream_iterator.hpp>
+#include <boost/timer/timer.hpp>
 #include <boost/unordered_map.hpp>
 
 // 5. Shared Headers
@@ -43,8 +49,9 @@ namespace xms
 class DaStreamReader::Impl
 {
 public:
-  Impl(std::istream& a_inStream)
+  Impl(std::istream& a_inStream, bool a_binaryArrays)
     : m_inStream(a_inStream)
+    , m_binaryArrays(a_binaryArrays)
   {
   }
 
@@ -55,8 +62,9 @@ public:
 class DaStreamWriter::Impl
 {
 public:
-  Impl(std::ostream& a_outStream)
+  Impl(std::ostream& a_outStream, bool a_binaryArrays)
     : m_outStream(a_outStream)
+    , m_binaryArrays(a_binaryArrays)
   {
   }
 
@@ -66,6 +74,77 @@ public:
 
 namespace
 {
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+inline std::size_t iBase64Size(std::size_t n)
+{
+  return 4 * ((n + 2) / 3);
+} // iBase64Size
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void iWriteBase64Bytes(std::ostream& a_outStream, const char* a_bytes, size_t a_bytesLength)
+{
+  boost::timer::cpu_timer timer;
+  using namespace boost::archive::iterators;
+  typedef base64_from_binary<transform_width<const char*, 6, 8>> base64_text;
+
+  VecChar buffer(iBase64Size(a_bytesLength));
+  char* begin = &buffer[0];
+  char* curr = &buffer[0];
+
+  for (auto it = base64_text(a_bytes); it != base64_text(a_bytes + a_bytesLength); ++it)
+  {
+    *curr++ = *it;
+  }
+  //std::copy(base64_text(a_bytes), base64_text(a_bytes + a_bytesLength),
+  //          curr);
+  buffer.resize(curr - begin);
+
+  boost::timer::cpu_timer timer2;
+
+  curr = &buffer[0];
+  char* end = begin + buffer.size();
+  while (curr != end)
+  {
+    char* writeTo = curr + 1024*16;
+    if (writeTo > end)
+      writeTo = end;
+    a_outStream.write(curr, writeTo - curr);
+    curr = writeTo;
+  }
+  a_outStream << '\n';
+  std::cerr << "Base64 write time: " << timer.format() << '\n';
+} // iWriteBase64Bytes
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void iReadBase64Bytes(std::istream& a_inStream, char* a_bytes)
+{
+  using namespace boost::archive::iterators;
+  typedef transform_width<binary_from_base64<const char*>, 8, 6> base64_dec;
+
+  std::string s;
+  boost::timer::cpu_timer timer1;
+  daReadLine(a_inStream, s);
+  std::cerr << "Base64 read time: " << timer1.format() << '\n';
+  size_t size = s.size();
+
+  if (size && s[size - 1] == '=')
+  {
+    --size;
+    if (size && s[size - 1] == '=')
+      --size;
+  }
+  if (size != 0)
+  {
+    boost::timer::cpu_timer timer2;
+    std::copy(base64_dec(s.data()), base64_dec(s.data() + size), a_bytes);
+    std::cerr << "Convert from base64 time: " << timer2.format() << '\n';
+  }
+} // iReadBase64Bytes
 //------------------------------------------------------------------------------
 /// \brief Read line of name (beginning of line) followed with up to 3 expected
 /// values.
@@ -321,7 +400,7 @@ bool iReadValueFromLine(std::string& a_line, _T& a_val)
 /// \class DaStreamReader
 ////////////////////////////////////////////////////////////////////////////////
 DaStreamReader::DaStreamReader(std::istream& a_inStream, bool a_binary /*= false*/)
-  : m_impl(new Impl(a_inStream))
+  : m_impl(new Impl(a_inStream, a_binary))
 {
 } // DaStreamReader::DaStreamReader
 //------------------------------------------------------------------------------
@@ -432,6 +511,18 @@ bool DaStreamReader::ReadStringLine(const char* a_name, std::string& a_val)
 //------------------------------------------------------------------------------
 bool DaStreamReader::ReadVecInt(const char* a_name, VecInt& a_vec)
 {
+  if (IsBinary())
+  {
+    int size;
+    if (!daReadIntLine(m_impl->m_inStream, a_name, size))
+      return false;
+
+    a_vec.resize(size);
+    if (size != 0)
+      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0]);
+    return true;
+  }
+
   return iReadVector(m_impl->m_inStream, a_name, a_vec);
 } // DaStreamReader::ReadVecInt
 //------------------------------------------------------------------------------
@@ -456,27 +547,36 @@ bool DaStreamReader::ReadVecPt3d(const char* a_name, VecPt3d& a_vec)
   if (!daReadIntLine(m_impl->m_inStream, a_name, size))
     return false;
 
-  a_vec.resize(0);
-  a_vec.reserve(size);
-  std::string pointLine;
-  std::string pointValue;
-  for (int i = 0; i < size; ++i)
+  if (IsBinary())
   {
-    if (!daReadLine(m_impl->m_inStream, pointLine))
-      return false;
+    a_vec.resize(size);
+    if (size != 0)
+      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0]);
+  }
+  else
+  {
+    a_vec.resize(0);
+    a_vec.reserve(size);
+    std::string pointLine;
+    std::string pointValue;
+    for (int i = 0; i < size; ++i)
+    {
+      if (!daReadLine(m_impl->m_inStream, pointLine))
+        return false;
 
-    bool success = daReadStringFromLine(pointLine, pointValue);
-    success = success && pointValue == "POINT";
-    int readPointIdx = -1;
-    success = success && daReadIntFromLine(pointLine, readPointIdx);
-    success = success && readPointIdx == (int)i;
-    Pt3d pt;
-    success = success && daReadDoubleFromLine(pointLine, pt.x);
-    success = success && daReadDoubleFromLine(pointLine, pt.y);
-    success = success && daReadDoubleFromLine(pointLine, pt.z);
-    if (!success)
-      return false;
-    a_vec.push_back(pt);
+      bool success = daReadStringFromLine(pointLine, pointValue);
+      success = success && pointValue == "POINT";
+      int readPointIdx = -1;
+      success = success && daReadIntFromLine(pointLine, readPointIdx);
+      success = success && readPointIdx == (int) i;
+      Pt3d pt;
+      success = success && daReadDoubleFromLine(pointLine, pt.x);
+      success = success && daReadDoubleFromLine(pointLine, pt.y);
+      success = success && daReadDoubleFromLine(pointLine, pt.z);
+      if (!success)
+        return false;
+      a_vec.push_back(pt);
+    }
   }
 
   return true;
@@ -566,6 +666,32 @@ bool DaStreamReader::ReadDoubleFromLine(std::string& a_line, double& a_val)
 {
   return iReadValueFromLine(a_line, a_val);
 } // DaStreamReader::ReadDoubleFromLine
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool DaStreamReader::ReadString(std::string& a_val)
+{
+  m_impl->m_inStream >> a_val;
+  return !m_impl->m_inStream.fail();
+} // DaStreamReader::ReadString
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool DaStreamReader::ReadInt(int& a_val)
+{
+  m_impl->m_inStream >> a_val;
+  return !m_impl->m_inStream.fail();
+} // DaStreamReader::ReadInt
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool DaStreamReader::NextLine()
+{
+  std::string line;
+  ReadLine(line);
+  return !m_impl->m_inStream.fail();
+} // DaStreamReader::NextLine
+
 ////////////////////////////////////////////////////////////////////////////////
 /// \class DaStreamWriter
 ////////////////////////////////////////////////////////////////////////////////
@@ -573,7 +699,7 @@ bool DaStreamReader::ReadDoubleFromLine(std::string& a_line, double& a_val)
 /// \brief Constructor.
 //------------------------------------------------------------------------------
 DaStreamWriter::DaStreamWriter(std::ostream& a_outStream, bool a_binary /*= false*/)
-  : m_impl(new Impl(a_outStream))
+  : m_impl(new Impl(a_outStream, a_binary))
 {
 } // DaStreamWriter::DaStreamWriter
 //------------------------------------------------------------------------------
@@ -590,14 +716,6 @@ bool DaStreamWriter::IsBinary() const
 {
   return m_impl->m_binaryArrays;
 } // DaStreamWriter::IsBinary
-//------------------------------------------------------------------------------
-/// \brief Write a given line to a stream.
-/// \param a_name The line of text to be written.
-//------------------------------------------------------------------------------
-void DaStreamWriter::WriteNamedLine(const char* a_name)
-{
-  iWriteLine(m_impl->m_outStream, a_name);
-} // DaStreamWriter::WriteNamedLine
 //------------------------------------------------------------------------------
 /// \brief Write a given line to a stream.
 /// \param a_line The line of text to be written.
@@ -632,7 +750,17 @@ void DaStreamWriter::WriteStringLine(const char* a_name, const std::string& a_va
 //------------------------------------------------------------------------------
 void DaStreamWriter::WriteVecInt(const char* a_name, const VecInt& a_vec)
 {
-  iWriteVec(m_impl->m_outStream, a_name, a_vec);
+  if (IsBinary())
+  {
+    size_t size = a_vec.size();
+    iWriteLine(m_impl->m_outStream, a_name, &size);
+    if (!a_vec.empty())
+      iWriteBase64Bytes(m_impl->m_outStream, (const char*)&a_vec[0], a_vec.size()* sizeof(VecInt::value_type));
+  }
+  else
+  {
+    iWriteVec(m_impl->m_outStream, a_name, a_vec);
+  }
 } // DaStreamWriter::WriteVecInt
 //------------------------------------------------------------------------------
 /// \brief Write a named pair of words to a line.
@@ -706,16 +834,60 @@ void DaStreamWriter::WriteVecPt3d(const char* a_name, const VecPt3d& a_points)
   const size_t size = a_points.size();
   iWriteLine(m_impl->m_outStream, a_name, &size);
 
-  // write each indented point and XYZ (why not remove POINT text?)
-  for (size_t i = 0; i < a_points.size(); ++i)
+  if (IsBinary())
   {
-    const Pt3d& point = a_points[i];
-    std::string sx(STRstd(point.x));
-    std::string sy(STRstd(point.y));
-    std::string sz(STRstd(point.z));
-    m_impl->m_outStream << "  POINT " << i << ' ' << sx << ' ' << sy << ' ' << sz << '\n';
+    if (!a_points.empty())
+      iWriteBase64Bytes(m_impl->m_outStream, (const char*)&a_points[0], a_points.size()* sizeof(VecPt3d::value_type));
+  }
+  else
+  {
+    // write each indented point and XYZ (why not remove POINT text?)
+    for (size_t i = 0; i < a_points.size(); ++i)
+    {
+      const Pt3d& point = a_points[i];
+      std::string sx(STRstd(point.x));
+      std::string sy(STRstd(point.y));
+      std::string sz(STRstd(point.z));
+      m_impl->m_outStream << "  POINT " << i << ' ' << sx << ' ' << sy << ' ' << sz << '\n';
+    }
   }
 } // DaStreamWriter::WriteVecPt3d
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void DaStreamWriter::WriteString(const char* a_string)
+{
+  m_impl->m_outStream << a_string;
+} // DaStreamWriter::WriteString
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void DaStreamWriter::AppendInt(int a_val)
+{
+  m_impl->m_outStream << ' ' << a_val;
+} // DaStreamWriter::AppendInt
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void DaStreamWriter::AppendInts(const int* a_vals, int a_numVals)
+{
+  for (int i = 0; i < a_numVals; ++i)
+    m_impl->m_outStream << ' ' << *a_vals++;
+} // DaStreamWriter::AppendInts
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void DaStreamWriter::AppendString(const std::string& a_val)
+{
+  m_impl->m_outStream << ' ' << a_val;
+} // DaStreamWriter::AppendString
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void DaStreamWriter::EndLine()
+{
+  m_impl-> m_outStream << '\n';
+} // DaStreamWriter::EndLine
 
 } // namespace xms
 

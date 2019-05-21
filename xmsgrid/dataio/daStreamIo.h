@@ -63,6 +63,10 @@ public:
   static bool ReadStringFromLine(std::string& a_line, std::string& a_val);
   static bool ReadDoubleFromLine(std::string& a_line, double& a_val);
 
+  bool ReadString(std::string& a_val);
+  bool ReadInt(int& a_val);
+  bool NextLine();
+
 private:
   class Impl;
   std::unique_ptr<Impl> m_impl;
@@ -77,7 +81,6 @@ public:
   DaStreamWriter& operator=(const DaStreamWriter&) = delete;
   
   bool IsBinary() const;
-  void WriteNamedLine(const char* a_name);
   void WriteVecInt(const char* a_name, const VecInt& a_vec);
   void WriteVecDbl(const char* a_name, const VecDbl& a_vec);
   void WriteVecPt3d(const char* a_name, const VecPt3d& a_vec);
@@ -99,6 +102,12 @@ public:
                         const std::string& a_val1,
                         const std::string& a_val2,
                         const std::string& a_val3);
+
+  void WriteString(const char* a_string);
+  void AppendInt(int a_val);
+  void AppendInts(const int* a_vals, int a_numVals);
+  void AppendString(const std::string& a_val);
+  void EndLine();
 
 private:
   class Impl;
