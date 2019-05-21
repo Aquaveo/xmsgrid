@@ -53,7 +53,6 @@ namespace xms
 
 namespace
 {
-
 typedef boost::bimap<std::string, int> CellNameToType;
 
 class XmUGridReaderVersion2 : public XmUGridReader
@@ -87,11 +86,9 @@ size_t g_readLocation = 0;
 VecChar g_writeBuffer;
 
 /// Returns max chars needed to encode a base64 string
-inline
-std::size_t
-encoded_size(std::size_t n)
+inline std::size_t encoded_size(std::size_t n)
 {
-    return 4 * ((n + 2) / 3);
+  return 4 * ((n + 2) / 3);
 }
 
 void iWriteBase64Bytes(std::ostream& a_outStream, const char* a_bytes, int a_bytesLength)
@@ -100,11 +97,10 @@ void iWriteBase64Bytes(std::ostream& a_outStream, const char* a_bytes, int a_byt
   typedef base64_from_binary<transform_width<const char*, 6, 8>> base64_text;
 
   g_writeBuffer.reserve(g_writeBuffer.size() + encoded_size(a_bytesLength));
-  std::back_insert_iterator< std::vector<char> > writeInserter(g_writeBuffer);
+  std::back_insert_iterator<std::vector<char>> writeInserter(g_writeBuffer);
 
-  std::copy(base64_text(a_bytes), base64_text(a_bytes + a_bytesLength),
-            writeInserter);
-  //a_outStream << '\n';
+  std::copy(base64_text(a_bytes), base64_text(a_bytes + a_bytesLength), writeInserter);
+  // a_outStream << '\n';
 } // iWriteBase64Bytes
 
 void iReadBase64Bytes(std::istream& a_inStream, char* a_bytes)
@@ -1375,8 +1371,10 @@ void XmUGridUtilsTests::testCellStringToEnum()
   TS_ASSERT_EQUALS("TRIQUADRATIC_HEXAHEDRON", iStringFromCellType(XMU_TRIQUADRATIC_HEXAHEDRON));
   TS_ASSERT_EQUALS("QUADRATIC_LINEAR_QUAD", iStringFromCellType(XMU_QUADRATIC_LINEAR_QUAD));
   TS_ASSERT_EQUALS("QUADRATIC_LINEAR_WEDGE", iStringFromCellType(XMU_QUADRATIC_LINEAR_WEDGE));
-  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_WEDGE", iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_WEDGE));
-  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_HEXAHEDRON", iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON));
+  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_WEDGE",
+                   iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_WEDGE));
+  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_HEXAHEDRON",
+                   iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON));
   TS_ASSERT_EQUALS("BIQUADRATIC_TRIANGLE", iStringFromCellType(XMU_BIQUADRATIC_TRIANGLE));
   TS_ASSERT_EQUALS("CUBIC_LINE", iStringFromCellType(XMU_CUBIC_LINE));
   TS_ASSERT_EQUALS("CONVEX_POINT_SET", iStringFromCellType(XMU_CONVEX_POINT_SET));
@@ -1426,8 +1424,10 @@ void XmUGridUtilsTests::testCellStringToEnum()
   TS_ASSERT_EQUALS(XMU_TRIQUADRATIC_HEXAHEDRON, iCellTypeFromString("TRIQUADRATIC_HEXAHEDRON"));
   TS_ASSERT_EQUALS(XMU_QUADRATIC_LINEAR_QUAD, iCellTypeFromString("QUADRATIC_LINEAR_QUAD"));
   TS_ASSERT_EQUALS(XMU_QUADRATIC_LINEAR_WEDGE, iCellTypeFromString("QUADRATIC_LINEAR_WEDGE"));
-  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_WEDGE, iCellTypeFromString("BIQUADRATIC_QUADRATIC_WEDGE"));
-  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON, iCellTypeFromString("BIQUADRATIC_QUADRATIC_HEXAHEDRON"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_WEDGE,
+                   iCellTypeFromString("BIQUADRATIC_QUADRATIC_WEDGE"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON,
+                   iCellTypeFromString("BIQUADRATIC_QUADRATIC_HEXAHEDRON"));
   TS_ASSERT_EQUALS(XMU_BIQUADRATIC_TRIANGLE, iCellTypeFromString("BIQUADRATIC_TRIANGLE"));
   TS_ASSERT_EQUALS(XMU_CUBIC_LINE, iCellTypeFromString("CUBIC_LINE"));
   TS_ASSERT_EQUALS(XMU_CONVEX_POINT_SET, iCellTypeFromString("CONVEX_POINT_SET"));

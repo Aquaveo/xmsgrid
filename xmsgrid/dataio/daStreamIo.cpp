@@ -23,8 +23,8 @@
 #include <boost/archive/iterators/insert_linebreaks.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/ostream_iterator.hpp>
-#include <boost/timer/timer.hpp>
 #include <boost/unordered_map.hpp>
+#include <zlib.h>
 
 // 5. Shared Headers
 #include <xmscore/dataio/daStreamIo.h>
@@ -78,72 +78,161 @@ namespace
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
-inline std::size_t iBase64Size(std::size_t n)
+int32_t iCompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int32_t a_destLength)
 {
-  return 4 * ((n + 2) / 3);
-} // iBase64Size
+  auto compressedLength = (uLong)a_destLength;
+  if (compress2((Bytef*)a_dest, &compressedLength, (Bytef*)a_source, (uLong)a_sourceLength, -1) != Z_OK)
+  {
+    XM_LOG(xmlog::error, "Unable to write file. Compression failed.")
+    return -1;
+  }
+
+  return (int32_t)compressedLength;
+} // iCompress
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
-void iWriteBase64Bytes(std::ostream& a_outStream, const char* a_bytes, size_t a_bytesLength)
+bool iUncompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int32_t a_destLength)
 {
-  boost::timer::cpu_timer timer;
+  auto uncompressedLength = (uLong)a_destLength;
+  bool success = uncompress((Bytef*)a_dest, &uncompressedLength, (Bytef*)a_source, (uLong)a_sourceLength) == Z_OK;
+  success = success && uncompressedLength == a_destLength;
+  if (!success)
+  {
+    XM_LOG(xmlog::error, "Unable to read file. Unable to uncompress data.")
+    return false;
+  }
+
+  return true;
+} // iCompress
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+int32_t iBase64EncodeSize(int32_t a_sourceLength)
+{
+  u_int32_t length = ((4U * (u_int32_t)a_sourceLength / 3U) + 3U) & ~3U;
+  return (int32_t)length;
+} // iBase64EncodeSize
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+int32_t iBase64DecodeSize(int32_t a_sourceLength)
+{
+  long long length = 6 * (long long)a_sourceLength / 8;
+  return (int32_t)length;
+} // iBase64DecodeSize
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+int32_t iBase64Encode(const char* a_source, int32_t a_sourceLength, char* a_dest)
+{
   using namespace boost::archive::iterators;
   typedef base64_from_binary<transform_width<const char*, 6, 8>> base64_text;
 
-  VecChar buffer(iBase64Size(a_bytesLength));
-  char* begin = &buffer[0];
-  char* curr = &buffer[0];
+  const char* srcBegin = &a_source[0];
+  const char* srcEnd = srcBegin + a_sourceLength;
+  char* dstBegin = a_dest;
+  char* dstCurr = a_dest;
+  for (auto it = base64_text(srcBegin); it != base64_text(srcEnd); ++it)
+    *dstCurr++ = *it;
+  *dstCurr = 0;
 
-  for (auto it = base64_text(a_bytes); it != base64_text(a_bytes + a_bytesLength); ++it)
-  {
-    *curr++ = *it;
-  }
-  //std::copy(base64_text(a_bytes), base64_text(a_bytes + a_bytesLength),
-  //          curr);
-  buffer.resize(curr - begin);
-
-  boost::timer::cpu_timer timer2;
-
-  curr = &buffer[0];
-  char* end = begin + buffer.size();
-  while (curr != end)
-  {
-    char* writeTo = curr + 1024*16;
-    if (writeTo > end)
-      writeTo = end;
-    a_outStream.write(curr, writeTo - curr);
-    curr = writeTo;
-  }
-  a_outStream << '\n';
-  std::cerr << "Base64 write time: " << timer.format() << '\n';
-} // iWriteBase64Bytes
+  int32_t encodedLength = int(dstCurr - dstBegin);
+  return encodedLength;
+} // iBase64Encode
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
-void iReadBase64Bytes(std::istream& a_inStream, char* a_bytes)
+void iBase64Decode(const char* a_source, int32_t a_sourceLength, char* a_dest)
 {
   using namespace boost::archive::iterators;
   typedef transform_width<binary_from_base64<const char*>, 8, 6> base64_dec;
 
-  std::string s;
-  boost::timer::cpu_timer timer1;
-  daReadLine(a_inStream, s);
-  std::cerr << "Base64 read time: " << timer1.format() << '\n';
-  size_t size = s.size();
-
-  if (size && s[size - 1] == '=')
+  int32_t size = a_sourceLength;
+  if (size && a_source[size - 1] == '=')
   {
     --size;
-    if (size && s[size - 1] == '=')
+    if (size && a_source[size - 1] == '=')
       --size;
   }
   if (size != 0)
   {
-    boost::timer::cpu_timer timer2;
-    std::copy(base64_dec(s.data()), base64_dec(s.data() + size), a_bytes);
-    std::cerr << "Convert from base64 time: " << timer2.format() << '\n';
+    std::copy(base64_dec(a_source), base64_dec(a_source + size), a_dest);
   }
+} // iBase64Decode
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+const int32_t blockSize = 32*1024;
+bool iWriteBase64Bytes(std::ostream& a_outStream, const char* a_source, long long a_sourceLength)
+{
+  int32_t maxCompressedLength = (int32_t)compressBound(blockSize);
+  uLong compressedLength = maxCompressedLength;
+  int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
+  std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
+  std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
+
+  while (a_sourceLength > 0)
+  {
+    // compress a block
+    int32_t blockLength = a_sourceLength < blockSize ? a_sourceLength : blockSize;
+    int32_t compressedLength = iCompress(a_source, blockLength, &compressed[0], maxCompressedLength);
+    if (compressedLength < 0)
+      return false;
+    a_sourceLength -= blockLength;
+    a_source += blockLength;
+
+    // encode a block
+    int32_t encodedLength = iBase64Encode(&compressed[0], compressedLength, &encoded[0]);
+
+    // encode compressedLength and encodedLength
+    char header[24];
+    int32_t headerBytes[] = {encodedLength, compressedLength, blockLength};
+    int32_t headerLength = iBase64Encode((char*)headerBytes, sizeof(int32_t)*3, header);
+
+    a_outStream.write(header, headerLength);
+    a_outStream.write(&encoded[0], encodedLength);
+  }
+
+  a_outStream << '\n';
+  return true;
+} // iWriteBase64Bytes
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool iReadBase64Bytes(std::istream& a_inStream, char* a_dest, long long a_destLength)
+{
+  int32_t maxCompressedLength = (int32_t)compressBound(blockSize);
+  uLong compressedLength = maxCompressedLength;
+  int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
+  std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
+  std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
+
+  while (a_destLength > 0)
+  {
+    char headerBytes[16];
+    int32_t headerData[3];
+    a_inStream.read(headerBytes, 16);
+    iBase64Decode(headerBytes, 16, (char*)headerData);
+    int32_t encodedLength = headerData[0];
+    int32_t compressedLength = headerData[1];
+    int32_t blockLength = headerData[2];
+
+    // read encoded data and decode
+    a_inStream.read(&encoded[0], encodedLength);
+    iBase64Decode(&encoded[0], encodedLength, &compressed[0]);
+
+    // decompress data
+    if (!iUncompress(&compressed[0], compressedLength, a_dest, blockLength))
+      return false;
+
+    a_dest += blockLength;
+    a_destLength -= blockLength;
+  }
+  std::string line;
+  daReadLine(a_inStream, line);
+
+  return true;
 } // iReadBase64Bytes
 //------------------------------------------------------------------------------
 /// \brief Read line of name (beginning of line) followed with up to 3 expected
@@ -519,7 +608,7 @@ bool DaStreamReader::ReadVecInt(const char* a_name, VecInt& a_vec)
 
     a_vec.resize(size);
     if (size != 0)
-      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0]);
+      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0], size * sizeof(VecInt::value_type));
     return true;
   }
 
@@ -551,7 +640,7 @@ bool DaStreamReader::ReadVecPt3d(const char* a_name, VecPt3d& a_vec)
   {
     a_vec.resize(size);
     if (size != 0)
-      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0]);
+      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0], size * sizeof(VecPt3d::value_type));
   }
   else
   {
