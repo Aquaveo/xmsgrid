@@ -49,7 +49,6 @@ namespace xms
 
 namespace
 {
-
 typedef boost::bimap<std::string, int> CellNameToType;
 
 class XmUGridReaderVersion2 : public XmUGridReader
@@ -274,9 +273,7 @@ bool iReadCellLineVersion1(DaStreamReader& a_reader, std::string& a_cellLine, in
 /// \param a_cellType The cell type.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellLineVersion2(DaStreamReader& a_reader,
-                           int a_cellIdx,
-                           int& a_cellType)
+bool iReadCellLineVersion2(DaStreamReader& a_reader, int a_cellIdx, int& a_cellType)
 {
   int readCellIdx = -1;
   if (!a_reader.ReadInt(readCellIdx) || readCellIdx != a_cellIdx)
@@ -366,9 +363,7 @@ bool iReadCellStreamVersion1(DaStreamReader& a_reader,
 /// \param a_cellstream The output cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellStreamVersion2(DaStreamReader& a_reader,
-                             int a_cellType,
-                             VecInt& a_cellstream)
+bool iReadCellStreamVersion2(DaStreamReader& a_reader, int a_cellType, VecInt& a_cellstream)
 {
   a_cellstream.push_back(a_cellType);
   if (a_cellType == XMU_POLYHEDRON)
@@ -594,7 +589,7 @@ bool XmUGridReaderVersion2::ReadCellstream(VecInt& a_cellstream)
 bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
 {
   bool success = true;
-  //if (m_binary)
+  // if (m_binary)
   //{
   //  for (auto& intArray : a_intArrays)
   //  {
@@ -649,7 +644,7 @@ bool XmUGridWriterVersion2::WriteCellstream(const VecInt& a_cellstream)
 bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
 {
   bool success = true;
-  //if (m_binary)
+  // if (m_binary)
   //{
   //  for (auto& intArray : a_intArrays)
   //  {
@@ -1198,23 +1193,12 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
   std::string outputBase =
     "Binary XmUGrid Version 2\n"
     "LOCATIONS 30\n"
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANEAAAAAAAAAAAAAAAAAAAA"
-    "AAAAAAAAAAPkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAREAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkQAAAAAAA"
-    "AAAAAAAAAAAAJEAAAAAAAAAkQAAAAAAAAAAAAAAAAAAANEAAAAAAAAAkQAAAAAAAAAAAAAAAAAAAPkAAAAAAAAAkQAAAAA"
-    "AAAAAAAAAAAAAAREAAAAAAAAAkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0QAAAAAAAAAAAAAAAAAAAJEAAAAAAAAA0QAAA"
-    "AAAAAAAAAAAAAAAANEAAAAAAAAA0QAAAAAAAAAAAAAAAAAAAPkAAAAAAAAA0QAAAAAAAAAAAAAAAAAAAREAAAAAAAAA0QA"
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACRAAAAAAAAAJEAAAAAAAAAAAAAAAAAAACRAAAAAAAAANEAAAAAAAAAA"
-    "AAAAAAAAACRAAAAAAAAAPkAAAAAAAAAAAAAAAAAAACRAAAAAAAAAREAAAAAAAAAAAAAAAAAAACRAAAAAAAAAAAAAAAAAAA"
-    "AkQAAAAAAAACRAAAAAAAAAJEAAAAAAAAAkQAAAAAAAACRAAAAAAAAANEAAAAAAAAAkQAAAAAAAACRAAAAAAAAAPkAAAAAA"
-    "AAAkQAAAAAAAACRAAAAAAAAAREAAAAAAAAAkQAAAAAAAACRAAAAAAAAAAAAAAAAAAAA0QAAAAAAAACRAAAAAAAAAJEAAAA"
-    "AAAAA0QAAAAAAAACRAAAAAAAAANEAAAAAAAAA0QAAAAAAAACRAAAAAAAAAPkAAAAAAAAA0QAAAAAAAACRAAAAAAAAAREAA"
-    "AAAAAAA0QAAAAAAAACRA\n"
+    "dwAAAFkAAADQAgAAeJyF0aERACAMBEGKoYToTET6rwkVc8NBDMMKHp61XrPr7iGe4i1uObOnh3iKtzjPYy49xFO8xTn2Tr"
+    "vHOHseZ8+/Xm1lz8yls+ffv1kOe2YunT3vOsWUGWk\n"
     "CELL_STREAM 73\n"
-    "CgAAAAQAAAAAAAAAAQAAAAUAAAAPAAAACwAAAAgAAAABAAAAAgAAAAYAAAAHAAAAEAAAABEAAAAVAAAAFgAAAAwAAAAIAA"
-    "AAAgAAAAMAAAAIAAAABwAAABEAAAASAAAAFwAAABYAAAAqAAAABgAAAAQAAAAJAAAACAAAAA0AAAAOAAAABAAAAAgAAAAJ"
-    "AAAAGAAAABcAAAAEAAAACQAAAA4AAAAdAAAAGAAAAAQAAAAOAAAADQAAABwAAAAdAAAABAAAAAgAAAANAAAAHAAAABcAAA"
-    "AEAAAAFwAAABgAAAAdAAAAHAAAAA0AAAAGAAAAAwAAAAQAAAASAAAACAAAAAkAAAAXAAAADgAAAAUAAAAFAAAABgAAAAsA"
-    "AAAKAAAAFAAAAA\n";
+    "lwAAAHEAAAAkAQAAeJxNj1sOgCAQA1FQFN9GxQ+9gPc/"
+    "oCWOCSSTQLfthmCMceY7hajEJDrRoJWiFl7MYhG7OESPL3ksd49nFRHfQ0fa1eIbxIjWoJ9kfl+a3+"
+    "iOd8pd6C7rurJsJHOjD+y3zNdsZ6S3gpr/B7GJF/PfA6o\n";
   std::string outputString = output.str();
   TS_ASSERT_EQUALS(outputBase, outputString);
 
@@ -1261,8 +1245,10 @@ void XmUGridUtilsTests::testCellStringToEnum()
   TS_ASSERT_EQUALS("TRIQUADRATIC_HEXAHEDRON", iStringFromCellType(XMU_TRIQUADRATIC_HEXAHEDRON));
   TS_ASSERT_EQUALS("QUADRATIC_LINEAR_QUAD", iStringFromCellType(XMU_QUADRATIC_LINEAR_QUAD));
   TS_ASSERT_EQUALS("QUADRATIC_LINEAR_WEDGE", iStringFromCellType(XMU_QUADRATIC_LINEAR_WEDGE));
-  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_WEDGE", iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_WEDGE));
-  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_HEXAHEDRON", iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON));
+  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_WEDGE",
+                   iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_WEDGE));
+  TS_ASSERT_EQUALS("BIQUADRATIC_QUADRATIC_HEXAHEDRON",
+                   iStringFromCellType(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON));
   TS_ASSERT_EQUALS("BIQUADRATIC_TRIANGLE", iStringFromCellType(XMU_BIQUADRATIC_TRIANGLE));
   TS_ASSERT_EQUALS("CUBIC_LINE", iStringFromCellType(XMU_CUBIC_LINE));
   TS_ASSERT_EQUALS("CONVEX_POINT_SET", iStringFromCellType(XMU_CONVEX_POINT_SET));
@@ -1312,8 +1298,10 @@ void XmUGridUtilsTests::testCellStringToEnum()
   TS_ASSERT_EQUALS(XMU_TRIQUADRATIC_HEXAHEDRON, iCellTypeFromString("TRIQUADRATIC_HEXAHEDRON"));
   TS_ASSERT_EQUALS(XMU_QUADRATIC_LINEAR_QUAD, iCellTypeFromString("QUADRATIC_LINEAR_QUAD"));
   TS_ASSERT_EQUALS(XMU_QUADRATIC_LINEAR_WEDGE, iCellTypeFromString("QUADRATIC_LINEAR_WEDGE"));
-  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_WEDGE, iCellTypeFromString("BIQUADRATIC_QUADRATIC_WEDGE"));
-  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON, iCellTypeFromString("BIQUADRATIC_QUADRATIC_HEXAHEDRON"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_WEDGE,
+                   iCellTypeFromString("BIQUADRATIC_QUADRATIC_WEDGE"));
+  TS_ASSERT_EQUALS(XMU_BIQUADRATIC_QUADRATIC_HEXAHEDRON,
+                   iCellTypeFromString("BIQUADRATIC_QUADRATIC_HEXAHEDRON"));
   TS_ASSERT_EQUALS(XMU_BIQUADRATIC_TRIANGLE, iCellTypeFromString("BIQUADRATIC_TRIANGLE"));
   TS_ASSERT_EQUALS(XMU_CUBIC_LINE, iCellTypeFromString("CUBIC_LINE"));
   TS_ASSERT_EQUALS(XMU_CONVEX_POINT_SET, iCellTypeFromString("CONVEX_POINT_SET"));
@@ -1356,7 +1344,7 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
   }
 
   {
-    std::ofstream output("C:\\temp\\speed_test_out.txt");
+    std::ofstream output("speed_test_out.txt");
     boost::timer::cpu_timer timer;
     bool binary = true;
     XmWriteUGridToStream(*grid, output, binary);
@@ -1365,7 +1353,7 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
 
   BSHP<XmUGrid> gridRead;
   {
-    std::ifstream input("C:\\temp\\speed_test_out.txt");
+    std::ifstream input("speed_test_out.txt");
     boost::timer::cpu_timer timer;
     gridRead = XmReadUGridFromStream(input);
     TS_FAIL("Read time: " + timer.format());
