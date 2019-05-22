@@ -27,8 +27,6 @@ namespace xms
 {
 //----- Forward declarations ---------------------------------------------------
 class XmEdge;
-class XmUGridReader;
-class XmUGridWriter;
 
 //----- Constants / Enumerations -----------------------------------------------
 
@@ -119,10 +117,8 @@ class XmUGrid
 {
 public:
   static BSHP<XmUGrid> New(const VecPt3d& a_locations, const VecInt& a_cellstream);
-  static BSHP<XmUGrid> New(XmUGridReader& a_ioReader);
   static BSHP<XmUGrid> New();
   XmUGrid();
-  XmUGrid(const XmUGridReader& a_ioHandler);
   XmUGrid(const XmUGrid& a_xmUGrid);
   XmUGrid(XmUGrid&& a_xmUGrid);
   ~XmUGrid();
@@ -194,9 +190,6 @@ public:
                                  int& a_neighborCell,
                                  int& a_neighborFace) const;
   XmUGridFaceOrientation GetCell3dFaceOrientation(int a_cellIdx, int a_faceIdx) const;
-
-  // IO Support
-  bool WriteXmUGrid(XmUGridWriter& a_ioWriter) const;
 
 private:
   class Impl;

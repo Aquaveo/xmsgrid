@@ -28,7 +28,6 @@
 // 6. Non-shared code headers
 #include <xmsgrid/geometry/geoms.h>
 #include <xmsgrid/ugrid/detail/XmGeometry.h>
-#include <xmsgrid/ugrid/detail/XmUGridIo.h>
 #include <xmsgrid/ugrid/XmEdge.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -54,13 +53,8 @@ public:
   /// Default constructor.
   Impl() = default;
   /// Default copy constructor.
-  Impl(VecPt3d a_locations,
-       VecInt a_cellstream,
-       VecInt a_cellIdxToStreamIdx,
-       VecInt a_pointsToCells,
-       VecInt a_pointIdxToPointsToCells);
   Impl(const Impl&) = default;
-
+  /// Default assignment operator.
   Impl& operator=(const Impl&) = default;
 
   // Misc
@@ -145,9 +139,6 @@ public:
                                  int a_faceIdx,
                                  int& a_neighborCell,
                                  int& a_neighborFace) const;
-
-  // IO Support
-  bool WriteXmUGrid(XmUGridWriter& a_ioWriter) const;
 
   XmUGridFaceOrientation GetCell3dFaceOrientation(int a_cellIdx, int a_faceIdx) const;
   XmUGridFaceOrientation FaceOrientation(int a_cellIdx, int a_faceIdx) const;
@@ -614,27 +605,6 @@ void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
 /// \brief Implementation for XmUGrid which provides geometry for an
 ///        unstructured grid.
 ////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------
-/// \brief
-/// \param a_locations
-/// \param a_cellstream
-/// \param a_cellIdxToStreamIdx
-/// \param a_pointsToCells
-/// \param a_pointIdxToPointsToCells
-//------------------------------------------------------------------------------
-XmUGrid::Impl::Impl(VecPt3d a_locations,
-                    VecInt a_cellstream,
-                    VecInt a_cellIdxToStreamIdx,
-                    VecInt a_pointsToCells,
-                    VecInt a_pointIdxToPointsToCells)
-: m_locations(std::move(a_locations))
-, m_cellstream(std::move(a_cellstream))
-, m_cellIdxToStreamIdx(std::move(a_cellIdxToStreamIdx))
-, m_pointsToCells(std::move(a_pointsToCells))
-, m_pointIdxToPointsToCells(std::move(a_pointIdxToPointsToCells))
-, m_modified(true)
-{
-} // XmUGrid::Impl::Impl
 //------------------------------------------------------------------------------
 /// \brief Returns the modified flag. Gets set when points or cells get changed.
 /// \return the modified flag
@@ -1846,25 +1816,6 @@ bool XmUGrid::Impl::GetCell3dFaceAdjacentCell(int a_cellIdx,
   return false;
 } // XmUGrid::Impl::GetCell3dFaceAdjacentCell
 //------------------------------------------------------------------------------
-/// \brief Write an XmUGrid.
-/// \param a_ioWriter The writer.
-//------------------------------------------------------------------------------
-bool XmUGrid::Impl::WriteXmUGrid(XmUGridWriter& a_ioWriter) const
-{
-  bool success = a_ioWriter.WriteLocations(m_locations);
-  success = success && a_ioWriter.WriteCellstream(m_cellstream);
-  if (success)
-  {
-    XmUGridWriter::ConstIntArrays intArrays;
-    intArrays.emplace_back(CELLSTREAM_OFFSETS, &m_cellIdxToStreamIdx);
-    intArrays.emplace_back(POINTS_TO_CELLS, &m_pointsToCells);
-    intArrays.emplace_back(POINTS_TO_CELLS_OFFSETS, &m_pointIdxToPointsToCells);
-    success = a_ioWriter.WriteIntArrays(intArrays);
-  }
-
-  return success;
-} // XmUGrid::Impl::WriteXmUGrid
-//------------------------------------------------------------------------------
 /// \brief Get the orientation of the face of a vertically prismatic cell.
 /// \param[in] a_cellIdx the index of the cell
 /// \param[in] a_faceIdx the face index of the cell
@@ -2929,41 +2880,6 @@ BSHP<XmUGrid> XmUGrid::New(const VecPt3d& a_locations, const VecInt& a_cellstrea
   return ugrid;
 } // XmUGrid::New
 //------------------------------------------------------------------------------
-/// \brief Create a new XmUGrid with a reader
-/// \param a_ioReader The reader
-/// \return the new XmUGrid.
-//------------------------------------------------------------------------------
-BSHP<XmUGrid> XmUGrid::New(XmUGridReader& a_ioReader)
-{
-  VecPt3d locations;
-  bool success = a_ioReader.ReadLocations(locations);
-
-  VecInt cellstream;
-  success = success && a_ioReader.ReadCellstream(cellstream);
-
-  XmUGridReader::IntArrays intArrays;
-  success = success && a_ioReader.ReadIntArrays(intArrays);
-
-  BSHP<XmUGrid> xmUGrid;
-  if (success)
-  {
-    if (intArrays.size() == 3 && intArrays[0].first == std::string(CELLSTREAM_OFFSETS) &&
-        intArrays[1].first == std::string(POINTS_TO_CELLS) &&
-        intArrays[2].first == std::string(POINTS_TO_CELLS_OFFSETS))
-    {
-      xmUGrid = New();
-      xmUGrid->m_impl.reset(new Impl(locations, cellstream, *intArrays[0].second,
-                                     *intArrays[1].second, *intArrays[2].second));
-    }
-    else
-    {
-      xmUGrid = New(locations, cellstream);
-    }
-  }
-
-  return xmUGrid;
-} // XmUGrid::New
-//------------------------------------------------------------------------------
 /// \brief Constructor
 //------------------------------------------------------------------------------
 XmUGrid::XmUGrid()
@@ -3700,15 +3616,6 @@ XmUGridFaceOrientation XmUGrid::GetCell3dFaceOrientation(int a_cellIdx, int a_fa
 } // XmUGrid::GetCell3dFaceOrientation
 
 //------------------------------------------------------------------------------
-/// \brief Write an XmUGrid.
-/// \param a_ioWriter The writer.
-//------------------------------------------------------------------------------
-bool XmUGrid::WriteXmUGrid(XmUGridWriter& a_ioWriter) const
-{
-  return m_impl->WriteXmUGrid(a_ioWriter);
-} // XmUGrid::WriteXmUGrid
-
-//------------------------------------------------------------------------------
 /// \brief Builds a 1 cell (left 90 degree triangle) 2D XmUGrid for testing.
 /// \code
 ///  2
@@ -4086,6 +3993,8 @@ BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
 //------------------------------------------------------------------------------
 #include <xmsgrid/ugrid/XmUGrid.t.h>
 
+#include <xmscore/testing/TestTools.h>
+
 using namespace xms;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4260,11 +4169,7 @@ void XmUGridUnitTests::testGetCellCellstream()
 void XmUGridUnitTests::testGetCellType()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
   TS_ASSERT_EQUALS(14, ugrid2d->GetPointCount());
   TS_ASSERT_EQUALS(6, ugrid2d->GetCellCount());
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid2d->GetCellType(-1));
@@ -4277,11 +4182,8 @@ void XmUGridUnitTests::testGetCellType()
   TS_ASSERT_EQUALS(XMU_LINE, ugrid2d->GetCellType(5));
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
+
   TS_ASSERT_EQUALS(30, ugrid3d->GetPointCount());
   TS_ASSERT_EQUALS(6, ugrid3d->GetCellCount());
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid3d->GetCellType(-1));
@@ -4299,11 +4201,7 @@ void XmUGridUnitTests::testGetCellType()
 void XmUGridUnitTests::testGetCellDimension()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid2d->GetCellDimension(-1));
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid2d->GetCellDimension(6));
@@ -4315,11 +4213,8 @@ void XmUGridUnitTests::testGetCellDimension()
   TS_ASSERT_EQUALS(1, ugrid2d->GetCellDimension(5));
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
+
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid3d->GetCellDimension(-1));
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid3d->GetCellDimension(6));
   TS_ASSERT_EQUALS(3, ugrid3d->GetCellDimension(0));
@@ -4348,11 +4243,7 @@ void XmUGridUnitTests::testGetCellDimension()
 void XmUGridUnitTests::testGetExtents()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   Pt3d min, max;
   Pt3d expectedMin = {0.0, 0.0, 0.0}, expectMax = {40.0, 20.0, 0.0};
@@ -4361,11 +4252,7 @@ void XmUGridUnitTests::testGetExtents()
   TS_ASSERT_EQUALS(expectMax, max);
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   expectedMin = {0.0, 0.0, 0.0};
   expectMax = {40.0, 20.0, 10.0};
@@ -4375,11 +4262,8 @@ void XmUGridUnitTests::testGetExtents()
 
   Pt3d origin(-25.0, -25.0, -15.0);
   BSHP<XmUGrid> ugridBuild = TEST_XmUBuildHexahedronUgrid(51, 51, 31, origin);
-  if (!ugridBuild)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugridBuild);
+
   expectedMin = {-25.0, -25.0, -15.0};
   expectMax = {25.0, 25.0, 15.0};
   ugridBuild->GetExtents(min, max);
@@ -4392,11 +4276,7 @@ void XmUGridUnitTests::testGetExtents()
 void XmUGridUnitTests::testGetCellEdgeCount()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCellEdgeCount(-1));
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCellEdgeCount(6));
@@ -4408,11 +4288,7 @@ void XmUGridUnitTests::testGetCellEdgeCount()
   TS_ASSERT_EQUALS(1, ugrid2d->GetCellEdgeCount(5));
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   TS_ASSERT_EQUALS(-1, ugrid3d->GetCellEdgeCount(-1));
   TS_ASSERT_EQUALS(-1, ugrid3d->GetCellEdgeCount(6));
@@ -4432,11 +4308,7 @@ void XmUGridUnitTests::testGetCellEdgeCount()
 void XmUGridUnitTests::testGetCell3dFaceCount()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   // test 1D and 2D cells
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCell3dFaceCount(-1));
@@ -4447,11 +4319,7 @@ void XmUGridUnitTests::testGetCell3dFaceCount()
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCell3dFaceCount(ugrid2d->GetCellCount()));
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   // test 3D cells
   TS_ASSERT_EQUALS(-1, ugrid3d->GetCell3dFaceCount(-1));
@@ -4471,11 +4339,7 @@ void XmUGridUnitTests::testGetCell3dFaceCount()
 void XmUGridUnitTests::testGetCell3dFacePointCount()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   // test 1D and 2D cells - should return 0 for valid cell index
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCell3dFacePointCount(-1, 0));
@@ -4483,11 +4347,7 @@ void XmUGridUnitTests::testGetCell3dFacePointCount()
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCell3dFacePointCount(ugrid2d->GetCellCount(), 0));
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   // test 3D cells
   TS_ASSERT_EQUALS(-1, ugrid3d->GetCell3dFacePointCount(-1, 0));
@@ -4541,11 +4401,7 @@ void XmUGridUnitTests::testGetPointAdjacentCellsSimple()
 void XmUGridUnitTests::testGetPointAdjacentCells()
 {
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   VecInt2d cellsFor2DPoints = {{0},          // point 0
                                {0, 1},       // point 1
@@ -4569,11 +4425,8 @@ void XmUGridUnitTests::testGetPointAdjacentCells()
   }
 
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
+
   VecInt2d cellsFor3DPoints = {{0},       // point 0
                                {0, 1},    // point 1
                                {1, 2},    // point 2
@@ -4623,11 +4476,7 @@ void XmUGridUnitTests::testGetPointAdjacentCells()
 void XmUGridUnitTests::testGetCellPoints()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt2d expectedGetCellPoints = {{0, 3, 4, 1}, {1, 4, 5, 2}, {3, 6, 7, 4}, {4, 7, 8, 5}};
   VecInt2d cellPoints;
@@ -4646,11 +4495,7 @@ void XmUGridUnitTests::testGetCellPoints()
                            {3, 4, 8, 13, 12, 7}, {7, 11, 10},  {5, 9}};
   cellPoints.clear();
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   for (int i(0); i < ugrid2d->GetCellCount(); i++)
   {
@@ -4668,11 +4513,7 @@ void XmUGridUnitTests::testGetCellPoints()
   VecInt expectedPointCounts = {4, 8, 8, 8, 6, 5};
   cellPoints.clear();
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   for (int i(0); i < ugrid3d->GetCellCount(); i++)
   {
@@ -4697,11 +4538,7 @@ void XmUGridUnitTests::testGetCellEdge()
 
   // 2D shape (simple)
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   {
     XmEdge edge0(0, 3), edge1(3, 4), edge2(4, 1), edge3(1, 0);     // cell 0
@@ -4747,11 +4584,7 @@ void XmUGridUnitTests::testGetCellEdge()
 
     // 2D Shapes
     BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-    if (!ugrid2d)
-    {
-      TS_FAIL("Unable to create UGrid.");
-      return;
-    }
+    TS_REQUIRE_NOT_NULL(ugrid2d);
 
     std::vector<std::vector<XmEdge>> expectedCellsCellEdges;
     expectedCellsCellEdges = {{edge0, edge1, edge2, edge3},
@@ -4777,11 +4610,7 @@ void XmUGridUnitTests::testGetCellEdge()
   {
     // 3D Shapes
     BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-    if (!ugrid3d)
-    {
-      TS_FAIL("Unable to create UGrid.");
-      return;
-    }
+    TS_REQUIRE_NOT_NULL(ugrid3d);
 
     // clang-format off
     std::vector<std::vector<XmEdge>> expectedCellsCellEdges =
@@ -4820,11 +4649,7 @@ void XmUGridUnitTests::testGetPointsAdjacentCells()
   //     6-----7-----8
 
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedCells;
   VecInt points = {-1, 0};
@@ -4889,11 +4714,7 @@ void XmUGridUnitTests::testGetCellAdjacentCells()
   //     6-----7-----8
 
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedCells;
 
@@ -4914,11 +4735,7 @@ void XmUGridUnitTests::testGetCellAdjacentCells()
 
   // 2D Shapes
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   expectedCells = {1, 5};
   retrievedCells = ugrid2d->GetCellAdjacentCells(0);
@@ -4941,11 +4758,7 @@ void XmUGridUnitTests::testGetCellAdjacentCells()
 
   // 3D Shapes
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   expectedCells = {1, 5};
   retrievedCells = ugrid3d->GetCellAdjacentCells(0);
@@ -4981,11 +4794,7 @@ void XmUGridUnitTests::testGetCellEdgeAdjacentCells()
   //     6-----7-----8
 
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedFail;
   VecInt2d expectedCells = {{}, {2}, {1}, {}};
@@ -5012,11 +4821,7 @@ void XmUGridUnitTests::testGetCellEdgeAdjacentCells()
 
   // Test a cell in the middle of an hexahedron grid
   BSHP<XmUGrid> hexUgrid = TEST_XmUBuildHexahedronUgrid(5, 5, 5);
-  if (!hexUgrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(hexUgrid);
 
   expectedCells = {{2, 6, 18},   {6, 7, 23},   {6, 10, 26},  {5, 6, 21},
                    {18, 34, 38}, {23, 38, 39}, {26, 38, 42}, {21, 37, 38},
@@ -5040,11 +4845,7 @@ void XmUGridUnitTests::testEdgeAdjacentCells()
   //     6-----7-----8
 
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedFail;
   VecInt2d expectedCells = {{0, 1}, {0, 2}, {0}};
@@ -5087,11 +4888,7 @@ void XmUGridUnitTests::testGetCell3dFacePoints()
 
   // 2D Shapes
   BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
-  if (!ugrid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid2d);
 
   cellFaces = ugrid2d->GetCell3dFacePoints(-1, 0);
   TS_ASSERT_EQUALS(emptyCellFaces, cellFaces);
@@ -5111,11 +4908,7 @@ void XmUGridUnitTests::testGetCell3dFacePoints()
 
   // 3D Shapes
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   expectedCellFaces = {// Tetra
                        {0, 1, 15},
@@ -5178,11 +4971,7 @@ void XmUGridUnitTests::testGetCell3dFaceAdjacentCell()
   int lays = 2;
 
   BSHP<xms::XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);
-  if (!grid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(grid);
 
   // clang-format off
   VecInt expectedNeighbor = {-1, -1, -1, 1, -1, -1, -1, -1, 0, -1, -1, -1};
@@ -5231,11 +5020,7 @@ void XmUGridUnitTests::testGetCell3dFaceAdjacentCell()
   cols = 3;
   lays = 3;
   grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);
-  if (!grid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(grid);
 
   expectedNeighbor.clear();
   // clang-format off
@@ -5285,11 +5070,8 @@ void XmUGridUnitTests::testGetPointAdjacentPoints()
   //     6-----7-----8
 
   BSHP<xms::XmUGrid> grid = TEST_XmUGridSimpleQuad();
-  if (!grid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(grid);
+
   VecInt attachedIdxs;
   grid->GetPointAdjacentPoints(0, attachedIdxs);
   VecInt expectedIdxs = {1, 3};
@@ -5321,11 +5103,8 @@ void XmUGridUnitTests::testGetCellPlanViewPolygon()
 {
   // 2d
   BSHP<xms::XmUGrid> grid2d = TEST_XmUGrid2dLinear();
-  if (!grid2d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(grid2d);
+
   VecPt3d2d expectedPolygons{
     {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}},
     {{10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}},
@@ -5350,11 +5129,8 @@ void XmUGridUnitTests::testGetCellPlanViewPolygon()
 
   // 3d
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
+
   expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},
                       {{20, 0, 0}, {20, 10, 0}, {10, 10, 0}, {10, 0, 0}},
                       {{30, 0, 0}, {30, 10, 0}, {20, 10, 0}, {20, 0, 0}},
@@ -5369,11 +5145,7 @@ void XmUGridUnitTests::testGetCellPlanViewPolygon()
   }
 
   BSHP<xms::XmUGrid> chevronUgrid = TEST_XmUBuild3DChevronUgrid();
-  if (!chevronUgrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(chevronUgrid);
 
   expectedPolygons = {{{0.0, 0.0, 0.0}, {20.0, 10.0, 0.0}, {40.0, 0.0, 0.0}, {20.0, 50.0, 0.0}}};
   TS_ASSERT(chevronUgrid->GetCellPlanViewPolygon(0, viewPolygon));
@@ -5413,11 +5185,7 @@ void XmUGridUnitTests::testGetCellPlanViewPolygonMultiSideFace()
   };
   // clang-format on
   BSHP<XmUGrid> ugrid3d = XmUGrid::New(points, cells);
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   // vertically prismatic
   VecPt3d cellPoints;
@@ -5446,11 +5214,7 @@ void XmUGridUnitTests::testIsCellValidWithPointChange()
   //{ 20, 0, 0 }, { 0, -10, 0 }, { 10, -10, 0 }, { 20, -10, 0 } };
 
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   Pt3d validPt = {5.0, 5.0, 0.0};
   Pt3d invalid = {500.0, 500.0, 0.0};
@@ -5480,11 +5244,7 @@ void XmUGridUnitTests::testIsCellValidWithPointChange()
 void XmUGridUnitTests::testPointFunctions()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetPointCount
   TS_ASSERT_EQUALS(ugrid->GetPointCount(), 9);
@@ -5540,11 +5300,7 @@ void XmUGridUnitTests::testPointFunctions()
 void XmUGridUnitTests::testCellFunctions()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetCellPoints
   VecInt pointsOfCell = ugrid->GetCellPoints(0);
@@ -5587,11 +5343,7 @@ void XmUGridUnitTests::testCellFunctions()
 void XmUGridUnitTests::testCellstreamFunctions()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetCellstream
   VecInt cellstream = ugrid->GetCellstream();
@@ -5618,11 +5370,7 @@ void XmUGridUnitTests::testCellEdgeAdjacentCellFunctions()
   //     |  2  |  3  |
   //     6-----7-----8
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   // Get Adjacent Cells from cell and edge
   VecInt2d expectedCells = {{}, {2}, {1}, {}};
@@ -5656,11 +5404,7 @@ void XmUGridUnitTests::testCellEdgeAdjacentCellFunctions()
 void XmUGridUnitTests::testCellEdges()
 {
   BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
-  if (!ugrid)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetCellEdges
   std::vector<XmEdge> edges = ugrid->GetCellEdges(0);
@@ -5677,11 +5421,7 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
 {
   // 3D Shapes
   BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
-  if (!ugrid3d)
-  {
-    TS_FAIL("Unable to create UGrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugrid3d);
 
   VecInt cellFace;
   VecInt2d expectedCellFaces = {// Tetra
@@ -5929,7 +5669,7 @@ void XmUGridUnitTests::testLargeUGridLinkSpeed()
   {
     boost::timer::cpu_timer timer;
     BSHP<XmUGrid> ugrid = XmUGrid::New(grid->GetLocations(), grid->GetCellstream());
-    TS_FAIL(timer.format());
+    std::cerr << timer.format() << '\n';
   }
 
 #endif
