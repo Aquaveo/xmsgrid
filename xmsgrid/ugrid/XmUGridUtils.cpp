@@ -26,8 +26,6 @@
 #include <xmscore/stl/vector.h>
 
 // 6. Non-shared code headers
-#include <xmsgrid/dataio/daStreamIo.h>
-#include <xmsgrid/ugrid/detail/XmUGridIo.h>
 #include <xmsgrid/ugrid/XmUGrid.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -50,30 +48,6 @@ namespace xms
 namespace
 {
 typedef boost::bimap<std::string, int> CellNameToType;
-
-class XmUGridReaderVersion2 : public XmUGridReader
-{
-public:
-  explicit XmUGridReaderVersion2(DaStreamReader& a_reader);
-  bool ReadLocations(VecPt3d& a_locations) final;
-  bool ReadCellstream(VecInt& a_cellstream) final;
-  bool ReadIntArrays(IntArrays& a_intArrays) final;
-
-private:
-  DaStreamReader& m_reader;
-};
-
-class XmUGridWriterVersion2 : public XmUGridWriter
-{
-public:
-  explicit XmUGridWriterVersion2(DaStreamWriter& a_writer);
-  bool WriteLocations(const VecPt3d& a_locations) final;
-  bool WriteCellstream(const VecInt& a_cellstream) final;
-  bool WriteIntArrays(ConstIntArrays& a_intArrays) final;
-
-private:
-  DaStreamWriter& m_writer;
-};
 
 //------------------------------------------------------------------------------
 /// \brief Get a bi-map from a cell type string to a cell type integer.
@@ -519,7 +493,7 @@ void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
     else
     {
       std::ostringstream err;
-      err << "Unknow cell type (" << cellType << ").";
+      err << "Unknown cell type (" << cellType << ").";
       XM_LOG(xmlog::error, err.str());
       return;
     }
@@ -551,99 +525,6 @@ void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
     ++cellIdx;
   }
 } // iWriteCellStream
-////////////////////////////////////////////////////////////////////////////////
-/// \class XmUGridReaderVersion2
-////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------
-/// \brief Constructor.
-/// \param a_reader The stream reader.
-//------------------------------------------------------------------------------
-XmUGridReaderVersion2::XmUGridReaderVersion2(DaStreamReader& a_reader)
-: m_reader(a_reader)
-{
-} // XmUGridReaderVersion2::XmUGridReaderVersion2
-//------------------------------------------------------------------------------
-/// \brief Read XmUGrid locations.
-/// \param a_locations The locations.
-//------------------------------------------------------------------------------
-bool XmUGridReaderVersion2::ReadLocations(VecPt3d& a_locations)
-{
-  return m_reader.ReadVecPt3d("LOCATIONS", a_locations);
-} // XmUGridReaderVersion2::WriteLocations
-//------------------------------------------------------------------------------
-/// \brief Read XmUGrid cell stream.
-/// \param a_cellstream The cell stream.
-//------------------------------------------------------------------------------
-bool XmUGridReaderVersion2::ReadCellstream(VecInt& a_cellstream)
-{
-  if (m_reader.IsBinary())
-    return m_reader.ReadVecInt("CELL_STREAM", a_cellstream);
-  return iReadCellsVersion2(m_reader, a_cellstream);
-} // XmUGridReaderVersion2::ReadCellstream
-//------------------------------------------------------------------------------
-/// \brief Read XmUGrid private integer arrays.
-/// \param a_intArrays The private integer arrays.
-//------------------------------------------------------------------------------
-bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
-{
-  bool success = true;
-  //  if (m_reader.IsBinary())
-  //  {
-  //    for (auto& intArray : a_intArrays)
-  //    {
-  //      success = success && m_reader.ReadVecInt(intArray.first, *intArray.second);
-  //    }
-  //  }
-  return success;
-} // XmUGridReaderVersion2::WriteIntArrays
-////////////////////////////////////////////////////////////////////////////////
-/// \class XmUGridWriterVersion2
-////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------
-/// \brief Constructor.
-/// \param a_writer The stream writer.
-//------------------------------------------------------------------------------
-XmUGridWriterVersion2::XmUGridWriterVersion2(DaStreamWriter& a_writer)
-: m_writer(a_writer)
-{
-} // XmUGridWriterVersion2::XmUGridWriterVersion2
-//------------------------------------------------------------------------------
-/// \brief Write XmUGrid locations.
-/// \param a_locations The locations.
-//------------------------------------------------------------------------------
-bool XmUGridWriterVersion2::WriteLocations(const VecPt3d& a_locations)
-{
-  m_writer.WriteVecPt3d("LOCATIONS", a_locations);
-  return true;
-} // XmUGridWriterVersion2::WriteLocations
-//------------------------------------------------------------------------------
-/// \brief Write XmUGrid cell stream.
-/// \param a_cellstream The cell stream.
-//------------------------------------------------------------------------------
-bool XmUGridWriterVersion2::WriteCellstream(const VecInt& a_cellstream)
-{
-  if (m_writer.IsBinary())
-    m_writer.WriteVecInt("CELL_STREAM", a_cellstream);
-  else
-    iWriteCellStream(m_writer, a_cellstream);
-  return true;
-} // XmUGridWriterVersion2::WriteCellstream
-//------------------------------------------------------------------------------
-/// \brief Write XmUGrid private integer arrays.
-/// \param a_intArrays The private integer arrays.
-//------------------------------------------------------------------------------
-bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
-{
-  bool success = true;
-  //  if (m_writer.IsBinary())
-  //  {
-  //    for (auto& intArray : a_intArrays)
-  //    {
-  //      m_writer.WriteVecInt(intArray.first, *intArray.second);
-  //    }
-  //  }
-  return success;
-} // XmUGridWriterVersion2::WriteIntArrays
 //------------------------------------------------------------------------------
 /// \brief Save an XmUGrid ASCII text to output stream.
 /// \param[in] a_ugrid the UGrid to save
@@ -662,8 +543,11 @@ void iWriteUGridToStream(const XmUGrid& a_ugrid,
     a_outStream << "ASCII XmUGrid Version 2\n";
   DaStreamWriter writer(a_outStream, a_binary);
   writer.SetBinaryBlockSize(a_blockSize);
-  XmUGridWriterVersion2 gridWriter(writer);
-  a_ugrid.WriteXmUGrid(gridWriter);
+  writer.WriteVecPt3d("LOCATIONS", a_ugrid.GetLocations());
+  if (a_binary)
+    writer.WriteVecInt("CELL_STREAM", a_ugrid.GetCellstream());
+  else
+    iWriteCellStream(writer, a_ugrid.GetCellstream());
 } // iWriteUGridToStream
 
 } // namespace
@@ -699,44 +583,41 @@ BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
     return nullptr;
   }
 
-  int version;
-  bool binary = false;
   if (versionString == "ASCII XmUGrid Version 1.0")
   {
-    version = 1;
+    DaStreamReader reader(a_inStream, false);
+    VecPt3d locations;
+    bool success = iReadPointsVersion1(reader, locations);
+    VecInt cellstream;
+    success = success && iReadCellsVersion1(reader, cellstream);
+    if (success)
+      return XmUGrid::New(locations, cellstream);
   }
-  else if (versionString == "ASCII XmUGrid Version 2")
-  {
-    version = 2;
-  }
+
+  bool binary;
+  if (versionString == "ASCII XmUGrid Version 2")
+    binary = false;
   else if (versionString == "Binary XmUGrid Version 2")
-  {
-    version = 2;
     binary = true;
-  }
   else
   {
     XM_LOG(xmlog::error, "Unsupported file version or file type.");
     return nullptr;
   }
 
-  if (version == 1)
-  {
-    DaStreamReader reader(a_inStream, false);
-    VecPt3d locations;
-    if (version == 1 && !iReadPointsVersion1(reader, locations))
-      return nullptr;
-    VecInt cellstream;
-    if (version == 1 && !iReadCellsVersion1(reader, cellstream))
-      return nullptr;
-    BSHP<XmUGrid> xmUGrid = XmUGrid::New(locations, cellstream);
-    return xmUGrid;
-  }
-
   DaStreamReader reader(a_inStream, binary);
-  XmUGridReaderVersion2 gridReader(reader);
-  BSHP<XmUGrid> xmUGrid = XmUGrid::New(gridReader);
-  return xmUGrid;
+  VecPt3d locations;
+  bool success = reader.ReadVecPt3d("LOCATIONS", locations);
+  VecInt cellstream;
+  if (binary)
+    success = success && reader.ReadVecInt("CELL_STREAM", cellstream);
+  else
+    success = success && iReadCellsVersion2(reader, cellstream);
+
+  if (success)
+    return XmUGrid::New(locations, cellstream);
+
+  return nullptr;
 } // XmReadUGridFromStream
 //------------------------------------------------------------------------------
 /// \brief Write an XmUGrid to an ASCII file.
@@ -762,7 +643,7 @@ void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
 /// \brief Save an XmUGrid ASCII text to output stream.
 /// \param[in] a_ugrid the UGrid to save
 /// \param[in] a_outStream the stream to write
-/// \param a_binary[in] should arrays be written in binary
+/// \param[in] a_binary should arrays be written in binary
 //------------------------------------------------------------------------------
 void XmWriteUGridToStream(const XmUGrid& a_ugrid,
                           std::ostream& a_outStream,
@@ -777,9 +658,12 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
 //------------------------------------------------------------------------------
 // Unit Tests
 //------------------------------------------------------------------------------
-using namespace xms;
 #include <xmsgrid/ugrid/XmUGrid.t.h>
+
+#include <xmscore/testing/TestTools.h>
 #include <xmsgrid/ugrid/XmUGridUtils.t.h>
+
+using namespace xms;
 
 namespace
 {
@@ -968,8 +852,7 @@ void XmUGridUtilsTests::testReadEmptyUGridAsciiFile()
   std::istringstream input;
   input.str(inputText);
   BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
-  if (!ugrid)
-    TS_FAIL("Failed to read UGrid.");
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   TS_ASSERT(ugrid->GetLocations().empty());
   TS_ASSERT(ugrid->GetCellstream().empty());
@@ -990,8 +873,7 @@ void XmUGridUtilsTests::testReadBasicUGrid()
   std::istringstream input;
   input.str(inputText);
   BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
-  if (!ugrid)
-    TS_FAIL("Failed to read UGrid.");
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   BSHP<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
   VecPt3d locations = ugrid->GetLocations();
@@ -1026,8 +908,7 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
   std::istringstream input;
   input.str(inputText);
   BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
-  if (!ugrid)
-    TS_FAIL("Failed to read UGrid.");
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   BSHP<XmUGrid> ugridBase = TEST_XmUGridHexagonalPolyhedron();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
@@ -1088,11 +969,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
   std::ifstream input(TestFilesPath() + "3d_grid_linear.xmugrid");
   BSHP<XmUGrid> ugridOut = XmReadUGridFromStream(input);
   input.close();
-  if (!ugridOut)
-  {
-    TS_FAIL("Unable to read ugrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugridOut);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
@@ -1112,11 +989,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
   // read
   std::string input(TestFilesPath() + "3d_grid_linear.xmugrid");
   BSHP<XmUGrid> ugridOut = XmReadUGridFromAsciiFile(input);
-  if (!ugridOut)
-  {
-    TS_FAIL("Unable to read ugrid.");
-    return;
-  }
+  TS_REQUIRE_NOT_NULL(ugridOut);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
@@ -1175,8 +1048,7 @@ void XmUGridUtilsTests::testReadVersion1Dot0File()
     "  CELL 14 5 5 6 11 10 20\n";
   std::istringstream input(inputText);
   BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
-  if (!ugrid)
-    TS_FAIL("Failed to read UGrid.");
+  TS_REQUIRE_NOT_NULL(ugrid);
 
   BSHP<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
@@ -1219,8 +1091,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
 
   std::istringstream input(outputString);
   BSHP<XmUGrid> ugridIn = XmReadUGridFromStream(input);
-  if (!ugridIn)
-    TS_FAIL("Failed to read UGrid.");
+  TS_REQUIRE_NOT_NULL(ugridIn);
   TS_ASSERT_EQUALS(ugridOut->GetLocations(), ugridIn->GetLocations());
   TS_ASSERT_EQUALS(ugridOut->GetCellstream(), ugridIn->GetCellstream());
 } // XmUGridUtilsTests::testWriteThenReadUGridBinary

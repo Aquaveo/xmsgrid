@@ -79,8 +79,6 @@ link_directories(${EXT_LIB_DIRS})
 
 # Static library sources
 set(xmsgrid_sources
-  # Data IO
-  xmsgrid/dataio/daStreamIo.cpp
   # Geometry
   xmsgrid/geometry/geoms.cpp
   xmsgrid/geometry/GmExtents.cpp
@@ -106,12 +104,9 @@ set(xmsgrid_sources
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
   xmsgrid/ugrid/detail/XmGeometry.cpp
-  xmsgrid/ugrid/detail/XmUGridIo.cpp
 )
 
 set(xmsgrid_headers
-  # Data IO
-  xmsgrid/dataio/daStreamIo.h
   # Geometry
   xmsgrid/geometry/geoms.h
   xmsgrid/geometry/GmBoostTypes.h
@@ -140,7 +135,6 @@ set(xmsgrid_headers
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
   xmsgrid/ugrid/detail/XmGeometry.h
-  xmsgrid/ugrid/detail/XmUGridIo.h
 )
 
 # Pybind11 sources
@@ -172,8 +166,6 @@ if (BUILD_TESTING)
  add_definitions(-DCXX_TEST -DCXXTEST4)
 
  list(APPEND xmsgrid_sources
-   # Data IO
-   xmsgrid/dataio/daStreamIo.t.h
    # Geometry
    xmsgrid/geometry/geoms.t.h
    xmsgrid/geometry/GmExtents.t.h
@@ -192,7 +184,6 @@ if (BUILD_TESTING)
    xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
-   xmsgrid/ugrid/detail/XmUGridIo.t.h
  )
 
  find_package(CxxTest)
