@@ -589,20 +589,13 @@ bool XmUGridReaderVersion2::ReadCellstream(VecInt& a_cellstream)
 bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
 {
   bool success = true;
-  // if (m_binary)
-  //{
-  //  for (auto& intArray : a_intArrays)
-  //  {
-  //    int count;
-  //    success = daReadIntLine(m_inStream, "CELL_STREAM", count);
-  //    if (count > 0)
-  //    {
-  //      VecInt& intVec = *intArray.second;
-  //      intVec.resize(count);
-  //      iReadBase64Bytes(m_inStream, (char*)&intVec[0]);
-  //    }
-  //  }
-  //}
+//  if (m_reader.IsBinary())
+//  {
+//    for (auto& intArray : a_intArrays)
+//    {
+//      success = success && m_reader.ReadVecInt(intArray.first, *intArray.second);
+//    }
+//  }
   return success;
 } // XmUGridReaderVersion2::WriteIntArrays
 ////////////////////////////////////////////////////////////////////////////////
@@ -644,18 +637,13 @@ bool XmUGridWriterVersion2::WriteCellstream(const VecInt& a_cellstream)
 bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
 {
   bool success = true;
-  // if (m_binary)
-  //{
-  //  for (auto& intArray : a_intArrays)
-  //  {
-  //    const VecInt& vecInts = *intArray.second;
-  //    int arraySize = (int)vecInts.size();
-  //    daWriteIntLine(m_outStream, intArray.first, arraySize);
-  //    std::cerr << intArray.first << '\n';
-  //    if (arraySize > 0)
-  //      iWriteBase64Bytes(m_outStream, (const char*)&vecInts[0], arraySize * sizeof(int));
-  //  }
-  //}
+//  if (m_writer.IsBinary())
+//  {
+//    for (auto& intArray : a_intArrays)
+//    {
+//      m_writer.WriteVecInt(intArray.first, *intArray.second);
+//    }
+//  }
   return success;
 } // XmUGridWriterVersion2::WriteIntArrays
 
