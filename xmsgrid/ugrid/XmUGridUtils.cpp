@@ -646,6 +646,25 @@ bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
 //  }
   return success;
 } // XmUGridWriterVersion2::WriteIntArrays
+//------------------------------------------------------------------------------
+/// \brief Save an XmUGrid ASCII text to output stream.
+/// \param[in] a_ugrid: the UGrid to save
+/// \param[in] a_outStream: the stream to write
+//------------------------------------------------------------------------------
+void iWriteUGridToStream(const XmUGrid& a_ugrid,
+                         std::ostream& a_outStream,
+                         bool a_binary,
+                         int a_blockSize = 32*1024)
+{
+  if (a_binary)
+    a_outStream << "Binary XmUGrid Version 2\n";
+  else
+    a_outStream << "ASCII XmUGrid Version 2\n";
+  DaStreamWriter writer(a_outStream, a_binary);
+  writer.SetBinaryBlockSize(a_blockSize);
+  XmUGridWriterVersion2 gridWriter(writer);
+  a_ugrid.WriteXmUGrid(gridWriter);
+} // iWriteUGridToStream
 
 } // namespace
 
@@ -748,13 +767,7 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
                           std::ostream& a_outStream,
                           bool a_binary /*= true*/)
 {
-  if (a_binary)
-    a_outStream << "Binary XmUGrid Version 2\n";
-  else
-    a_outStream << "ASCII XmUGrid Version 2\n";
-  DaStreamWriter writer(a_outStream, a_binary);
-  XmUGridWriterVersion2 gridWriter(writer);
-  a_ugrid.WriteXmUGrid(gridWriter);
+  iWriteUGridToStream(a_ugrid, a_outStream, a_binary);
 } // XmWriteUGridToStream
 
 } // namespace xms
@@ -1176,17 +1189,31 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
   BSHP<XmUGrid> ugridOut = TEST_XmUGrid3dLinear();
   std::ostringstream output;
   bool binary = true;
-  XmWriteUGridToStream(*ugridOut, output, binary);
+  iWriteUGridToStream(*ugridOut, output, binary, 120);
 
   std::string outputBase =
     "Binary XmUGrid Version 2\n"
     "LOCATIONS 30\n"
-    "dwAAAFkAAADQAgAAeJyF0aERACAMBEGKoYToTET6rwkVc8NBDMMKHp61XrPr7iGe4i1uObOnh3iKtzjPYy49xFO8xTn2Tr"
-    "vHOHseZ8+/Xm1lz8yls+ffv1kOe2YunT3vOsWUGWk\n"
+    "BINARY_BLOCK 34 25 120\n"
+    "eAFjYMAHVBywy5rgELfDIe6CIQ4AXnwB2w\n"
+    "BINARY_BLOCK 46 34 120\n"
+    "eAFjYEAGKg7IPAYGGB9Gw2RNoOrQxe1wiLtgiAMAzoQDzw\n"
+    "BINARY_BLOCK 46 34 120\n"
+    "eAFjYEAGJg7IPAYGFSgfXRzGh9EwXXY41LtgiAMA4KQEHw\n"
+    "BINARY_BLOCK 43 32 120\n"
+    "eAFjYMAGVBwgojAapgbGN4HKo4vb4RB3wRAHAL7kA88\n"
+    "BINARY_BLOCK 35 26 120\n"
+    "eAFjYEAGKg4QHiHaBIc6OxziLhjiAC77BcM\n"
+    "BINARY_BLOCK 44 33 120\n"
+    "eAFjYEAGJg4QngoajS4O48NomHo7qD50cRcMcQBBGwYT\n"
     "CELL_STREAM 73\n"
-    "lwAAAHEAAAAkAQAAeJxNj1sOgCAQA1FQFN9GxQ+9gPc/"
-    "oCWOCSSTQLfthmCMceY7hajEJDrRoJWiFl7MYhG7OESPL3ksd49nFRHfQ0fa1eIbxIjWoJ9kfl+a3+"
-    "iOd8pd6C7rurJsJHOjD+y3zNdsZ6S3gpr/B7GJF/PfA6o\n";
+    "LITTLE_ENDIAN 32\n"
+    "BINARY_BLOCK 90 67 120\n"
+    "eAEtzQEKgCAQAMGrzLKCTMj+0P8f2C4kDBzHcm4RkeAbMOPEjhXuRmQsqLhwo+OAnc30z3Y2DQ/sXnjDvwo+QSwBSA\n"
+    "BINARY_BLOCK 82 61 120\n"
+    "eAE1yzEOACAIBEEKY7DQVgv9/zfdLSgmhIPLiJhYaEgMHGyYuXt/MDdzt3dhXt3Kquu044+/3js+aLQB2w\n"
+    "BINARY_BLOCK 52 39 52\n"
+    "eAFjZmBgYAFiISDmAGJOIBYHYj4gZoViNiDNDcRcQCwCxAAN9ACJ\n";
   std::string outputString = output.str();
   TS_ASSERT_EQUALS(outputBase, outputString);
 
@@ -1328,7 +1355,7 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
   {
     boost::timer::cpu_timer timer;
     grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
-    TS_FAIL("Build time: " + timer.format());
+    std::cerr << "Build time: " + timer.format();
   }
 
   {
@@ -1336,7 +1363,7 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
     boost::timer::cpu_timer timer;
     bool binary = true;
     XmWriteUGridToStream(*grid, output, binary);
-    TS_FAIL("Write time: " + timer.format());
+    std::cerr << "Write time: " + timer.format();
   }
 
   BSHP<XmUGrid> gridRead;
@@ -1344,7 +1371,7 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
     std::ifstream input("speed_test_out.txt");
     boost::timer::cpu_timer timer;
     gridRead = XmReadUGridFromStream(input);
-    TS_FAIL("Read time: " + timer.format());
+    std::cerr << "Read time: " + timer.format();
   }
 
   TS_ASSERT_EQUALS(grid->GetLocations(), gridRead->GetLocations());

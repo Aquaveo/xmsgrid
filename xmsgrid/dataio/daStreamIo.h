@@ -67,6 +67,8 @@ public:
   bool ReadInt(int& a_val);
   bool NextLine();
 
+  bool ReadBinaryBytes(char* a_dest, long long a_destLength);
+
 private:
   class Impl;
   std::unique_ptr<Impl> m_impl;
@@ -108,6 +110,9 @@ public:
   void AppendInts(const int* a_vals, int a_numVals);
   void AppendString(const std::string& a_val);
   void EndLine();
+
+  bool WriteBinaryBytes(const char* a_source, long long a_sourceLength);
+  void SetBinaryBlockSize(int a_blockSize);
 
 private:
   class Impl;
