@@ -2,7 +2,7 @@
 /// \file
 /// \ingroup dataio
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
-/// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
+/// (See accompanying file LICENSE or https://aquaveo.com/bsd/license.txt)
 //------------------------------------------------------------------------------
 
 //----- Included files ---------------------------------------------------------
@@ -86,25 +86,26 @@ namespace
 //------------------------------------------------------------------------------
 int32_t iCompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int32_t a_destLength)
 {
-  auto compressedLength = (uLong)a_destLength;
-  if (compress2((Bytef*)a_dest, &compressedLength, (Bytef*)a_source, (uLong)a_sourceLength,
-                Z_BEST_SPEED) != Z_OK)
+  auto compressedLength = static_cast<uLong>(a_destLength);
+  auto result = compress2(reinterpret_cast<Bytef*>(a_dest), &compressedLength, reinterpret_cast<const Bytef*>(a_source), static_cast<uLong>(a_sourceLength),
+                Z_BEST_SPEED);
+  if (result != Z_OK)
   {
     XM_LOG(xmlog::error, "Unable to write file. Compression failed.")
     return -1;
   }
 
-  return (int32_t)compressedLength;
+  return static_cast<int32_t>(compressedLength);
 } // iCompress
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
 bool iUncompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int32_t a_destLength)
 {
-  auto uncompressedLength = (uLong)a_destLength;
-  bool success = uncompress((Bytef*)a_dest, &uncompressedLength, (Bytef*)a_source,
-                            (uLong)a_sourceLength) == Z_OK;
-  success = success && uncompressedLength == a_destLength;
+  auto uncompressedLength = static_cast<uLong>(a_destLength);
+  bool success = uncompress(reinterpret_cast<Bytef*>(a_dest), &uncompressedLength, reinterpret_cast<const Bytef*>(a_source),
+                            static_cast<uLong>(a_sourceLength)) == Z_OK;
+  success = success && static_cast<int32_t>(uncompressedLength) == a_destLength;
   if (!success)
   {
     XM_LOG(xmlog::error, "Unable to read file. Unable to uncompress data.")
@@ -118,17 +119,9 @@ bool iUncompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int
 //------------------------------------------------------------------------------
 int32_t iBase64EncodeSize(int32_t a_sourceLength)
 {
-  u_int32_t length = ((4U * (u_int32_t)a_sourceLength / 3U) + 3U) & ~3U;
-  return (int32_t)length;
+  unsigned long length = ((4U * static_cast<unsigned long>(a_sourceLength) / 3U) + 3U) & ~3U;
+  return static_cast<int32_t>(length);
 } // iBase64EncodeSize
-//------------------------------------------------------------------------------
-/// \brief
-//------------------------------------------------------------------------------
-int32_t iBase64DecodeSize(int32_t a_sourceLength)
-{
-  long long length = 6 * (long long)a_sourceLength / 8;
-  return (int32_t)length;
-} // iBase64DecodeSize
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
@@ -139,13 +132,13 @@ int32_t iBase64Encode(const char* a_source, int32_t a_sourceLength, char* a_dest
 
   const char* srcBegin = &a_source[0];
   const char* srcEnd = srcBegin + a_sourceLength;
-  char* dstBegin = a_dest;
-  char* dstCurr = a_dest;
+  char* destBegin = a_dest;
+  char* destIterator = a_dest;
   for (auto it = base64_text(srcBegin); it != base64_text(srcEnd); ++it)
-    *dstCurr++ = *it;
-  *dstCurr = 0;
+    *destIterator++ = *it;
+  *destIterator = 0;
 
-  int32_t encodedLength = int(dstCurr - dstBegin);
+  auto encodedLength = int32_t(destIterator - destBegin);
   return encodedLength;
 } // iBase64Encode
 //------------------------------------------------------------------------------
@@ -197,32 +190,32 @@ bool iReadLine(std::istream& a_inStream,
   }
 
   std::string afterName = line.substr(a_prefix.size());
-  std::stringstream ssline(afterName); // remainder of line
+  std::stringstream ssLine(afterName); // remainder of line
   if (a_val1)
   {
-    ssline >> *a_val1;
-    if (ssline.bad())
+    ssLine >> *a_val1;
+    if (ssLine.bad())
       return false;
   }
   if (a_val2)
   {
-    ssline >> *a_val2;
-    if (ssline.bad())
+    ssLine >> *a_val2;
+    if (ssLine.bad())
       return false;
   }
   if (a_val3)
   {
-    ssline >> *a_val3;
-    if (ssline.bad())
+    ssLine >> *a_val3;
+    if (ssLine.bad())
       return false;
   }
   return true;
 } // iReadLine
 //------------------------------------------------------------------------------
-/// \brief Read a line into a std::stringstream.
+/// \brief Read a line into a input stream.
 /// \param a_inStream The stream to read from.
 /// \param a_name The expected name before the value.
-/// \param a_ss The std::stringstream to write to.
+/// \param a_ss The input stream to read from.
 /// \return True on success.
 //------------------------------------------------------------------------------
 bool iReadLineToSStream(std::istream& a_inStream, const char* a_name, std::stringstream& a_ss)
@@ -421,6 +414,9 @@ bool iReadValueFromLine(std::string& a_line, _T& a_val)
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class DaStreamReader
+/// \brief Class for reading ASCII files with named card fields. Also includes
+/// the ability to embed non-portable compressed binary for integer and Pt3d
+/// arrays.
 ////////////////////////////////////////////////////////////////////////////////
 DaStreamReader::DaStreamReader(std::istream& a_inStream, bool a_binary /*= false*/)
 : m_impl(new Impl(a_inStream, a_binary))
@@ -453,7 +449,6 @@ bool DaStreamReader::ReadNamedLine(const char* a_name)
 //------------------------------------------------------------------------------
 /// \brief Read a line from a stream with the following line endings: CR LF, LF,
 /// CR, or none.
-/// \param a_inStream The stream to read from.
 /// \param a_line The line that was read.
 /// \return True if no errors.
 //------------------------------------------------------------------------------
@@ -493,7 +488,7 @@ bool DaStreamReader::ReadLine(std::string& a_line)
       return !!m_impl->m_inStream;
     }
 
-    a_line += (char)c;
+    a_line += static_cast<char>(c);
   }
 } // DaStreamReader::ReadLine
 //------------------------------------------------------------------------------
@@ -542,23 +537,7 @@ bool DaStreamReader::ReadVecInt(const char* a_name, VecInt& a_vec)
 
     a_vec.resize(size);
     if (size != 0)
-    {
-      using namespace boost::endian;
-      std::string endian;
-      ReadLine(endian);
-      order readEndian = endian == "BIG_ENDIAN" ? order::big : order::little;
-      order nativeEndian = order::native;
-
-      ReadBinaryBytes((char*)&a_vec[0], size * sizeof(VecInt::value_type));
-
-      if (readEndian != nativeEndian)
-      {
-        for (auto& item : a_vec)
-        {
-          item = endian_reverse(item);
-        }
-      }
-    }
+      ReadBinaryBytes(reinterpret_cast<char*>(&a_vec[0]), size * sizeof(VecInt::value_type));
     return true;
   }
 
@@ -590,7 +569,7 @@ bool DaStreamReader::ReadVecPt3d(const char* a_name, VecPt3d& a_vec)
   {
     a_vec.resize(size);
     if (size != 0)
-      ReadBinaryBytes((char*)&a_vec[0], size * sizeof(VecPt3d::value_type));
+      ReadBinaryBytes(reinterpret_cast<char*>(&a_vec[0]), size * sizeof(VecPt3d::value_type));
   }
   else
   {
@@ -607,7 +586,7 @@ bool DaStreamReader::ReadVecPt3d(const char* a_name, VecPt3d& a_vec)
       success = success && pointValue == "POINT";
       int readPointIdx = -1;
       success = success && daReadIntFromLine(pointLine, readPointIdx);
-      success = success && readPointIdx == (int)i;
+      success = success && readPointIdx == static_cast<int>(i);
       Pt3d pt;
       success = success && daReadDoubleFromLine(pointLine, pt.x);
       success = success && daReadDoubleFromLine(pointLine, pt.y);
@@ -730,8 +709,7 @@ bool DaStreamReader::NextLine()
 //------------------------------------------------------------------------------
 bool DaStreamReader::ReadBinaryBytes(char* a_dest, long long a_destLength)
 {
-  int32_t maxCompressedLength = (int32_t)compressBound(MAX_BLOCK_SIZE);
-  uLong compressedLength = maxCompressedLength;
+  auto maxCompressedLength = static_cast<int32_t>(compressBound(MAX_BLOCK_SIZE));
   int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
   std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
   std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
@@ -768,6 +746,9 @@ bool DaStreamReader::ReadBinaryBytes(char* a_dest, long long a_destLength)
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class DaStreamWriter
+/// \brief Class for writing ASCII files with named card fields. Also includes
+/// the ability to embed non-portable compressed binary for integer and Pt3d
+/// arrays.
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Constructor.
@@ -829,12 +810,8 @@ void DaStreamWriter::WriteVecInt(const char* a_name, const VecInt& a_vec)
     size_t size = a_vec.size();
     iWriteLine(m_impl->m_outStream, a_name, &size);
     if (!a_vec.empty())
-    {
-      bool isLittle = boost::endian::order::native == boost::endian::order::little;
-      const char* endianName = isLittle ? "LITTLE_ENDIAN" : "BIG_ENDIAN";
-      WriteIntLine(endianName, sizeof(VecInt::value_type) * 8);
-      WriteBinaryBytes((const char*)&a_vec[0], a_vec.size() * sizeof(VecInt::value_type));
-    }
+      WriteBinaryBytes(reinterpret_cast<const char*>(&a_vec[0]),
+                       a_vec.size() * sizeof(VecInt::value_type));
   }
   else
   {
@@ -913,7 +890,7 @@ void DaStreamWriter::WriteVecPt3d(const char* a_name, const VecPt3d& a_points)
   if (IsBinary())
   {
     if (!a_points.empty())
-      WriteBinaryBytes((const char*)&a_points[0], a_points.size() * sizeof(VecPt3d::value_type));
+      WriteBinaryBytes(reinterpret_cast<const char*>(&a_points[0]), a_points.size() * sizeof(VecPt3d::value_type));
   }
   else
   {
@@ -969,8 +946,7 @@ void DaStreamWriter::EndLine()
 //------------------------------------------------------------------------------
 bool DaStreamWriter::WriteBinaryBytes(const char* a_source, long long a_sourceLength)
 {
-  int32_t maxCompressedLength = (int32_t)compressBound(m_impl->m_blockSize);
-  uLong compressedLength = maxCompressedLength;
+  auto maxCompressedLength = static_cast<int32_t>(compressBound(m_impl->m_blockSize));
   int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
   std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
   std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
@@ -979,7 +955,7 @@ bool DaStreamWriter::WriteBinaryBytes(const char* a_source, long long a_sourceLe
   {
     // compress a block
     int32_t blockLength =
-      a_sourceLength < m_impl->m_blockSize ? a_sourceLength : m_impl->m_blockSize;
+      a_sourceLength < m_impl->m_blockSize ? static_cast<int32_t>(a_sourceLength) : m_impl->m_blockSize;
     int32_t compressedLength =
       iCompress(a_source, blockLength, compressed.get(), maxCompressedLength);
     if (compressedLength < 0)
@@ -1153,11 +1129,9 @@ void StreamIoUnitTests::testReadWrite3StringLine()
 //------------------------------------------------------------------------------
 void StreamIoUnitTests::testReadIntFromLine()
 {
-  std::string line;
-
   // read from front
   int intValue;
-  line = "1 -1 A 2.0 B 4";
+  std::string line = "1 -1 A 2.0 B 4";
   TS_ASSERT(DaStreamReader::ReadIntFromLine(line, intValue));
   TS_ASSERT_EQUALS(1, intValue);
   TS_ASSERT_EQUALS(" -1 A 2.0 B 4", line);
@@ -1194,11 +1168,9 @@ void StreamIoUnitTests::testReadIntFromLine()
 //------------------------------------------------------------------------------
 void StreamIoUnitTests::testReadStringFromLine()
 {
-  std::string line;
-
   // read from front
   std::string stringValue;
-  line = "value1 value2 3";
+  std::string line = "value1 value2 3";
   TS_ASSERT(DaStreamReader::ReadStringFromLine(line, stringValue));
   TS_ASSERT_EQUALS("value1", stringValue);
   TS_ASSERT_EQUALS(" value2 3", line);
@@ -1227,11 +1199,9 @@ void StreamIoUnitTests::testReadStringFromLine()
 //------------------------------------------------------------------------------
 void StreamIoUnitTests::testReadDoubleFromLine()
 {
-  std::string line;
-
   // read from front
   double doubleValue;
-  line = "1.1 -1.0e-3 3";
+  std::string line = "1.1 -1.0e-3 3";
   TS_ASSERT(DaStreamReader::ReadDoubleFromLine(line, doubleValue));
   TS_ASSERT_EQUALS(1.1, doubleValue);
   TS_ASSERT_EQUALS(" -1.0e-3 3", line);

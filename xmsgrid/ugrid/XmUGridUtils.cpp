@@ -2,7 +2,7 @@
 /// \file XmUGridUtils.cpp
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
-/// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
+/// (See accompanying file LICENSE or https://aquaveo.com/bsd/license.txt)
 //------------------------------------------------------------------------------
 
 //----- Included files ---------------------------------------------------------
@@ -136,7 +136,6 @@ const CellNameToType& iCellTypeStringIntPair()
     cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_PYRAMID", XMU_HIGHER_ORDER_PYRAMID));
     cellNameToInt.insert(CellNameToType::value_type("HIGHER_ORDER_HEXAHEDRON", XMU_HIGHER_ORDER_HEXAHEDRON));
     // clang-format on
-    std::cout << '\n';
   }
 
   return cellNameToInt;
@@ -173,7 +172,7 @@ int iCellTypeFromString(const std::string& a_type)
 
 //------------------------------------------------------------------------------
 /// \brief Read points for version 1 XmUGrid file.
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param locations The read locations.
 /// \return True on success.
 //------------------------------------------------------------------------------
@@ -206,7 +205,7 @@ bool iReadPointsVersion1(DaStreamReader& a_reader, VecPt3d& locations)
 
 //------------------------------------------------------------------------------
 /// \brief Read a line for cell stream size for an XmUGrid file.
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param cellStreamSize The number of values in the cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
@@ -222,7 +221,7 @@ bool iReadCellStreamSizeVersion1(DaStreamReader& a_reader, int& cellStreamSize)
 
 //------------------------------------------------------------------------------
 /// \brief Read a line for cell stream size for an XmUGrid file.
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param cellStreamSize The number of values in the cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
@@ -238,7 +237,7 @@ bool iReadCellStreamSizeVersion2(DaStreamReader& a_reader, int& cellStreamSize)
 
 //------------------------------------------------------------------------------
 /// \brief Read line contents for a version 1 "CELL" line.
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param a_cellLine The line to read from.
 /// \param a_cellType The cell type.
 /// \return True on success.
@@ -246,10 +245,9 @@ bool iReadCellStreamSizeVersion2(DaStreamReader& a_reader, int& cellStreamSize)
 bool iReadCellLineVersion1(DaStreamReader& a_reader, std::string& a_cellLine, int& a_cellType)
 {
   a_cellType = XMU_INVALID_CELL_TYPE;
-  std::string cellTypeString;
   if (daReadIntFromLine(a_cellLine, a_cellType))
   {
-    cellTypeString = iStringFromCellType(a_cellType);
+    std::string cellTypeString = iStringFromCellType(a_cellType);
     if (cellTypeString.empty())
       a_cellType = XMU_INVALID_CELL_TYPE;
   }
@@ -268,7 +266,7 @@ bool iReadCellLineVersion1(DaStreamReader& a_reader, std::string& a_cellLine, in
 
 //------------------------------------------------------------------------------
 /// \brief Read line contents for a version 2 "CELL" line.
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param a_cellIdx The zero based index of the cell to read.
 /// \param a_cellType The cell type.
 /// \return True on success.
@@ -304,7 +302,7 @@ bool iReadCellLineVersion2(DaStreamReader& a_reader, int a_cellIdx, int& a_cellT
 
 //------------------------------------------------------------------------------
 /// \brief
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param a_cellLine The line to read from.
 /// \param a_cellType The cell type.
 /// \param a_cellstream The output cell stream.
@@ -358,7 +356,7 @@ bool iReadCellStreamVersion1(DaStreamReader& a_reader,
 
 //------------------------------------------------------------------------------
 /// \brief
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param a_cellType The cell type.
 /// \param a_cellstream The output cell stream.
 /// \return True on success.
@@ -424,7 +422,7 @@ bool iReadCellStreamVersion2(DaStreamReader& a_reader, int a_cellType, VecInt& a
 
 //------------------------------------------------------------------------------
 /// \brief Read the cells for a version 1 XmUGrid file.
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param cellstream The resulting cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
@@ -460,7 +458,7 @@ bool iReadCellsVersion1(DaStreamReader& a_reader, VecInt& cellstream)
 
 //------------------------------------------------------------------------------
 /// \brief Read the cells for a version 1 XmUGrid file.
-/// \param a_inStream The stream to read from.
+/// \param a_reader The stream reader.
 /// \param cellstream The resulting cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
@@ -495,8 +493,8 @@ bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& cellstream)
 } // iReadCellsVersion2
 //------------------------------------------------------------------------------
 /// \brief Write XmUGrid cell stream as text.
-/// \param a_outStream The output stream.
-/// \param a_ugrid The UGrid.
+/// \param a_writer The stream writer.
+/// \param a_cellstream The cell stream.
 //------------------------------------------------------------------------------
 void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
 {
@@ -558,7 +556,7 @@ void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Constructor.
-/// \param a_inStream The input stream.
+/// \param a_reader The stream reader.
 //------------------------------------------------------------------------------
 XmUGridReaderVersion2::XmUGridReaderVersion2(DaStreamReader& a_reader)
 : m_reader(a_reader)
@@ -603,7 +601,7 @@ bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Constructor.
-/// \param a_outStream The output stream.
+/// \param a_writer The stream writer.
 //------------------------------------------------------------------------------
 XmUGridWriterVersion2::XmUGridWriterVersion2(DaStreamWriter& a_writer)
 : m_writer(a_writer)
@@ -648,8 +646,10 @@ bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
 } // XmUGridWriterVersion2::WriteIntArrays
 //------------------------------------------------------------------------------
 /// \brief Save an XmUGrid ASCII text to output stream.
-/// \param[in] a_ugrid: the UGrid to save
-/// \param[in] a_outStream: the stream to write
+/// \param[in] a_ugrid the UGrid to save
+/// \param[in] a_outStream the stream to write
+/// \param[in] a_binary should arrays be written in binary
+/// \param[in] a_blockSize the block for writing binary arrays
 //------------------------------------------------------------------------------
 void iWriteUGridToStream(const XmUGrid& a_ugrid,
                          std::ostream& a_outStream,
@@ -760,8 +760,9 @@ void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
 } // XmWriteUGridToStream
 //------------------------------------------------------------------------------
 /// \brief Save an XmUGrid ASCII text to output stream.
-/// \param[in] a_ugrid: the UGrid to save
-/// \param[in] a_outStream: the stream to write
+/// \param[in] a_ugrid the UGrid to save
+/// \param[in] a_outStream the stream to write
+/// \param a_binary[in] should arrays be written in binary
 //------------------------------------------------------------------------------
 void XmWriteUGridToStream(const XmUGrid& a_ugrid,
                           std::ostream& a_outStream,
@@ -1207,7 +1208,6 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
     "BINARY_BLOCK 44 33 120\n"
     "eAFjYEAGJg4QngoajS4O48NomHo7qD50cRcMcQBBGwYT\n"
     "CELL_STREAM 73\n"
-    "LITTLE_ENDIAN 32\n"
     "BINARY_BLOCK 90 67 120\n"
     "eAEtzQEKgCAQAMGrzLKCTMj+0P8f2C4kDBzHcm4RkeAbMOPEjhXuRmQsqLhwo+OAnc30z3Y2DQ/sXnjDvwo+QSwBSA\n"
     "BINARY_BLOCK 82 61 120\n"
@@ -1223,7 +1223,6 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
     TS_FAIL("Failed to read UGrid.");
   TS_ASSERT_EQUALS(ugridOut->GetLocations(), ugridIn->GetLocations());
   TS_ASSERT_EQUALS(ugridOut->GetCellstream(), ugridIn->GetCellstream());
-
 } // XmUGridUtilsTests::testWriteThenReadUGridBinary
 //------------------------------------------------------------------------------
 /// \brief Test conversion between cell type string and cell type enum.
@@ -1341,7 +1340,7 @@ void XmUGridUtilsTests::testCellStringToEnum()
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------
-#define SPEEDTEST
+//#define SPEEDTEST
 #ifdef SPEEDTEST
 #include <boost/timer/timer.hpp>
 #endif
