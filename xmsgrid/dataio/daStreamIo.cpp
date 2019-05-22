@@ -81,7 +81,7 @@ namespace
 int32_t iCompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int32_t a_destLength)
 {
   auto compressedLength = (uLong)a_destLength;
-  if (compress2((Bytef*)a_dest, &compressedLength, (Bytef*)a_source, (uLong)a_sourceLength, -1) != Z_OK)
+  if (compress2((Bytef*)a_dest, &compressedLength, (Bytef*)a_source, (uLong)a_sourceLength, Z_BEST_SPEED) != Z_OK)
   {
     XM_LOG(xmlog::error, "Unable to write file. Compression failed.")
     return -1;
