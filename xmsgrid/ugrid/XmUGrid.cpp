@@ -55,7 +55,6 @@ public:
   /// Default copy constructor.
   Impl(const Impl&) = default;
 
-  /// Default assignment operator.
   Impl& operator=(const Impl&) = default;
 
   // Misc
@@ -1301,7 +1300,8 @@ bool XmUGrid::Impl::DoEdgesCrossWithPointChange(int a_changedPtIdx,
   {
     for (const auto& unChangedEdge : unChangedEdges)
     {
-      if (gmLinesCross(changedEdge.first, changedEdge.second, unChangedEdge.first, unChangedEdge.second))
+      if (gmLinesCross(changedEdge.first, changedEdge.second, unChangedEdge.first,
+                       unChangedEdge.second))
         return true;
     }
   }
@@ -3842,14 +3842,16 @@ BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
       {
         cells.push_back(XMU_HEXAHEDRON);
         cells.push_back(8);
+
         cells.push_back(j + a_cols * i + layOffset);
-        cells.push_back(j + a_cols * (i + 1) + layOffset);
-        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset);
         cells.push_back(j + 1 + a_cols * i + layOffset);
+        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset);
+        cells.push_back(j + a_cols * (i + 1) + layOffset);
+
         cells.push_back(j + a_cols * i + layOffset + numInLayer);
-        cells.push_back(j + a_cols * (i + 1) + layOffset + numInLayer);
-        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset + numInLayer);
         cells.push_back(j + 1 + a_cols * i + layOffset + numInLayer);
+        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset + numInLayer);
+        cells.push_back(j + a_cols * (i + 1) + layOffset + numInLayer);
       }
     }
   }
@@ -3946,10 +3948,10 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
         cells.push_back(pt6);
         // bottom
         cells.push_back(4);
-        cells.push_back(pt4);
-        cells.push_back(pt5);
-        cells.push_back(pt6);
         cells.push_back(pt7);
+        cells.push_back(pt6);
+        cells.push_back(pt5);
+        cells.push_back(pt4);
       }
     }
   }
@@ -4925,16 +4927,16 @@ void XmUGridUnitTests::testGetCellEdgeAdjacentCells()
     TS_FAIL("Unable to create UGrid.");
     return;
   }
-  expectedCells = {{5, 6, 21},   {6, 10, 26},  {6, 7, 23},   {2, 6, 18},
-                   {21, 37, 38}, {26, 38, 42}, {23, 38, 39}, {18, 34, 38},
-                   {17, 18, 21}, {21, 25, 26}, {18, 23, 19}, {26, 23, 27}};
+
+  expectedCells = {{2, 6, 18},   {6, 7, 23},   {6, 10, 26},  {5, 6, 21},
+                   {18, 34, 38}, {23, 38, 39}, {26, 38, 42}, {21, 37, 38},
+                   {17, 18, 21}, {18, 19, 23}, {21, 26, 25}, {23, 26, 27}};
 
   for (int i(0); i < hexUgrid->GetCellEdgeCount(22); i++)
   {
     adjacentCells = hexUgrid->GetCellEdgeAdjacentCells(22, i);
     TS_ASSERT_EQUALS(expectedCells[i], adjacentCells);
   }
-
 } // XmUGridUnitTests::testGetCellEdgeAdjacentCells
 //------------------------------------------------------------------------------
 /// \brief Test retrieving Adjacent Cell
@@ -5093,8 +5095,8 @@ void XmUGridUnitTests::testGetCell3dFaceAdjacentCell()
   }
 
   // clang-format off
-  VecInt expectedNeighbor = {-1, 1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1};
-  VecInt expectedFace =     {-1, 0, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1};
+  VecInt expectedNeighbor = {-1, -1, -1, 1, -1, -1, -1, -1, 0, -1, -1, -1};
+  VecInt expectedFace =     {-1, -1, -1, 2, -1, -1, -1, -1, 3, -1, -1, -1};
   // clang-format on
 
   int expectedIdx = 0;
@@ -5147,12 +5149,8 @@ void XmUGridUnitTests::testGetCell3dFaceAdjacentCell()
 
   expectedNeighbor.clear();
   // clang-format off
-  expectedNeighbor = {-1, 2, -1, 1, -1, 4, -1, 3, 0, -1, -1, 5, 0, -1, -1, 3, -1, 6, 1, -1, 2, -1,
-                      -1, 7, -1, 6, -1, 5, 0, -1, -1, 7, 4, -1, 1, -1, 4, -1, -1, 7, 2, -1, 5, -1,
-                      6, -1, 3, -1};
-  expectedFace =     {-1, 0, -1, 2, -1, 4, -1, 0, 3, -1, -1, 4, 1, -1, -1, 2, -1, 4, 1, -1, 3, -1,
-                      -1, 4, -1, 0, -1, 2, 5, -1, -1, 0, 3, -1, 5, -1, 1, -1, -1, 2, 5, -1, 1, -1,
-                      3, -1, 5, -1};
+  expectedNeighbor = {-1, 1, -1, 2, -1, 4, 0, -1, -1, 3, -1, 5, -1, 3, 0, -1, -1, 6, 2, -1, 1, -1, -1, 7, -1, 5, -1, 6, 0, -1, 4, -1, -1, 7, 1, -1, -1, 7, 4, -1, 2, -1, 6, -1, 5, -1, 3, -1};
+  expectedFace =     {-1, 0, -1, 2, -1, 4, 1, -1, -1, 2, -1, 4, -1, 0, 3, -1, -1, 4, 1, -1, 3, -1, -1, 4, -1, 0, -1, 2, 5, -1, 1, -1, -1, 2, 5, -1, -1, 0, 3, -1, 5, -1, 1, -1, 3, -1, 5, -1};
   // clang-format on
 
   expectedIdx = 0;
@@ -5169,9 +5167,6 @@ void XmUGridUnitTests::testGetCell3dFaceAdjacentCell()
       grid->GetCell3dFaceAdjacentCell(cellIdx, faceIdx, neighborCellIdx, neighborFaceIdx);
       TS_ASSERT_EQUALS(expectedNeighbor[expectedIdx], neighborCellIdx);
       TS_ASSERT_EQUALS(expectedFace[expectedIdx], neighborFaceIdx);
-
-      expectedNeighbor.push_back(neighborCellIdx);
-      expectedFace.push_back(neighborFaceIdx);
 
       // Check that faces are the same
       VecInt expectedFacePt = grid->GetCell3dFacePoints(cellIdx, faceIdx);
@@ -5691,6 +5686,26 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
 } // XmUGridUnitTests::testCell3dFaceFunctions
 //! [snip_test_Cell3dFaceFunctions]
 //------------------------------------------------------------------------------
+/// \brief Test face orientation for 3D grid of hexahedrons.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()
+{
+  BSHP<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 2, 2, Pt3d());
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 0));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 3));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 4));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
+  xmUGrid = TEST_XmUBuildPolyhedronUgrid(2, 2, 2, Pt3d());
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 0));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 3));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 4));
+  TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
+} // XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons
+//------------------------------------------------------------------------------
 /// \brief Test face orientation for concave cell where a triangle from the
 ///        first two points in the top face to the centroid create a triangle
 ///        with a normal pointing down rather than up.
@@ -5750,12 +5765,12 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
 {
   BSHP<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 3, 2);
 
-  VecInt2d expectedNeighbors = {{-1, -1, -1, 1, -1, -1}, {-1, -1, 0, -1, -1, -1}};
+  VecInt2d expectedNeighbors = {{-1, 1, -1, -1, -1, -1}, {0, -1, -1, -1, -1, -1}};
   VecInt2d expectedOrientations = {
     {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
-     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP},
+     XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM},
     {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
-     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP}};
+     XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM}};
 
   // test four times, to fill the cache, read from the cache, turn off the cache,
   // and turn on the cache
@@ -5777,13 +5792,13 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
   }
 
   // change to different points and cells and test again
-  expectedNeighbors = {{-1, -1, -1, 1, -1, -1}, {-1, -1, 0, 2, -1, -1}, {-1, -1, 1, -1, -1, -1}};
+  expectedNeighbors = {{-1, 1, -1, -1, -1, -1}, {0, 2, -1, -1, -1, -1}, {1, -1, -1, -1, -1, -1}};
   expectedOrientations = {{XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
-                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP},
+                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM},
                           {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
-                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP},
+                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM},
                           {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
-                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP}};
+                           XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM}};
   BSHP<XmUGrid> newXmUGrid = TEST_XmUBuildHexahedronUgrid(2, 4, 2);
   xmUGrid->SetLocations(newXmUGrid->GetLocations());
   xmUGrid->SetCellstream(newXmUGrid->GetCellstream());
