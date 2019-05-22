@@ -49,15 +49,15 @@ namespace xms
 
 namespace
 {
-const int MAX_BLOCK_SIZE = 1024*32;
+const int MAX_BLOCK_SIZE = 1024 * 32;
 }
 
 class DaStreamReader::Impl
 {
 public:
   Impl(std::istream& a_inStream, bool a_binaryArrays)
-    : m_inStream(a_inStream)
-    , m_binaryArrays(a_binaryArrays)
+  : m_inStream(a_inStream)
+  , m_binaryArrays(a_binaryArrays)
   {
   }
 
@@ -69,8 +69,8 @@ class DaStreamWriter::Impl
 {
 public:
   Impl(std::ostream& a_outStream, bool a_binaryArrays)
-    : m_outStream(a_outStream)
-    , m_binaryArrays(a_binaryArrays)
+  : m_outStream(a_outStream)
+  , m_binaryArrays(a_binaryArrays)
   {
   }
 
@@ -81,14 +81,14 @@ public:
 
 namespace
 {
-
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
 int32_t iCompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int32_t a_destLength)
 {
   auto compressedLength = (uLong)a_destLength;
-  if (compress2((Bytef*)a_dest, &compressedLength, (Bytef*)a_source, (uLong)a_sourceLength, Z_BEST_SPEED) != Z_OK)
+  if (compress2((Bytef*)a_dest, &compressedLength, (Bytef*)a_source, (uLong)a_sourceLength,
+                Z_BEST_SPEED) != Z_OK)
   {
     XM_LOG(xmlog::error, "Unable to write file. Compression failed.")
     return -1;
@@ -102,7 +102,8 @@ int32_t iCompress(const char* a_source, int32_t a_sourceLength, char* a_dest, in
 bool iUncompress(const char* a_source, int32_t a_sourceLength, char* a_dest, int32_t a_destLength)
 {
   auto uncompressedLength = (uLong)a_destLength;
-  bool success = uncompress((Bytef*)a_dest, &uncompressedLength, (Bytef*)a_source, (uLong)a_sourceLength) == Z_OK;
+  bool success = uncompress((Bytef*)a_dest, &uncompressedLength, (Bytef*)a_source,
+                            (uLong)a_sourceLength) == Z_OK;
   success = success && uncompressedLength == a_destLength;
   if (!success)
   {
@@ -422,7 +423,7 @@ bool iReadValueFromLine(std::string& a_line, _T& a_val)
 /// \class DaStreamReader
 ////////////////////////////////////////////////////////////////////////////////
 DaStreamReader::DaStreamReader(std::istream& a_inStream, bool a_binary /*= false*/)
-  : m_impl(new Impl(a_inStream, a_binary))
+: m_impl(new Impl(a_inStream, a_binary))
 {
 } // DaStreamReader::DaStreamReader
 //------------------------------------------------------------------------------
@@ -548,7 +549,7 @@ bool DaStreamReader::ReadVecInt(const char* a_name, VecInt& a_vec)
       order readEndian = endian == "BIG_ENDIAN" ? order::big : order::little;
       order nativeEndian = order::native;
 
-      ReadBinaryBytes((char*) &a_vec[0], size * sizeof(VecInt::value_type));
+      ReadBinaryBytes((char*)&a_vec[0], size * sizeof(VecInt::value_type));
 
       if (readEndian != nativeEndian)
       {
@@ -606,7 +607,7 @@ bool DaStreamReader::ReadVecPt3d(const char* a_name, VecPt3d& a_vec)
       success = success && pointValue == "POINT";
       int readPointIdx = -1;
       success = success && daReadIntFromLine(pointLine, readPointIdx);
-      success = success && readPointIdx == (int) i;
+      success = success && readPointIdx == (int)i;
       Pt3d pt;
       success = success && daReadDoubleFromLine(pointLine, pt.x);
       success = success && daReadDoubleFromLine(pointLine, pt.y);
@@ -626,10 +627,7 @@ bool DaStreamReader::ReadVecPt3d(const char* a_name, VecPt3d& a_vec)
 /// \param a_val2 The second word.
 /// \return True if no errors.
 //------------------------------------------------------------------------------
-bool DaStreamReader::Read2StringLine(
-                       const char* a_name,
-                       std::string& a_val1,
-                       std::string& a_val2)
+bool DaStreamReader::Read2StringLine(const char* a_name, std::string& a_val1, std::string& a_val2)
 {
   return iRead2Values(m_impl->m_inStream, a_name, a_val1, a_val2);
 } // DaStreamReader::Read2StringLine
@@ -641,11 +639,10 @@ bool DaStreamReader::Read2StringLine(
 /// \param a_val3 The third word.
 /// \return True if no errors.
 //------------------------------------------------------------------------------
-bool DaStreamReader::Read3StringLine(
-                       const char* a_name,
-                       std::string& a_val1,
-                       std::string& a_val2,
-                       std::string& a_val3)
+bool DaStreamReader::Read3StringLine(const char* a_name,
+                                     std::string& a_val1,
+                                     std::string& a_val2,
+                                     std::string& a_val3)
 {
   return iRead3Values(m_impl->m_inStream, a_name, a_val1, a_val2, a_val3);
 } // DaStreamReader::Read3StringLine
@@ -657,11 +654,10 @@ bool DaStreamReader::Read3StringLine(
 /// \param a_val3 The third double.
 /// \return True if no errors.
 //------------------------------------------------------------------------------
-bool DaStreamReader::Read3DoubleLine(
-                       const char* a_name,
-                       double& a_val1,
-                       double& a_val2,
-                       double& a_val3)
+bool DaStreamReader::Read3DoubleLine(const char* a_name,
+                                     double& a_val1,
+                                     double& a_val2,
+                                     double& a_val3)
 {
   return iRead3Values(m_impl->m_inStream, a_name, a_val1, a_val2, a_val3);
 } // DaStreamReader::Read3DoubleLine
@@ -777,7 +773,7 @@ bool DaStreamReader::ReadBinaryBytes(char* a_dest, long long a_destLength)
 /// \brief Constructor.
 //------------------------------------------------------------------------------
 DaStreamWriter::DaStreamWriter(std::ostream& a_outStream, bool a_binary /*= false*/)
-  : m_impl(new Impl(a_outStream, a_binary))
+: m_impl(new Impl(a_outStream, a_binary))
 {
 } // DaStreamWriter::DaStreamWriter
 //------------------------------------------------------------------------------
@@ -836,8 +832,8 @@ void DaStreamWriter::WriteVecInt(const char* a_name, const VecInt& a_vec)
     {
       bool isLittle = boost::endian::order::native == boost::endian::order::little;
       const char* endianName = isLittle ? "LITTLE_ENDIAN" : "BIG_ENDIAN";
-      WriteIntLine(endianName, sizeof(VecInt::value_type)*8);
-      WriteBinaryBytes((const char*) &a_vec[0], a_vec.size() * sizeof(VecInt::value_type));
+      WriteIntLine(endianName, sizeof(VecInt::value_type) * 8);
+      WriteBinaryBytes((const char*)&a_vec[0], a_vec.size() * sizeof(VecInt::value_type));
     }
   }
   else
@@ -851,10 +847,9 @@ void DaStreamWriter::WriteVecInt(const char* a_name, const VecInt& a_vec)
 /// \param a_val1 The first word.
 /// \param a_val2 The second word.
 //------------------------------------------------------------------------------
-void DaStreamWriter::Write2StringLine(
-                        const char* a_name,
-                        const std::string& a_val1,
-                        const std::string& a_val2)
+void DaStreamWriter::Write2StringLine(const char* a_name,
+                                      const std::string& a_val1,
+                                      const std::string& a_val2)
 {
   iWriteLine(m_impl->m_outStream, a_name, &a_val1, &a_val2);
 } // DaStreamWriter::Write2StringLine
@@ -865,11 +860,10 @@ void DaStreamWriter::Write2StringLine(
 /// \param a_val2 The second word.
 /// \param a_val3 The third word.
 //------------------------------------------------------------------------------
-void DaStreamWriter::Write3StringLine(
-                        const char* a_name,
-                        const std::string& a_val1,
-                        const std::string& a_val2,
-                        const std::string& a_val3)
+void DaStreamWriter::Write3StringLine(const char* a_name,
+                                      const std::string& a_val1,
+                                      const std::string& a_val2,
+                                      const std::string& a_val3)
 {
   iWriteLine(m_impl->m_outStream, a_name, &a_val1, &a_val2, &a_val3);
 } // DaStreamWriter::Write3StringLine
@@ -880,11 +874,10 @@ void DaStreamWriter::Write3StringLine(
 /// \param a_val2 The second double.
 /// \param a_val3 The third double.
 //------------------------------------------------------------------------------
-void DaStreamWriter::Write3DoubleLine(
-                        const char* a_name,
-                        const double& a_val1,
-                        const double& a_val2,
-                        const double& a_val3)
+void DaStreamWriter::Write3DoubleLine(const char* a_name,
+                                      const double& a_val1,
+                                      const double& a_val2,
+                                      const double& a_val3)
 {
   iWriteLine(m_impl->m_outStream, a_name, &a_val1, &a_val2, &a_val3);
 } // DaStreamWriter::Write3DoubleLine
@@ -920,7 +913,7 @@ void DaStreamWriter::WriteVecPt3d(const char* a_name, const VecPt3d& a_points)
   if (IsBinary())
   {
     if (!a_points.empty())
-      WriteBinaryBytes((const char*)&a_points[0], a_points.size()* sizeof(VecPt3d::value_type));
+      WriteBinaryBytes((const char*)&a_points[0], a_points.size() * sizeof(VecPt3d::value_type));
   }
   else
   {
@@ -985,8 +978,10 @@ bool DaStreamWriter::WriteBinaryBytes(const char* a_source, long long a_sourceLe
   while (a_sourceLength > 0)
   {
     // compress a block
-    int32_t blockLength = a_sourceLength < m_impl->m_blockSize ? a_sourceLength : m_impl->m_blockSize;
-    int32_t compressedLength = iCompress(a_source, blockLength, compressed.get(), maxCompressedLength);
+    int32_t blockLength =
+      a_sourceLength < m_impl->m_blockSize ? a_sourceLength : m_impl->m_blockSize;
+    int32_t compressedLength =
+      iCompress(a_source, blockLength, compressed.get(), maxCompressedLength);
     if (compressedLength < 0)
       return false;
     a_sourceLength -= blockLength;

@@ -589,13 +589,13 @@ bool XmUGridReaderVersion2::ReadCellstream(VecInt& a_cellstream)
 bool XmUGridReaderVersion2::ReadIntArrays(IntArrays& a_intArrays)
 {
   bool success = true;
-//  if (m_reader.IsBinary())
-//  {
-//    for (auto& intArray : a_intArrays)
-//    {
-//      success = success && m_reader.ReadVecInt(intArray.first, *intArray.second);
-//    }
-//  }
+  //  if (m_reader.IsBinary())
+  //  {
+  //    for (auto& intArray : a_intArrays)
+  //    {
+  //      success = success && m_reader.ReadVecInt(intArray.first, *intArray.second);
+  //    }
+  //  }
   return success;
 } // XmUGridReaderVersion2::WriteIntArrays
 ////////////////////////////////////////////////////////////////////////////////
@@ -637,13 +637,13 @@ bool XmUGridWriterVersion2::WriteCellstream(const VecInt& a_cellstream)
 bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
 {
   bool success = true;
-//  if (m_writer.IsBinary())
-//  {
-//    for (auto& intArray : a_intArrays)
-//    {
-//      m_writer.WriteVecInt(intArray.first, *intArray.second);
-//    }
-//  }
+  //  if (m_writer.IsBinary())
+  //  {
+  //    for (auto& intArray : a_intArrays)
+  //    {
+  //      m_writer.WriteVecInt(intArray.first, *intArray.second);
+  //    }
+  //  }
   return success;
 } // XmUGridWriterVersion2::WriteIntArrays
 //------------------------------------------------------------------------------
@@ -654,7 +654,7 @@ bool XmUGridWriterVersion2::WriteIntArrays(ConstIntArrays& a_intArrays)
 void iWriteUGridToStream(const XmUGrid& a_ugrid,
                          std::ostream& a_outStream,
                          bool a_binary,
-                         int a_blockSize = 32*1024)
+                         int a_blockSize = 32 * 1024)
 {
   if (a_binary)
     a_outStream << "Binary XmUGrid Version 2\n";

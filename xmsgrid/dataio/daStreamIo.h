@@ -47,17 +47,12 @@ public:
   bool ReadVecInt(const char* a_name, VecInt& a_vec);
   bool ReadVecDbl(const char* a_name, VecDbl& a_vec);
   bool ReadVecPt3d(const char* a_name, VecPt3d& a_vec);
-  bool Read2StringLine(const char* a_name,
-                       std::string& a_val1,
-                       std::string& a_val2);
+  bool Read2StringLine(const char* a_name, std::string& a_val1, std::string& a_val2);
   bool Read3StringLine(const char* a_name,
                        std::string& a_val1,
                        std::string& a_val2,
                        std::string& a_val3);
-  bool Read3DoubleLine(const char* a_name,
-                       double& a_val1,
-                       double& a_val2,
-                       double& a_val3);
+  bool Read3DoubleLine(const char* a_name, double& a_val1, double& a_val2, double& a_val3);
 
   static bool ReadIntFromLine(std::string& a_line, int& a_val);
   static bool ReadStringFromLine(std::string& a_line, std::string& a_val);
@@ -81,7 +76,7 @@ public:
   DaStreamWriter(const DaStreamWriter&) = delete;
   ~DaStreamWriter();
   DaStreamWriter& operator=(const DaStreamWriter&) = delete;
-  
+
   bool IsBinary() const;
   void WriteVecInt(const char* a_name, const VecInt& a_vec);
   void WriteVecDbl(const char* a_name, const VecDbl& a_vec);
@@ -97,9 +92,7 @@ public:
 
   void WriteLine(const std::string& a_line);
   void WriteStringLine(const char* a_name, const std::string& a_val);
-  void Write2StringLine(const char* a_name,
-                          const std::string& a_val1,
-                          const std::string& a_val2);
+  void Write2StringLine(const char* a_name, const std::string& a_val1, const std::string& a_val2);
   void Write3StringLine(const char* a_name,
                         const std::string& a_val1,
                         const std::string& a_val2,
