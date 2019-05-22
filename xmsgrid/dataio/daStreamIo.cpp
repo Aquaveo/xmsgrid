@@ -23,6 +23,7 @@
 #include <boost/archive/iterators/insert_linebreaks.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 #include <boost/archive/iterators/ostream_iterator.hpp>
+#include <boost/endian/conversion.hpp>
 #include <boost/unordered_map.hpp>
 #include <zlib.h>
 
@@ -45,6 +46,11 @@ namespace xms
 //----- Classes / Structs ------------------------------------------------------
 
 //----- Class / Function definitions -------------------------------------------
+
+namespace
+{
+const int MAX_BLOCK_SIZE = 1024*32;
+}
 
 class DaStreamReader::Impl
 {
@@ -70,6 +76,7 @@ public:
 
   std::ostream& m_outStream;
   bool m_binaryArrays;
+  int m_blockSize = MAX_BLOCK_SIZE;
 };
 
 namespace
@@ -160,80 +167,6 @@ void iBase64Decode(const char* a_source, int32_t a_sourceLength, char* a_dest)
     std::copy(base64_dec(a_source), base64_dec(a_source + size), a_dest);
   }
 } // iBase64Decode
-//------------------------------------------------------------------------------
-/// \brief
-//------------------------------------------------------------------------------
-const int32_t blockSize = 32*1024;
-bool iWriteBase64Bytes(std::ostream& a_outStream, const char* a_source, long long a_sourceLength)
-{
-  int32_t maxCompressedLength = (int32_t)compressBound(blockSize);
-  uLong compressedLength = maxCompressedLength;
-  int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
-  std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
-  std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
-
-  while (a_sourceLength > 0)
-  {
-    // compress a block
-    int32_t blockLength = a_sourceLength < blockSize ? a_sourceLength : blockSize;
-    int32_t compressedLength = iCompress(a_source, blockLength, &compressed[0], maxCompressedLength);
-    if (compressedLength < 0)
-      return false;
-    a_sourceLength -= blockLength;
-    a_source += blockLength;
-
-    // encode a block
-    int32_t encodedLength = iBase64Encode(&compressed[0], compressedLength, &encoded[0]);
-
-    // encode compressedLength and encodedLength
-    char header[24];
-    int32_t headerBytes[] = {encodedLength, compressedLength, blockLength};
-    int32_t headerLength = iBase64Encode((char*)headerBytes, sizeof(int32_t)*3, header);
-
-    a_outStream.write(header, headerLength);
-    a_outStream.write(&encoded[0], encodedLength);
-  }
-
-  a_outStream << '\n';
-  return true;
-} // iWriteBase64Bytes
-//------------------------------------------------------------------------------
-/// \brief
-//------------------------------------------------------------------------------
-bool iReadBase64Bytes(std::istream& a_inStream, char* a_dest, long long a_destLength)
-{
-  int32_t maxCompressedLength = (int32_t)compressBound(blockSize);
-  uLong compressedLength = maxCompressedLength;
-  int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
-  std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
-  std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
-
-  while (a_destLength > 0)
-  {
-    char headerBytes[16];
-    int32_t headerData[3];
-    a_inStream.read(headerBytes, 16);
-    iBase64Decode(headerBytes, 16, (char*)headerData);
-    int32_t encodedLength = headerData[0];
-    int32_t compressedLength = headerData[1];
-    int32_t blockLength = headerData[2];
-
-    // read encoded data and decode
-    a_inStream.read(&encoded[0], encodedLength);
-    iBase64Decode(&encoded[0], encodedLength, &compressed[0]);
-
-    // decompress data
-    if (!iUncompress(&compressed[0], compressedLength, a_dest, blockLength))
-      return false;
-
-    a_dest += blockLength;
-    a_destLength -= blockLength;
-  }
-  std::string line;
-  daReadLine(a_inStream, line);
-
-  return true;
-} // iReadBase64Bytes
 //------------------------------------------------------------------------------
 /// \brief Read line of name (beginning of line) followed with up to 3 expected
 /// values.
@@ -603,12 +536,28 @@ bool DaStreamReader::ReadVecInt(const char* a_name, VecInt& a_vec)
   if (IsBinary())
   {
     int size;
-    if (!daReadIntLine(m_impl->m_inStream, a_name, size))
+    if (!ReadIntLine(a_name, size))
       return false;
 
     a_vec.resize(size);
     if (size != 0)
-      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0], size * sizeof(VecInt::value_type));
+    {
+      using namespace boost::endian;
+      std::string endian;
+      ReadLine(endian);
+      order readEndian = endian == "BIG_ENDIAN" ? order::big : order::little;
+      order nativeEndian = order::native;
+
+      ReadBinaryBytes((char*) &a_vec[0], size * sizeof(VecInt::value_type));
+
+      if (readEndian != nativeEndian)
+      {
+        for (auto& item : a_vec)
+        {
+          item = endian_reverse(item);
+        }
+      }
+    }
     return true;
   }
 
@@ -640,7 +589,7 @@ bool DaStreamReader::ReadVecPt3d(const char* a_name, VecPt3d& a_vec)
   {
     a_vec.resize(size);
     if (size != 0)
-      iReadBase64Bytes(m_impl->m_inStream, (char*)&a_vec[0], size * sizeof(VecPt3d::value_type));
+      ReadBinaryBytes((char*)&a_vec[0], size * sizeof(VecPt3d::value_type));
   }
   else
   {
@@ -780,6 +729,46 @@ bool DaStreamReader::NextLine()
   ReadLine(line);
   return !m_impl->m_inStream.fail();
 } // DaStreamReader::NextLine
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool DaStreamReader::ReadBinaryBytes(char* a_dest, long long a_destLength)
+{
+  int32_t maxCompressedLength = (int32_t)compressBound(MAX_BLOCK_SIZE);
+  uLong compressedLength = maxCompressedLength;
+  int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
+  std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
+  std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
+
+  while (a_destLength > 0)
+  {
+    // read block info
+    std::string blockString;
+    int32_t encodedLength;
+    int32_t compressedLength;
+    int32_t blockLength;
+    ReadString(blockString);
+    ReadInt(encodedLength);
+    ReadInt(compressedLength);
+    ReadInt(blockLength);
+    NextLine();
+
+    // read and decode
+    m_impl->m_inStream.read(encoded.get(), encodedLength);
+    NextLine();
+
+    iBase64Decode(encoded.get(), encodedLength, compressed.get());
+
+    // decompress data
+    if (!iUncompress(compressed.get(), compressedLength, a_dest, blockLength))
+      return false;
+
+    a_dest += blockLength;
+    a_destLength -= blockLength;
+  }
+
+  return true;
+} // DaStreamReader::ReadBinaryBytes
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class DaStreamWriter
@@ -844,7 +833,12 @@ void DaStreamWriter::WriteVecInt(const char* a_name, const VecInt& a_vec)
     size_t size = a_vec.size();
     iWriteLine(m_impl->m_outStream, a_name, &size);
     if (!a_vec.empty())
-      iWriteBase64Bytes(m_impl->m_outStream, (const char*)&a_vec[0], a_vec.size()* sizeof(VecInt::value_type));
+    {
+      bool isLittle = boost::endian::order::native == boost::endian::order::little;
+      const char* endianName = isLittle ? "LITTLE_ENDIAN" : "BIG_ENDIAN";
+      WriteIntLine(endianName, sizeof(VecInt::value_type)*8);
+      WriteBinaryBytes((const char*) &a_vec[0], a_vec.size() * sizeof(VecInt::value_type));
+    }
   }
   else
   {
@@ -926,7 +920,7 @@ void DaStreamWriter::WriteVecPt3d(const char* a_name, const VecPt3d& a_points)
   if (IsBinary())
   {
     if (!a_points.empty())
-      iWriteBase64Bytes(m_impl->m_outStream, (const char*)&a_points[0], a_points.size()* sizeof(VecPt3d::value_type));
+      WriteBinaryBytes((const char*)&a_points[0], a_points.size()* sizeof(VecPt3d::value_type));
   }
   else
   {
@@ -975,8 +969,51 @@ void DaStreamWriter::AppendString(const std::string& a_val)
 //------------------------------------------------------------------------------
 void DaStreamWriter::EndLine()
 {
-  m_impl-> m_outStream << '\n';
+  m_impl->m_outStream << '\n';
 } // DaStreamWriter::EndLine
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+bool DaStreamWriter::WriteBinaryBytes(const char* a_source, long long a_sourceLength)
+{
+  int32_t maxCompressedLength = (int32_t)compressBound(m_impl->m_blockSize);
+  uLong compressedLength = maxCompressedLength;
+  int32_t maxEncodeLength = iBase64EncodeSize(maxCompressedLength);
+  std::unique_ptr<char[]> compressed(new char[maxCompressedLength]);
+  std::unique_ptr<char[]> encoded(new char[maxEncodeLength + 1]);
+
+  while (a_sourceLength > 0)
+  {
+    // compress a block
+    int32_t blockLength = a_sourceLength < m_impl->m_blockSize ? a_sourceLength : m_impl->m_blockSize;
+    int32_t compressedLength = iCompress(a_source, blockLength, compressed.get(), maxCompressedLength);
+    if (compressedLength < 0)
+      return false;
+    a_sourceLength -= blockLength;
+    a_source += blockLength;
+
+    // encode a block
+    int32_t encodedLength = iBase64Encode(compressed.get(), compressedLength, encoded.get());
+
+    // write block info
+    WriteString("BINARY_BLOCK");
+    AppendInt(encodedLength);
+    AppendInt(compressedLength);
+    AppendInt(blockLength);
+    EndLine();
+    m_impl->m_outStream.write(encoded.get(), encodedLength);
+    EndLine();
+  }
+
+  return true;
+} // DaStreamWriter::WriteBinaryBytes
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void DaStreamWriter::SetBinaryBlockSize(int a_blockSize)
+{
+  m_impl->m_blockSize = a_blockSize > MAX_BLOCK_SIZE ? MAX_BLOCK_SIZE : a_blockSize;
+} // DaStreamWriter::SetBinaryBlockSize
 
 } // namespace xms
 
