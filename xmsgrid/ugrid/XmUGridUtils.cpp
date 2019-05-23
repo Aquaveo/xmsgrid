@@ -460,6 +460,8 @@ bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& cellstream)
 
     if (!iReadCellStreamVersion2(a_reader, cellType, cellstream))
       return false;
+
+    a_reader.NextLine();
     ++cellIdx;
   }
 
@@ -1249,5 +1251,35 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
 
 #endif
 } // XmUGridUtilsTests::testLargeUGridBinarySpeed
+//------------------------------------------------------------------------------
+/// \brief 
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testReadReadyAtNextLine()
+{
+    std::string inputText =
+    "ASCII XmUGrid Version 2\n"
+    "LOCATIONS 3\n"
+    "  POINT 0 0.0 0.0 0.0\n"
+    "  POINT 1 20.0 0.0 0.0\n"
+    "  POINT 2 0.0 20.0 0.0\n"
+    "CELL_STREAM 5\n"
+    "  CELL 0 TRIANGLE 3 0 1 2\n"
+    "LEFT OVER LINE\n";
+  std::istringstream input;
+  input.str(inputText);
+  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  TS_REQUIRE_NOT_NULL(ugrid);
+
+  BSHP<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
+  VecPt3d locations = ugrid->GetLocations();
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), locations);
+  VecInt cellstream = ugrid->GetCellstream();
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), cellstream);
+
+  // read ignores leftover line
+  std::string line;
+  TS_ASSERT(daReadLine(input, line));
+  TS_ASSERT_EQUALS("LEFT OVER LINE", line);
+} // XmUGridUtilsTests::testReadReadyAtNextLine
 
 #endif
