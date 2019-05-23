@@ -38,6 +38,7 @@ public:
   void testWriteThenReadUGridBinary();
   void testCellStringToEnum();
   void testLargeUGridBinarySpeed();
+  void testReadReadyAtNextLine();
 }; // XmUGridReaderTests
 
 #endif
