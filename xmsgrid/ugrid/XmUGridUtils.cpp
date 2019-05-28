@@ -1252,7 +1252,8 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
 #endif
 } // XmUGridUtilsTests::testLargeUGridBinarySpeed
 //------------------------------------------------------------------------------
-/// \brief 
+/// \brief Test reading XmUGrid to make sure it doesn't read the whole file.
+/// Should leave stream at next line after XmUGrid contents.
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testReadReadyAtNextLine()
 {

@@ -54,8 +54,10 @@ public:
   Impl() = default;
   /// Default copy constructor.
   Impl(const Impl&) = default;
-  /// Default assignment operator.
-  Impl& operator=(const Impl&) = default;
+  /// \brief Default ssignment operator.
+  /// \param a_xmUGrid The XmUGrid to copy from.
+  /// \return The reference to this.
+  Impl& operator=(const Impl& a_xmUGrid) = default;
 
   // Misc
   bool GetModified() const;
