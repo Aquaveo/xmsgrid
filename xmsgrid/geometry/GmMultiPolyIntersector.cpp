@@ -391,12 +391,20 @@ void GmMultiPolyIntersectorImpl::PointsOnSegment(const GmBstPoly3d &a_poly,
 /// to each intersection.
 //------------------------------------------------------------------------------
 void GmMultiPolyIntersectorImpl::ComputeTValues() {
-  double totalLength = gmXyDistance(m_pt1, m_pt2);
-  for (size_t i = 0; i < m_d.m_ixs.size(); ++i) {
-    if (m_d.m_ixs[i].m_t == XM_NODATA) {
-      m_d.m_ixs[i].m_t = gmXyDistance(m_pt1, m_d.m_ixs[i].m_pt) / totalLength;
+  for (size_t i = 0; i < m_d.m_ixs.size(); ++i)
+  {
+    if (m_d.m_ixs[i].m_t == XM_NODATA)
+    {
+      // to fix bug 11722 we changed this from gmXyDistanct to actually compute t
+      m_d.m_ixs[i].m_t = gmPtDistanceAlongSegment(m_pt1, m_pt2, m_d.m_ixs[i].m_pt, gmXyTol());
     }
   }
+  // added for bug fix for 11722 (july 2019, AKZ and MJK)
+  // get rid of any points that have a t value outside of the 0.0 to 1.0 range
+  // the boost intersection can find phantom intersections just beyond the segment
+  m_d.m_ixs.erase(std::remove_if(m_d.m_ixs.begin(), m_d.m_ixs.end(),
+    [](const ix & a_ix) { return a_ix.m_t < -gmXyTol() || a_ix.m_t > 1.0 + gmXyTol(); }),
+    m_d.m_ixs.end());
 } // GmMultiPolyIntersectorImpl::ComputeTValues
 //------------------------------------------------------------------------------
 /// \brief Does a preliminary sort of the intersections by t value.
@@ -1729,26 +1737,23 @@ void GmMultiPolyIntersectorUnitTests::testMap2MfBug() {
   polys[1] = {0, 1, 7, 6, 5, 4};
 
   const double t = 0.41350462827872492;
-  VecInt expectedIds{2, -1, 2, 1, -1};
-  VecDbl expectedTvals{0.0, 0.0, t, .5, 1.0};
+  VecInt expectedIds{2, 1, -1};
+  VecDbl expectedTvals{0.0, .5, 1.0};
   VecPt3d expectedPoints = {
-      {2046.1951363232131, 11842.783920653745, 0.00000000000000000},
-      {2046.1951363231999, 11842.783920653999, 0.00000000000000000},
-      {1955.8900301603892, 11832.159790516887, 0.00000000000000000},
-      {1937.0003414078999, 11829.937474193001, 0.00000000000000000},
-      {1827.8055464926999, 11817.091027732000, 0.00000000000000000}};
-  iRunTest(2046.1951363232131, 11842.783920653745, 1827.8055464926651,
-           11817.091027732373, pts, polys, expectedIds, expectedTvals,
+      {2046.1951363232, 11842.783920654, 0.00000000000000000},
+      {1937.0003414079, 11829.937474193, 0.00000000000000000},
+      {1827.8055464927, 11817.091027732, 0.00000000000000000}};
+  iRunTest(2046.1951363232, 11842.783920654, 1827.8055464927,
+           11817.091027732, pts, polys, expectedIds, expectedTvals,
            expectedPoints);
-  expectedIds = {1, 2, -1, 2, -1};
-  expectedTvals = {0.0, .5, 1 - t, 1, 1};
+  expectedIds = {1, 2, -1, -1};
+  expectedTvals = {0.0, .5, 1, 1};
   expectedPoints = {{1827.8055464927, 11817.091027732, 0.0},
                     {1937.0003414079, 11829.937474193, 0.0},
-                    {1955.8909579942, 11832.159899674, 0.0},
                     {2046.1951363232, 11842.783920654, 0.0},
                     {2046.1951363232, 11842.783920654, 0.0}};
-  iRunTest(1827.8055464926651, 11817.091027732373, 2046.1951363232131,
-           11842.783920653745, pts, polys, expectedIds, expectedTvals,
+  iRunTest(1827.8055464927, 11817.091027732, 2046.1951363232,
+           11842.783920654, pts, polys, expectedIds, expectedTvals,
            expectedPoints);
 } // GmMultiPolyIntersectorUnitTests::testInsideToEdgeThenThroughAdjacent
 //------------------------------------------------------------------------------
