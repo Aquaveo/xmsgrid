@@ -9,7 +9,6 @@ from conans.errors import ConanException
 class XmsgridConan(ConanFile):
     """XMSGrid Conanfile"""
     name = "xmsgrid"
-    #version = None
     license = "BSD2"
     url = "https://github.com/Aquaveo/xmsgrid"
     description = "Grid library for XMS products"
