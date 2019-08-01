@@ -560,7 +560,7 @@ void iWriteUGridToStream(const XmUGrid& a_ugrid,
 /// extension
 /// \return the UGrid that was read from the file
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
+std::shared_ptr<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
 {
   std::ifstream inFile(a_filePath);
   return XmReadUGridFromStream(inFile);
@@ -571,7 +571,7 @@ BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath)
 /// \param[in] a_inStream: the stream to read
 /// \return the UGrid
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
+std::shared_ptr<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
 {
   if (a_inStream.eof())
   {
@@ -627,7 +627,7 @@ BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
 /// \param[in] a_filePath: filename to write including path, file name, and
 /// extension
 //------------------------------------------------------------------------------
-void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePath)
+void XmWriteUGridToAsciiFile(std::shared_ptr<XmUGrid> a_ugrid, const std::string& a_filePath)
 {
   std::ofstream outFile(a_filePath);
   XmWriteUGridToStream(a_ugrid, outFile);
@@ -637,7 +637,7 @@ void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePat
 /// \param[in] a_ugrid: the UGrid to save
 /// \param[in] a_outStream: the stream to write
 //------------------------------------------------------------------------------
-void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream)
+void XmWriteUGridToStream(std::shared_ptr<XmUGrid> a_ugrid, std::ostream& a_outStream)
 {
   XmWriteUGridToStream(*a_ugrid, a_outStream);
 } // XmWriteUGridToStream
@@ -688,7 +688,7 @@ std::string TestFilesPath()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWriteEmptyUGrid()
 {
-  BSHP<XmUGrid> ugrid = XmUGrid::New();
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New();
   std::ostringstream output;
   XmWriteUGridToStream(ugrid, output);
 
@@ -703,7 +703,7 @@ void XmUGridUtilsTests::testWriteEmptyUGrid()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWriteBasicUGrid()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGrid1Left90Tri();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGrid1Left90Tri();
   std::ostringstream output;
   XmWriteUGridToStream(ugrid, output);
 
@@ -722,7 +722,7 @@ void XmUGridUtilsTests::testWriteBasicUGrid()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWritePolyhedronUGrid()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGridHexagonalPolyhedron();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridHexagonalPolyhedron();
   std::ostringstream output;
   XmWriteUGridToStream(ugrid, output);
 
@@ -753,7 +753,7 @@ void XmUGridUtilsTests::testWritePolyhedronUGrid()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWriteLinear2dCells()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGrid2dLinear();
   std::ostringstream output;
   XmWriteUGridToStream(ugrid, output);
 
@@ -789,7 +789,7 @@ void XmUGridUtilsTests::testWriteLinear2dCells()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWriteLinear3dCells()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGrid3dLinear();
   std::ostringstream output;
   XmWriteUGridToStream(ugrid, output);
 
@@ -853,7 +853,7 @@ void XmUGridUtilsTests::testReadEmptyUGridAsciiFile()
     "CELL_STREAM 0\n";
   std::istringstream input;
   input.str(inputText);
-  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugrid);
 
   TS_ASSERT(ugrid->GetLocations().empty());
@@ -874,10 +874,10 @@ void XmUGridUtilsTests::testReadBasicUGrid()
     "  CELL 0 TRIANGLE 3 0 1 2\n";
   std::istringstream input;
   input.str(inputText);
-  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugrid);
 
-  BSHP<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
   VecPt3d locations = ugrid->GetLocations();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), locations);
   VecInt cellstream = ugrid->GetCellstream();
@@ -909,10 +909,10 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
     "    FACE 5 4 4 7 6 5\n";
   std::istringstream input;
   input.str(inputText);
-  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugrid);
 
-  BSHP<XmUGrid> ugridBase = TEST_XmUGridHexagonalPolyhedron();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGridHexagonalPolyhedron();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugrid->GetCellstream());
 } // XmUGridUtilsTests::testReadPolyhedronUGrid
@@ -921,7 +921,7 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testLinear2dWriteThenRead()
 {
-  BSHP<XmUGrid> ugridBase = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGrid2dLinear();
 
   // write
   std::ostringstream output;
@@ -930,7 +930,7 @@ void XmUGridUtilsTests::testLinear2dWriteThenRead()
   // read
   std::istringstream input;
   input.str(output.str());
-  BSHP<XmUGrid> ugridOut = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugridOut = XmReadUGridFromStream(input);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
@@ -940,7 +940,7 @@ void XmUGridUtilsTests::testLinear2dWriteThenRead()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testLinear3dWriteThenRead()
 {
-  BSHP<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
 
   // write
   std::ostringstream output;
@@ -949,7 +949,7 @@ void XmUGridUtilsTests::testLinear3dWriteThenRead()
   // read
   std::istringstream input;
   input.str(output.str());
-  BSHP<XmUGrid> ugridOut = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugridOut = XmReadUGridFromStream(input);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
@@ -959,7 +959,7 @@ void XmUGridUtilsTests::testLinear3dWriteThenRead()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWriteThenReadUGridFile()
 {
-  BSHP<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
 
   // write
   std::string outFileName(TestFilesPath() + "3d_grid_linear.xmugrid");
@@ -969,7 +969,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
 
   // read
   std::ifstream input(TestFilesPath() + "3d_grid_linear.xmugrid");
-  BSHP<XmUGrid> ugridOut = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugridOut = XmReadUGridFromStream(input);
   input.close();
   TS_REQUIRE_NOT_NULL(ugridOut);
 
@@ -982,7 +982,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFile()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
 {
-  BSHP<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
 
   // write
   std::string outFileName(TestFilesPath() + "3d_grid_linear.xmugrid");
@@ -990,7 +990,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()
 
   // read
   std::string input(TestFilesPath() + "3d_grid_linear.xmugrid");
-  BSHP<XmUGrid> ugridOut = XmReadUGridFromAsciiFile(input);
+  std::shared_ptr<XmUGrid> ugridOut = XmReadUGridFromAsciiFile(input);
   TS_REQUIRE_NOT_NULL(ugridOut);
 
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
@@ -1049,10 +1049,10 @@ void XmUGridUtilsTests::testReadVersion1Dot0File()
     "  CELL 13 6 3 4 18 8 9 23\n"
     "  CELL 14 5 5 6 11 10 20\n";
   std::istringstream input(inputText);
-  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugrid);
 
-  BSHP<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGrid3dLinear();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugrid->GetCellstream());
 } // XmUGridUtilsTests::testReadVersion1Dot0File
@@ -1061,7 +1061,7 @@ void XmUGridUtilsTests::testReadVersion1Dot0File()
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testWriteThenReadUGridBinary()
 {
-  BSHP<XmUGrid> ugridOut = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugridOut = TEST_XmUGrid3dLinear();
   std::ostringstream output;
   bool binary = true;
   iWriteUGridToStream(*ugridOut, output, binary, 120);
@@ -1092,7 +1092,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
   TS_ASSERT_EQUALS(outputBase, outputString);
 
   std::istringstream input(outputString);
-  BSHP<XmUGrid> ugridIn = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugridIn = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugridIn);
   TS_ASSERT_EQUALS(ugridOut->GetLocations(), ugridIn->GetLocations());
   TS_ASSERT_EQUALS(ugridOut->GetCellstream(), ugridIn->GetCellstream());
@@ -1223,7 +1223,7 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
   int rows = 1000;
   int cols = 500;
   int lays = 4;
-  BSHP<xms::XmUGrid> grid;
+  std::shared_ptr<xms::XmUGrid> grid;
   {
     boost::timer::cpu_timer timer;
     grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
@@ -1238,7 +1238,7 @@ void XmUGridUtilsTests::testLargeUGridBinarySpeed()
     std::cerr << "Write time: " + timer.format();
   }
 
-  BSHP<XmUGrid> gridRead;
+  std::shared_ptr<XmUGrid> gridRead;
   {
     std::ifstream input("speed_test_out.txt");
     boost::timer::cpu_timer timer;
@@ -1268,10 +1268,10 @@ void XmUGridUtilsTests::testReadReadyAtNextLine()
     "LEFT OVER LINE\n";
   std::istringstream input;
   input.str(inputText);
-  BSHP<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugrid);
 
-  BSHP<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGrid1Left90Tri();
   VecPt3d locations = ugrid->GetLocations();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), locations);
   VecInt cellstream = ugrid->GetCellstream();

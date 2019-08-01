@@ -2863,9 +2863,9 @@ XmUGridFaceOrientation XmUGrid::Impl::GetOrientationFromArea(int a_cellIdx, int 
 /// \brief Create a new XmUGrid.
 /// \return the new XmUGrid.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> XmUGrid::New()
+std::shared_ptr<XmUGrid> XmUGrid::New()
 {
-  BSHP<XmUGrid> ugrid(new XmUGrid());
+  std::shared_ptr<XmUGrid> ugrid(new XmUGrid());
   return ugrid;
 } // XmUGrid::New
 //------------------------------------------------------------------------------
@@ -2874,9 +2874,9 @@ BSHP<XmUGrid> XmUGrid::New()
 /// \param[in] a_cellstream the UGrid cell stream
 /// \return the new XmUGrid.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> XmUGrid::New(const VecPt3d& a_locations, const VecInt& a_cellstream)
+std::shared_ptr<XmUGrid> XmUGrid::New(const VecPt3d& a_locations, const VecInt& a_cellstream)
 {
-  BSHP<XmUGrid> ugrid = XmUGrid::New();
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New();
   ugrid->SetLocations(a_locations);
   ugrid->SetCellstream(a_cellstream);
   return ugrid;
@@ -3628,14 +3628,14 @@ XmUGridFaceOrientation XmUGrid::GetCell3dFaceOrientation(int a_cellIdx, int a_fa
 ///
 /// \endcode
 /// \return Returns a builder for the UGrid.
-BSHP<XmUGrid> TEST_XmUGrid1Left90Tri()
+std::shared_ptr<XmUGrid> TEST_XmUGrid1Left90Tri()
 {
   VecPt3d points = {{0, 0, 0}, {20, 0, 0}, {0, 20, 0}};
 
   // Cell type (5), number of points (3), point numbers, counterclockwise
   std::vector<int> cells = {5, 3, 0, 1, 2};
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
   return ugrid;
 } // TEST_UGrid1Left90Tri
@@ -3651,7 +3651,7 @@ BSHP<XmUGrid> TEST_XmUGrid1Left90Tri()
 ///
 /// \endcode
 /// \return Returns a builder for the UGrid.
-BSHP<XmUGrid> TEST_XmUGridSimpleQuad()
+std::shared_ptr<XmUGrid> TEST_XmUGridSimpleQuad()
 {
   VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
                     {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
@@ -3660,7 +3660,7 @@ BSHP<XmUGrid> TEST_XmUGridSimpleQuad()
   VecInt cellstream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2,
                        XMU_QUAD, 4, 3, 6, 7, 4, XMU_QUAD, 4, 4, 7, 8, 5};
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
   return ugrid;
 } // TEST_XmUGridSimpleQuad
 
@@ -3668,7 +3668,7 @@ BSHP<XmUGrid> TEST_XmUGridSimpleQuad()
 /// \brief Builds an XmUGrid with supported 1D and 2D linear cells for testing.
 /// \return Returns the XmUGrid.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> TEST_XmUGrid2dLinear()
+std::shared_ptr<XmUGrid> TEST_XmUGrid2dLinear()
 {
   // clang-format off
   //! [snip_test_2DShapes]
@@ -3686,7 +3686,7 @@ BSHP<XmUGrid> TEST_XmUGrid2dLinear()
   //! [snip_test_2DShapes]
   // clang-format on
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
   return ugrid;
 } // TEST_XmUGrid2dLinear
@@ -3694,7 +3694,7 @@ BSHP<XmUGrid> TEST_XmUGrid2dLinear()
 /// \brief Builds an XmUGrid with supported 3D linear cells for testing.
 /// \return Returns the XmUGrid.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> TEST_XmUGrid3dLinear()
+std::shared_ptr<XmUGrid> TEST_XmUGrid3dLinear()
 {
   // clang-format off
   //! [snip_test_3DShapes]
@@ -3721,7 +3721,7 @@ BSHP<XmUGrid> TEST_XmUGrid3dLinear()
   //! [snip_test_3DShapes]
   // clang-format on
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
   return ugrid;
 } // TEST_XmUGrid3dLinear
@@ -3729,7 +3729,7 @@ BSHP<XmUGrid> TEST_XmUGrid3dLinear()
 /// \brief Builds a 1 cell hexagon with cell type polyhedron.
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
+std::shared_ptr<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
 {
   VecPt3d points = {
     {0, 0, 10}, {10, 0, 10}, {10, 10, 10}, {0, 10, 10},
@@ -3748,7 +3748,7 @@ BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
                             4, 4, 7, 6, 5};
   // clang-format on
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cells);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cells);
 
   return ugrid;
 } // TEST_XmUGridHexagonalPolyhedron
@@ -3758,7 +3758,7 @@ BSHP<XmUGrid> TEST_XmUGridHexagonalPolyhedron()
 /// \param[in] a_cols number of columns in UGrid
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols)
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols)
 {
   Pt3d origin(0.0, 0.0, 0.0);
   return TEST_XmUBuildQuadUGrid(a_rows, a_cols, origin);
@@ -3770,7 +3770,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols)
 /// \param[in] a_origin location where the UGrid begins (min x, min y, min z)
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, const xms::Pt3d& a_origin)
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, const xms::Pt3d& a_origin)
 {
   VecPt3d points;
   points.reserve(a_rows * a_cols);
@@ -3806,7 +3806,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, const xms::Pt3
 /// \param[in] a_lays number of layers in UGrid
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_cols, int a_lays)
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_cols, int a_lays)
 {
   Pt3d origin(0.0, 0.0, 0.0);
   return TEST_XmUBuildHexahedronUgrid(a_rows, a_cols, a_lays, origin);
@@ -3819,7 +3819,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_cols, int a_la
 /// \param[in] a_origin locatGetPointLocation UGrid begins (min x, min y, min z)
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
                                                 int a_cols,
                                                 int a_lays,
                                                 const xms::Pt3d& a_origin)
@@ -3872,7 +3872,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
 /// \param[in] a_lays number of layers in UGrid
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_cols, int a_lays)
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_cols, int a_lays)
 {
   Pt3d origin(0.0, 0.0, 0.0);
   return TEST_XmUBuildPolyhedronUgrid(a_rows, a_cols, a_lays, origin);
@@ -3885,7 +3885,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_cols, int a_la
 /// \param[in] a_origin location wGetPointLocationd begins (min x, min y, min z)
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
                                                 int a_cols,
                                                 int a_lays,
                                                 const xms::Pt3d& a_origin)
@@ -3969,7 +3969,7 @@ BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
 /// \brief Builds a UGrid with one 3D Chevron polyhedron
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
 {
   VecPt3d ugridPoints = {{0.0, 0.0, 0.0},   {20.0, 10.0, 0.0}, {40.0, 0.0, 0.0},
                          {20.0, 50.0, 0.0}, {0.0, 0.0, 10.0},  {20.0, 10.0, 10.0},
@@ -4009,7 +4009,7 @@ using namespace xms;
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testOperators()
 {
-  BSHP<XmUGrid> xmUGrid = TEST_XmUGrid1Left90Tri();
+  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUGrid1Left90Tri();
 
   // test copy constructor
   XmUGrid grid1(*xmUGrid);
@@ -4033,7 +4033,7 @@ void XmUGridUnitTests::testOperators()
 void XmUGridUnitTests::testUGridStreams()
 {
   // test empty UGrid
-  BSHP<XmUGrid> emptyUGrid = XmUGrid::New();
+  std::shared_ptr<XmUGrid> emptyUGrid = XmUGrid::New();
   VecPt3d points = emptyUGrid->GetLocations();
   TS_ASSERT_EQUALS(0, points.size());
 
@@ -4049,7 +4049,7 @@ void XmUGridUnitTests::testUGridStreams()
   //     |    |    |
   //     6----7----8
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New();
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New();
 
   points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
             {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
@@ -4079,7 +4079,7 @@ void XmUGridUnitTests::testUGridStreams()
   TS_ASSERT(!XmUGrid::IsValidCellstream(cellstream));
 
   // Test adding cellstream then points (should fail)
-  BSHP<XmUGrid> ugridBadOrder = XmUGrid::New();
+  std::shared_ptr<XmUGrid> ugridBadOrder = XmUGrid::New();
   TS_ASSERT(!ugridBadOrder->SetCellstream(cellstream));
 
 } // XmUGridUnitTests::testUGridStreams
@@ -4103,7 +4103,7 @@ void XmUGridUnitTests::testGetSetPoint()
   // Cell type (9), number of points (4), point numbers, counterclockwise
   VecInt cellstream = {9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5};
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
   //! [snip_test_NewOperator]
 
   TS_ASSERT_EQUALS(Pt3d(), ugrid->GetPointLocation(-1));
@@ -4148,7 +4148,7 @@ void XmUGridUnitTests::testGetCellCellstream()
   cellstream.insert(cellstream.end(), cell2.begin(), cell2.end());
   cellstream.insert(cellstream.end(), cell3.begin(), cell3.end());
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
   VecInt cellResult;
 
   TS_ASSERT_EQUALS(false, ugrid->GetCellCellstream(-1, cellResult));
@@ -4170,7 +4170,7 @@ void XmUGridUnitTests::testGetCellCellstream()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCellType()
 {
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
   TS_ASSERT_EQUALS(14, ugrid2d->GetPointCount());
   TS_ASSERT_EQUALS(6, ugrid2d->GetCellCount());
@@ -4183,7 +4183,7 @@ void XmUGridUnitTests::testGetCellType()
   TS_ASSERT_EQUALS(XMU_POLY_LINE, ugrid2d->GetCellType(4));
   TS_ASSERT_EQUALS(XMU_LINE, ugrid2d->GetCellType(5));
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   TS_ASSERT_EQUALS(30, ugrid3d->GetPointCount());
@@ -4202,7 +4202,7 @@ void XmUGridUnitTests::testGetCellType()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCellDimension()
 {
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid2d->GetCellDimension(-1));
@@ -4214,7 +4214,7 @@ void XmUGridUnitTests::testGetCellDimension()
   TS_ASSERT_EQUALS(1, ugrid2d->GetCellDimension(4));
   TS_ASSERT_EQUALS(1, ugrid2d->GetCellDimension(5));
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   TS_ASSERT_EQUALS(XMU_INVALID_CELL_TYPE, ugrid3d->GetCellDimension(-1));
@@ -4235,7 +4235,7 @@ void XmUGridUnitTests::testGetCellDimension()
   TS_ASSERT_EQUALS(threeDResults, ugrid3d->GetDimensionCounts());
 
   // Test GetDimensionCounts with an empty grid
-  BSHP<XmUGrid> emptyUgrid = XmUGrid::New();
+  std::shared_ptr<XmUGrid> emptyUgrid = XmUGrid::New();
   std::vector<int> emptyResults = emptyUgrid->GetDimensionCounts();
   TS_ASSERT_EQUALS(VecInt(4, 0), emptyResults);
 } // XmUGridUnitTests::testGetCellDimension
@@ -4244,7 +4244,7 @@ void XmUGridUnitTests::testGetCellDimension()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetExtents()
 {
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   Pt3d min, max;
@@ -4253,7 +4253,7 @@ void XmUGridUnitTests::testGetExtents()
   TS_ASSERT_EQUALS(expectedMin, min);
   TS_ASSERT_EQUALS(expectMax, max);
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   expectedMin = {0.0, 0.0, 0.0};
@@ -4263,7 +4263,7 @@ void XmUGridUnitTests::testGetExtents()
   TS_ASSERT_EQUALS(expectMax, max);
 
   Pt3d origin(-25.0, -25.0, -15.0);
-  BSHP<XmUGrid> ugridBuild = TEST_XmUBuildHexahedronUgrid(51, 51, 31, origin);
+  std::shared_ptr<XmUGrid> ugridBuild = TEST_XmUBuildHexahedronUgrid(51, 51, 31, origin);
   TS_REQUIRE_NOT_NULL(ugridBuild);
 
   expectedMin = {-25.0, -25.0, -15.0};
@@ -4277,7 +4277,7 @@ void XmUGridUnitTests::testGetExtents()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCellEdgeCount()
 {
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCellEdgeCount(-1));
@@ -4289,7 +4289,7 @@ void XmUGridUnitTests::testGetCellEdgeCount()
   TS_ASSERT_EQUALS(2, ugrid2d->GetCellEdgeCount(4));
   TS_ASSERT_EQUALS(1, ugrid2d->GetCellEdgeCount(5));
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   TS_ASSERT_EQUALS(-1, ugrid3d->GetCellEdgeCount(-1));
@@ -4309,7 +4309,7 @@ void XmUGridUnitTests::testGetCellEdgeCount()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCell3dFaceCount()
 {
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   // test 1D and 2D cells
@@ -4320,7 +4320,7 @@ void XmUGridUnitTests::testGetCell3dFaceCount()
   }
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCell3dFaceCount(ugrid2d->GetCellCount()));
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   // test 3D cells
@@ -4340,7 +4340,7 @@ void XmUGridUnitTests::testGetCell3dFaceCount()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCell3dFacePointCount()
 {
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   // test 1D and 2D cells - should return 0 for valid cell index
@@ -4348,7 +4348,7 @@ void XmUGridUnitTests::testGetCell3dFacePointCount()
   TS_ASSERT_EQUALS(0, ugrid2d->GetCell3dFacePointCount(1, 0));
   TS_ASSERT_EQUALS(-1, ugrid2d->GetCell3dFacePointCount(ugrid2d->GetCellCount(), 0));
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   // test 3D cells
@@ -4370,7 +4370,7 @@ void XmUGridUnitTests::testGetPointAdjacentCellsSimple()
 
   VecInt cellstream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2};
 
-  BSHP<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
 
   VecInt cellEmpty = {};
   VecInt cellZero = {0};
@@ -4402,7 +4402,7 @@ void XmUGridUnitTests::testGetPointAdjacentCellsSimple()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetPointAdjacentCells()
 {
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   VecInt2d cellsFor2DPoints = {{0},          // point 0
@@ -4426,7 +4426,7 @@ void XmUGridUnitTests::testGetPointAdjacentCells()
     TS_ASSERT_EQUALS(cellsFor2DPoints[i], ugrid2d->GetPointAdjacentCells(i));
   }
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   VecInt2d cellsFor3DPoints = {{0},       // point 0
@@ -4477,7 +4477,7 @@ void XmUGridUnitTests::testGetPointAdjacentCells()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCellPoints()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt2d expectedGetCellPoints = {{0, 3, 4, 1}, {1, 4, 5, 2}, {3, 6, 7, 4}, {4, 7, 8, 5}};
@@ -4496,7 +4496,7 @@ void XmUGridUnitTests::testGetCellPoints()
   expectedGetCellPoints = {{0, 1, 6, 5},         {1, 2, 7, 6}, {2, 3, 7},
                            {3, 4, 8, 13, 12, 7}, {7, 11, 10},  {5, 9}};
   cellPoints.clear();
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   for (int i(0); i < ugrid2d->GetCellCount(); i++)
@@ -4514,7 +4514,7 @@ void XmUGridUnitTests::testGetCellPoints()
                            {5, 6, 11, 10, 20}};
   VecInt expectedPointCounts = {4, 8, 8, 8, 6, 5};
   cellPoints.clear();
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   for (int i(0); i < ugrid3d->GetCellCount(); i++)
@@ -4539,7 +4539,7 @@ void XmUGridUnitTests::testGetCellEdge()
   //     6-----7-----8
 
   // 2D shape (simple)
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   {
@@ -4585,7 +4585,7 @@ void XmUGridUnitTests::testGetCellEdge()
     XmEdge edge19(5, 9);                  // Line
 
     // 2D Shapes
-    BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+    std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
     TS_REQUIRE_NOT_NULL(ugrid2d);
 
     std::vector<std::vector<XmEdge>> expectedCellsCellEdges;
@@ -4611,7 +4611,7 @@ void XmUGridUnitTests::testGetCellEdge()
   //! [snip_test_GetCellEdgeFromEdgeIndex3D]
   {
     // 3D Shapes
-    BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+    std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
     TS_REQUIRE_NOT_NULL(ugrid3d);
 
     // clang-format off
@@ -4650,7 +4650,7 @@ void XmUGridUnitTests::testGetPointsAdjacentCells()
   //     |  2  |  3  |
   //     6-----7-----8
 
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedCells;
@@ -4715,7 +4715,7 @@ void XmUGridUnitTests::testGetCellAdjacentCells()
   //     |  2  |  3  |
   //     6-----7-----8
 
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedCells;
@@ -4736,7 +4736,7 @@ void XmUGridUnitTests::testGetCellAdjacentCells()
   retrievedCells.clear();
 
   // 2D Shapes
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   expectedCells = {1, 5};
@@ -4759,7 +4759,7 @@ void XmUGridUnitTests::testGetCellAdjacentCells()
   TS_ASSERT_EQUALS(expectedCells, retrievedCells);
 
   // 3D Shapes
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   expectedCells = {1, 5};
@@ -4795,7 +4795,7 @@ void XmUGridUnitTests::testGetCellEdgeAdjacentCells()
   //     |  2  |  3  |
   //     6-----7-----8
 
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedFail;
@@ -4822,7 +4822,7 @@ void XmUGridUnitTests::testGetCellEdgeAdjacentCells()
   TS_ASSERT_EQUALS(-1, adjacentCell);
 
   // Test a cell in the middle of an hexahedron grid
-  BSHP<XmUGrid> hexUgrid = TEST_XmUBuildHexahedronUgrid(5, 5, 5);
+  std::shared_ptr<XmUGrid> hexUgrid = TEST_XmUBuildHexahedronUgrid(5, 5, 5);
   TS_REQUIRE_NOT_NULL(hexUgrid);
 
   expectedCells = {{2, 6, 18},   {6, 7, 23},   {6, 10, 26},  {5, 6, 21},
@@ -4846,7 +4846,7 @@ void XmUGridUnitTests::testEdgeAdjacentCells()
   //     |  2  |  3  |
   //     6-----7-----8
 
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   VecInt expectedFail;
@@ -4889,7 +4889,7 @@ void XmUGridUnitTests::testGetCell3dFacePoints()
   VecInt cellFaces;
 
   // 2D Shapes
-  BSHP<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<XmUGrid> ugrid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(ugrid2d);
 
   cellFaces = ugrid2d->GetCell3dFacePoints(-1, 0);
@@ -4909,7 +4909,7 @@ void XmUGridUnitTests::testGetCell3dFacePoints()
   TS_ASSERT_EQUALS(emptyCellFaces, cellFaces);
 
   // 3D Shapes
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   expectedCellFaces = {// Tetra
@@ -4972,7 +4972,7 @@ void XmUGridUnitTests::testGetCell3dFaceAdjacentCell()
   int cols = 2;
   int lays = 2;
 
-  BSHP<xms::XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);
+  std::shared_ptr<xms::XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);
   TS_REQUIRE_NOT_NULL(grid);
 
   // clang-format off
@@ -5071,7 +5071,7 @@ void XmUGridUnitTests::testGetPointAdjacentPoints()
   //     |  2  |  3  |
   //     6-----7-----8
 
-  BSHP<xms::XmUGrid> grid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<xms::XmUGrid> grid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(grid);
 
   VecInt attachedIdxs;
@@ -5104,7 +5104,7 @@ void XmUGridUnitTests::testGetPointAdjacentPoints()
 void XmUGridUnitTests::testGetCellPlanViewPolygon()
 {
   // 2d
-  BSHP<xms::XmUGrid> grid2d = TEST_XmUGrid2dLinear();
+  std::shared_ptr<xms::XmUGrid> grid2d = TEST_XmUGrid2dLinear();
   TS_REQUIRE_NOT_NULL(grid2d);
 
   VecPt3d2d expectedPolygons{
@@ -5130,7 +5130,7 @@ void XmUGridUnitTests::testGetCellPlanViewPolygon()
   }
 
   // 3d
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   expectedPolygons = {{{0, 0, 0}, {10, 0, 0}, {0, 10, 0}},
@@ -5146,7 +5146,7 @@ void XmUGridUnitTests::testGetCellPlanViewPolygon()
     TS_ASSERT_EQUALS(expectedPolygons[i], viewPolygon);
   }
 
-  BSHP<xms::XmUGrid> chevronUgrid = TEST_XmUBuild3DChevronUgrid();
+  std::shared_ptr<xms::XmUGrid> chevronUgrid = TEST_XmUBuild3DChevronUgrid();
   TS_REQUIRE_NOT_NULL(chevronUgrid);
 
   expectedPolygons = {{{0.0, 0.0, 0.0}, {20.0, 10.0, 0.0}, {40.0, 0.0, 0.0}, {20.0, 50.0, 0.0}}};
@@ -5186,7 +5186,7 @@ void XmUGridUnitTests::testGetCellPlanViewPolygonMultiSideFace()
     XMU_TETRA, 4, 2, 16, 12, 17 // tetrahedron with 
   };
   // clang-format on
-  BSHP<XmUGrid> ugrid3d = XmUGrid::New(points, cells);
+  std::shared_ptr<XmUGrid> ugrid3d = XmUGrid::New(points, cells);
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   // vertically prismatic
@@ -5215,7 +5215,7 @@ void XmUGridUnitTests::testIsCellValidWithPointChange()
   // VecPt3d points = { { 0, 10, 0 }, { 10, 10, 0 }, { 20, 10, 0 }, { 0, 0, 0 }, { 10, 0, 0 },
   //{ 20, 0, 0 }, { 0, -10, 0 }, { 10, -10, 0 }, { 20, -10, 0 } };
 
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   Pt3d validPt = {5.0, 5.0, 0.0};
@@ -5224,7 +5224,7 @@ void XmUGridUnitTests::testIsCellValidWithPointChange()
   TS_ASSERT(ugrid->IsValidPointChange(4, validPt));
   TS_ASSERT(!ugrid->IsValidPointChange(4, invalid));
 
-  BSHP<XmUGrid> ugrid3d = TEST_XmUBuildHexahedronUgrid(4, 4, 4);
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUBuildHexahedronUgrid(4, 4, 4);
 
   validPt = ugrid3d->GetPointLocation(21);
   validPt.x += 0.5;
@@ -5245,7 +5245,7 @@ void XmUGridUnitTests::testIsCellValidWithPointChange()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testPointFunctions()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetPointCount
@@ -5301,7 +5301,7 @@ void XmUGridUnitTests::testPointFunctions()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testCellFunctions()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetCellPoints
@@ -5344,7 +5344,7 @@ void XmUGridUnitTests::testCellFunctions()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testCellstreamFunctions()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetCellstream
@@ -5371,7 +5371,7 @@ void XmUGridUnitTests::testCellEdgeAdjacentCellFunctions()
   //     3-----4-----5
   //     |  2  |  3  |
   //     6-----7-----8
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   // Get Adjacent Cells from cell and edge
@@ -5405,7 +5405,7 @@ void XmUGridUnitTests::testCellEdgeAdjacentCellFunctions()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testCellEdges()
 {
-  BSHP<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
+  std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridSimpleQuad();
   TS_REQUIRE_NOT_NULL(ugrid);
 
   // Test GetCellEdges
@@ -5422,7 +5422,7 @@ void XmUGridUnitTests::testCellEdges()
 void XmUGridUnitTests::testCell3dFaceFunctions()
 {
   // 3D Shapes
-  BSHP<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
+  std::shared_ptr<XmUGrid> ugrid3d = TEST_XmUGrid3dLinear();
   TS_REQUIRE_NOT_NULL(ugrid3d);
 
   VecInt cellFace;
@@ -5522,7 +5522,7 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()
 {
-  BSHP<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 2, 2, Pt3d());
+  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 2, 2, Pt3d());
   TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 0));
   TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
   TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
@@ -5577,7 +5577,7 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationConcaveCell()
   };
   // clang-format on
 
-  BSHP<XmUGrid> xmUGrid = XmUGrid::New(nodes, elements);
+  std::shared_ptr<XmUGrid> xmUGrid = XmUGrid::New(nodes, elements);
   VecInt actual;
   for (int faceIdx = 0; faceIdx < xmUGrid->GetCell3dFaceCount(0); ++faceIdx)
   {
@@ -5595,7 +5595,7 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationConcaveCell()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testCell3dFunctionCaching()
 {
-  BSHP<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 3, 2);
+  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 3, 2);
 
   VecInt2d expectedNeighbors = {{-1, 1, -1, -1, -1, -1}, {0, -1, -1, -1, -1, -1}};
   VecInt2d expectedOrientations = {
@@ -5631,7 +5631,7 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
                            XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM},
                           {XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
                            XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM}};
-  BSHP<XmUGrid> newXmUGrid = TEST_XmUBuildHexahedronUgrid(2, 4, 2);
+  std::shared_ptr<XmUGrid> newXmUGrid = TEST_XmUBuildHexahedronUgrid(2, 4, 2);
   xmUGrid->SetLocations(newXmUGrid->GetLocations());
   xmUGrid->SetCellstream(newXmUGrid->GetCellstream());
   for (bool useCacheValue : useCacheValues)
@@ -5664,13 +5664,13 @@ void XmUGridUnitTests::testLargeUGridLinkSpeed()
   int cols = 500;
   int lays = 4;
 
-  // BSHP<xms::XmUGrid> grid = TEST_XmUBuildQuadUGrid(rows, cols);
-  // BSHP<xms::XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);
-  BSHP<xms::XmUGrid> grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
+  // std::shared_ptr<xms::XmUGrid> grid = TEST_XmUBuildQuadUGrid(rows, cols);
+  // std::shared_ptr<xms::XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(rows, cols, lays);
+  std::shared_ptr<xms::XmUGrid> grid = TEST_XmUBuildPolyhedronUgrid(rows, cols, lays);
 
   {
     boost::timer::cpu_timer timer;
-    BSHP<XmUGrid> ugrid = XmUGrid::New(grid->GetLocations(), grid->GetCellstream());
+    std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(grid->GetLocations(), grid->GetCellstream());
     std::cerr << timer.format() << '\n';
   }
 

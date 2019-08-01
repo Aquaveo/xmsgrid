@@ -39,7 +39,7 @@ class XmUGrid;
 std::vector<Pt3d> ConvexHull(const std::vector<Pt3<double>>& a_points);
 
 // !!!Deprecated!!!
-VecInt ConvexHullWithIndices(const std::vector<int>& a_points, BSHP<XmUGrid> a_ugrid);
+VecInt ConvexHullWithIndices(const std::vector<int>& a_points, std::shared_ptr<XmUGrid> a_ugrid);
 
 // !!!Deprecated!!!
 bool DoLineSegmentsCross(const std::pair<Pt3<double>, Pt3<double>>& a_segment1,
