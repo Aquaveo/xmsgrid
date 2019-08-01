@@ -17,7 +17,6 @@
 namespace py = pybind11;
 
 //----- Python Interface -------------------------------------------------------
-PYBIND11_DECLARE_HOLDER_TYPE(T, boost::shared_ptr<T>);
 
 namespace {
 //------------------------------------------------------------------------------
@@ -67,19 +66,19 @@ py::iterable PyIterFromVecXmEdge(const std::vector<xms::XmEdge>& a_edges)
 
 void initXmUGrid(py::module &m) {
     // XmUGrid Class
-    py::class_<xms::XmUGrid, boost::shared_ptr<xms::XmUGrid>> xmUg(m, "XmUGrid");
+    py::class_<xms::XmUGrid, std::shared_ptr<xms::XmUGrid>> xmUg(m, "XmUGrid");
 
   // ---------------------------------------------------------------------------
   // function: init
   // ---------------------------------------------------------------------------
     xmUg.def(py::init([]() {
-            return boost::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New());
+            return std::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New());
         }));
 
     xmUg.def(py::init([](py::iterable pts, py::iterable cellstream) {
             boost::shared_ptr<xms::VecPt3d> points = xms::VecPt3dFromPyIter(pts);
             boost::shared_ptr<xms::VecInt> _cellstream = xms::VecIntFromPyIter(cellstream);
-            return boost::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New(*points, *_cellstream));
+            return std::shared_ptr<xms::XmUGrid>(xms::XmUGrid::New(*points, *_cellstream));
         }), py::arg("pts"), py::arg("cellstream"));
   // Misc Functions
   // ---------------------------------------------------------------------------

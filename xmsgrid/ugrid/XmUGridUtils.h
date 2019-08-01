@@ -34,10 +34,10 @@ class XmUGrid;
 //----- Function prototypes ----------------------------------------------------
 
 // IO
-BSHP<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath);
-BSHP<XmUGrid> XmReadUGridFromStream(std::istream& a_istream);
-void XmWriteUGridToAsciiFile(BSHP<XmUGrid> a_ugrid, const std::string& a_filePath);
-void XmWriteUGridToStream(BSHP<XmUGrid> a_ugrid, std::ostream& a_outStream);
+std::shared_ptr<XmUGrid> XmReadUGridFromAsciiFile(const std::string& a_filePath);
+std::shared_ptr<XmUGrid> XmReadUGridFromStream(std::istream& a_istream);
+void XmWriteUGridToAsciiFile(std::shared_ptr<XmUGrid> a_ugrid, const std::string& a_filePath);
+void XmWriteUGridToStream(std::shared_ptr<XmUGrid> a_ugrid, std::ostream& a_outStream);
 void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream, bool a_binary = false);
 
 } // namespace xms

@@ -18,7 +18,6 @@
 namespace py = pybind11;
 
 //----- Python Interface -------------------------------------------------------
-PYBIND11_DECLARE_HOLDER_TYPE(T, boost::shared_ptr<T>);
 
 namespace {
 
