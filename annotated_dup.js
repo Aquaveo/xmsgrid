@@ -20,8 +20,6 @@ var annotated_dup =
     [ "TrTinUnitTests", "class_tr_tin_unit_tests.html", "class_tr_tin_unit_tests" ],
     [ "TrTriangulatorPointsUnitTests", "class_tr_triangulator_points_unit_tests.html", "class_tr_triangulator_points_unit_tests" ],
     [ "XmEdgeUnitTests", "class_xm_edge_unit_tests.html", "class_xm_edge_unit_tests" ],
-    [ "XmGeometryUnitTests", "class_xm_geometry_unit_tests.html", "class_xm_geometry_unit_tests" ],
-    [ "XmUGridTests", "class_xm_u_grid_tests.html", null ],
     [ "XmUGridUnitTests", "class_xm_u_grid_unit_tests.html", "class_xm_u_grid_unit_tests" ],
     [ "XmUGridUtilsTests", "class_xm_u_grid_utils_tests.html", "class_xm_u_grid_utils_tests" ]
 ];

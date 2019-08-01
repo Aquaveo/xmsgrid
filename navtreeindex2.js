@@ -1,5 +1,7 @@
 var NAVTREEINDEX2 =
 {
+"classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a7bacf816a4c3b4eae33cd5a36007655a":[5,0,0,6,12],
+"classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a9cd8f532b56f11e5600f2910051daaff":[5,0,0,6,4],
 "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#aab32ba927a9062f1c95c5a2e1bedb62d":[5,0,0,6,9],
 "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ab19ab5f34e20a4cce4d5ef18e6e914f3":[5,0,0,6,2],
 "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ab8b8a8153fae932c73a83a639f8ac7ad":[5,0,0,6,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX2 =
 "classxms_1_1_tr_tin_impl.html#a8947cb759381812e9b2b906b48874553":[5,0,0,28,26],
 "classxms_1_1_tr_tin_impl.html#a89fad78d3d1f79fbfff7684e9323cc0b":[5,0,0,28,14],
 "classxms_1_1_tr_tin_impl.html#a8b2ebdfcba14a1d76554c9cd077a7026":[5,0,0,28,17],
-"classxms_1_1_tr_tin_impl.html#a8dbab5f6b33aeb379c704a7b2343269a":[5,0,0,28,48],
-"classxms_1_1_tr_tin_impl.html#a92fa71c48a02cb66695487cf01fef1cc":[5,0,0,28,6],
-"classxms_1_1_tr_tin_impl.html#a9f129e46ee51dbc0b3d3fef0cb794b0a":[5,0,0,28,54]
+"classxms_1_1_tr_tin_impl.html#a8dbab5f6b33aeb379c704a7b2343269a":[5,0,0,28,48]
 };

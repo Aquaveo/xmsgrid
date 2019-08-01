@@ -32,6 +32,5 @@ var namespacexms =
     [ "TrTriangulator", "classxms_1_1_tr_triangulator.html", "classxms_1_1_tr_triangulator" ],
     [ "TrTriangulatorPoints", "classxms_1_1_tr_triangulator_points.html", "classxms_1_1_tr_triangulator_points" ],
     [ "XmEdge", "classxms_1_1_xm_edge.html", "classxms_1_1_xm_edge" ],
-    [ "XmUGrid", "classxms_1_1_xm_u_grid.html", "classxms_1_1_xm_u_grid" ],
-    [ "XmUGridImpl", "classxms_1_1_xm_u_grid_impl.html", "classxms_1_1_xm_u_grid_impl" ]
+    [ "XmUGrid", "classxms_1_1_xm_u_grid.html", "classxms_1_1_xm_u_grid" ]
 ];

@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['_7edastreamreader',['~DaStreamReader',['https://aquaveo.github.io/xmscore/classxms_1_1_da_stream_reader.html#aad5dc1455f83c68d4acff807b43e825c',1,'xms::DaStreamReader']]],
+  ['_7edastreamwriter',['~DaStreamWriter',['https://aquaveo.github.io/xmscore/classxms_1_1_da_stream_writer.html#a1f25e755097823e1a1e8736c29862259',1,'xms::DaStreamWriter']]],
   ['_7egmextents2d',['~GmExtents2d',['../classxms_1_1_gm_extents2d.html#a199a9513a66ab4e8ca031c93a60502ce',1,'xms::GmExtents2d']]],
   ['_7egmpolygon',['~GmPolygon',['../classxms_1_1_gm_polygon.html#a044fc1abedbc680be3610e0078383b9c',1,'xms::GmPolygon']]],
   ['_7egmtrisearch',['~GmTriSearch',['../classxms_1_1_gm_tri_search.html#ac56072f01e9da1702618ee7255bb91c0',1,'xms::GmTriSearch']]],

@@ -109,6 +109,10 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structxms_1_1_barycentric_vals.html">BarycentricVals</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure for Barycentric coordinate calculations.  <a href="structxms_1_1_barycentric_vals.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_da_stream_reader.html">DaStreamReader</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_da_stream_writer.html">DaStreamWriter</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structxms_1_1edgerecord.html">edgerecord</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines an edge that intersects a breakline.  <a href="structxms_1_1edgerecord.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -232,9 +236,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geometry for an unstructured grid. An <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> is defined as a vector of 3d points and a stream of cells. Throughout this interface, we use these terms:  <a href="classxms_1_1_xm_u_grid.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html">XmUGridImpl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation for <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>.  <a href="classxms_1_1_xm_u_grid_impl.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -282,9 +283,10 @@ typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 typedef bgi::quadratic&lt; 8 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a528acc66ce7a7889c76de85b6d5d5a23">qRtree</a></td></tr>
 <tr class="memdesc:a528acc66ce7a7889c76de85b6d5d5a23"><td class="mdescLeft">&#160;</td><td class="mdescRight">qRtree <br /></td></tr>
 <tr class="separator:a528acc66ce7a7889c76de85b6d5d5a23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af61a52173b72612c5609d7a0549832c3"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="structxms_1_1edgerecord.html">edgerecord</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#af61a52173b72612c5609d7a0549832c3">VecEdge</a></td></tr>
-<tr class="memdesc:af61a52173b72612c5609d7a0549832c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector of edgerecord.  <a href="#af61a52173b72612c5609d7a0549832c3">More...</a><br /></td></tr>
-<tr class="separator:af61a52173b72612c5609d7a0549832c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7541b74c2b86c70e57e863b57304bdcc"><td class="memItemLeft" align="right" valign="top"><a id="a7541b74c2b86c70e57e863b57304bdcc"></a>
+typedef std::vector&lt; <a class="el" href="structxms_1_1edgerecord.html">edgerecord</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a7541b74c2b86c70e57e863b57304bdcc">VecEdge</a></td></tr>
+<tr class="memdesc:a7541b74c2b86c70e57e863b57304bdcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector of edgerecord. <br /></td></tr>
+<tr class="separator:a7541b74c2b86c70e57e863b57304bdcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -431,6 +433,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a06f4c8c6bc396759e5d8953d85530b46"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a06f4c8c6bc396759e5d8953d85530b46">gmCross2D</a> (const double &amp;dx1, const double &amp;dy1, const double &amp;dx2, const double &amp;dy2)</td></tr>
 <tr class="memdesc:a06f4c8c6bc396759e5d8953d85530b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the cross product of two 2-d vectors.  <a href="#a06f4c8c6bc396759e5d8953d85530b46">More...</a><br /></td></tr>
 <tr class="separator:a06f4c8c6bc396759e5d8953d85530b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a477b039c6c57c8bbe95fe341eb5b1164"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a477b039c6c57c8bbe95fe341eb5b1164">gmCross2D</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_origin, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_A, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_B)</td></tr>
+<tr class="memdesc:a477b039c6c57c8bbe95fe341eb5b1164"><td class="mdescLeft">&#160;</td><td class="mdescRight">2D cross product of two points  <a href="#a477b039c6c57c8bbe95fe341eb5b1164">More...</a><br /></td></tr>
+<tr class="separator:a477b039c6c57c8bbe95fe341eb5b1164"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacf14a948fef6fc782b4e7210652ad35"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#aacf14a948fef6fc782b4e7210652ad35">gmAngleBetween2DVectors</a> (double dxp, double dyp, double dxn, double dyn)</td></tr>
 <tr class="memdesc:aacf14a948fef6fc782b4e7210652ad35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the angle (0-2PI) in radians between the edges p and n based on a ccw rotation from p to n.  <a href="#aacf14a948fef6fc782b4e7210652ad35">More...</a><br /></td></tr>
 <tr class="separator:aacf14a948fef6fc782b4e7210652ad35"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -476,6 +481,9 @@ Functions</h2></td></tr>
 <tr class="memitem:adc56691197d92d60abcb0e77e48df4ea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#adc56691197d92d60abcb0e77e48df4ea">gmLinesIntersect</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;one1, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;one2, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;two1, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;two2)</td></tr>
 <tr class="memdesc:adc56691197d92d60abcb0e77e48df4ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">intersects the plan projection of two line segments (bad func name) segment 1 = one1,one2 = one1 + lambda(one2 - one1) segment 2 = two1,two2 = two1 + mu (two2 - two1)  <a href="#adc56691197d92d60abcb0e77e48df4ea">More...</a><br /></td></tr>
 <tr class="separator:adc56691197d92d60abcb0e77e48df4ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a576c914d0519eaeab0e4494e4f000c75"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a576c914d0519eaeab0e4494e4f000c75">gmLinesCross</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_segment1Point1, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_segment1Point2, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_segment2Point1, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_segment2Point2)</td></tr>
+<tr class="memdesc:a576c914d0519eaeab0e4494e4f000c75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether 2 line segments cross. The segments may touch at the end points.  <a href="#a576c914d0519eaeab0e4494e4f000c75">More...</a><br /></td></tr>
+<tr class="separator:a576c914d0519eaeab0e4494e4f000c75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43bab17fe8d6f6b67de11a49e5127424"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a43bab17fe8d6f6b67de11a49e5127424"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacexms.html#a43bab17fe8d6f6b67de11a49e5127424">gmPointInPolygon2D</a> (const T *a_verts, const size_t a_num, const double a_x, const double a_y, const double a_tol)</td></tr>
 <tr class="memdesc:a43bab17fe8d6f6b67de11a49e5127424"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether (a_x, a_y) is inside=1, on=0, or outside=-1 the polygon defined by the given vertices.  <a href="#a43bab17fe8d6f6b67de11a49e5127424">More...</a><br /></td></tr>
@@ -590,6 +598,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a9684415f055c6e1f7b779d3a9e84f609"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a9684415f055c6e1f7b779d3a9e84f609">gm2DDistanceToLineWithTol</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> *a_pt1, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> *a_pt2, double a_x, double a_y, double a_tol)</td></tr>
 <tr class="memdesc:a9684415f055c6e1f7b779d3a9e84f609"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the xy distance from (a_x,a_y) to line through (a_pt1, a_pt2)  <a href="#a9684415f055c6e1f7b779d3a9e84f609">More...</a><br /></td></tr>
 <tr class="separator:a9684415f055c6e1f7b779d3a9e84f609"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74e3df59e816303d09c6923d6e8d7272"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a74e3df59e816303d09c6923d6e8d7272">gmGetConvexHull</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_pts, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;a_hull, bool a_includeOn)</td></tr>
+<tr class="memdesc:a74e3df59e816303d09c6923d6e8d7272"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate convex hull using Monotone chain aka Andrew's algorithm.  <a href="#a74e3df59e816303d09c6923d6e8d7272">More...</a><br /></td></tr>
+<tr class="separator:a74e3df59e816303d09c6923d6e8d7272"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99db03c7ac0beff008fd1d9b5795f7cb"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a99db03c7ac0beff008fd1d9b5795f7cb">iDistanceToRing</a> (const <a class="el" href="namespacexms.html#a4d04b2e2f10cd613e47211b9ac69784e">GmBstRing3d</a> &amp;a_ring, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;a_pt)</td></tr>
 <tr class="memdesc:a99db03c7ac0beff008fd1d9b5795f7cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the minimum distance from the point to a line on the ring.  <a href="#a99db03c7ac0beff008fd1d9b5795f7cb">More...</a><br /></td></tr>
 <tr class="separator:a99db03c7ac0beff008fd1d9b5795f7cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -663,16 +674,16 @@ Functions</h2></td></tr>
 <tr class="memdesc:a66eebefbcd706efc80c4ca1cdceb05d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Boost serialize function.  <a href="#a66eebefbcd706efc80c4ca1cdceb05d3">More...</a><br /></td></tr>
 <tr class="separator:a66eebefbcd706efc80c4ca1cdceb05d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8bf3a5f5a2e5003c8de8e44a75fa9cde"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a8bf3a5f5a2e5003c8de8e44a75fa9cde">ConvexHull</a> (const std::vector&lt; <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt;&gt; &amp;a_points)</td></tr>
-<tr class="memdesc:a8bf3a5f5a2e5003c8de8e44a75fa9cde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the convex hull of a set of points.  <a href="#a8bf3a5f5a2e5003c8de8e44a75fa9cde">More...</a><br /></td></tr>
+<tr class="memdesc:a8bf3a5f5a2e5003c8de8e44a75fa9cde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the convex hull of a set of points (Deprecated).  <a href="#a8bf3a5f5a2e5003c8de8e44a75fa9cde">More...</a><br /></td></tr>
 <tr class="separator:a8bf3a5f5a2e5003c8de8e44a75fa9cde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d5547f30586a0da0391aa281a4ef559"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#ad81e1ef6499bc0e65df973717a1e2fbb">VecInt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a8d5547f30586a0da0391aa281a4ef559">ConvexHullWithIndices</a> (const std::vector&lt; int &gt; &amp;a_points, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt; a_ugrid)</td></tr>
-<tr class="memdesc:a8d5547f30586a0da0391aa281a4ef559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the convex hull of a set of points.  <a href="#a8d5547f30586a0da0391aa281a4ef559">More...</a><br /></td></tr>
+<tr class="memdesc:a8d5547f30586a0da0391aa281a4ef559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the convex hull of a set of points (Deprecated).  <a href="#a8d5547f30586a0da0391aa281a4ef559">More...</a><br /></td></tr>
 <tr class="separator:a8d5547f30586a0da0391aa281a4ef559"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea9cf0b2bb6a3c1fc4d36d6defebecfe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#aea9cf0b2bb6a3c1fc4d36d6defebecfe">DoLineSegmentsCross</a> (const std::pair&lt; <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt;, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt;&gt; &amp;a_segment1, const std::pair&lt; <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt;, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt;&gt; &amp;a_segment2)</td></tr>
-<tr class="memdesc:aea9cf0b2bb6a3c1fc4d36d6defebecfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether 2 line segments intersect.  <a href="#aea9cf0b2bb6a3c1fc4d36d6defebecfe">More...</a><br /></td></tr>
+<tr class="memdesc:aea9cf0b2bb6a3c1fc4d36d6defebecfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether 2 line segments intersect (Deprecated).  <a href="#aea9cf0b2bb6a3c1fc4d36d6defebecfe">More...</a><br /></td></tr>
 <tr class="separator:aea9cf0b2bb6a3c1fc4d36d6defebecfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3978b6fc01a80623f117b8642e64f85"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#ac3978b6fc01a80623f117b8642e64f85">DoLineSegmentsCross</a> (const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt; &amp;a_segment1Point1, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt; &amp;a_segment1Point2, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt; &amp;a_segment2Point1, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html">Pt3</a>&lt; double &gt; &amp;a_segment2Point2)</td></tr>
-<tr class="memdesc:ac3978b6fc01a80623f117b8642e64f85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether 2 line segments cross.  <a href="#ac3978b6fc01a80623f117b8642e64f85">More...</a><br /></td></tr>
+<tr class="memdesc:ac3978b6fc01a80623f117b8642e64f85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether 2 line segments cross (Deprecated).  <a href="#ac3978b6fc01a80623f117b8642e64f85">More...</a><br /></td></tr>
 <tr class="separator:ac3978b6fc01a80623f117b8642e64f85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78f807814aab6186ecac3c7f44a9af37"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a78f807814aab6186ecac3c7f44a9af37">XmEdgesEquivalent</a> (const <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &amp;a_edge1, const <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &amp;a_edge2)</td></tr>
 <tr class="memdesc:a78f807814aab6186ecac3c7f44a9af37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if two edges are the same ignoring direction.  <a href="#a78f807814aab6186ecac3c7f44a9af37">More...</a><br /></td></tr>
@@ -692,24 +703,24 @@ Functions</h2></td></tr>
 <tr class="memitem:a15d3f924e7e8424b2c491ef2132b700c"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a15d3f924e7e8424b2c491ef2132b700c">TEST_XmUGridHexagonalPolyhedron</a> ()</td></tr>
 <tr class="memdesc:a15d3f924e7e8424b2c491ef2132b700c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a 1 cell hexagon with cell type polyhedron.  <a href="#a15d3f924e7e8424b2c491ef2132b700c">More...</a><br /></td></tr>
 <tr class="separator:a15d3f924e7e8424b2c491ef2132b700c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66cfca71e0f54169d0175e75a1da1b9f"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a66cfca71e0f54169d0175e75a1da1b9f">TEST_XmUBuildQuadUGrid</a> (const int a_rows, const int a_cols)</td></tr>
-<tr class="memdesc:a66cfca71e0f54169d0175e75a1da1b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a66cfca71e0f54169d0175e75a1da1b9f">More...</a><br /></td></tr>
-<tr class="separator:a66cfca71e0f54169d0175e75a1da1b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae795f753066bfd3749f441b965aba896"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#ae795f753066bfd3749f441b965aba896">TEST_XmUBuildQuadUGrid</a> (const int a_rows, const int a_cols, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
-<tr class="memdesc:ae795f753066bfd3749f441b965aba896"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#ae795f753066bfd3749f441b965aba896">More...</a><br /></td></tr>
-<tr class="separator:ae795f753066bfd3749f441b965aba896"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a50a2c6d678fa5e90212d03fecd3f44"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a0a50a2c6d678fa5e90212d03fecd3f44">TEST_XmUBuildHexahedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays)</td></tr>
-<tr class="memdesc:a0a50a2c6d678fa5e90212d03fecd3f44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a0a50a2c6d678fa5e90212d03fecd3f44">More...</a><br /></td></tr>
-<tr class="separator:a0a50a2c6d678fa5e90212d03fecd3f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b7018697957bbe8aed198fe6cf69a07"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a9b7018697957bbe8aed198fe6cf69a07">TEST_XmUBuildHexahedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
-<tr class="memdesc:a9b7018697957bbe8aed198fe6cf69a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a9b7018697957bbe8aed198fe6cf69a07">More...</a><br /></td></tr>
-<tr class="separator:a9b7018697957bbe8aed198fe6cf69a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a512cd32ebbe039154d962c0d47a6e4fc"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a512cd32ebbe039154d962c0d47a6e4fc">TEST_XmUBuildPolyhedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays)</td></tr>
-<tr class="memdesc:a512cd32ebbe039154d962c0d47a6e4fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a512cd32ebbe039154d962c0d47a6e4fc">More...</a><br /></td></tr>
-<tr class="separator:a512cd32ebbe039154d962c0d47a6e4fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b241889d06a379363e269e80a06ea1c"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a6b241889d06a379363e269e80a06ea1c">TEST_XmUBuildPolyhedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
-<tr class="memdesc:a6b241889d06a379363e269e80a06ea1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a6b241889d06a379363e269e80a06ea1c">More...</a><br /></td></tr>
-<tr class="separator:a6b241889d06a379363e269e80a06ea1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4060e4f462e3b4be62e1e4ec5ad518db"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a4060e4f462e3b4be62e1e4ec5ad518db">TEST_XmUBuildQuadUGrid</a> (int a_rows, int a_cols)</td></tr>
+<tr class="memdesc:a4060e4f462e3b4be62e1e4ec5ad518db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a4060e4f462e3b4be62e1e4ec5ad518db">More...</a><br /></td></tr>
+<tr class="separator:a4060e4f462e3b4be62e1e4ec5ad518db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a934ef910c886d3a7c635e20161271a34"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a934ef910c886d3a7c635e20161271a34">TEST_XmUBuildQuadUGrid</a> (int a_rows, int a_cols, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
+<tr class="memdesc:a934ef910c886d3a7c635e20161271a34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a934ef910c886d3a7c635e20161271a34">More...</a><br /></td></tr>
+<tr class="separator:a934ef910c886d3a7c635e20161271a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56cfb9438b4307bfe2541b8ff1830628"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a56cfb9438b4307bfe2541b8ff1830628">TEST_XmUBuildHexahedronUgrid</a> (int a_rows, int a_cols, int a_lays)</td></tr>
+<tr class="memdesc:a56cfb9438b4307bfe2541b8ff1830628"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a56cfb9438b4307bfe2541b8ff1830628">More...</a><br /></td></tr>
+<tr class="separator:a56cfb9438b4307bfe2541b8ff1830628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a179b7fab69fb99e844f727543feafa4f"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a179b7fab69fb99e844f727543feafa4f">TEST_XmUBuildHexahedronUgrid</a> (int a_rows, int a_cols, int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
+<tr class="memdesc:a179b7fab69fb99e844f727543feafa4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a179b7fab69fb99e844f727543feafa4f">More...</a><br /></td></tr>
+<tr class="separator:a179b7fab69fb99e844f727543feafa4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeefffe6fa733a4912b83cf32364d2718"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#aeefffe6fa733a4912b83cf32364d2718">TEST_XmUBuildPolyhedronUgrid</a> (int a_rows, int a_cols, int a_lays)</td></tr>
+<tr class="memdesc:aeefffe6fa733a4912b83cf32364d2718"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#aeefffe6fa733a4912b83cf32364d2718">More...</a><br /></td></tr>
+<tr class="separator:aeefffe6fa733a4912b83cf32364d2718"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588bfc31a2511a832b6a2291e24997ea"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a588bfc31a2511a832b6a2291e24997ea">TEST_XmUBuildPolyhedronUgrid</a> (int a_rows, int a_cols, int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
+<tr class="memdesc:a588bfc31a2511a832b6a2291e24997ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="#a588bfc31a2511a832b6a2291e24997ea">More...</a><br /></td></tr>
+<tr class="separator:a588bfc31a2511a832b6a2291e24997ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18cc668860be57dfc3d4800446ab6dfb"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a18cc668860be57dfc3d4800446ab6dfb">TEST_XmUBuild3DChevronUgrid</a> ()</td></tr>
 <tr class="memdesc:a18cc668860be57dfc3d4800446ab6dfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid with one 3D Chevron polyhedron.  <a href="#a18cc668860be57dfc3d4800446ab6dfb">More...</a><br /></td></tr>
 <tr class="separator:a18cc668860be57dfc3d4800446ab6dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -725,33 +736,13 @@ Functions</h2></td></tr>
 <tr class="memitem:adcf5db1fd47ba0560a24e9ae63b942df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#adcf5db1fd47ba0560a24e9ae63b942df">XmWriteUGridToStream</a> (<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt; a_ugrid, std::ostream &amp;a_outStream)</td></tr>
 <tr class="memdesc:adcf5db1fd47ba0560a24e9ae63b942df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save an <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> ASCII text to output stream.  <a href="#adcf5db1fd47ba0560a24e9ae63b942df">More...</a><br /></td></tr>
 <tr class="separator:adcf5db1fd47ba0560a24e9ae63b942df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7e35a02bf354662441212141a4a91e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#ab7e35a02bf354662441212141a4a91e3">XmWriteUGridToStream</a> (const <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &amp;a_ugrid, std::ostream &amp;a_outStream)</td></tr>
-<tr class="memdesc:ab7e35a02bf354662441212141a4a91e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save an <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> ASCII text to output stream.  <a href="#ab7e35a02bf354662441212141a4a91e3">More...</a><br /></td></tr>
-<tr class="separator:ab7e35a02bf354662441212141a4a91e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a089a787adbb806cc55d8751b8ffb3a8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a089a787adbb806cc55d8751b8ffb3a8d">XmWriteUGridToStream</a> (const <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &amp;a_ugrid, std::ostream &amp;a_outStream, bool a_binary)</td></tr>
+<tr class="memdesc:a089a787adbb806cc55d8751b8ffb3a8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save an <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> ASCII text to output stream.  <a href="#a089a787adbb806cc55d8751b8ffb3a8d">More...</a><br /></td></tr>
+<tr class="separator:a089a787adbb806cc55d8751b8ffb3a8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>XMS Namespace. </p>
-</div><h2 class="groupheader">Typedef Documentation</h2>
-<a id="af61a52173b72612c5609d7a0549832c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af61a52173b72612c5609d7a0549832c3">&#9670;&nbsp;</a></span>VecEdge</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef std::vector&lt; <a class="el" href="classxms_1_1_xm_edge.html">XmEdge</a> &gt; <a class="el" href="namespacexms.html#af61a52173b72612c5609d7a0549832c3">xms::VecEdge</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Vector of edgerecord. </p>
-<p>A Vector of XmEdges. </p>
-
-<p class="definition">Definition at line <a class="el" href="_tr_breakline_adder_8cpp_source.html#l00057">57</a> of file <a class="el" href="_tr_breakline_adder_8cpp_source.html">TrBreaklineAdder.cpp</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Enumeration Type Documentation</h2>
+</div><h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a89f7d814569daefeabe9f5e3b5fbd213"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a89f7d814569daefeabe9f5e3b5fbd213">&#9670;&nbsp;</a></span>PtInOutOrOn_enum</h2>
 
@@ -825,7 +816,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the convex hull of a set of points. </p>
+<p>Returns the convex hull of a set of points (Deprecated). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">a_points</td><td>The list of points </td></tr>
@@ -835,9 +826,11 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the list of points in the convex hull </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>a convex hull is the minimum set of points which contains (not connects) all of the points in a set and is convex. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00070">70</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00055">55</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_geometry_8cpp_source.html#l00108">ConvexHullWithIndices()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02774">xms::XmUGridImpl::GetPlanViewPolygon3d()</a>, and <a class="el" href="_xm_geometry_8cpp_source.html#l00194">XmGeometryUnitTests::testConvexHull()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l02211">gmGetConvexHull()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_xm_geometry_8cpp_source.html#l00070">ConvexHullWithIndices()</a>.</p>
 
 </div>
 </div>
@@ -867,7 +860,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Returns the convex hull of a set of points. </p>
+<p>Returns the convex hull of a set of points (Deprecated). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">a_points</td><td>The list of indices to points </td></tr>
@@ -878,9 +871,9 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>the list of indices to points in the convex hull </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>a convex hull is the minimum set of points which contains (not connects) all of the points in a set and is convex. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00108">108</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00070">70</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_geometry_8cpp_source.html#l00070">ConvexHull()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_geometry_8cpp_source.html#l00055">ConvexHull()</a>.</p>
 
 </div>
 </div>
@@ -910,7 +903,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Determine whether 2 line segments intersect. </p>
+<p>Determine whether 2 line segments intersect (Deprecated). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">a_segment1</td><td>The first line segment </td></tr>
@@ -920,9 +913,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the line segments intersect </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00136">136</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00099">99</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01708">xms::XmUGridImpl::DoEdgesCrossWithPointChange()</a>, and <a class="el" href="_xm_geometry_8cpp_source.html#l00225">XmGeometryUnitTests::testDoLineSegmentsCross()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01013">gmLinesCross()</a>.</p>
 
 </div>
 </div>
@@ -964,7 +957,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Determine whether 2 line segments cross. </p>
+<p>Determine whether 2 line segments cross (Deprecated). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">a_segment1Point1</td><td>First point 3d of line segment 1 </td></tr>
@@ -976,7 +969,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the line segments cross </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00151">151</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_geometry_8cpp_source.html#l00115">115</a> of file <a class="el" href="_xm_geometry_8cpp_source.html">XmGeometry.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01013">gmLinesCross()</a>.</p>
 
 </div>
 </div>
@@ -1037,7 +1032,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>distance from a_x,a_y to the line (a_pt1, a_pt2) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02112">2112</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02177">2177</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
@@ -1085,9 +1080,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00762">762</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00787">787</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00261">xms::GmMultiPolyIntersectorImpl::BuildRTree()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00205">xms::GmMultiPolyIntersectorImpl::CalculateBuffer()</a>, <a class="el" href="_tr_tin_8cpp_source.html#l00857">xms::TrTinImpl::GetExtents()</a>, <a class="el" href="geoms_8cpp_source.html#l01756">gmExtents2D()</a>, <a class="el" href="geoms_8cpp_source.html#l01791">gmExtents3D()</a>, and <a class="el" href="_tr_triangulator_points_8cpp_source.html#l00195">xms::TrTriangulatorPoints::UpdateAreaTolerance()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00261">xms::GmMultiPolyIntersectorImpl::BuildRTree()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00205">xms::GmMultiPolyIntersectorImpl::CalculateBuffer()</a>, <a class="el" href="_tr_tin_8cpp_source.html#l00857">xms::TrTinImpl::GetExtents()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02435">xms::XmUGrid::Impl::GetExtentsFromPoints()</a>, <a class="el" href="geoms_8cpp_source.html#l01821">gmExtents2D()</a>, <a class="el" href="geoms_8cpp_source.html#l01856">gmExtents3D()</a>, and <a class="el" href="_tr_triangulator_points_8cpp_source.html#l00195">xms::TrTriangulatorPoints::UpdateAreaTolerance()</a>.</p>
 
 </div>
 </div>
@@ -1131,7 +1126,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00777">777</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00802">802</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -1175,7 +1170,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00790">790</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00815">815</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -1229,11 +1224,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The angle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00578">578</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00603">603</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00630">gmAngleBetweenEdges()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00655">gmAngleBetweenEdges()</a>.</p>
 
 </div>
 </div>
@@ -1301,9 +1296,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The angle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00597">597</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00622">622</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00565">gmCross2D()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00579">gmCross2D()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>.</p>
 
 </div>
 </div>
@@ -1350,9 +1345,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The angle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00630">630</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00655">655</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00578">gmAngleBetween2DVectors()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00603">gmAngleBetween2DVectors()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_tr_tin_8cpp_source.html#l00419">xms::TrTinImpl::SwapEdge()</a>.</p>
 
@@ -1401,9 +1396,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The angle. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00647">647</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00672">672</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00578">gmAngleBetween2DVectors()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00603">gmAngleBetween2DVectors()</a>.</p>
 
 </div>
 </div>
@@ -1443,7 +1438,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Vector of Pt3d. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01525">1525</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01590">1590</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_gm_polygon_8cpp_source.html#l00624">GmPolygonUnitTests::SetUpPolyWithHole()</a>.</p>
 
@@ -1527,7 +1522,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>XM_SUCCESS or XM_FAILURE. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00301">301</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00315">315</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a49767d69c41924570a9ba7618a1ab347">Mmin()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a7f96d1229a7678847a8bb97c0d51af50">XM_SUCCESS</a>.</p>
 
@@ -1578,9 +1573,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>angle that bisects the edges </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01836">1836</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01901">1901</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00565">gmCross2D()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00579">gmCross2D()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>.</p>
 
 </div>
 </div>
@@ -1634,7 +1629,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the boxes overlap </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00065">65</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00079">79</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -1708,7 +1703,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00091">91</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00105">105</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -1782,7 +1777,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00113">113</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00127">127</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -1843,7 +1838,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>XM_SUCCESS (always it seems) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00261">261</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00275">275</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a7f96d1229a7678847a8bb97c0d51af50">XM_SUCCESS</a>.</p>
 
@@ -1922,11 +1917,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>false on error (triangle has zero area), otherwise true </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00204">204</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00218">218</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00158">gmPtInCircumcircle()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00172">gmPtInCircumcircle()</a>.</p>
 
 </div>
 </div>
@@ -1980,11 +1975,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if colinear. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00379">379</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00393">393</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00707">gmOnLineWithTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00732">gmOnLineWithTol()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00406">gmIntersectLineSegmentsWithTol()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00420">gmIntersectLineSegmentsWithTol()</a>.</p>
 
 </div>
 </div>
@@ -2044,7 +2039,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01876">1876</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01941">1941</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2a0754bc3b4dbca0eb229608e31a4550">XM_ZERO_TOL</a>.</p>
 
@@ -2075,9 +2070,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Centroid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00870">870</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00895">895</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersection_sorter_terse_8cpp_source.html#l00112">xms::GmMultiPolyIntersectionSorterTerse::RemoveDuplicateEdges()</a>, <a class="el" href="geoms_8cpp_source.html#l02326">GeomsXmsngUnitTests::test_gmComputeCentroid()</a>, and <a class="el" href="triangles_8cpp_source.html#l00072">trBuildGridTrianglePolys()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersection_sorter_terse_8cpp_source.html#l00112">xms::GmMultiPolyIntersectionSorterTerse::RemoveDuplicateEdges()</a>, <a class="el" href="geoms_8cpp_source.html#l02449">GeomsXmsngUnitTests::test_gmComputeCentroid()</a>, and <a class="el" href="triangles_8cpp_source.html#l00072">trBuildGridTrianglePolys()</a>.</p>
 
 </div>
 </div>
@@ -2128,7 +2123,7 @@ Functions</h2></td></tr>
 </ul>
 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00672">672</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00697">697</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a1ebfb4727e5e32fd9c5ff54bbe1eb00d">Mmax()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a49767d69c41924570a9ba7618a1ab347">Mmin()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>.</p>
 
@@ -2159,9 +2154,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Centroid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00883">883</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00908">908</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01584">xms::XmUGridImpl::GetCellCentroid()</a>, and <a class="el" href="geoms_8cpp_source.html#l02353">GeomsXmsngUnitTests::test_gmComputePolygonCentroid()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01157">xms::XmUGrid::Impl::GetCellCentroid()</a>, and <a class="el" href="geoms_8cpp_source.html#l02476">GeomsXmsngUnitTests::test_gmComputePolygonCentroid()</a>.</p>
 
 </div>
 </div>
@@ -2201,9 +2196,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01199">1199</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01262">1262</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00807">gmXyDistance()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00832">gmXyDistance()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_tr_breakline_adder_8cpp_source.html#l00533">xms::TrBreaklineAdderImpl::ComputeTolerance()</a>, and <a class="el" href="_tr_triangulator_points_8cpp_source.html#l00195">xms::TrTriangulatorPoints::UpdateAreaTolerance()</a>.</p>
 
@@ -2245,7 +2240,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>an angle between 0 and 360 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01932">1932</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01997">1997</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#ae0787a6aa8fbfb21f298cea14409af25">GTEQ_TOL()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a4cfdbe3e6a4d961c82a96926619f5a9f">LT_TOL()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>.</p>
 
@@ -2294,7 +2289,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if vertex order is counter clockwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00550">550</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00564">564</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="triangles_8cpp_source.html#l00046">trArea()</a>.</p>
 
@@ -2338,12 +2333,12 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a vector with x,y,z components representing the direction from a_p1 to a_p2 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01917">1917</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01982">1982</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
 <a id="a06f4c8c6bc396759e5d8953d85530b46"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06f4c8c6bc396759e5d8953d85530b46">&#9670;&nbsp;</a></span>gmCross2D()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a06f4c8c6bc396759e5d8953d85530b46">&#9670;&nbsp;</a></span>gmCross2D() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2392,9 +2387,56 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>cross product of 2 vectors vector 1 = dx1i + dy1j vector 2 = dx2i + dy2j </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00565">565</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00579">579</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00597">gmAngleBetween2DVectors()</a>, and <a class="el" href="geoms_8cpp_source.html#l01836">gmBisectingAngle()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00622">gmAngleBetween2DVectors()</a>, <a class="el" href="geoms_8cpp_source.html#l01901">gmBisectingAngle()</a>, and <a class="el" href="geoms_8cpp_source.html#l01013">gmLinesCross()</a>.</p>
+
+</div>
+</div>
+<a id="a477b039c6c57c8bbe95fe341eb5b1164"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a477b039c6c57c8bbe95fe341eb5b1164">&#9670;&nbsp;</a></span>gmCross2D() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double xms::gmCross2D </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_origin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_A</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_B</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>2D cross product of two points </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_origin</td><td>origin point for the "vectors" </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_A</td><td>first vector </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_B</td><td>second vector </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the cross product </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00590">590</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -2440,9 +2482,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01969">1969</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02034">2034</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02010">gmIntersectTriangleAndLineSegment()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02075">gmIntersectTriangleAndLineSegment()</a>.</p>
 
 </div>
 </div>
@@ -2490,9 +2532,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The dot product has the geometric interpretation as the length of the projection of a_vec1 onto the unit vector a_vec2 when the two vectors are placed so that their tails coincide. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01983">1983</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02048">2048</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02010">gmIntersectTriangleAndLineSegment()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02075">gmIntersectTriangleAndLineSegment()</a>.</p>
 
 </div>
 </div>
@@ -2538,7 +2580,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01541">1541</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01606">1606</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html#a3dc5059ab2a87bfa4876b29ca6567376">XM_ENSURE_TRUE</a>.</p>
 
@@ -2601,9 +2643,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01245">1245</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01308">1308</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01264">gmEqualPointsXY()</a>, <a class="el" href="geoms_8cpp_source.html#l01717">gmInsideOfLineWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l01387">gmInsideOrOnLineWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l00406">gmIntersectLineSegmentsWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l00707">gmOnLineWithTol()</a>, and <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00368">xms::GmMultiPolyIntersectorImpl::PointsOnSegment()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01327">gmEqualPointsXY()</a>, <a class="el" href="geoms_8cpp_source.html#l01782">gmInsideOfLineWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l01450">gmInsideOrOnLineWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l00420">gmIntersectLineSegmentsWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l00732">gmOnLineWithTol()</a>, and <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00368">xms::GmMultiPolyIntersectorImpl::PointsOnSegment()</a>.</p>
 
 </div>
 </div>
@@ -2655,9 +2697,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01264">1264</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01327">1327</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01245">gmEqualPointsXY()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01308">gmEqualPointsXY()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
 </div>
 </div>
@@ -2702,9 +2744,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal within tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01275">1275</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01338">1338</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01245">gmEqualPointsXY()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01308">gmEqualPointsXY()</a>.</p>
 
 </div>
 </div>
@@ -2749,9 +2791,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal within tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01286">1286</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01349">1349</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01245">gmEqualPointsXY()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01308">gmEqualPointsXY()</a>.</p>
 
 </div>
 </div>
@@ -2789,7 +2831,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal within tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01296">1296</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01359">1359</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -2864,9 +2906,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01313">1313</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01376">1376</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01335">gmEqualPointsXYZ()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01398">gmEqualPointsXYZ()</a>.</p>
 
 </div>
 </div>
@@ -2932,9 +2974,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal within tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01335">1335</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01398">1398</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01313">gmEqualPointsXYZ()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01376">gmEqualPointsXYZ()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
 </div>
 </div>
@@ -2979,9 +3021,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if equal within tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01346">1346</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01409">1409</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01313">gmEqualPointsXYZ()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01376">gmEqualPointsXYZ()</a>.</p>
 
 </div>
 </div>
@@ -3027,9 +3069,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01756">1756</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01821">1821</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00762">gmAddToExtents()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html#a23da302a5e3a5ad9f79b60045c2fd24e">XM_ENSURE_TRUE_VOID_NO_ASSERT</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00787">gmAddToExtents()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html#a23da302a5e3a5ad9f79b60045c2fd24e">XM_ENSURE_TRUE_VOID_NO_ASSERT</a>.</p>
 
 </div>
 </div>
@@ -3073,9 +3115,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01773">1773</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01838">1838</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00762">gmAddToExtents()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html#a23da302a5e3a5ad9f79b60045c2fd24e">XM_ENSURE_TRUE_VOID_NO_ASSERT</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00787">gmAddToExtents()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html#a23da302a5e3a5ad9f79b60045c2fd24e">XM_ENSURE_TRUE_VOID_NO_ASSERT</a>.</p>
 
 </div>
 </div>
@@ -3121,9 +3163,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01791">1791</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01856">1856</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00762">gmAddToExtents()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html#a23da302a5e3a5ad9f79b60045c2fd24e">XM_ENSURE_TRUE_VOID_NO_ASSERT</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00787">gmAddToExtents()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html#a23da302a5e3a5ad9f79b60045c2fd24e">XM_ENSURE_TRUE_VOID_NO_ASSERT</a>.</p>
 
 </div>
 </div>
@@ -3184,9 +3226,59 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>parametric value along the line a_pt1, a_pt2 that is the location of a_newpt. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01649">1649</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01714">1714</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01684">gmPtDistanceAlongSegment()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01749">gmPtDistanceAlongSegment()</a>.</p>
+
+</div>
+</div>
+<a id="a74e3df59e816303d09c6923d6e8d7272"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74e3df59e816303d09c6923d6e8d7272">&#9670;&nbsp;</a></span>gmGetConvexHull()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void xms::gmGetConvexHull </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_pts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/vector_8h.html#a0dc29604ee813731d584232b63f54922">VecPt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_hull</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>a_includeOn</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate convex hull using Monotone chain aka Andrew's algorithm. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_pts</td><td>The input points. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a_hull</td><td>The convex hull polygon. First point is NOT repeated. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_includeOn</td><td>Should points on the hull's line segments be included? </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02211">2211</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00863">gmTurn()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_xm_geometry_8cpp_source.html#l00055">ConvexHull()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l02356">xms::XmUGrid::Impl::GetPlanViewPolygon3d()</a>, and <a class="el" href="geoms_8cpp_source.html#l02516">GeomsXmsngUnitTests::testConvexHull()</a>.</p>
 
 </div>
 </div>
@@ -3254,9 +3346,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the a_x, a_y are inside the line defined by a_vertex1 and a_vertex2. Inside is defined as the opposite side of a_oppositevertex </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01717">1717</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01782">1782</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01245">gmEqualPointsXY()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01308">gmEqualPointsXY()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
 </div>
 </div>
@@ -3331,11 +3423,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if in. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01387">1387</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01450">1450</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01245">gmEqualPointsXY()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a05c138381112b821d1b787e9a00ec7bf">Mfabs()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01308">gmEqualPointsXY()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a05c138381112b821d1b787e9a00ec7bf">Mfabs()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01360">gmPointInTriangleWithTol()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01423">gmPointInTriangleWithTol()</a>.</p>
 
 </div>
 </div>
@@ -3424,9 +3516,9 @@ Functions</h2></td></tr>
 </dl>
 <p>segment 1 = one1,one2 = one1 + lambda(one2 - one1) segment 2 = two1,two2 = two1 + mu (two2 - two1) </p><dl class="section return"><dt>Returns</dt><dd>true if lines intersect, else false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00406">406</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00420">420</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#ad2b764be90f289082998491db1b52711">EQ_TOL()</a>, <a class="el" href="geoms_8cpp_source.html#l00379">gmColinearWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l01245">gmEqualPointsXY()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#ab8190cb81d709d785efaa01409c342c2">GT_TOL()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a4cfdbe3e6a4d961c82a96926619f5a9f">LT_TOL()</a>.</p>
+<p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#ad2b764be90f289082998491db1b52711">EQ_TOL()</a>, <a class="el" href="geoms_8cpp_source.html#l00393">gmColinearWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l01308">gmEqualPointsXY()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#ab8190cb81d709d785efaa01409c342c2">GT_TOL()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a4cfdbe3e6a4d961c82a96926619f5a9f">LT_TOL()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_tr_breakline_adder_8cpp_source.html#l00471">xms::TrBreaklineAdderImpl::FindIntersectingEdgeFromEdge()</a>, <a class="el" href="_tr_breakline_adder_8cpp_source.html#l00425">xms::TrBreaklineAdderImpl::FindIntersectingEdgeFromPoint()</a>, and <a class="el" href="_tr_breakline_adder_8cpp_source.html#l00293">xms::TrBreaklineAdderImpl::ProcessSegmentBySwapping()</a>.</p>
 
@@ -3496,9 +3588,67 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>-1 if triangle is degenerate (a point or a line) 0 if line does not intersect triangle 1 if line does intersect triangle 2 if line and triangle are in the same plane </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02010">2010</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02075">2075</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01969">gmCross3D()</a>, <a class="el" href="geoms_8cpp_source.html#l01983">gmDot3D()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2a0754bc3b4dbca0eb229608e31a4550">XM_ZERO_TOL</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l02034">gmCross3D()</a>, <a class="el" href="geoms_8cpp_source.html#l02048">gmDot3D()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2a0754bc3b4dbca0eb229608e31a4550">XM_ZERO_TOL</a>.</p>
+
+</div>
+</div>
+<a id="a576c914d0519eaeab0e4494e4f000c75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a576c914d0519eaeab0e4494e4f000c75">&#9670;&nbsp;</a></span>gmLinesCross()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool xms::gmLinesCross </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_segment1Point1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_segment1Point2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_segment2Point1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">Pt3d</a> &amp;&#160;</td>
+          <td class="paramname"><em>a_segment2Point2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether 2 line segments cross. The segments may touch at the end points. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_segment1Point1</td><td>First point 3d of line segment 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_segment1Point2</td><td>Second point 3d of line segment 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_segment2Point1</td><td>First point 3d of line segment 2 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_segment2Point2</td><td>Second point 3d of line segment 2 </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the line segments cross </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01013">1013</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00579">gmCross2D()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l01281">xms::XmUGrid::Impl::DoEdgesCrossWithPointChange()</a>, <a class="el" href="_xm_geometry_8cpp_source.html#l00099">DoLineSegmentsCross()</a>, and <a class="el" href="geoms_8cpp_source.html#l02544">GeomsXmsngUnitTests::testDoLineSegmentsCross()</a>.</p>
 
 </div>
 </div>
@@ -3552,7 +3702,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if segments intersect, else false </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00941">941</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00966">966</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#ab8190cb81d709d785efaa01409c342c2">GT_TOL()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a4cfdbe3e6a4d961c82a96926619f5a9f">LT_TOL()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2a0754bc3b4dbca0eb229608e31a4550">XM_ZERO_TOL</a>.</p>
 
@@ -3583,7 +3733,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Middle z value. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00139">139</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00153">153</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -3645,9 +3795,9 @@ Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>true if on line segment</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>For simple test of colinearity, call gmOnLineWithTol or gmColinear </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00742">742</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00767">767</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00707">gmOnLineWithTol()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a1ebfb4727e5e32fd9c5ff54bbe1eb00d">Mmax()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a49767d69c41924570a9ba7618a1ab347">Mmin()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00732">gmOnLineWithTol()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a1ebfb4727e5e32fd9c5ff54bbe1eb00d">Mmax()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#a49767d69c41924570a9ba7618a1ab347">Mmin()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00368">xms::GmMultiPolyIntersectorImpl::PointsOnSegment()</a>.</p>
 
@@ -3710,11 +3860,11 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the Point is on the line passing through p1 and p2 within the tolerance passed. note: you should always be careful to consider the case when p1 and p2 are very close to each other but not to x,y. in that case this test will almost always fail because it will be more susceptible to roundoff error. if you need to know if three points are colinear you should use the gmColinear function. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00707">707</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00732">732</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01245">gmEqualPointsXY()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01308">gmEqualPointsXY()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00379">gmColinearWithTol()</a>, and <a class="el" href="geoms_8cpp_source.html#l00742">gmOnLineAndBetweenEndpointsWithTol()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00393">gmColinearWithTol()</a>, and <a class="el" href="geoms_8cpp_source.html#l00767">gmOnLineAndBetweenEndpointsWithTol()</a>.</p>
 
 </div>
 </div>
@@ -3760,9 +3910,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01570">1570</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01635">1635</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01625">gmOrderPointsCounterclockwise()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01690">gmOrderPointsCounterclockwise()</a>.</p>
 
 </div>
 </div>
@@ -3790,9 +3940,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01625">1625</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01690">1690</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01570">gmOrderPointsCounterclockwise()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01635">gmOrderPointsCounterclockwise()</a>.</p>
 
 </div>
 </div>
@@ -3832,7 +3982,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>angle perpendicular to the edge </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01809">1809</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01874">1874</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html#a2fd384675f63eadb4674ab11e5e2cd5a">XM_PI</a>.</p>
 
@@ -3881,7 +4031,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the point is in or on a box </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00051">51</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00065">65</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -3947,9 +4097,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 (inside), 0 (on), or -1 (outside) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00994">994</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01057">1057</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02266">GmPointInPolyTester_gmPointInPolygon2D::CheckPoint()</a>, <a class="el" href="geoms_8cpp_source.html#l01092">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l02412">GeomsXmsngIntermediateTests::test_gmPointInPolygon2D()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02389">GmPointInPolyTester_gmPointInPolygon2D::CheckPoint()</a>, <a class="el" href="geoms_8cpp_source.html#l01155">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l02624">GeomsXmsngIntermediateTests::test_gmPointInPolygon2D()</a>.</p>
 
 </div>
 </div>
@@ -4001,9 +4151,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 (inside), 0 (on), or -1 (outside) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01092">1092</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01155">1155</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00994">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01057">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
 </div>
 </div>
@@ -4048,9 +4198,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 (inside), 0 (on), or -1 (outside) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01103">1103</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01166">1166</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00994">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01057">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
 </div>
 </div>
@@ -4095,9 +4245,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 (inside), 0 (on), or -1 (outside) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01114">1114</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01177">1177</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00994">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01057">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
 </div>
 </div>
@@ -4142,9 +4292,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 (inside), 0 (on), or -1 (outside) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01125">1125</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01188">1188</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00994">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01057">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
 </div>
 </div>
@@ -4189,9 +4339,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 (inside), 0 (on), or -1 (outside) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01136">1136</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01199">1199</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00994">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01057">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
 </div>
 </div>
@@ -4229,11 +4379,11 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>1 (inside), 0 (on), or -1 (outside) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01146">1146</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01209">1209</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00994">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01057">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02412">GeomsXmsngIntermediateTests::test_gmPointInPolygon2D()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02624">GeomsXmsngIntermediateTests::test_gmPointInPolygon2D()</a>.</p>
 
 </div>
 </div>
@@ -4472,9 +4622,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if in. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01360">1360</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01423">1423</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01387">gmInsideOrOnLineWithTol()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l01450">gmInsideOrOnLineWithTol()</a>.</p>
 
 </div>
 </div>
@@ -4515,7 +4665,9 @@ template&lt;typename T &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Area of the polygon.</dd></dl>
 <p>CCW = positive area, CW = negative. Don't repeat the last point. </p>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01474">1474</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01537">1537</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l02782">xms::XmUGrid::Impl::GetOrientationFromArea()</a>.</p>
 
 </div>
 </div>
@@ -4569,9 +4721,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>parametric value along the line a_pt1, a_pt2 that is the closest location to a_pt. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01684">1684</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01749">1749</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01649">gmFindClosestPtOnSegment()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00393">xms::GmMultiPolyIntersectorImpl::ComputeTValues()</a>, and <a class="el" href="geoms_8cpp_source.html#l01714">gmFindClosestPtOnSegment()</a>.</p>
 
 </div>
 </div>
@@ -4611,9 +4763,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>PtInOutOrOn_enum </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00158">158</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00172">172</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00204">gmCircumcircleWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l01216">gmXyTol()</a>, <a class="el" href="geoms_8h_source.html#l00037">PT_ERROR</a>, <a class="el" href="geoms_8h_source.html#l00038">PT_IN</a>, <a class="el" href="geoms_8h_source.html#l00040">PT_ON</a>, <a class="el" href="geoms_8h_source.html#l00039">PT_OUT</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00218">gmCircumcircleWithTol()</a>, <a class="el" href="geoms_8cpp_source.html#l01279">gmXyTol()</a>, <a class="el" href="geoms_8h_source.html#l00037">PT_ERROR</a>, <a class="el" href="geoms_8h_source.html#l00038">PT_IN</a>, <a class="el" href="geoms_8h_source.html#l00040">PT_ON</a>, <a class="el" href="geoms_8h_source.html#l00039">PT_OUT</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_tr_tin_8cpp_source.html#l00582">xms::TrTinImpl::PointIsInCircumcircle()</a>.</p>
 
@@ -4670,11 +4822,11 @@ template&lt;typename T &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>the type of turn defined by the angle </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>a_angtol was added in August 2014 by AKZ (with consultation by APC). This is the sine of the angle that is considered a turn at all. The default is 0.0017453 (sine 0.1 and sine 179.9). Therefore, this function will only classify two segments as colinear if the angle between edges is less than this tol of the angle between edges is greater than 180-tol. In that case it will determine if the angle is considered to be 180 TURN_COLINEAR_180 or 0 TURN_COLINEAR_0 based on the cosine. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00838">838</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00863">863</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="el" href="geoms_8h_source.html#l00032">TURN_COLINEAR_0</a>, <a class="el" href="geoms_8h_source.html#l00031">TURN_COLINEAR_180</a>, <a class="el" href="geoms_8h_source.html#l00029">TURN_LEFT</a>, and <a class="el" href="geoms_8h_source.html#l00030">TURN_RIGHT</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersection_sorter_terse_8cpp_source.html#l00112">xms::GmMultiPolyIntersectionSorterTerse::RemoveDuplicateEdges()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l02211">gmGetConvexHull()</a>, and <a class="el" href="_gm_multi_poly_intersection_sorter_terse_8cpp_source.html#l00112">xms::GmMultiPolyIntersectionSorterTerse::RemoveDuplicateEdges()</a>.</p>
 
 </div>
 </div>
@@ -4729,11 +4881,11 @@ template&lt;typename T &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Distance between location 1 and 2</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>See gmActualDistance if you don't want the distance in model units. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00807">807</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00832">832</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00205">xms::GmMultiPolyIntersectorImpl::CalculateBuffer()</a>, <a class="el" href="_tr_tin_8cpp_source.html#l01181">xms::TrTinImpl::CheckTriangle()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00393">xms::GmMultiPolyIntersectorImpl::ComputeTValues()</a>, and <a class="el" href="geoms_8cpp_source.html#l01199">gmComputeXyTol()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00205">xms::GmMultiPolyIntersectorImpl::CalculateBuffer()</a>, <a class="el" href="_tr_tin_8cpp_source.html#l01181">xms::TrTinImpl::CheckTriangle()</a>, and <a class="el" href="geoms_8cpp_source.html#l01262">gmComputeXyTol()</a>.</p>
 
 </div>
 </div>
@@ -4771,7 +4923,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Distance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00817">817</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00842">842</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
@@ -4813,7 +4965,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>distance squared. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00188">188</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l00202">202</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/math_8h.html#aa101a2a7d9f16080d4ff39ef821e36cf">sqr()</a>.</p>
 
@@ -4855,9 +5007,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>XY tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01216">1216</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01279">1279</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l01264">gmEqualPointsXY()</a>, <a class="el" href="geoms_8cpp_source.html#l01335">gmEqualPointsXYZ()</a>, <a class="el" href="geoms_8cpp_source.html#l01092">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l00158">gmPtInCircumcircle()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l00393">xms::GmMultiPolyIntersectorImpl::ComputeTValues()</a>, <a class="el" href="geoms_8cpp_source.html#l01327">gmEqualPointsXY()</a>, <a class="el" href="geoms_8cpp_source.html#l01398">gmEqualPointsXYZ()</a>, <a class="el" href="geoms_8cpp_source.html#l01155">gmPointInPolygon2D()</a>, and <a class="el" href="geoms_8cpp_source.html#l00172">gmPtInCircumcircle()</a>.</p>
 
 </div>
 </div>
@@ -4897,7 +5049,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Z tolerance. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01229">1229</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l01292">1292</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
 </div>
 </div>
@@ -4952,7 +5104,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_gm_tri_search_8cpp_source.html#l00188">188</a> of file <a class="el" href="_gm_tri_search_8cpp_source.html">GmTriSearch.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_gm_tri_search_8cpp_source.html#l00118">xms::BarycentricVals::coef</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00119">xms::BarycentricVals::dir</a>, <a class="el" href="geoms_8cpp_source.html#l00301">gmBaryPrepare()</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00117">xms::BarycentricVals::orig</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a3870f08593cabc47fd5d213ea1c0898a">xms::Pt3&lt; T &gt;::x</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a218217ff3405493c7b6dce94935f1290">xms::Pt3&lt; T &gt;::y</a>.</p>
+<p class="reference">References <a class="el" href="_gm_tri_search_8cpp_source.html#l00118">xms::BarycentricVals::coef</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00119">xms::BarycentricVals::dir</a>, <a class="el" href="geoms_8cpp_source.html#l00315">gmBaryPrepare()</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00117">xms::BarycentricVals::orig</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a3870f08593cabc47fd5d213ea1c0898a">xms::Pt3&lt; T &gt;::x</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a218217ff3405493c7b6dce94935f1290">xms::Pt3&lt; T &gt;::y</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_gm_tri_search_8cpp_source.html#l00617">xms::GmTriSearchImpl::GetTriBarycentricVals()</a>.</p>
 
@@ -5052,7 +5204,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="_gm_tri_search_8cpp_source.html#l00203">203</a> of file <a class="el" href="_gm_tri_search_8cpp_source.html">GmTriSearch.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_gm_tri_search_8cpp_source.html#l00118">xms::BarycentricVals::coef</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00119">xms::BarycentricVals::dir</a>, <a class="el" href="geoms_8cpp_source.html#l00261">gmCartToBary()</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00117">xms::BarycentricVals::orig</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a3870f08593cabc47fd5d213ea1c0898a">xms::Pt3&lt; T &gt;::x</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a218217ff3405493c7b6dce94935f1290">xms::Pt3&lt; T &gt;::y</a>.</p>
+<p class="reference">References <a class="el" href="_gm_tri_search_8cpp_source.html#l00118">xms::BarycentricVals::coef</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00119">xms::BarycentricVals::dir</a>, <a class="el" href="geoms_8cpp_source.html#l00275">gmCartToBary()</a>, <a class="el" href="_gm_tri_search_8cpp_source.html#l00117">xms::BarycentricVals::orig</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a3870f08593cabc47fd5d213ea1c0898a">xms::Pt3&lt; T &gt;::x</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a218217ff3405493c7b6dce94935f1290">xms::Pt3&lt; T &gt;::y</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="_gm_tri_search_8cpp_source.html#l00550">xms::GmTriSearchImpl::FindTriangle()</a>.</p>
 
@@ -5754,16 +5906,16 @@ template&lt;typename T &gt; </div>
 <p>Builds a UGrid with one 3D Chevron polyhedron. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03569">3569</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03972">3972</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l04809">XmUGridUnitTests::testGetCellPlanViewPolygon()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05104">XmUGridUnitTests::testGetCellPlanViewPolygon()</a>.</p>
 
 </div>
 </div>
-<a id="a0a50a2c6d678fa5e90212d03fecd3f44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a50a2c6d678fa5e90212d03fecd3f44">&#9670;&nbsp;</a></span>TEST_XmUBuildHexahedronUgrid() <span class="overload">[1/2]</span></h2>
+<a id="a56cfb9438b4307bfe2541b8ff1830628"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56cfb9438b4307bfe2541b8ff1830628">&#9670;&nbsp;</a></span>TEST_XmUBuildHexahedronUgrid() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5771,19 +5923,19 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt; xms::TEST_XmUBuildHexahedronUgrid </td>
           <td>(</td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_rows</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_cols</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_lays</em>&#160;</td>
         </tr>
         <tr>
@@ -5805,14 +5957,14 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03404">3404</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03809">3809</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05323">XmUGridUnitTests::testCell3dFunctionCaching()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04655">XmUGridUnitTests::testGetCell3dFaceAdjacentCell()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04457">XmUGridUnitTests::testGetCellEdgeAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03840">XmUGridUnitTests::testGetExtents()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l04926">XmUGridUnitTests::testIsCellValidWithPointChange()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05596">XmUGridUnitTests::testCell3dFunctionCaching()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04968">XmUGridUnitTests::testGetCell3dFaceAdjacentCell()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05523">XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04790">XmUGridUnitTests::testGetCellEdgeAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04245">XmUGridUnitTests::testGetExtents()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l05207">XmUGridUnitTests::testIsCellValidWithPointChange()</a>.</p>
 
 </div>
 </div>
-<a id="a9b7018697957bbe8aed198fe6cf69a07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b7018697957bbe8aed198fe6cf69a07">&#9670;&nbsp;</a></span>TEST_XmUBuildHexahedronUgrid() <span class="overload">[2/2]</span></h2>
+<a id="a179b7fab69fb99e844f727543feafa4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a179b7fab69fb99e844f727543feafa4f">&#9670;&nbsp;</a></span>TEST_XmUBuildHexahedronUgrid() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5820,19 +5972,19 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt; xms::TEST_XmUBuildHexahedronUgrid </td>
           <td>(</td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_rows</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_cols</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_lays</em>, </td>
         </tr>
         <tr>
@@ -5861,14 +6013,14 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03419">3419</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03822">3822</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
 </div>
 </div>
-<a id="a512cd32ebbe039154d962c0d47a6e4fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a512cd32ebbe039154d962c0d47a6e4fc">&#9670;&nbsp;</a></span>TEST_XmUBuildPolyhedronUgrid() <span class="overload">[1/2]</span></h2>
+<a id="aeefffe6fa733a4912b83cf32364d2718"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeefffe6fa733a4912b83cf32364d2718">&#9670;&nbsp;</a></span>TEST_XmUBuildPolyhedronUgrid() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5876,19 +6028,19 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt; xms::TEST_XmUBuildPolyhedronUgrid </td>
           <td>(</td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_rows</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_cols</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_lays</em>&#160;</td>
         </tr>
         <tr>
@@ -5910,14 +6062,14 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03470">3470</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03875">3875</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05387">XmUGridUnitTests::testLargeUGridLinkSpeed()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05523">XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01459">XmUGridUtilsTests::testLargeUGridBinarySpeed()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l05660">XmUGridUnitTests::testLargeUGridLinkSpeed()</a>.</p>
 
 </div>
 </div>
-<a id="a6b241889d06a379363e269e80a06ea1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b241889d06a379363e269e80a06ea1c">&#9670;&nbsp;</a></span>TEST_XmUBuildPolyhedronUgrid() <span class="overload">[2/2]</span></h2>
+<a id="a588bfc31a2511a832b6a2291e24997ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a588bfc31a2511a832b6a2291e24997ea">&#9670;&nbsp;</a></span>TEST_XmUBuildPolyhedronUgrid() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5925,19 +6077,19 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt; xms::TEST_XmUBuildPolyhedronUgrid </td>
           <td>(</td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_rows</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_cols</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_lays</em>, </td>
         </tr>
         <tr>
@@ -5966,14 +6118,14 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03485">3485</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03888">3888</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
 </div>
 </div>
-<a id="a66cfca71e0f54169d0175e75a1da1b9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66cfca71e0f54169d0175e75a1da1b9f">&#9670;&nbsp;</a></span>TEST_XmUBuildQuadUGrid() <span class="overload">[1/2]</span></h2>
+<a id="a4060e4f462e3b4be62e1e4ec5ad518db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4060e4f462e3b4be62e1e4ec5ad518db">&#9670;&nbsp;</a></span>TEST_XmUBuildQuadUGrid() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5981,13 +6133,13 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt; xms::TEST_XmUBuildQuadUGrid </td>
           <td>(</td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_rows</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_cols</em>&#160;</td>
         </tr>
         <tr>
@@ -6008,12 +6160,12 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03354">3354</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03761">3761</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ae795f753066bfd3749f441b965aba896"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae795f753066bfd3749f441b965aba896">&#9670;&nbsp;</a></span>TEST_XmUBuildQuadUGrid() <span class="overload">[2/2]</span></h2>
+<a id="a934ef910c886d3a7c635e20161271a34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a934ef910c886d3a7c635e20161271a34">&#9670;&nbsp;</a></span>TEST_XmUBuildQuadUGrid() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -6021,13 +6173,13 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt; xms::TEST_XmUBuildQuadUGrid </td>
           <td>(</td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_rows</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>a_cols</em>, </td>
         </tr>
         <tr>
@@ -6055,9 +6207,9 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03366">3366</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03773">3773</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
 </div>
 </div>
@@ -6079,11 +6231,11 @@ template&lt;typename T &gt; </div>
 <p>Builds a 1 cell (left 90 degree triangle) 2D <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> for testing. </p>
 <div class="fragment"><div class="line">2</div><div class="line">| \</div><div class="line">|  \</div><div class="line">|   \</div><div class="line">0----1</div></div><!-- fragment --> <dl class="section return"><dt>Returns</dt><dd>Returns a builder for the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03224">3224</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03631">3631</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00419">XmUGridUtilsTests::testReadBasicUGrid()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00256">XmUGridUtilsTests::testWriteBasicUGrid()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l04010">XmUGridUnitTests::testOperators()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01084">XmUGridUtilsTests::testReadBasicUGrid()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l01258">XmUGridUtilsTests::testReadReadyAtNextLine()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00922">XmUGridUtilsTests::testWriteBasicUGrid()</a>.</p>
 
 </div>
 </div>
@@ -6107,11 +6259,11 @@ template&lt;typename T &gt; </div>
 <p>[snip_test_2DShapes]</p>
 <p>[snip_test_2DShapes] </p>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03264">3264</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03671">3671</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l03924">XmUGridUnitTests::testGetCell3dFaceCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03963">XmUGridUnitTests::testGetCell3dFacePointCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04552">XmUGridUnitTests::testGetCell3dFacePoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04365">XmUGridUnitTests::testGetCellAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03791">XmUGridUnitTests::testGetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04172">XmUGridUnitTests::testGetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03884">XmUGridUnitTests::testGetCellEdgeCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04809">XmUGridUnitTests::testGetCellPlanViewPolygon()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04105">XmUGridUnitTests::testGetCellPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03752">XmUGridUnitTests::testGetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03840">XmUGridUnitTests::testGetExtents()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04023">XmUGridUnitTests::testGetPointAdjacentCells()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00478">XmUGridUtilsTests::testLinear2dWriteThenRead()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00308">XmUGridUtilsTests::testWriteLinear2dCells()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l04310">XmUGridUnitTests::testGetCell3dFaceCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04341">XmUGridUnitTests::testGetCell3dFacePointCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04873">XmUGridUnitTests::testGetCell3dFacePoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04710">XmUGridUnitTests::testGetCellAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04203">XmUGridUnitTests::testGetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04533">XmUGridUnitTests::testGetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04278">XmUGridUnitTests::testGetCellEdgeCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05104">XmUGridUnitTests::testGetCellPlanViewPolygon()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04478">XmUGridUnitTests::testGetCellPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04171">XmUGridUnitTests::testGetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04245">XmUGridUnitTests::testGetExtents()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04403">XmUGridUnitTests::testGetPointAdjacentCells()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01143">XmUGridUtilsTests::testLinear2dWriteThenRead()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00972">XmUGridUtilsTests::testWriteLinear2dCells()</a>.</p>
 
 </div>
 </div>
@@ -6135,11 +6287,11 @@ template&lt;typename T &gt; </div>
 <p>[snip_test_3DShapes]</p>
 <p>[snip_test_3DShapes] </p>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03290">3290</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03697">3697</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05165">XmUGridUnitTests::testCell3dFaceFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03924">XmUGridUnitTests::testGetCell3dFaceCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03963">XmUGridUnitTests::testGetCell3dFacePointCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04552">XmUGridUnitTests::testGetCell3dFacePoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04365">XmUGridUnitTests::testGetCellAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03791">XmUGridUnitTests::testGetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04172">XmUGridUnitTests::testGetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03884">XmUGridUnitTests::testGetCellEdgeCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04809">XmUGridUnitTests::testGetCellPlanViewPolygon()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04105">XmUGridUnitTests::testGetCellPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03752">XmUGridUnitTests::testGetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03840">XmUGridUnitTests::testGetExtents()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04023">XmUGridUnitTests::testGetPointAdjacentCells()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00497">XmUGridUtilsTests::testLinear3dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00344">XmUGridUtilsTests::testWriteLinear3dCells()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00516">XmUGridUtilsTests::testWriteThenReadUGridFile()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00543">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05422">XmUGridUnitTests::testCell3dFaceFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04310">XmUGridUnitTests::testGetCell3dFaceCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04341">XmUGridUnitTests::testGetCell3dFacePointCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04873">XmUGridUnitTests::testGetCell3dFacePoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04710">XmUGridUnitTests::testGetCellAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04203">XmUGridUnitTests::testGetCellDimension()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04533">XmUGridUnitTests::testGetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04278">XmUGridUnitTests::testGetCellEdgeCount()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05104">XmUGridUnitTests::testGetCellPlanViewPolygon()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04478">XmUGridUnitTests::testGetCellPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04171">XmUGridUnitTests::testGetCellType()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04245">XmUGridUnitTests::testGetExtents()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04403">XmUGridUnitTests::testGetPointAdjacentCells()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01162">XmUGridUtilsTests::testLinear3dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01232">XmUGridUtilsTests::testReadVersion1Dot0File()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01008">XmUGridUtilsTests::testWriteLinear3dCells()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01292">XmUGridUtilsTests::testWriteThenReadUGridBinary()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01181">XmUGridUtilsTests::testWriteThenReadUGridFile()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01208">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()</a>.</p>
 
 </div>
 </div>
@@ -6161,11 +6313,11 @@ template&lt;typename T &gt; </div>
 <p>Builds a 1 cell hexagon with cell type polyhedron. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03325">3325</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03732">3732</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00443">XmUGridUtilsTests::testReadPolyhedronUGrid()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00276">XmUGridUtilsTests::testWritePolyhedronUGrid()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01109">XmUGridUtilsTests::testReadPolyhedronUGrid()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00941">XmUGridUtilsTests::testWritePolyhedronUGrid()</a>.</p>
 
 </div>
 </div>
@@ -6187,11 +6339,11 @@ template&lt;typename T &gt; </div>
 <p>Builds a 2 cell (Quad) 2D <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a> for testing. </p>
 <div class="fragment"><div class="line">0-----1-----2</div><div class="line">|  0  |  1  |</div><div class="line">3-----4-----5</div><div class="line">|  2  |  3  |</div><div class="line">6-----7-----8</div></div><!-- fragment --> <dl class="section return"><dt>Returns</dt><dd>Returns a builder for the UGrid. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03247">3247</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03654">3654</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_8cpp_source.html#l02866">xms::XmUGrid::New()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05102">XmUGridUnitTests::testCellEdgeAdjacentCellFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05145">XmUGridUnitTests::testCellEdges()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05029">XmUGridUnitTests::testCellFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05076">XmUGridUnitTests::testCellstreamFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04516">XmUGridUnitTests::testEdgeAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04365">XmUGridUnitTests::testGetCellAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04172">XmUGridUnitTests::testGetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04457">XmUGridUnitTests::testGetCellEdgeAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04105">XmUGridUnitTests::testGetCellPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04768">XmUGridUnitTests::testGetPointAdjacentPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04296">XmUGridUnitTests::testGetPointsAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04926">XmUGridUnitTests::testIsCellValidWithPointChange()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l04969">XmUGridUnitTests::testPointFunctions()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_8cpp_source.html#l05367">XmUGridUnitTests::testCellEdgeAdjacentCellFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05406">XmUGridUnitTests::testCellEdges()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05302">XmUGridUnitTests::testCellFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05345">XmUGridUnitTests::testCellstreamFunctions()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04841">XmUGridUnitTests::testEdgeAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04710">XmUGridUnitTests::testGetCellAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04533">XmUGridUnitTests::testGetCellEdge()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04790">XmUGridUnitTests::testGetCellEdgeAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04478">XmUGridUnitTests::testGetCellPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05066">XmUGridUnitTests::testGetPointAdjacentPoints()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l04645">XmUGridUnitTests::testGetPointsAdjacentCells()</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l05207">XmUGridUnitTests::testIsCellValidWithPointChange()</a>, and <a class="el" href="_xm_u_grid_8cpp_source.html#l05246">XmUGridUnitTests::testPointFunctions()</a>.</p>
 
 </div>
 </div>
@@ -6240,7 +6392,7 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="triangles_8cpp_source.html#l00046">46</a> of file <a class="el" href="triangles_8cpp_source.html">triangles.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00550">gmCounterClockwiseTri()</a>, <a class="el" href="_tr_triangulator_points_8cpp_source.html#l00171">xms::TrTriangulatorPoints::ReceiveTriangle()</a>, <a class="el" href="_tr_tin_8cpp_source.html#l00419">xms::TrTinImpl::SwapEdge()</a>, and <a class="el" href="_tr_tin_8cpp_source.html#l00665">xms::TrTinImpl::TriangleArea()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="geoms_8cpp_source.html#l00564">gmCounterClockwiseTri()</a>, <a class="el" href="_tr_triangulator_points_8cpp_source.html#l00171">xms::TrTriangulatorPoints::ReceiveTriangle()</a>, <a class="el" href="_tr_tin_8cpp_source.html#l00419">xms::TrTinImpl::SwapEdge()</a>, and <a class="el" href="_tr_tin_8cpp_source.html#l00665">xms::TrTinImpl::TriangleArea()</a>.</p>
 
 </div>
 </div>
@@ -6370,9 +6522,9 @@ template&lt;typename T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="triangles_8cpp_source.html#l00072">72</a> of file <a class="el" href="triangles_8cpp_source.html">triangles.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00870">gmComputeCentroid()</a>, and <a class="el" href="triangles_8cpp_source.html#l00132">trBuildGridPolys()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00895">gmComputeCentroid()</a>, and <a class="el" href="triangles_8cpp_source.html#l00132">trBuildGridPolys()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01538">GmMultiPolyIntersectorUnitTests::testAlongEdgesInsideToInside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01585">GmMultiPolyIntersectorUnitTests::testAlongEdgesOutsideToOutside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01620">GmMultiPolyIntersectorUnitTests::testEdgeThroughOppositeVertexAtAngle()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01772">GmMultiPolyIntersectorUnitTests::testEndAtEdgeFromAdjacent()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01695">GmMultiPolyIntersectorUnitTests::testInsideToEdgeThenThroughAdjacent()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01394">GmMultiPolyIntersectorUnitTests::testInsideToInside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01838">GmMultiPolyIntersector2IntermediateTests::testLargeNumPolys()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01865">GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01427">GmMultiPolyIntersectorUnitTests::testOutsideToOutside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01658">GmMultiPolyIntersectorUnitTests::testStartAtEdgeThroughAdjacent()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01491">GmMultiPolyIntersectorUnitTests::testTouchesEdge()</a>, and <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01462">GmMultiPolyIntersectorUnitTests::testTouchesVertex()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01546">GmMultiPolyIntersectorUnitTests::testAlongEdgesInsideToInside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01593">GmMultiPolyIntersectorUnitTests::testAlongEdgesOutsideToOutside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01628">GmMultiPolyIntersectorUnitTests::testEdgeThroughOppositeVertexAtAngle()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01777">GmMultiPolyIntersectorUnitTests::testEndAtEdgeFromAdjacent()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01703">GmMultiPolyIntersectorUnitTests::testInsideToEdgeThenThroughAdjacent()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01402">GmMultiPolyIntersectorUnitTests::testInsideToInside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01843">GmMultiPolyIntersector2IntermediateTests::testLargeNumPolys()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01871">GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01435">GmMultiPolyIntersectorUnitTests::testOutsideToOutside()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01666">GmMultiPolyIntersectorUnitTests::testStartAtEdgeThroughAdjacent()</a>, <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01499">GmMultiPolyIntersectorUnitTests::testTouchesEdge()</a>, and <a class="el" href="_gm_multi_poly_intersector_8cpp_source.html#l01470">GmMultiPolyIntersectorUnitTests::testTouchesVertex()</a>.</p>
 
 </div>
 </div>
@@ -6598,11 +6750,11 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the UGrid that was read from the file </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00051">51</a> of file <a class="el" href="_xm_u_grid_utils_8cpp_source.html">XmUGridUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00779">779</a> of file <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html">XmUGridUtils - Copy.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00061">XmReadUGridFromStream()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00779">XmReadUGridFromAsciiFile()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00790">XmReadUGridFromStream()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00543">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01208">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00779">XmReadUGridFromAsciiFile()</a>.</p>
 
 </div>
 </div>
@@ -6631,11 +6783,11 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the UGrid </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00061">61</a> of file <a class="el" href="_xm_u_grid_utils_8cpp_source.html">XmUGridUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00790">790</a> of file <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html">XmUGridUtils - Copy.cpp</a>.</p>
 
-<p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/namespacexmlog.html#a7f66c92bb821241cbb29fb07d7bce588a6c90100ca9f6986351a3a437374735c1">xmlog::error</a>, <a class="el" href="_xm_u_grid_8cpp_source.html#l03065">xms::XmUGrid::New()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a3870f08593cabc47fd5d213ea1c0898a">xms::Pt3&lt; T &gt;::x</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_log_8h.html#a2aa4d2a0a80e464d6acba7f32b13f978">XM_LOG</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a218217ff3405493c7b6dce94935f1290">xms::Pt3&lt; T &gt;::y</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#af018fc0ba7dcbb74142c9a3ddadf5610">xms::Pt3&lt; T &gt;::z</a>.</p>
+<p class="reference">References <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/da_stream_io_8cpp.html#a99168b11f65e2fda3fa9500db54fa8b9">daReadLine()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/namespacexmlog.html#a7f66c92bb821241cbb29fb07d7bce588a6c90100ca9f6986351a3a437374735c1">xmlog::error</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_log_8h.html#a2aa4d2a0a80e464d6acba7f32b13f978">XM_LOG</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00790">XmReadUGridFromStream()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00478">XmUGridUtilsTests::testLinear2dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00497">XmUGridUtilsTests::testLinear3dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00419">XmUGridUtilsTests::testReadBasicUGrid()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00401">XmUGridUtilsTests::testReadEmptyUGridAsciiFile()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00443">XmUGridUtilsTests::testReadPolyhedronUGrid()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00516">XmUGridUtilsTests::testWriteThenReadUGridFile()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00051">XmReadUGridFromAsciiFile()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01459">XmUGridUtilsTests::testLargeUGridBinarySpeed()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01143">XmUGridUtilsTests::testLinear2dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01162">XmUGridUtilsTests::testLinear3dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01084">XmUGridUtilsTests::testReadBasicUGrid()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01066">XmUGridUtilsTests::testReadEmptyUGridAsciiFile()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01109">XmUGridUtilsTests::testReadPolyhedronUGrid()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l01258">XmUGridUtilsTests::testReadReadyAtNextLine()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01232">XmUGridUtilsTests::testReadVersion1Dot0File()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01292">XmUGridUtilsTests::testWriteThenReadUGridBinary()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01181">XmUGridUtilsTests::testWriteThenReadUGridFile()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00779">XmReadUGridFromAsciiFile()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00790">XmReadUGridFromStream()</a>.</p>
 
 </div>
 </div>
@@ -6674,11 +6826,11 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00148">148</a> of file <a class="el" href="_xm_u_grid_utils_8cpp_source.html">XmUGridUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00847">847</a> of file <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html">XmUGridUtils - Copy.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00158">XmWriteUGridToStream()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00847">XmWriteUGridToAsciiFile()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00857">XmWriteUGridToStream()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00543">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01208">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00847">XmWriteUGridToAsciiFile()</a>.</p>
 
 </div>
 </div>
@@ -6717,14 +6869,16 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00158">158</a> of file <a class="el" href="_xm_u_grid_utils_8cpp_source.html">XmUGridUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00857">857</a> of file <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html">XmUGridUtils - Copy.cpp</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00478">XmUGridUtilsTests::testLinear2dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00497">XmUGridUtilsTests::testLinear3dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00256">XmUGridUtilsTests::testWriteBasicUGrid()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00241">XmUGridUtilsTests::testWriteEmptyUGrid()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00308">XmUGridUtilsTests::testWriteLinear2dCells()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00344">XmUGridUtilsTests::testWriteLinear3dCells()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00276">XmUGridUtilsTests::testWritePolyhedronUGrid()</a>, <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00516">XmUGridUtilsTests::testWriteThenReadUGridFile()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00148">XmWriteUGridToAsciiFile()</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00857">XmWriteUGridToStream()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01459">XmUGridUtilsTests::testLargeUGridBinarySpeed()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01143">XmUGridUtilsTests::testLinear2dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01162">XmUGridUtilsTests::testLinear3dWriteThenRead()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00922">XmUGridUtilsTests::testWriteBasicUGrid()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00907">XmUGridUtilsTests::testWriteEmptyUGrid()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00972">XmUGridUtilsTests::testWriteLinear2dCells()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01008">XmUGridUtilsTests::testWriteLinear3dCells()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00941">XmUGridUtilsTests::testWritePolyhedronUGrid()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01292">XmUGridUtilsTests::testWriteThenReadUGridBinary()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l01181">XmUGridUtilsTests::testWriteThenReadUGridFile()</a>, <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00847">XmWriteUGridToAsciiFile()</a>, and <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00857">XmWriteUGridToStream()</a>.</p>
 
 </div>
 </div>
-<a id="ab7e35a02bf354662441212141a4a91e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7e35a02bf354662441212141a4a91e3">&#9670;&nbsp;</a></span>XmWriteUGridToStream() <span class="overload">[2/2]</span></h2>
+<a id="a089a787adbb806cc55d8751b8ffb3a8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a089a787adbb806cc55d8751b8ffb3a8d">&#9670;&nbsp;</a></span>XmWriteUGridToStream() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -6739,7 +6893,13 @@ template&lt;typename T &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::ostream &amp;&#160;</td>
-          <td class="paramname"><em>a_outStream</em>&#160;</td>
+          <td class="paramname"><em>a_outStream</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>a_binary</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -6753,14 +6913,17 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">a_ugrid</td><td>the UGrid to save </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_outStream</td><td>the stream to write</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_ugrid</td><td>the UGrid to save </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">a_outStream</td><td>the stream to write </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">a_binary</td><td>should arrays be written in binary </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00167">167</a> of file <a class="el" href="_xm_u_grid_utils_8cpp_source.html">XmUGridUtils.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00866">866</a> of file <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html">XmUGridUtils - Copy.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="classxms_1_1_xm_u_grid.html#a06104da983f629140cdba388cc69b34f">xms::XmUGrid::GetCellstream()</a>, <a class="el" href="classxms_1_1_xm_u_grid.html#acca1315fd4948f73d62c3a2f23d36fd0">xms::XmUGrid::GetLocations()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_string_util_8cpp.html#ac1a247a3a486723b3ce08d4e732845f3">STRstd()</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a3870f08593cabc47fd5d213ea1c0898a">xms::Pt3&lt; T &gt;::x</a>, <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#a218217ff3405493c7b6dce94935f1290">xms::Pt3&lt; T &gt;::y</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/classxms_1_1_pt3.html#af018fc0ba7dcbb74142c9a3ddadf5610">xms::Pt3&lt; T &gt;::z</a>.</p>
+<p class="reference">References <a class="el" href="_xm_u_grid_utils_01-_01_copy_8cpp_source.html#l00857">XmWriteUGridToStream()</a>.</p>
 
 </div>
 </div>
@@ -6770,7 +6933,7 @@ template&lt;typename T &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespacexms.html">xms</a></li>
-    <li class="footer">Generated on Mon May 20 2019 09:51:55 for xmsgrid by
+    <li class="footer">Generated on Thu Aug 1 2019 16:04:03 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.14 </li>
   </ul>

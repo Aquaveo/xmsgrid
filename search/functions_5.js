@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['faceorientation',['FaceOrientation',['../classxms_1_1_xm_u_grid_1_1_impl.html#a9eb19e84aa68a154aff7cdbd8780fd7e',1,'xms::XmUGrid::Impl']]],
+  ['faceorientationwithfail',['FaceOrientationWithFail',['../classxms_1_1_xm_u_grid_1_1_impl.html#aad48cc3e2385f9c5c67739e3f48543de',1,'xms::XmUGrid::Impl']]],
   ['filladjtrisifneeded',['FillAdjTrisIfNeeded',['../classxms_1_1_tr_auto_fix_four_triangle_pts_impl.html#a7bafc03b8a5a97ba3f8fea1ce5238aa8',1,'xms::TrAutoFixFourTrianglePtsImpl']]],
   ['finalizetriangulation',['FinalizeTriangulation',['../classxms_1_1_tr_triangulator_points.html#a91c8c4eb53d2b252c816b168d0b5f7e5',1,'xms::TrTriangulatorPoints']]],
   ['findintersectingedgefromedge',['FindIntersectingEdgeFromEdge',['../classxms_1_1_tr_breakline_adder_impl.html#a25e0d6e4454a500d1720681e023aecb3',1,'xms::TrBreaklineAdderImpl']]],

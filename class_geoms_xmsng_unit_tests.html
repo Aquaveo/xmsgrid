@@ -115,6 +115,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3c7aa86a05eb6c65edbfd2739adae675"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geoms_xmsng_unit_tests.html#a3c7aa86a05eb6c65edbfd2739adae675">test_gmPointInPolygon2D_Speed</a> ()</td></tr>
 <tr class="memdesc:a3c7aa86a05eb6c65edbfd2739adae675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test lots of points for timing purposes. Only in release, not debug.  <a href="#a3c7aa86a05eb6c65edbfd2739adae675">More...</a><br /></td></tr>
 <tr class="separator:a3c7aa86a05eb6c65edbfd2739adae675"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac45c185deb053fda8149b2d72dffce5f"><td class="memItemLeft" align="right" valign="top"><a id="ac45c185deb053fda8149b2d72dffce5f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geoms_xmsng_unit_tests.html#ac45c185deb053fda8149b2d72dffce5f">testConvexHull</a> ()</td></tr>
+<tr class="memdesc:ac45c185deb053fda8149b2d72dffce5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test building a convex hull. <br /></td></tr>
+<tr class="separator:ac45c185deb053fda8149b2d72dffce5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8f57e79cd7c87606b3da6b142fcf0e6"><td class="memItemLeft" align="right" valign="top"><a id="ad8f57e79cd7c87606b3da6b142fcf0e6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geoms_xmsng_unit_tests.html#ad8f57e79cd7c87606b3da6b142fcf0e6">testDoLineSegmentsCross</a> ()</td></tr>
+<tr class="memdesc:ad8f57e79cd7c87606b3da6b142fcf0e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test determining if two lines intersect. <br /></td></tr>
+<tr class="separator:ad8f57e79cd7c87606b3da6b142fcf0e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Tests for functions in <a class="el" href="geoms_8cpp.html" title="Functions dealing with geometry. ">geoms.cpp</a>. </p>
@@ -143,9 +151,9 @@ Public Member Functions</h2></td></tr>
 //    0     10
 /// </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02326">2326</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02449">2449</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00870">xms::gmComputeCentroid()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_test_tools_8h.html#a8cf38238ae1360b955b35555180bd5bb">TS_ASSERT_DELTA_PT3D</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00895">xms::gmComputeCentroid()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_test_tools_8h.html#a8cf38238ae1360b955b35555180bd5bb">TS_ASSERT_DELTA_PT3D</a>.</p>
 
 </div>
 </div>
@@ -170,9 +178,9 @@ Public Member Functions</h2></td></tr>
 //  0 *------*
 //    0     10
 /// </pre> 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02353">2353</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02476">2476</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00883">xms::gmComputePolygonCentroid()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_test_tools_8h.html#a8cf38238ae1360b955b35555180bd5bb">TS_ASSERT_DELTA_PT3D</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l00908">xms::gmComputePolygonCentroid()</a>, and <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_test_tools_8h.html#a8cf38238ae1360b955b35555180bd5bb">TS_ASSERT_DELTA_PT3D</a>.</p>
 
 </div>
 </div>
@@ -210,9 +218,9 @@ Public Member Functions</h2></td></tr>
 //             0   5  10  15  20  25  30  35  40  45  50  55
 /// </pre> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02383">2383</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="geoms_8cpp_source.html#l02506">2506</a> of file <a class="el" href="geoms_8cpp_source.html">geoms.cpp</a>.</p>
 
-<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l02180">GmPointInPolyUnitTests::DoTest()</a>.</p>
+<p class="reference">References <a class="el" href="geoms_8cpp_source.html#l02303">GmPointInPolyUnitTests::DoTest()</a>.</p>
 
 </div>
 </div>
@@ -226,7 +234,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_geoms_xmsng_unit_tests.html">GeomsXmsngUnitTests</a></li>
-    <li class="footer">Generated on Mon May 20 2019 09:51:54 for xmsgrid by
+    <li class="footer">Generated on Thu Aug 1 2019 16:04:03 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.14 </li>
   </ul>

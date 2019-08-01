@@ -6,8 +6,7 @@ var searchData=
   ['xmlog',['XmLog',['https://aquaveo.github.io/xmscore/classxms_1_1_xm_log.html#aa755e43cb07d364b0bce3b265569985b',1,'xms::XmLog']]],
   ['xmreadugridfromasciifile',['XmReadUGridFromAsciiFile',['../namespacexms.html#a92b5c5c0a9e2455db6d671eb7134a76e',1,'xms']]],
   ['xmreadugridfromstream',['XmReadUGridFromStream',['../namespacexms.html#a9d5b4a9ea7c259666b64babd5e190cf8',1,'xms']]],
-  ['xmugrid',['XmUGrid',['../classxms_1_1_xm_u_grid.html#a2830cab0aca6c776321d58294dbc2208',1,'xms::XmUGrid']]],
-  ['xmugridimpl',['XmUGridImpl',['../classxms_1_1_xm_u_grid_impl.html#a0ec8140212d29927620c6010fd5fa8f1',1,'xms::XmUGridImpl']]],
+  ['xmugrid',['XmUGrid',['../classxms_1_1_xm_u_grid.html#a2830cab0aca6c776321d58294dbc2208',1,'xms::XmUGrid::XmUGrid()'],['../classxms_1_1_xm_u_grid.html#a9cd98317e176227dabbe6ce31e21f69a',1,'xms::XmUGrid::XmUGrid(const XmUGrid &amp;a_xmUGrid)'],['../classxms_1_1_xm_u_grid.html#ad5227c0f60db617fb19c0db89dc4579f',1,'xms::XmUGrid::XmUGrid(XmUGrid &amp;&amp;a_xmUGrid)']]],
   ['xmwriteugridtoasciifile',['XmWriteUGridToAsciiFile',['../namespacexms.html#aad684d8d566604305a00cc4d875dd51e',1,'xms']]],
-  ['xmwriteugridtostream',['XmWriteUGridToStream',['../namespacexms.html#adcf5db1fd47ba0560a24e9ae63b942df',1,'xms::XmWriteUGridToStream(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)'],['../namespacexms.html#ab7e35a02bf354662441212141a4a91e3',1,'xms::XmWriteUGridToStream(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream)']]]
+  ['xmwriteugridtostream',['XmWriteUGridToStream',['../namespacexms.html#adcf5db1fd47ba0560a24e9ae63b942df',1,'xms::XmWriteUGridToStream(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)'],['../namespacexms.html#a089a787adbb806cc55d8751b8ffb3a8d',1,'xms::XmWriteUGridToStream(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream, bool a_binary)']]]
 ];

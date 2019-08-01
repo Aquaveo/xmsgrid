@@ -30,6 +30,7 @@ var hierarchy =
     ] ],
     [ "xms::idx_pt", "classxms_1_1idx__pt.html", null ],
     [ "xms::idx_tri", "classxms_1_1idx__tri.html", null ],
+    [ "xms::XmUGrid::Impl", "classxms_1_1_xm_u_grid_1_1_impl.html", null ],
     [ "xms::ix", "classxms_1_1ix.html", null ],
     [ "TestSuite", null, [
       [ "GeomsXmsngIntermediateTests", "class_geoms_xmsng_intermediate_tests.html", null ],
@@ -48,7 +49,6 @@ var hierarchy =
       [ "TrTinUnitTests", "class_tr_tin_unit_tests.html", null ],
       [ "TrTriangulatorPointsUnitTests", "class_tr_triangulator_points_unit_tests.html", null ],
       [ "XmEdgeUnitTests", "class_xm_edge_unit_tests.html", null ],
-      [ "XmGeometryUnitTests", "class_xm_geometry_unit_tests.html", null ],
       [ "XmUGridUnitTests", "class_xm_u_grid_unit_tests.html", null ],
       [ "XmUGridUtilsTests", "class_xm_u_grid_utils_tests.html", null ]
     ] ],
@@ -68,8 +68,5 @@ var hierarchy =
       [ "xms::TrTriangulatorPoints", "classxms_1_1_tr_triangulator_points.html", null ]
     ] ],
     [ "xms::XmEdge", "classxms_1_1_xm_edge.html", null ],
-    [ "xms::XmUGrid", "classxms_1_1_xm_u_grid.html", [
-      [ "xms::XmUGridImpl", "classxms_1_1_xm_u_grid_impl.html", null ]
-    ] ],
-    [ "XmUGridTests", "class_xm_u_grid_tests.html", null ]
+    [ "xms::XmUGrid", "classxms_1_1_xm_u_grid.html", null ]
 ];

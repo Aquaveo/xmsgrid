@@ -97,25 +97,24 @@ $(document).ready(function(){initNavTree('_xm_u_grid_8cpp.html','');});
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="_xm_u_grid_8h_source.html">xmsgrid/ugrid/XmUGrid.h</a>&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
-<code>#include &lt;set&gt;</code><br />
-<code>#include &lt;unordered_set&gt;</code><br />
 <code>#include &lt;boost/container/flat_set.hpp&gt;</code><br />
 <code>#include &lt;<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_const_8h.html">xmscore/misc/XmConst.h</a>&gt;</code><br />
 <code>#include &lt;<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_error_8h.html">xmscore/misc/XmError.h</a>&gt;</code><br />
 <code>#include &lt;<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_xm_log_8h.html">xmscore/misc/XmLog.h</a>&gt;</code><br />
 <code>#include &lt;<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/xmstype_8h.html">xmscore/misc/xmstype.h</a>&gt;</code><br />
 <code>#include &lt;<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/set_8h.html">xmscore/stl/set.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="geoms_8h_source.html">xmsgrid/geometry/geoms.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="_xm_geometry_8h_source.html">xmsgrid/ugrid/detail/XmGeometry.h</a>&gt;</code><br />
 <code>#include &lt;xmsgrid/ugrid/XmEdge.h&gt;</code><br />
-<code>#include &lt;<a class="el" href="_xm_u_grid_utils_8h_source.html">xmsgrid/ugrid/XmUGridUtils.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="_xm_u_grid_8t_8h_source.html">xmsgrid/ugrid/XmUGrid.t.h</a>&gt;</code><br />
+<code>#include &lt;<a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/_test_tools_8h.html">xmscore/testing/TestTools.h</a>&gt;</code><br />
 </div>
 <p><a href="_xm_u_grid_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_impl.html">xms::XmUGridImpl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation for <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>.  <a href="classxms_1_1_xm_u_grid_impl.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classxms_1_1_xm_u_grid_1_1_impl.html">xms::XmUGrid::Impl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation for <a class="el" href="classxms_1_1_xm_u_grid.html" title="Geometry for an unstructured grid. An XmUGrid is defined as a vector of 3d points and a stream of cel...">XmUGrid</a>.  <a href="classxms_1_1_xm_u_grid_1_1_impl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -141,67 +140,39 @@ Functions</h2></td></tr>
 <tr class="memitem:a15d3f924e7e8424b2c491ef2132b700c"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a15d3f924e7e8424b2c491ef2132b700c">xms::TEST_XmUGridHexagonalPolyhedron</a> ()</td></tr>
 <tr class="memdesc:a15d3f924e7e8424b2c491ef2132b700c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a 1 cell hexagon with cell type polyhedron.  <a href="namespacexms.html#a15d3f924e7e8424b2c491ef2132b700c">More...</a><br /></td></tr>
 <tr class="separator:a15d3f924e7e8424b2c491ef2132b700c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66cfca71e0f54169d0175e75a1da1b9f"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a66cfca71e0f54169d0175e75a1da1b9f">xms::TEST_XmUBuildQuadUGrid</a> (const int a_rows, const int a_cols)</td></tr>
-<tr class="memdesc:a66cfca71e0f54169d0175e75a1da1b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a66cfca71e0f54169d0175e75a1da1b9f">More...</a><br /></td></tr>
-<tr class="separator:a66cfca71e0f54169d0175e75a1da1b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae795f753066bfd3749f441b965aba896"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#ae795f753066bfd3749f441b965aba896">xms::TEST_XmUBuildQuadUGrid</a> (const int a_rows, const int a_cols, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
-<tr class="memdesc:ae795f753066bfd3749f441b965aba896"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#ae795f753066bfd3749f441b965aba896">More...</a><br /></td></tr>
-<tr class="separator:ae795f753066bfd3749f441b965aba896"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a50a2c6d678fa5e90212d03fecd3f44"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a0a50a2c6d678fa5e90212d03fecd3f44">xms::TEST_XmUBuildHexahedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays)</td></tr>
-<tr class="memdesc:a0a50a2c6d678fa5e90212d03fecd3f44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a0a50a2c6d678fa5e90212d03fecd3f44">More...</a><br /></td></tr>
-<tr class="separator:a0a50a2c6d678fa5e90212d03fecd3f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b7018697957bbe8aed198fe6cf69a07"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a9b7018697957bbe8aed198fe6cf69a07">xms::TEST_XmUBuildHexahedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
-<tr class="memdesc:a9b7018697957bbe8aed198fe6cf69a07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a9b7018697957bbe8aed198fe6cf69a07">More...</a><br /></td></tr>
-<tr class="separator:a9b7018697957bbe8aed198fe6cf69a07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a512cd32ebbe039154d962c0d47a6e4fc"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a512cd32ebbe039154d962c0d47a6e4fc">xms::TEST_XmUBuildPolyhedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays)</td></tr>
-<tr class="memdesc:a512cd32ebbe039154d962c0d47a6e4fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a512cd32ebbe039154d962c0d47a6e4fc">More...</a><br /></td></tr>
-<tr class="separator:a512cd32ebbe039154d962c0d47a6e4fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b241889d06a379363e269e80a06ea1c"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a6b241889d06a379363e269e80a06ea1c">xms::TEST_XmUBuildPolyhedronUgrid</a> (const int a_rows, const int a_cols, const int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
-<tr class="memdesc:a6b241889d06a379363e269e80a06ea1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a6b241889d06a379363e269e80a06ea1c">More...</a><br /></td></tr>
-<tr class="separator:a6b241889d06a379363e269e80a06ea1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4060e4f462e3b4be62e1e4ec5ad518db"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a4060e4f462e3b4be62e1e4ec5ad518db">xms::TEST_XmUBuildQuadUGrid</a> (int a_rows, int a_cols)</td></tr>
+<tr class="memdesc:a4060e4f462e3b4be62e1e4ec5ad518db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a4060e4f462e3b4be62e1e4ec5ad518db">More...</a><br /></td></tr>
+<tr class="separator:a4060e4f462e3b4be62e1e4ec5ad518db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a934ef910c886d3a7c635e20161271a34"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a934ef910c886d3a7c635e20161271a34">xms::TEST_XmUBuildQuadUGrid</a> (int a_rows, int a_cols, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
+<tr class="memdesc:a934ef910c886d3a7c635e20161271a34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a934ef910c886d3a7c635e20161271a34">More...</a><br /></td></tr>
+<tr class="separator:a934ef910c886d3a7c635e20161271a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56cfb9438b4307bfe2541b8ff1830628"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a56cfb9438b4307bfe2541b8ff1830628">xms::TEST_XmUBuildHexahedronUgrid</a> (int a_rows, int a_cols, int a_lays)</td></tr>
+<tr class="memdesc:a56cfb9438b4307bfe2541b8ff1830628"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a56cfb9438b4307bfe2541b8ff1830628">More...</a><br /></td></tr>
+<tr class="separator:a56cfb9438b4307bfe2541b8ff1830628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a179b7fab69fb99e844f727543feafa4f"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a179b7fab69fb99e844f727543feafa4f">xms::TEST_XmUBuildHexahedronUgrid</a> (int a_rows, int a_cols, int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
+<tr class="memdesc:a179b7fab69fb99e844f727543feafa4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a179b7fab69fb99e844f727543feafa4f">More...</a><br /></td></tr>
+<tr class="separator:a179b7fab69fb99e844f727543feafa4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeefffe6fa733a4912b83cf32364d2718"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#aeefffe6fa733a4912b83cf32364d2718">xms::TEST_XmUBuildPolyhedronUgrid</a> (int a_rows, int a_cols, int a_lays)</td></tr>
+<tr class="memdesc:aeefffe6fa733a4912b83cf32364d2718"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#aeefffe6fa733a4912b83cf32364d2718">More...</a><br /></td></tr>
+<tr class="separator:aeefffe6fa733a4912b83cf32364d2718"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588bfc31a2511a832b6a2291e24997ea"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a588bfc31a2511a832b6a2291e24997ea">xms::TEST_XmUBuildPolyhedronUgrid</a> (int a_rows, int a_cols, int a_lays, const <a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/ptsfwd_8h.html#a33ae0c78e599c46ba59bce7f2b32d7ab">xms::Pt3d</a> &amp;a_origin)</td></tr>
+<tr class="memdesc:a588bfc31a2511a832b6a2291e24997ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid of Quads at 1 spacing for rows &amp; cols specified.  <a href="namespacexms.html#a588bfc31a2511a832b6a2291e24997ea">More...</a><br /></td></tr>
+<tr class="separator:a588bfc31a2511a832b6a2291e24997ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18cc668860be57dfc3d4800446ab6dfb"><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="/home/conan/Doxygen/xmscore.tag:https://aquaveo.github.io/xmscore/" href="https://aquaveo.github.io/xmscore/boost__defines_8h.html#a37efc6913312f9271e2ea37f1acbc2dc">BSHP</a>&lt; <a class="el" href="classxms_1_1_xm_u_grid.html">xms::XmUGrid</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacexms.html#a18cc668860be57dfc3d4800446ab6dfb">xms::TEST_XmUBuild3DChevronUgrid</a> ()</td></tr>
 <tr class="memdesc:a18cc668860be57dfc3d4800446ab6dfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Builds a UGrid with one 3D Chevron polyhedron.  <a href="namespacexms.html#a18cc668860be57dfc3d4800446ab6dfb">More...</a><br /></td></tr>
 <tr class="separator:a18cc668860be57dfc3d4800446ab6dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5077e9a31a7514c737aec71ff1732e1c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_xm_u_grid_8cpp.html#a5077e9a31a7514c737aec71ff1732e1c">TestFilesPath</a> ()</td></tr>
-<tr class="memdesc:a5077e9a31a7514c737aec71ff1732e1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Path to test files.  <a href="#a5077e9a31a7514c737aec71ff1732e1c">More...</a><br /></td></tr>
-<tr class="separator:a5077e9a31a7514c737aec71ff1732e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>(C) Copyright Aquaveo 2018. Distributed under FreeBSD License (See accompanying file LICENSE or <a href="https://aqaveo.com/bsd/license.txt">https://aqaveo.com/bsd/license.txt</a>) </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a5077e9a31a7514c737aec71ff1732e1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5077e9a31a7514c737aec71ff1732e1c">&#9670;&nbsp;</a></span>TestFilesPath()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string TestFilesPath </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Path to test files. </p>
-<dl class="section return"><dt>Returns</dt><dd>Returns path to test files. </dd></dl>
-
-<p class="definition">Definition at line <a class="el" href="_xm_u_grid_8cpp_source.html#l03600">3600</a> of file <a class="el" href="_xm_u_grid_8cpp_source.html">XmUGrid.cpp</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00516">XmUGridUtilsTests::testWriteThenReadUGridFile()</a>, and <a class="el" href="_xm_u_grid_utils_8cpp_source.html#l00543">XmUGridUtilsTests::testWriteThenReadUGridFileToAscii()</a>.</p>
-
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_063f5bb27051e7adf91034aa3d93de96.html">xmsgrid</a></li><li class="navelem"><a class="el" href="dir_a4f80c8107f4df91c21d011369fb1e1d.html">ugrid</a></li><li class="navelem"><a class="el" href="_xm_u_grid_8cpp.html">XmUGrid.cpp</a></li>
-    <li class="footer">Generated on Mon May 20 2019 09:51:54 for xmsgrid by
+    <li class="footer">Generated on Thu Aug 1 2019 16:04:03 for xmsgrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.14 </li>
   </ul>

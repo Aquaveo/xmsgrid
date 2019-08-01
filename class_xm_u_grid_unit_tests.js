@@ -10,6 +10,7 @@ var class_xm_u_grid_unit_tests =
     [ "testGetCell3dFaceAdjacentCell", "class_xm_u_grid_unit_tests.html#ad0716e5ca692e4d3f3f01d9e70c9d42c", null ],
     [ "testGetCell3dFaceCount", "class_xm_u_grid_unit_tests.html#a24af8a3e33913422fe3ad15c0e092583", null ],
     [ "testGetCell3dFaceOrientationConcaveCell", "class_xm_u_grid_unit_tests.html#a17d270a72f90ec49c8783aa5173d3aa4", null ],
+    [ "testGetCell3dFaceOrientationHexahedrons", "class_xm_u_grid_unit_tests.html#aa9a46b443946cb2927bcf013142fe3b0", null ],
     [ "testGetCell3dFacePointCount", "class_xm_u_grid_unit_tests.html#aa64c5e0c1cb6b4c7d215e9353c8eb94e", null ],
     [ "testGetCell3dFacePoints", "class_xm_u_grid_unit_tests.html#a4b745c672b7c2efbc42ecdc8bf6f6035", null ],
     [ "testGetCellAdjacentCells", "class_xm_u_grid_unit_tests.html#af64a6531be327452cc4a1ad83990acf5", null ],
@@ -30,6 +31,7 @@ var class_xm_u_grid_unit_tests =
     [ "testGetSetPoint", "class_xm_u_grid_unit_tests.html#a8e9168df5e65f86cfbc2dbb22a44e9af", null ],
     [ "testIsCellValidWithPointChange", "class_xm_u_grid_unit_tests.html#ac5a30921fdb122b8ef60fbd12365957e", null ],
     [ "testLargeUGridLinkSpeed", "class_xm_u_grid_unit_tests.html#a8e9078332f58080823880c04eb37b94f", null ],
+    [ "testOperators", "class_xm_u_grid_unit_tests.html#a5daf146c15730c2ca6e70a355b890ede", null ],
     [ "testPointFunctions", "class_xm_u_grid_unit_tests.html#ae950f2efb2ef0e1d655bf12ed1803f83", null ],
     [ "testUGridStreams", "class_xm_u_grid_unit_tests.html#afecce71921cd7ff64d695314747a48aa", null ]
 ];

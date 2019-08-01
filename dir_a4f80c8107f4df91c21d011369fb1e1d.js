@@ -8,7 +8,10 @@ var dir_a4f80c8107f4df91c21d011369fb1e1d =
     ] ],
     [ "XmUGrid.cpp", "_xm_u_grid_8cpp.html", "_xm_u_grid_8cpp" ],
     [ "XmUGrid.h", "_xm_u_grid_8h.html", "_xm_u_grid_8h" ],
-    [ "XmUGrid.t.h", "_xm_u_grid_8t_8h.html", "_xm_u_grid_8t_8h" ],
+    [ "XmUGrid.t.h", "_xm_u_grid_8t_8h.html", [
+      [ "XmUGridUnitTests", "class_xm_u_grid_unit_tests.html", "class_xm_u_grid_unit_tests" ]
+    ] ],
+    [ "XmUGridUtils - Copy.cpp", "_xm_u_grid_utils_01-_01_copy_8cpp_source.html", null ],
     [ "XmUGridUtils.cpp", "_xm_u_grid_utils_8cpp.html", "_xm_u_grid_utils_8cpp" ],
     [ "XmUGridUtils.h", "_xm_u_grid_utils_8h.html", "_xm_u_grid_utils_8h" ],
     [ "XmUGridUtils.t.h", "_xm_u_grid_utils_8t_8h.html", [
