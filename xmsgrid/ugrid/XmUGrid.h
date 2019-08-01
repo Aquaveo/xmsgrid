@@ -15,7 +15,6 @@
 // 4. External library headers
 
 // 5. Shared code headers
-#include <xmscore/misc/boost_defines.h>
 #include <xmscore/stl/vector.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -116,8 +115,8 @@ enum XmUGridFaceOrientation {
 class XmUGrid
 {
 public:
-  static BSHP<XmUGrid> New(const VecPt3d& a_locations, const VecInt& a_cellstream);
-  static BSHP<XmUGrid> New();
+  static std::shared_ptr<XmUGrid> New(const VecPt3d& a_locations, const VecInt& a_cellstream);
+  static std::shared_ptr<XmUGrid> New();
   XmUGrid();
   XmUGrid(const XmUGrid& a_xmUGrid);
   XmUGrid(XmUGrid&& a_xmUGrid);
@@ -197,23 +196,23 @@ private:
 };
 
 //----- Function prototypes ----------------------------------------------------
-BSHP<xms::XmUGrid> TEST_XmUGrid1Left90Tri();
-BSHP<xms::XmUGrid> TEST_XmUGridSimpleQuad();
-BSHP<xms::XmUGrid> TEST_XmUGrid2dLinear();
-BSHP<xms::XmUGrid> TEST_XmUGrid3dLinear();
-BSHP<xms::XmUGrid> TEST_XmUGridHexagonalPolyhedron();
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols);
-BSHP<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_cols, int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
+std::shared_ptr<XmUGrid> TEST_XmUGrid1Left90Tri();
+std::shared_ptr<XmUGrid> TEST_XmUGridSimpleQuad();
+std::shared_ptr<XmUGrid> TEST_XmUGrid2dLinear();
+std::shared_ptr<XmUGrid> TEST_XmUGrid3dLinear();
+std::shared_ptr<XmUGrid> TEST_XmUGridHexagonalPolyhedron();
+std::shared_ptr<XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols);
+std::shared_ptr<XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, const xms::Pt3d& a_origin);
+std::shared_ptr<XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_cols, int a_lays);
+std::shared_ptr<XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
                                                 int a_cols,
                                                 int a_lays,
                                                 const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_cols, int a_lays);
-BSHP<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
+std::shared_ptr<XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_cols, int a_lays);
+std::shared_ptr<XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
                                                 int a_cols,
                                                 int a_lays,
                                                 const xms::Pt3d& a_origin);
-BSHP<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid();
+std::shared_ptr<XmUGrid> TEST_XmUBuild3DChevronUgrid();
 
 } // namespace xms

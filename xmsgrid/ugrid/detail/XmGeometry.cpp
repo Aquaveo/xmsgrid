@@ -67,7 +67,7 @@ VecPt3d ConvexHull(const std::vector<Pt3<double>>& a_points)
 ///   all of the points in a set and is convex.
 //------------------------------------------------------------------------------
 // TODO: Deprecated. Remove in major version change.
-VecInt ConvexHullWithIndices(const std::vector<int>& a_points, BSHP<XmUGrid> a_ugrid)
+VecInt ConvexHullWithIndices(const std::vector<int>& a_points, std::shared_ptr<XmUGrid> a_ugrid)
 {
   VecPt3d points3d(a_points.size());
   for (int i = 0; i < a_points.size(); ++i)
