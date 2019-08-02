@@ -18,7 +18,7 @@ var searchData=
   ['computetvalues',['ComputeTValues',['../classxms_1_1_gm_multi_poly_intersector_impl.html#ab1525012537a7fe8d974de6c1c7c1080',1,'xms::GmMultiPolyIntersectorImpl']]],
   ['connectedtoporbottom',['ConnectedTopOrBottom',['../classxms_1_1_xm_u_grid_1_1_impl.html#a9f6c0ee548eef71afecd775c83ccb86e',1,'xms::XmUGrid::Impl']]],
   ['convexhull',['ConvexHull',['../namespacexms.html#a8bf3a5f5a2e5003c8de8e44a75fa9cde',1,'xms']]],
-  ['convexhullwithindices',['ConvexHullWithIndices',['../namespacexms.html#a8d5547f30586a0da0391aa281a4ef559',1,'xms']]],
+  ['convexhullwithindices',['ConvexHullWithIndices',['../namespacexms.html#a00d2ba2d5a847f521e5ef4b8760673b1',1,'xms']]],
   ['coveredby',['CoveredBy',['../classxms_1_1_gm_polygon_impl.html#ab532f128e5d4ac3c9d5084d639d0c3bf',1,'xms::GmPolygonImpl']]],
   ['createline',['CreateLine',['../classxms_1_1_gm_multi_poly_intersector_impl.html#a3c3d8a9dd135301536427efe7e08a21a',1,'xms::GmMultiPolyIntersectorImpl']]],
   ['createoctants',['CreateOctants',['../classxms_1_1_gm_pt_search_impl.html#aae9c54c626d2860a7be4fc122fb917ae',1,'xms::GmPtSearchImpl']]],
