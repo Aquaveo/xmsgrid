@@ -837,7 +837,7 @@ void TrTinImpl::GetBoundaryPolys(VecInt2d& a_polys) const
       it = pointSet.find(next);
       if (it == pointSet.end())
       {
-        XM_LOG(xmlog::warning,
+        XM_LOG(xmlog::debug,
                "Unable to get boundary polygon from meshed points. Check the input polygon.");
         a_polys.clear();
         return;
