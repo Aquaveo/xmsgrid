@@ -23,7 +23,7 @@ requires = [
 version = __version__
 
 setup(
-    python_requires='==3.6.*',
+    python_requires='>=3.6',
     name='xmsgrid',
     version=version,
     packages=['xms.grid', 'xms.grid.geometry', 'xms.grid.triangulate',
