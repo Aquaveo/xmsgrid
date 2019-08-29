@@ -65,12 +65,15 @@ public:
   virtual ~GmMultiPolyIntersectorImpl();
 
   virtual void SetQuery(GmMultiPolyIntersectorQueryEnum a_query) override;
-  virtual void TraverseLineSegment(double x1, double y1, double x2, double y2,
-                                   VecInt &polyids, VecDbl &tvalues) override;
-  virtual void TraverseLineSegment(double x1, double y1, double x2, double y2,
-                                   VecInt &polyids) override;
+  virtual void TraverseLineSegment(double a_x1, double a_y1, double a_x2, double a_y2,
+                                   VecInt &a_polyids, VecDbl &a_tvalues) override;
+  virtual void TraverseLineSegment(double a_x1, double a_y1, double a_x2, double a_y2,
+                                   VecInt &a_polyids) override;
   virtual void TraverseLineSegment(double a_x1, double a_y1, double a_x2,
                                    double a_y2, VecInt &a_polyids,
+                                   std::vector<Pt3d> &a_pts) override;
+  virtual void TraverseLineSegment(double a_x1, double a_y1, double a_x2,
+                                   double a_y2, VecInt &a_polyids, VecDbl &a_tvalues,
                                    std::vector<Pt3d> &a_pts) override;
   virtual int PolygonFromPoint(const Pt3d &a_pt) override;
 
@@ -90,9 +93,6 @@ private:
   void PointsOnSegment(const GmBstPoly3d &a_poly, const GmBstLine3d &a_line,
                        std::deque<Pt3d> &a_output);
   // void ValidatePolygons ();
-  void TraverseLineSegmentAll(double a_x1, double a_y1, double a_x2,
-                              double a_y2, VecInt &a_polyids, VecDbl &a_tvalues,
-                              std::vector<Pt3d> &a_pts);
 
   GmMultiPolyIntersectorData m_d; ///< Point and poly data.
   Pt3d m_pt1;                     ///< 1st line segment point
@@ -465,12 +465,13 @@ void GmMultiPolyIntersectorImpl::OffsetPolyIds(VecInt &polyIds) const {
 } // GmMultiPolyIntersectorImpl::OffsetPolyIds
 //------------------------------------------------------------------------------
 /// \brief Intersect segment with polys and save intersected polys and t-values.
-/// \param x1: x coordinate of 1st point defining a line segment.
-/// \param y1: y coordinate of 1st point defining a line segment.
-/// \param x2: x coordinate of 2nd point defining a line segment.
-/// \param y2: y coordinate of 2nd point defining a line segment.
-/// \param polyids: 1-based list of polygons intersected by line segment.
-/// \param tvalues: Values from 0.0 to 1.0 representing where on the line
+/// \param a_x1: x coordinate of 1st point defining a line segment.
+/// \param a_y1: y coordinate of 1st point defining a line segment.
+/// \param a_x2: x coordinate of 2nd point defining a line segment.
+/// \param a_y2: y coordinate of 2nd point defining a line segment.
+/// \param a_polyids: list of polygons intersected by line segment. Can be zero
+///                  or 1 based depending on a_startingId passed to constructor.
+/// \param a_tvalues: Values from 0.0 to 1.0 representing where on the line
 ///                  segment the intersection with the polygon in polyids
 ///                  occurs. If there are any t values there are always at
 ///                  least 2 and all represent where the line enters the
@@ -479,27 +480,28 @@ void GmMultiPolyIntersectorImpl::OffsetPolyIds(VecInt &polyIds) const {
 ///                  but we make the sizes equal by always making the last
 ///                  poly id -1.
 //------------------------------------------------------------------------------
-void GmMultiPolyIntersectorImpl::TraverseLineSegment(double x1, double y1,
-                                                     double x2, double y2,
-                                                     VecInt &polyids,
-                                                     VecDbl &tvalues) {
+void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1, double a_y1,
+                                                     double a_x2, double a_y2,
+                                                     VecInt &a_polyids,
+                                                     VecDbl &a_tvalues) {
   VecPt3d pts;
-  TraverseLineSegmentAll(x1, y1, x2, y2, polyids, tvalues, pts);
+  TraverseLineSegment(a_x1, a_y1, a_x2, a_y2, a_polyids, a_tvalues, pts);
 } // GmMultiPolyIntersectorImpl::TraverseLineSegment
 //------------------------------------------------------------------------------
 /// \brief Intersect segment with polys and save intersected polys.
-/// \param x1: x coordinate of 1st point defining a line segment.
-/// \param y1: y coordinate of 1st point defining a line segment.
-/// \param x2: x coordinate of 2nd point defining a line segment.
-/// \param y2: y coordinate of 2nd point defining a line segment.
-/// \param polyids: 1-based list of polygons intersected by line segment.
+/// \param a_x1: x coordinate of 1st point defining a line segment.
+/// \param a_y1: y coordinate of 1st point defining a line segment.
+/// \param a_x2: x coordinate of 2nd point defining a line segment.
+/// \param a_y2: y coordinate of 2nd point defining a line segment.
+/// \param a_polyids: list of polygons intersected by line segment. Can be zero
+///                  or 1 based depending on a_startingId passed to constructor.
 //------------------------------------------------------------------------------
-void GmMultiPolyIntersectorImpl::TraverseLineSegment(double x1, double y1,
-                                                     double x2, double y2,
-                                                     VecInt &polyids) {
+void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1, double a_y1,
+                                                     double a_x2, double a_y2,
+                                                     VecInt &a_polyids) {
   VecDbl tvalues;
   VecPt3d pts;
-  TraverseLineSegmentAll(x1, y1, x2, y2, polyids, tvalues, pts);
+  TraverseLineSegment(a_x1, a_y1, a_x2, a_y2, a_polyids, tvalues, pts);
 } // GmMultiPolyIntersectorImpl::TraverseLineSegment
 //-----------------------------------------------------------------------------
 /// \brief Intersect segment with polys and save intersected polys and
@@ -508,7 +510,8 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double x1, double y1,
 /// \param a_y1: y coordinate of 1st point defining a line segment.
 /// \param a_x2: x coordinate of 2nd point defining a line segment.
 /// \param a_y2: y coordinate of 2nd point defining a line segment.
-/// \param a_polyids: 1-based list of polygons intersected by line segment.
+/// \param a_polyids: list of polygons intersected by line segment. Can be zero
+///                  or 1 based depending on a_startingId passed to constructor.
 /// \param a_pts: Intersection points.
 //-----------------------------------------------------------------------------
 void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1, double a_y1,
@@ -516,22 +519,8 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1, double a_y1,
                                                      VecInt &a_polyids,
                                                      std::vector<Pt3d> &a_pts) {
   VecDbl tvalues;
-  TraverseLineSegmentAll(a_x1, a_y1, a_x2, a_y2, a_polyids, tvalues, a_pts);
+  TraverseLineSegment(a_x1, a_y1, a_x2, a_y2, a_polyids, tvalues, a_pts);
 } // GmMultiPolyIntersectorImpl::TraverseLineSegment
-//-----------------------------------------------------------------------------
-/// \brief Finds the polygon containing the point
-/// \param a_pt: the location of the point
-/// \return the polygon id
-//-----------------------------------------------------------------------------
-int GmMultiPolyIntersectorImpl::PolygonFromPoint(const Pt3d &a_pt) {
-  int rval(XM_NONE);
-  SetInt polys;
-  GetPolysForPoint(a_pt, polys);
-  if (!polys.empty()) {
-    rval = (int)*polys.begin();
-  }
-  return rval;
-} // GmMultiPolyIntersectorImpl::PolygonFromPoint
 //-----------------------------------------------------------------------------
 /// \brief Intersect segment with polys and save intersected polys, t-values,
 ///        and intersection points.
@@ -539,7 +528,8 @@ int GmMultiPolyIntersectorImpl::PolygonFromPoint(const Pt3d &a_pt) {
 /// \param a_y1: y coordinate of 1st point defining a line segment.
 /// \param a_x2: x coordinate of 2nd point defining a line segment.
 /// \param a_y2: y coordinate of 2nd point defining a line segment.
-/// \param a_polyids: 1-based list of polygons intersected by line segment.
+/// \param a_polyids: list of polygons intersected by line segment. Can be zero
+///                  or 1 based depending on a_startingId passed to constructor.
 /// \param a_tvalues: Values from 0.0 to 1.0 representing where on the line
 ///                  segment the intersection with the polygon in polyids
 ///                  occurs. If there are any t values there are always at
@@ -550,7 +540,7 @@ int GmMultiPolyIntersectorImpl::PolygonFromPoint(const Pt3d &a_pt) {
 ///                  poly id -1.
 /// \param a_pts: Intersection points.
 //-----------------------------------------------------------------------------
-void GmMultiPolyIntersectorImpl::TraverseLineSegmentAll(
+void GmMultiPolyIntersectorImpl::TraverseLineSegment(
     double a_x1, double a_y1, double a_x2, double a_y2, VecInt &a_polyids,
     VecDbl &a_tvalues, std::vector<Pt3d> &a_pts) {
   m_pt1.Set(a_x1, a_y1, 0.0);
@@ -575,6 +565,20 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegmentAll(
   m_d.m_polys2.clear();
   m_line.clear();
 } // GmMultiPolyIntersectorImpl::TraverseLineSegmentAll
+//-----------------------------------------------------------------------------
+/// \brief Finds the polygon containing the point
+/// \param a_pt: the location of the point
+/// \return the polygon id
+//-----------------------------------------------------------------------------
+int GmMultiPolyIntersectorImpl::PolygonFromPoint(const Pt3d &a_pt) {
+  int rval(XM_NONE);
+  SetInt polys;
+  GetPolysForPoint(a_pt, polys);
+  if (!polys.empty()) {
+    rval = (int)*polys.begin();
+  }
+  return rval;
+} // GmMultiPolyIntersectorImpl::PolygonFromPoint
 } // namespace xms
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -607,20 +611,29 @@ void iRunTest(double x1, double y1, double x2, double y2, const VecPt3d &pts,
           new GmMultiPolyIntersectionSorterTerse());
   BSHP<GmMultiPolyIntersector> mpi =
       GmMultiPolyIntersector::New(pts, polys, sorter);
-  VecInt polyIds1, polyIds2, polyIds3;
-  VecDbl tValues;
-  VecPt3d points;
-  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds1, tValues);
+  VecInt polyIds1, polyIds2, polyIds3, polyIds4;
+  VecDbl tValues1, tValues2;
+  VecPt3d points1, points2;
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds1, tValues1);
   mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds2);
-  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds3, points);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds3, points1);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds4, tValues2, points2);
   TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds1);
   TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds2);
   TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds3);
-  TS_ASSERT_EQUALS(polyIds1.size(), tValues.size());
-  TS_ASSERT_EQUALS(polyIds1.size(), points.size());
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds4);
+  TS_ASSERT_EQUALS(polyIds1.size(), tValues1.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), points1.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds2.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds3.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds4.size());
+  TS_ASSERT_EQUALS(tValues1.size(), tValues2.size());
+  TS_ASSERT_EQUALS(points1.size(), points2.size());
   const double kDelta = 1e-5;
-  TS_ASSERT_DELTA_VEC(a_expectedtValues, tValues, kDelta);
-  TS_ASSERT_DELTA_VECPT3D(a_expectedPoints, points, kDelta);
+  TS_ASSERT_DELTA_VEC(a_expectedtValues, tValues1, kDelta);
+  TS_ASSERT_DELTA_VEC(a_expectedtValues, tValues2, kDelta);
+  TS_ASSERT_DELTA_VECPT3D(a_expectedPoints, points1, kDelta);
+  TS_ASSERT_DELTA_VECPT3D(a_expectedPoints, points2, kDelta);
 } // iRunTest
 
 } // unnamed namespace

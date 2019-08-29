@@ -41,22 +41,29 @@ public:
   /// \cond
 
   virtual void SetQuery(GmMultiPolyIntersectorQueryEnum a_query) = 0;
-  virtual void TraverseLineSegment(double x1,
-                                   double y1,
-                                   double x2,
-                                   double y2,
-                                   std::vector<int>& polyids,
-                                   std::vector<double>& tvalues) = 0;
-  virtual void TraverseLineSegment(double x1,
-                                   double y1,
-                                   double x2,
-                                   double y2,
-                                   std::vector<int>& polyidxs) = 0;
   virtual void TraverseLineSegment(double a_x1,
                                    double a_y1,
                                    double a_x2,
                                    double a_y2,
                                    std::vector<int>& a_polyids,
+                                   std::vector<double>& a_tvalues) = 0;
+  virtual void TraverseLineSegment(double a_x1,
+                                   double a_y1,
+                                   double a_x2,
+                                   double a_y2,
+                                   std::vector<int>& a_polyids) = 0;
+  virtual void TraverseLineSegment(double a_x1,
+                                   double a_y1,
+                                   double a_x2,
+                                   double a_y2,
+                                   std::vector<int>& a_polyids,
+                                   std::vector<Pt3d>& a_pts) = 0;
+  virtual void TraverseLineSegment(double a_x1,
+                                   double a_y1,
+                                   double a_x2,
+                                   double a_y2,
+                                   std::vector<int>& a_polyids,
+                                   std::vector<double>& a_tvalues,
                                    std::vector<Pt3d>& a_pts) = 0;
   virtual int PolygonFromPoint(const Pt3d& a_pt) = 0;
 
