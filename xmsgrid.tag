@@ -3175,15 +3175,15 @@
       <type>virtual void</type>
       <name>TraverseLineSegment</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
-      <anchor>ac609bd361ea9ad842dcbb3b242cbda93</anchor>
-      <arglist>(double x1, double y1, double x2, double y2, VecInt &amp;polyids, VecDbl &amp;tvalues) override</arglist>
+      <anchor>a7cb5461028c9c859bc605425cbd2a017</anchor>
+      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids, VecDbl &amp;a_tvalues) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
       <name>TraverseLineSegment</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
-      <anchor>a76d72475dbe448c625990126fd5a9f68</anchor>
-      <arglist>(double x1, double y1, double x2, double y2, VecInt &amp;polyids) override</arglist>
+      <anchor>a224368883bbcf3a6039606409e6bff7b</anchor>
+      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
@@ -3191,6 +3191,13 @@
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
       <anchor>a2ab2a192cfceda0596d9a5d9a0c1129e</anchor>
       <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids, std::vector&lt; Pt3d &gt; &amp;a_pts) override</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>TraverseLineSegment</name>
+      <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
+      <anchor>a9260d77e323e50b0cb55b83a0f147732</anchor>
+      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids, VecDbl &amp;a_tvalues, std::vector&lt; Pt3d &gt; &amp;a_pts) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
@@ -3289,13 +3296,6 @@
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
       <anchor>a425a8860d5df3720cee68cdd32f1bb9f</anchor>
       <arglist>(const GmBstPoly3d &amp;a_poly, const GmBstLine3d &amp;a_line, std::deque&lt; Pt3d &gt; &amp;a_output)</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>TraverseLineSegmentAll</name>
-      <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
-      <anchor>aab2618742a6a374cde9c4d8ea2cd8e6a</anchor>
-      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids, VecDbl &amp;a_tvalues, std::vector&lt; Pt3d &gt; &amp;a_pts)</arglist>
     </member>
     <member kind="variable" protection="private">
       <type>GmMultiPolyIntersectorData</type>
