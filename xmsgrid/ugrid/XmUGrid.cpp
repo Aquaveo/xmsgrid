@@ -1471,21 +1471,29 @@ void XmUGrid::Impl::GetCellEdgeAdjacentCells(int a_cellIdx,
 //------------------------------------------------------------------------------
 int XmUGrid::Impl::GetCell2dEdgeAdjacentCell(int a_cellIdx, int a_edgeIdx) const
 {
-  VecInt adjacentCells = GetCellEdgeAdjacentCells(a_cellIdx, a_edgeIdx);
-  if (adjacentCells.size() == 1)
-  {
-    return adjacentCells[0];
-  }
-  else if (adjacentCells.empty())
-  {
+  if (GetCellDimension(a_cellIdx) != 2)
     return -1;
-  }
-  else
+
+  XmEdge edge = GetCellEdge(a_cellIdx, a_edgeIdx);
+  int pointIdx = edge.GetFirst();
+
+  int adjCellCount = GetPointAdjacentCellCount(pointIdx);
+  for (int cellIdx = 0; cellIdx < adjCellCount; cellIdx++)
   {
-    // This is a 2D Function!
-    XM_ASSERT(0);
-    return -1;
+    int adjacentCell = m_pointsToCells[m_pointIdxToPointsToCells[pointIdx] + cellIdx + 1];
+    if (adjacentCell == a_cellIdx)
+      continue;
+
+    int edgeCount = GetCellEdgeCount(adjacentCell);
+    for (int adjacentEdgeIdx = 0; adjacentEdgeIdx < edgeCount; ++adjacentEdgeIdx)
+    {
+      XmEdge adjacentEdge = GetCellEdge(adjacentCell, adjacentEdgeIdx);
+      if (adjacentEdge.IsEquivalent(edge))
+        return adjacentCell;
+    }
   }
+
+  return -1;
 } // XmUGrid::Impl::GetCell2dEdgeAdjacentCell
 //------------------------------------------------------------------------------
 /// \brief Get the indices of the adjacent cells (that shares the same cell edge)
