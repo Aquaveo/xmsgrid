@@ -24,6 +24,7 @@ class TrTriangulatorPointsUnitTests : public CxxTest::TestSuite
 {
 public:
   void test1();
+  void test_bug12336();
 };
 
 //} // namespace xms

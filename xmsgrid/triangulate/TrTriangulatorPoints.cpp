@@ -202,7 +202,10 @@ void TrTriangulatorPoints::UpdateAreaTolerance()
     gmAddToExtents(p, ptMin, ptMax);
   m_areaTol = gmComputeXyTol(ptMin, ptMax);
   m_areaTol *= m_areaTol;
-  m_areaTol *= 100;
+  // this was originally m_areaTol *= 100. That seemed to work most of the time
+  // but test_bug12336 is a case where it did not work so we changed the
+  // tolerance to be multiplied by 1000
+  m_areaTol *= 1000;
 } // TrTriangulatorPoints::UpdateAreaTolerance
 
 } // namespace xms
@@ -270,6 +273,40 @@ void TrTriangulatorPointsUnitTests::test1()
   TS_ASSERT_EQUALS((VecInt{1, 2}), trisAdjToPts[4]);
 
 } // TrTriangulatorPointsUnitTests::test1
+//------------------------------------------------------------------------------
+/// \brief tests triangulating points
+//------------------------------------------------------------------------------
+void TrTriangulatorPointsUnitTests::test_bug12336()
+{
+  VecPt3d pts = { 
+    { 1149577.3999999999, 269746.50000000000, 262.60000000000002 },
+    { 1149627.6000000001, 269588.40000000002, 262.60000000000002 },
+    { 1149970.7503655001, 269500.66684485000, 262.60000000000002 },
+    { 1149582.1655385382, 269748.01315644925, 262.60000000000002 },
+    { 1149607.1846158644, 269755.95722780772, 241.59999999999974 },
+    { 1149631.0330864443, 269592.03509524878, 262.60000000000002 },
+    { 1149649.0567902755, 269611.11934530485, 241.59999999999974 },
+    { 1149971.9888759241, 269505.51102609449, 262.60000000000002 },
+    { 1149978.4910556506, 269530.94297762803, 241.59999999999974 },
+    { 1149572.6344614616, 269744.98684355075, 262.60000000000002 },
+    { 1149547.6153841354, 269737.04277219228, 241.59999999999974 },
+    { 1149624.1669135559, 269584.76490475127, 262.60000000000002 },
+    { 1149606.1432097247, 269565.68065469520, 241.59999999999974 },
+    { 1149969.5118550761, 269495.82266360550, 262.60000000000002 },
+    { 1149963.0096753496, 269470.39071207197, 241.59999999999974 }
+  };
+
+  VecInt tris;
+  VecInt2d trisAdjToPts;
+  TrTriangulatorPoints client(pts, tris, &trisAdjToPts);
+  trTriangulateIt(client);
+  
+  VecInt baseTris = { 10, 12, 11, 11, 12, 14, 9, 10, 6, 0, 9, 6, 6, 3, 0, 6, 4,
+                      3, 10, 11, 1, 6, 14, 13, 6, 13, 2, 7, 2, 8, 13, 8, 2, 6,
+                      2, 7, 5, 6, 10, 1, 14, 5, 6, 8, 4, 6, 5, 14, 8, 6, 7, 5,
+                      10, 1, 14, 1, 11 };
+  TS_ASSERT_EQUALS_VEC(baseTris, tris);
+} // TrTriangulatorPointsUnitTests::test_bug12336
 
   //} // namespace xms
 
