@@ -174,7 +174,11 @@ void TrTriangulatorPoints::ReceiveTriangle(int a_id1, int a_id2, int a_id3)
   double area = trArea(m_pts[a_id1 - 1], m_pts[a_id2 - 1], m_pts[a_id3 - 1]);
   if (area < m_areaTol)
   {
-    return;
+    if (gmColinearWithTol(m_pts[a_id1 - 1], m_pts[a_id2 - 1], m_pts[a_id3 - 1],
+                          m_areaTol))
+    {
+      return;
+    }
   }
 
   m_tris.push_back(a_id1 - 1);
@@ -201,11 +205,16 @@ void TrTriangulatorPoints::UpdateAreaTolerance()
   for (const auto& p : m_pts)
     gmAddToExtents(p, ptMin, ptMax);
   m_areaTol = gmComputeXyTol(ptMin, ptMax);
-  m_areaTol *= m_areaTol;
+  // areaTol is used to check if we should see if the points are colinear. So we
+  // will set it to be equal to an XY tol
+
+  // we don't do this anymore
+
+  //m_areaTol *= m_areaTol;
   // this was originally m_areaTol *= 100. That seemed to work most of the time
   // but test_bug12336 is a case where it did not work so we changed the
   // tolerance to be multiplied by 1000
-  m_areaTol *= 1000;
+  //m_areaTol *= 1000;
 } // TrTriangulatorPoints::UpdateAreaTolerance
 
 } // namespace xms
@@ -302,9 +311,8 @@ void TrTriangulatorPointsUnitTests::test_bug12336()
   trTriangulateIt(client);
   
   VecInt baseTris = { 10, 12, 11, 11, 12, 14, 9, 10, 6, 0, 9, 6, 6, 3, 0, 6, 4,
-                      3, 10, 11, 1, 6, 14, 13, 6, 13, 2, 7, 2, 8, 13, 8, 2, 6,
-                      2, 7, 5, 6, 10, 1, 14, 5, 6, 8, 4, 6, 5, 14, 8, 6, 7, 5,
-                      10, 1, 14, 1, 11 };
+                      3, 10, 11, 1, 6, 14, 13, 6, 13, 2, 6, 2, 7, 5, 6, 10, 1,
+                      14, 5, 6, 8, 4, 6, 5, 14, 8, 6, 7, 5, 10, 1, 14, 1, 11 };
   TS_ASSERT_EQUALS_VEC(baseTris, tris);
 } // TrTriangulatorPointsUnitTests::test_bug12336
 
