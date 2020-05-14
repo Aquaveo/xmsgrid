@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                4.2.0
+                4.2.1
               </div>
             
           
@@ -162,18 +162,18 @@
 <h1>Tin<a class="headerlink" href="#tin" title="Permalink to this headline">¶</a></h1>
 <p>Class to encapsulate a tin made simply of arrays of points,
 triangles and adjacency information. Also methods to manipulate it.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="xms.grid.triangulate.Tin">
-<em class="property">class </em><code class="sig-prename descclassname">xms.grid.triangulate.</code><code class="sig-name descname">Tin</code><span class="sig-paren">(</span><em class="sig-param">points=None</em>, <em class="sig-param">triangles=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">xms.grid.triangulate.</code><code class="sig-name descname">Tin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">points</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">triangles</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="xms.grid.triangulate.Tin.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">points=None</em>, <em class="sig-param">triangles=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">points</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">triangles</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.adjacent_triangle">
-<code class="sig-name descname">adjacent_triangle</code><span class="sig-paren">(</span><em class="sig-param">triangle_index</em>, <em class="sig-param">edge_idx</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.adjacent_triangle" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adjacent_triangle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangle_index</span></em>, <em class="sig-param"><span class="n">edge_idx</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.adjacent_triangle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the adjacent triangle from a triangle index and an edge</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -188,34 +188,34 @@ triangles and adjacency information. Also methods to manipulate it.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.boundary_points">
 <em class="property">property </em><code class="sig-name descname">boundary_points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.boundary_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indices of all points on any boundary, in no particular order</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.boundary_polys">
 <em class="property">property </em><code class="sig-name descname">boundary_polys</code><a class="headerlink" href="#xms.grid.triangulate.Tin.boundary_polys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exterior boundary and all interior voids as polygons of 0-based point indices. First point is not
 repeated as the last point.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.build_triangles_adjacent_to_points">
 <code class="sig-name descname">build_triangles_adjacent_to_points</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.build_triangles_adjacent_to_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build array of triangles adjacent to points.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.clear">
 <code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clear the tin of all points, triangles, and triangles adjacent to points.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.common_edge_index">
-<code class="sig-name descname">common_edge_index</code><span class="sig-paren">(</span><em class="sig-param">triangle</em>, <em class="sig-param">adjacent_triangle</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.common_edge_index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">common_edge_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangle</span></em>, <em class="sig-param"><span class="n">adjacent_triangle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.common_edge_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find common edge between triangle and neighbor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -230,9 +230,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.delete_points">
-<code class="sig-name descname">delete_points</code><span class="sig-paren">(</span><em class="sig-param">points</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.delete_points" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delete_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">points</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.delete_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a list of points, update and renumber.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -241,9 +241,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.delete_triangles">
-<code class="sig-name descname">delete_triangles</code><span class="sig-paren">(</span><em class="sig-param">triangles</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.delete_triangles" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delete_triangles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangles</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.delete_triangles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a list of triangles, update and renumber.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -252,9 +252,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.export_tin_file">
-<code class="sig-name descname">export_tin_file</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.export_tin_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">export_tin_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.export_tin_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export in the .tin file format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -263,15 +263,15 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.extents">
 <em class="property">property </em><code class="sig-name descname">extents</code><a class="headerlink" href="#xms.grid.triangulate.Tin.extents" title="Permalink to this definition">¶</a></dt>
 <dd><p>The extents of the tin</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.global_index">
-<code class="sig-name descname">global_index</code><span class="sig-paren">(</span><em class="sig-param">triangle_idx</em>, <em class="sig-param">local_point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.global_index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">global_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangle_idx</span></em>, <em class="sig-param"><span class="n">local_point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.global_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the global index of a point given the local index and a triangle</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -286,9 +286,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.local_index">
-<code class="sig-name descname">local_index</code><span class="sig-paren">(</span><em class="sig-param">triangle</em>, <em class="sig-param">point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.local_index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">local_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangle</span></em>, <em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.local_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns index (0-2) of point within triangle given global index.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -303,9 +303,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.next_boundary_point">
-<code class="sig-name descname">next_boundary_point</code><span class="sig-paren">(</span><em class="sig-param">point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.next_boundary_point" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">next_boundary_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.next_boundary_point" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the next point CW from point on the boundary. CCW if in an inside hole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -317,19 +317,19 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.number_of_points">
 <em class="property">property </em><code class="sig-name descname">number_of_points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.number_of_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in the tin</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.number_of_triangles">
 <em class="property">property </em><code class="sig-name descname">number_of_triangles</code><a class="headerlink" href="#xms.grid.triangulate.Tin.number_of_triangles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of triangles in the tin</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.optimize_triangulation">
 <code class="sig-name descname">optimize_triangulation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.optimize_triangulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Swaps triangle edges until they are a Delauney triangulation.</p>
@@ -340,15 +340,15 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.points">
 <em class="property">property </em><code class="sig-name descname">points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Points in the tin</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.previous_boundary_point">
-<code class="sig-name descname">previous_boundary_point</code><span class="sig-paren">(</span><em class="sig-param">point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.previous_boundary_point" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">previous_boundary_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.previous_boundary_point" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the previous point CCW from point on the boundary. CW if in an inside hole.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -360,9 +360,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.remove_long_thin_triangles_on_perimeter">
-<code class="sig-name descname">remove_long_thin_triangles_on_perimeter</code><span class="sig-paren">(</span><em class="sig-param">ratio</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.remove_long_thin_triangles_on_perimeter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">remove_long_thin_triangles_on_perimeter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ratio</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.remove_long_thin_triangles_on_perimeter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes long thin triangles on the boundary of the tin.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -374,9 +374,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.set_geometry">
-<code class="sig-name descname">set_geometry</code><span class="sig-paren">(</span><em class="sig-param">points</em>, <em class="sig-param">triangles</em>, <em class="sig-param">triangles_adjacent_to_points</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.set_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_geometry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">points</span></em>, <em class="sig-param"><span class="n">triangles</span></em>, <em class="sig-param"><span class="n">triangles_adjacent_to_points</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.set_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the geomoetry of the tin</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -389,9 +389,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.swap_edge">
-<code class="sig-name descname">swap_edge</code><span class="sig-paren">(</span><em class="sig-param">triangle_a</em>, <em class="sig-param">triangle_b</em>, <em class="sig-param">check_angle=True</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.swap_edge" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">swap_edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangle_a</span></em>, <em class="sig-param"><span class="n">triangle_b</span></em>, <em class="sig-param"><span class="n">check_angle</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.swap_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Swap edges if triangles combine to form convex quad.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -407,9 +407,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.triangle_adjacent_to_edge">
-<code class="sig-name descname">triangle_adjacent_to_edge</code><span class="sig-paren">(</span><em class="sig-param">point1</em>, <em class="sig-param">point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_adjacent_to_edge" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle_adjacent_to_edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point1</span></em>, <em class="sig-param"><span class="n">point2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_adjacent_to_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gives triangle on the right side of the edge.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -424,9 +424,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.triangle_area">
-<code class="sig-name descname">triangle_area</code><span class="sig-paren">(</span><em class="sig-param">triangle</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_area" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle_area</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate and return the area of a triangle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -438,9 +438,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.triangle_centroid">
-<code class="sig-name descname">triangle_centroid</code><span class="sig-paren">(</span><em class="sig-param">triangle</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_centroid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle_centroid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">triangle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_centroid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate and return the centroid of a triangle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -452,9 +452,9 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.triangle_from_edge">
-<code class="sig-name descname">triangle_from_edge</code><span class="sig-paren">(</span><em class="sig-param">point1</em>, <em class="sig-param">point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_from_edge" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle_from_edge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point1</span></em>, <em class="sig-param"><span class="n">point2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangle_from_edge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the triangle with the edge defined by an edge</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -469,27 +469,27 @@ repeated as the last point.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.triangles">
 <em class="property">property </em><code class="sig-name descname">triangles</code><a class="headerlink" href="#xms.grid.triangulate.Tin.triangles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Triangles defining the tin</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.triangles_adjacent_to_points">
 <em class="property">property </em><code class="sig-name descname">triangles_adjacent_to_points</code><a class="headerlink" href="#xms.grid.triangulate.Tin.triangles_adjacent_to_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Triangles adjacent to points</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.triangulate">
 <code class="sig-name descname">triangulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.triangulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Triangulate the tin</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.triangulate.Tin.vertices_are_adjacent">
-<code class="sig-name descname">vertices_are_adjacent</code><span class="sig-paren">(</span><em class="sig-param">point1</em>, <em class="sig-param">point2</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.vertices_are_adjacent" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">vertices_are_adjacent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point1</span></em>, <em class="sig-param"><span class="n">point2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.triangulate.Tin.vertices_are_adjacent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if vertices form an edge of a triangle</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -2360,14 +2360,14 @@
     <includes id="_xm_u_grid_utils_8t_8h" name="XmUGridUtils.t.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.t.h</includes>
     <namespace>xms</namespace>
     <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
+      <type>std::shared_ptr&lt; XmUGrid &gt;</type>
       <name>XmReadUGridFromAsciiFile</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>ab9624f114b63071fd74602311eab24d4</anchor>
       <arglist>(const std::string &amp;a_filePath)</arglist>
     </member>
     <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
+      <type>std::shared_ptr&lt; XmUGrid &gt;</type>
       <name>XmReadUGridFromStream</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>a567badd7a8307c065bb1d98fc00c6d64</anchor>
@@ -2401,14 +2401,14 @@
     <filename>_xm_u_grid_utils_8h</filename>
     <namespace>xms</namespace>
     <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
+      <type>std::shared_ptr&lt; XmUGrid &gt;</type>
       <name>XmReadUGridFromAsciiFile</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>ab9624f114b63071fd74602311eab24d4</anchor>
       <arglist>(const std::string &amp;a_filePath)</arglist>
     </member>
     <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
+      <type>std::shared_ptr&lt; XmUGrid &gt;</type>
       <name>XmReadUGridFromStream</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>a567badd7a8307c065bb1d98fc00c6d64</anchor>
@@ -6537,6 +6537,13 @@
       <anchor>a33422cef521b757882239d403bc6569d</anchor>
       <arglist>()</arglist>
     </member>
+    <member kind="function">
+      <type>void</type>
+      <name>test_bug12336</name>
+      <anchorfile>class_tr_triangulator_points_unit_tests.html</anchorfile>
+      <anchor>a45f0a0eccf070955b6160074cb12653b</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>xms::XmEdge</name>
@@ -8492,39 +8499,18 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
+      <type>std::shared_ptr&lt; XmUGrid &gt;</type>
       <name>XmReadUGridFromAsciiFile</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>ab9624f114b63071fd74602311eab24d4</anchor>
       <arglist>(const std::string &amp;a_filePath)</arglist>
     </member>
     <member kind="function">
-      <type>BSHP&lt; XmUGrid &gt;</type>
+      <type>std::shared_ptr&lt; XmUGrid &gt;</type>
       <name>XmReadUGridFromStream</name>
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>a567badd7a8307c065bb1d98fc00c6d64</anchor>
       <arglist>(std::istream &amp;a_inStream)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>XmWriteUGridToAsciiFile</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>aad684d8d566604305a00cc4d875dd51e</anchor>
-      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, const std::string &amp;a_filePath)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>XmWriteUGridToStream</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>adcf5db1fd47ba0560a24e9ae63b942df</anchor>
-      <arglist>(BSHP&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>XmWriteUGridToStream</name>
-      <anchorfile>namespacexms.html</anchorfile>
-      <anchor>a089a787adbb806cc55d8751b8ffb3a8d</anchor>
-      <arglist>(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream, bool a_binary)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -8539,6 +8525,13 @@
       <anchorfile>namespacexms.html</anchorfile>
       <anchor>a5c12f5e36da024c353837d9558c6c9c8</anchor>
       <arglist>(std::shared_ptr&lt; XmUGrid &gt; a_ugrid, std::ostream &amp;a_outStream)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>XmWriteUGridToStream</name>
+      <anchorfile>namespacexms.html</anchorfile>
+      <anchor>a089a787adbb806cc55d8751b8ffb3a8d</anchor>
+      <arglist>(const XmUGrid &amp;a_ugrid, std::ostream &amp;a_outStream, bool a_binary)</arglist>
     </member>
   </compound>
   <compound kind="page">

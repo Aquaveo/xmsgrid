@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                4.2.0
+                4.2.1
               </div>
             
           
@@ -162,18 +162,18 @@
   <div class="section" id="trisearch">
 <h1>TriSearch<a class="headerlink" href="#trisearch" title="Permalink to this headline">¶</a></h1>
 <p>The TriSearch class is used to create a spatial index for searching triangles.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="xms.grid.geometry.TriSearch">
-<em class="property">class </em><code class="sig-prename descclassname">xms.grid.geometry.</code><code class="sig-name descname">TriSearch</code><span class="sig-paren">(</span><em class="sig-param">points=None</em>, <em class="sig-param">triangles=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">xms.grid.geometry.</code><code class="sig-name descname">TriSearch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">points</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">triangles</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">points=None</em>, <em class="sig-param">triangles=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">points</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">triangles</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.interp_weights">
-<code class="sig-name descname">interp_weights</code><span class="sig-paren">(</span><em class="sig-param">point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.interp_weights" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">interp_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.interp_weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use the stored triangles to get interpolation weights for a point.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -185,9 +185,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.interp_weights_triangle_index">
-<code class="sig-name descname">interp_weights_triangle_index</code><span class="sig-paren">(</span><em class="sig-param">point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.interp_weights_triangle_index" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">interp_weights_triangle_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.interp_weights_triangle_index" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>point</strong> (<em>iterable</em>) – location that is interpolated to.</p>
@@ -198,27 +198,27 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.point_activity">
 <em class="property">property </em><code class="sig-name descname">point_activity</code><a class="headerlink" href="#xms.grid.geometry.TriSearch.point_activity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Activity of the points</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.points">
 <em class="property">property </em><code class="sig-name descname">points</code><a class="headerlink" href="#xms.grid.geometry.TriSearch.points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Points in the search</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.triangle_activity">
 <em class="property">property </em><code class="sig-name descname">triangle_activity</code><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangle_activity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Activity of the triangles</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.triangle_containing_point">
-<code class="sig-name descname">triangle_containing_point</code><span class="sig-paren">(</span><em class="sig-param">point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangle_containing_point" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle_containing_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangle_containing_point" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the triangle containing the point</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -230,9 +230,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.triangle_envelopes_overlap">
-<code class="sig-name descname">triangle_envelopes_overlap</code><span class="sig-paren">(</span><em class="sig-param">min_point</em>, <em class="sig-param">max_point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangle_envelopes_overlap" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle_envelopes_overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">min_point</span></em>, <em class="sig-param"><span class="n">max_point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangle_envelopes_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find all triangles whose envelope overlaps the envelope defined by min and max.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -247,9 +247,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.triangle_envelops_containing_point">
-<code class="sig-name descname">triangle_envelops_containing_point</code><span class="sig-paren">(</span><em class="sig-param">point</em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangle_envelops_containing_point" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">triangle_envelops_containing_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangle_envelops_containing_point" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find all triangles whose envelope contains the point.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -261,7 +261,7 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="xms.grid.geometry.TriSearch.triangles">
 <em class="property">property </em><code class="sig-name descname">triangles</code><a class="headerlink" href="#xms.grid.geometry.TriSearch.triangles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Triangles in the search</p>
