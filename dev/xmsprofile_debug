@@ -7,7 +7,8 @@ compiler=Visual Studio
 compiler.version=12
 build_type=Debug
 [options]
-xmscore:xms=True
-xmsgrid:xms=True
+xmsgrid:xms=False
+xmsgrid:pybind=False
+xmsgrid:testing=True
 [build_requires]
 [env]
