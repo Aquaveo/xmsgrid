@@ -3175,29 +3175,29 @@
       <type>virtual void</type>
       <name>TraverseLineSegment</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
-      <anchor>a7cb5461028c9c859bc605425cbd2a017</anchor>
-      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids, VecDbl &amp;a_tvalues) override</arglist>
+      <anchor>ada393f1506eb1026d0997c9b88578a8d</anchor>
+      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyIds, VecDbl &amp;a_tValues) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
       <name>TraverseLineSegment</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
-      <anchor>a224368883bbcf3a6039606409e6bff7b</anchor>
-      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids) override</arglist>
+      <anchor>a2fb6caeb7f6fc67201502cbf92753092</anchor>
+      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyIds) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
       <name>TraverseLineSegment</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
-      <anchor>a2ab2a192cfceda0596d9a5d9a0c1129e</anchor>
-      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids, std::vector&lt; Pt3d &gt; &amp;a_pts) override</arglist>
+      <anchor>a32ca6f99b230794b6373411ec4e4d28b</anchor>
+      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyIds, VecPt3d &amp;a_pts) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual void</type>
       <name>TraverseLineSegment</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
-      <anchor>a9260d77e323e50b0cb55b83a0f147732</anchor>
-      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyids, VecDbl &amp;a_tvalues, std::vector&lt; Pt3d &gt; &amp;a_pts) override</arglist>
+      <anchor>a98a84ed115d65b313f0f97ec16c91a4e</anchor>
+      <arglist>(double a_x1, double a_y1, double a_x2, double a_y2, VecInt &amp;a_polyIds, VecDbl &amp;a_tValues, VecPt3d &amp;a_pts) override</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual int</type>
@@ -3205,6 +3205,13 @@
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
       <anchor>a704347586a5fa15a9f66fd088f8d7353</anchor>
       <arglist>(const Pt3d &amp;a_pt) override</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>RemoveDuplicateTValues</name>
+      <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
+      <anchor>a38545696a626fedc3d6c98e6cfc59e4f</anchor>
+      <arglist>(VecInt &amp;a_polyIds, VecDbl &amp;a_tValues, VecPt3d &amp;a_pts)</arglist>
     </member>
     <member kind="function" protection="private">
       <type>void</type>
@@ -3572,6 +3579,20 @@
       <name>test2InEdgePt</name>
       <anchorfile>class_gm_multi_poly_intersector_unit_tests.html</anchorfile>
       <anchor>a00fe4843d3173ee19212b6d58d61f8fb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testCorners</name>
+      <anchorfile>class_gm_multi_poly_intersector_unit_tests.html</anchorfile>
+      <anchor>a5097eece91dfafe0e1a1d111bfb1f7cb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testQuadCorners</name>
+      <anchorfile>class_gm_multi_poly_intersector_unit_tests.html</anchorfile>
+      <anchor>abdef87477e39a8084bb0319a5578870c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
