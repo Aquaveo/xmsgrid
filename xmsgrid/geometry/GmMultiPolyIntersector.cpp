@@ -665,25 +665,44 @@ void GmMultiPolyIntersectorImpl::RemoveDuplicateTValues(VecInt& a_polyIds,
   int size((int)a_tValues.size());
   for (int i = size - 1; i > 0; --i)
   {
+    // Check for multiple T-values close to 1.0 (at the end of the line segment).
     if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[i - 1], 1.0, XM_ZERO_TOL))
     {
       for (int j = i - 1; j > 0; --j)
       {
+        // If the T-values are 1.0 and the polygon IDs are the same (for example, -1), go ahead and
+        // remove these intersections
         if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[j], 1.0, XM_ZERO_TOL) &&
             a_polyIds[i] == a_polyIds[j])
+          indexesToRemove.push_back(j);
+      }
+    }
+    else if (a_polyIds[i] == -1 && a_polyIds[i - 1] == -1)
+    {
+      // Remove excess "end" (-1) polygon IDs
+      for (int j = i - 1; j > 0; --j)
+      {
+        // Use 0.1 for the tolerance here because you have multiple end points and
+        // there really should only be a single end point unless your T-value is less
+        // than 0.9 and you've gone outside the mesh.
+        if (GTEQ_TOL(a_tValues[i], 1.0, 0.1) && GTEQ_TOL(a_tValues[j], 1.0, 0.1) &&
+            a_polyIds[j] == -1)
           indexesToRemove.push_back(j);
       }
     }
     else
       break;
   }
-  auto it = std::unique(indexesToRemove.begin(), indexesToRemove.end());
-  indexesToRemove.resize(std::distance(indexesToRemove.begin(), it));
-  for (auto&& i : indexesToRemove)
+  if (!indexesToRemove.empty())
   {
-    a_polyIds.erase(a_polyIds.begin() + i);
-    a_tValues.erase(a_tValues.begin() + i);
-    a_pts.erase(a_pts.begin() + i);
+    auto it = std::unique(indexesToRemove.begin(), indexesToRemove.end());
+    indexesToRemove.resize(std::distance(indexesToRemove.begin(), it));
+    for (auto&& i : indexesToRemove)
+    {
+      a_polyIds.erase(a_polyIds.begin() + i);
+      a_tValues.erase(a_tValues.begin() + i);
+      a_pts.erase(a_pts.begin() + i);
+    }
   }
 } // GmMultiPolyIntersectorImpl::RemoveDuplicateTValues
 //-----------------------------------------------------------------------------
@@ -1554,6 +1573,46 @@ void GmMultiPolyIntersectorUnitTests::testQuadCorners()
   iRunTest(109.543, -301.391, 111.302, -303.601, pts, polys, expectedIds, expectedTvals,
            expectedPoints);
 } // GmMultiPolyIntersectorUnitTests::testQuadCorners
+//------------------------------------------------------------------------------
+/// \brief
+/// \verbatim
+//  Pt 0: (263.313, -361.915, 47.375)
+//  Pt 1: (263.914, -360.497, 46.375)
+//  Pt 2: (264.582, -358.729, 48.375)
+//  Pt 3: (269.892, -359.609, 48.35)
+//  Pt 4: (269.228, -361.033, 46.35)
+//  Pt 5: (268.569, -362.502, 47.35)
+//  Pt 6: (273.694, -363.319, 47.325)
+//  Pt 7: (274.372, -361.835, 46.325)
+//  Pt 8: (275.054, -360.401, 48.325)
+//    2-------------3-------------8
+//    |             |             |
+//    |             |             |
+//    |      2      |      3      |
+//    |             |             |
+//    |             |             |
+//    1------p0---p1|4------------7
+//    |             |             |
+//    |             |             |
+//    |      1      |      4      |
+//    |             |             |
+//    |             |             |
+//    0-------------5-------------6
+/// \endverbatim
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorUnitTests::testQuadCornersBug12396()
+{
+  VecPt3d pts{
+    {263.313, -361.915, 47.375}, {263.914, -360.497, 46.375}, {264.582, -358.729, 48.375},
+    {269.892, -359.609, 48.35},  {269.228, -361.033, 46.35},  {268.569, -362.502, 47.35},
+    {273.694, -363.319, 47.325}, {274.372, -361.835, 46.325}, {275.054, -360.401, 48.325}};
+  VecInt2d polys = {{0, 5, 4, 1}, {1, 4, 3, 2}, {4, 7, 8, 3}, {5, 6, 7, 4}};
+  VecInt expectedIds{2, -1};
+  VecDbl expectedTvals = {0.0, 1};
+  VecPt3d expectedPoints = {{266.571, -360.765, 0.0}, {269.228, -361.033, 46.35}};
+  iRunTest(266.57100000000003, -360.76499999999999, 269.22800000000001, -361.03300000000002, pts,
+           polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorUnitTests::testQuadCornersBug12396
 //------------------------------------------------------------------------------
 /// \brief
 /// \verbatim

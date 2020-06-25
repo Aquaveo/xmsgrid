@@ -63,6 +63,7 @@ public:
   void test2InEdgePt();
   void testCorners();
   void testQuadCorners();
+  void testQuadCornersBug12396();
   void test2InOutIn();
 
   // Multiple polys
