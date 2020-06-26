@@ -40,6 +40,7 @@ var class_gm_multi_poly_intersector_unit_tests =
     [ "testMap2MfBug", "class_gm_multi_poly_intersector_unit_tests.html#a05ca020d15aa52adaeb42df71db2c748", null ],
     [ "testOutsideToOutside", "class_gm_multi_poly_intersector_unit_tests.html#a3fb7e8f8e878592caa011cc15e769587", null ],
     [ "testQuadCorners", "class_gm_multi_poly_intersector_unit_tests.html#abdef87477e39a8084bb0319a5578870c", null ],
+    [ "testQuadCornersBug12396", "class_gm_multi_poly_intersector_unit_tests.html#af58b71d869e3258f7f863c4195f049f5", null ],
     [ "testSmsCase1", "class_gm_multi_poly_intersector_unit_tests.html#aa22cd3c8a7facdc51f8767d8185bbb12", null ],
     [ "testStartAtEdgeThroughAdjacent", "class_gm_multi_poly_intersector_unit_tests.html#a89bac4f7c03a3d6ffaad8d7776613bcf", null ],
     [ "testTouchesEdge", "class_gm_multi_poly_intersector_unit_tests.html#a679656ec0fe0368c1f25b35fc345ccca", null ],

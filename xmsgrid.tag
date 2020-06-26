@@ -3597,6 +3597,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>testQuadCornersBug12396</name>
+      <anchorfile>class_gm_multi_poly_intersector_unit_tests.html</anchorfile>
+      <anchor>af58b71d869e3258f7f863c4195f049f5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>test2InOutIn</name>
       <anchorfile>class_gm_multi_poly_intersector_unit_tests.html</anchorfile>
       <anchor>abc2aacee320789fcd0548cb3a9244afa</anchor>
