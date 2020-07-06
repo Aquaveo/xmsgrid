@@ -1,11 +1,22 @@
+"""
+File for the Tin class.
+"""
 from .._xmsgrid.triangulate import TrTin
+
 
 class Tin(object):
     """
-
+    The Tin Class.
     """
 
     def __init__(self, points=None, triangles=None, **kwargs):
+        """
+        __init__ function for the Tin class.
+
+        Args:
+            points: The poist defining the Tin.
+            triangles: The triangles defining the relationship of the points.
+        """
         if 'instance' not in kwargs:
             if points is None:
                 raise ValueError('points is a required arguments.')
@@ -19,6 +30,9 @@ class Tin(object):
             self._instance = kwargs['instance']
 
     def __eq__(self, other):
+        """
+        __eq__ overload.
+        """
         other_instance = getattr(other, '_instance', None)
         if not other_instance or not isinstance(other_instance, TrTin):
             print("not instance or no value")
@@ -26,22 +40,31 @@ class Tin(object):
         return other_instance == self._instance
 
     def __ne__(self, other):
+        """
+        __ne__ overload.
+        """
         result = self.__eq__(other)
         return not result
 
     def __repr__(self):
+        """
+        __repr__ overload.
+        """
         return "<Tin - Point Count: {}, Triangle Count: {}, Extents: {}>".format(
             self.number_of_points, self.number_of_triangles, self.extents
         )
 
     def __str__(self):
+        """
+        __str__ overload.
+        """
         return "<Tin - Point Count: {}, Triangle Count: {}, Extents: {}>".format(
             self.number_of_points, self.number_of_triangles, self.extents
         )
 
     @property
     def points(self):
-        """Points in the tin"""
+        """Points in the tin."""
         return self._instance.Points
 
     @points.setter
@@ -50,7 +73,7 @@ class Tin(object):
 
     @property
     def triangles(self):
-        """Triangles defining the tin"""
+        """Triangles defining the tin."""
         return self._instance.Triangles
 
     @triangles.setter
@@ -59,7 +82,7 @@ class Tin(object):
 
     @property
     def triangles_adjacent_to_points(self):
-        """Triangles adjacent to points"""
+        """Triangles adjacent to points."""
         return self._instance.TrianglesAdjacentToPoints
 
     @triangles_adjacent_to_points.setter
@@ -68,37 +91,34 @@ class Tin(object):
 
     @property
     def number_of_points(self):
-        """Number of points in the tin"""
+        """Number of points in the tin."""
         return self._instance.NumPoints
 
     @property
     def number_of_triangles(self):
-        """Number of triangles in the tin"""
+        """Number of triangles in the tin."""
         return self._instance.NumTriangles
 
     @property
     def boundary_points(self):
-        """Indices of all points on any boundary, in no particular order"""
+        """Indices of all points on any boundary, in no particular order."""
         return self._instance.GetBoundaryPoints()
 
     @property
     def boundary_polys(self):
-        """
-        Exterior boundary and all interior voids as polygons of 0-based point indices. First point is not
-        repeated as the last point.
-        """
+        """Exterior boundary and all interior voids as polygons of 0-based point indices. First point is not repeated as the last point."""  # NOQA: E501
         return self._instance.GetBoundaryPolys()
 
     @property
     def extents(self):
         """
-        The extents of the tin
+        The extents of the tin.
         """
         return self._instance.GetExtents()
 
     def set_geometry(self, points, triangles, triangles_adjacent_to_points):
         """
-        Set the geomoetry of the tin
+        Set the geometry of the tin.
 
         Args:
             points: Points in tin
@@ -109,13 +129,13 @@ class Tin(object):
 
     def triangulate(self):
         """
-        Triangulate the tin
+        Triangulate the tin.
         """
         self._instance.Triangulate()
 
-    def triangle_from_edge(self, point1,  point2):
+    def triangle_from_edge(self, point1, point2):
         """
-        Finds the triangle with the edge defined by an edge
+        Finds the triangle with the edge defined by an edge.
 
         Args:
             point1: first point of edge
@@ -124,9 +144,9 @@ class Tin(object):
         Returns:
             Triangle from an edge
         """
-        return self._instance.TriangleFromEdge(point1,  point2)
-    
-    def triangle_adjacent_to_edge(self, point1,  point2):
+        return self._instance.TriangleFromEdge(point1, point2)
+
+    def triangle_adjacent_to_edge(self, point1, point2):
         """
         Gives triangle on the right side of the edge.
 
@@ -137,9 +157,9 @@ class Tin(object):
         Returns:
             The triangle adjacent to the edge.
         """
-        return self._instance.TriangleAdjacentToEdge(point1,  point2)
-    
-    def local_index(self, triangle,  point):
+        return self._instance.TriangleAdjacentToEdge(point1, point2)
+
+    def local_index(self, triangle, point):
         """
         Returns index (0-2) of point within triangle given global index.
 
@@ -150,11 +170,11 @@ class Tin(object):
         Returns:
             local index of the point in the triangle, or None if it is not part of the triangle
         """
-        return self._instance.LocalIndex(triangle,  point)
-    
-    def global_index(self, triangle_idx,  local_point):
+        return self._instance.LocalIndex(triangle, point)
+
+    def global_index(self, triangle_idx, local_point):
         """
-        Returns the global index of a point given the local index and a triangle
+        Returns the global index of a point given the local index and a triangle.
 
         Args:
             triangle_idx: triangle to search
@@ -163,11 +183,11 @@ class Tin(object):
         Returns:
             global index of local_point in triangle_idx
         """
-        return self._instance.GlobalIndex(triangle_idx,  local_point)
-    
-    def vertices_are_adjacent(self, point1,  point2):
+        return self._instance.GlobalIndex(triangle_idx, local_point)
+
+    def vertices_are_adjacent(self, point1, point2):
         """
-        Check if vertices form an edge of a triangle
+        Check if vertices form an edge of a triangle.
 
         Args:
             point1: first point index
@@ -176,11 +196,11 @@ class Tin(object):
         Returns:
             True if points form a triangle edge, False otherwise.
         """
-        return self._instance.VerticesAreAdjacent(point1,  point2)
-    
-    def common_edge_index(self, triangle,  adjacent_triangle):
+        return self._instance.VerticesAreAdjacent(point1, point2)
+
+    def common_edge_index(self, triangle, adjacent_triangle):
         """
-        Find common edge between triangle and neighbor
+        Find common edge between triangle and neighbor.
 
         Args:
             triangle: triangle index
@@ -189,11 +209,11 @@ class Tin(object):
         Returns:
             local index of the edge between the triange and adjacent_triangle if it exists, None otherwise.
         """
-        return self._instance.CommonEdgeIndex(triangle,  adjacent_triangle)
-    
-    def adjacent_triangle(self, triangle_index,  edge_idx):
+        return self._instance.CommonEdgeIndex(triangle, adjacent_triangle)
+
+    def adjacent_triangle(self, triangle_index, edge_idx):
         """
-        Find the adjacent triangle from a triangle index and an edge
+        Find the adjacent triangle from a triangle index and an edge.
 
         Args:
             triangle_index: index of the triangle
@@ -202,8 +222,8 @@ class Tin(object):
         Returns:
             The triangle adjance to the triangle at the index or None if there isn't one
         """
-        return self._instance.AdjacentTriangle(triangle_index,  edge_idx)
-    
+        return self._instance.AdjacentTriangle(triangle_index, edge_idx)
+
     def triangle_centroid(self, triangle):
         """
         Calculate and return the centroid of a triangle.
@@ -215,7 +235,7 @@ class Tin(object):
             The centroid
         """
         return self._instance.TriangleCentroid(triangle)
-    
+
     def triangle_area(self, triangle):
         """
         Calculate and return the area of a triangle.
@@ -227,7 +247,7 @@ class Tin(object):
             The area
         """
         return self._instance.TriangleArea(triangle)
-    
+
     def next_boundary_point(self, point):
         """
         Get the next point CW from point on the boundary. CCW if in an inside hole.
@@ -239,7 +259,7 @@ class Tin(object):
             The point index or None if not found
         """
         return self._instance.NextBoundaryPoint(point)
-    
+
     def previous_boundary_point(self, point):
         """
         Get the previous point CCW from point on the boundary. CW if in an inside hole.
@@ -251,7 +271,7 @@ class Tin(object):
             The point index or None if not found
         """
         return self._instance.PreviousBoundaryPoint(point)
-    
+
     def export_tin_file(self, file_name):
         """
         Export in the .tin file format.
@@ -262,7 +282,7 @@ class Tin(object):
         self._instance.ExportTinFile(file_name)
 
     # Modifiers
-    def swap_edge(self, triangle_a,  triangle_b,  check_angle=True):
+    def swap_edge(self, triangle_a, triangle_b, check_angle=True):
         """
         Swap edges if triangles combine to form convex quad.
 
@@ -274,9 +294,9 @@ class Tin(object):
         Returns:
             True if successful False otherwise
         """
-        return self._instance.SwapEdge(triangle_a,  triangle_b,  check_angle)
-    
-    def delete_triangles(self,  triangles):
+        return self._instance.SwapEdge(triangle_a, triangle_b, check_angle)
+
+    def delete_triangles(self, triangles):
         """
         Delete a list of triangles, update and renumber.
 
@@ -284,8 +304,8 @@ class Tin(object):
             triangles: Triangle to be deleted
         """
         self._instance.DeleteTriangles(triangles)
-    
-    def delete_points(self,  points):
+
+    def delete_points(self, points):
         """
         Delete a list of points, update and renumber.
 
@@ -293,7 +313,7 @@ class Tin(object):
             points: Points to be deleted
         """
         self._instance.DeletePoints(points)
-    
+
     def optimize_triangulation(self):
         """
         Swaps triangle edges until they are a Delauney triangulation.
@@ -302,25 +322,26 @@ class Tin(object):
             True if modified, False otherwise
         """
         return self._instance.OptimizeTriangulation()
-    
-    def remove_long_thin_triangles_on_perimeter(self,  ratio):
+
+    def remove_long_thin_triangles_on_perimeter(self, ratio):
         """
         Removes long thin triangles on the boundary of the tin.
 
         Args:
-            ratio: The ratio of one edge length compared to the sum of the other two edge lengths.  If the length ratio of a triangle is greater then or equal to this given ratio, the triangle is deleted.
+            ratio: The ratio of one edge length compared to the sum of the other two edge lengths.  If the length ratio
+            of a triangle is greater then or equal to this given ratio, the triangle is deleted.
 
         Returns:
             True if successful, False otherwise
         """
         return self._instance.RemoveLongThinTrianglesOnPerimeter(ratio)
-    
+
     def build_triangles_adjacent_to_points(self):
         """
         Build array of triangles adjacent to points.
         """
         return self._instance.BuildTrisAdjToPts()  # Triangles adjacent to points
-    
+
     def clear(self):
         """
         Clear the tin of all points, triangles, and triangles adjacent to points.

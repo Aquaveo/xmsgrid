@@ -1,11 +1,22 @@
+"""
+The tri_search file for the TriSearch class.
+"""
 from .._xmsgrid.geometry import GmTriSearch
+
 
 class TriSearch(object):
     """
-
+    TriSearch class.
     """
 
     def __init__(self, points=None, triangles=None, **kwargs):
+        """
+        __init__ function for the TriSearch class.
+
+        Args:
+            points: list of points defining the TriSearch
+            triangles: list of triangles
+        """
         if 'instance' not in kwargs:
             if not points:
                 raise ValueError('points is a required arguments.')
@@ -18,6 +29,9 @@ class TriSearch(object):
             self._instance = kwargs['instance']
 
     def __eq__(self, other):
+        """
+        __eq__ overload.
+        """
         other_instance = getattr(other, '_instance', None)
         if not other_instance or not isinstance(other_instance, GmTriSearch):
             print("not instance or no value")
@@ -25,18 +39,27 @@ class TriSearch(object):
         return other_instance == self._instance
 
     def __ne__(self, other):
+        """
+        __ne__ overload.
+        """
         result = self.__eq__(other)
         return not result
 
     def __repr__(self):
+        """
+        __repr__ overload.
+        """
         return "<xms.grid.geometry.TriSearch>"
 
     def __str__(self):
+        """
+        __str__ overload.
+        """
         return "<xms.grid.geometry.TriSearch>"
 
     @property
     def point_activity(self):
-        """Activity of the points"""
+        """Activity of the points."""
         return self._instance.GetPtActivity()
 
     @point_activity.setter
@@ -45,7 +68,7 @@ class TriSearch(object):
 
     @property
     def triangle_activity(self):
-        """Activity of the triangles"""
+        """Activity of the triangles."""
         return self._instance.GetTriActivity()
 
     @triangle_activity.setter
@@ -54,17 +77,17 @@ class TriSearch(object):
 
     @property
     def points(self):
-        """Points in the search"""
+        """Points in the search."""
         return self._instance.GetPoints()
 
     @property
     def triangles(self):
-        """Triangles in the search"""
+        """Triangles in the search."""
         return self._instance.GetTriangles()
 
     def triangle_containing_point(self, point):
         """
-        Find the triangle containing the point
+        Find the triangle containing the point.
 
         Args:
             point (iterable): The location used to find the triangle
@@ -113,11 +136,13 @@ class TriSearch(object):
 
     def interp_weights_triangle_index(self, point):
         """
+        Interpolate weights by triangle index.
 
         Args:
             point (iterable): location that is interpolated to.
 
         Returns:
-            A tuple of a flag if it was successful, triangle containing the point, triangle point indices and triangle point weights or None if the point is not any triangle
+            A tuple of a flag if it was successful, triangle containing the point, triangle point indices and triangle
+            point weights or None if the point is not any triangle
         """
         return self._instance.InterpWeightsTriangleIdx(point)
