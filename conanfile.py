@@ -127,3 +127,11 @@ class XmsgridConan(ConanFile):
             self.cpp_info.libs = ["xmsgridlib_d"]
         else:
             self.cpp_info.libs = ["xmsgridlib"]
+        # Editable Mode Config
+        if not self.in_local_cache:
+            from os import path
+            print("Editable Mode: Assuming generated libraries are in 'build/lib'.")
+            # When in editable mode we need to update where we check for
+            # libraries...
+            root = path.abspath(path.dirname(__file__))
+            self.cpp_info.libdirs = [path.join(root, "build", "lib")]
