@@ -100,6 +100,8 @@ void GmMultiPolyIntersectionSorterTerse::RemoveCornerTouches() {
     }
   }
 
+  AddMissingEndpointIds(tChange);
+
   // Remove them, working backwards
   for (size_t i = toRemove.size(); i-- > 0;) {
     m_d->m_ixs.erase(m_d->m_ixs.begin() + toRemove[i]);
@@ -207,6 +209,37 @@ void GmMultiPolyIntersectionSorterTerse::SwapAdjacents() {
     }
   }
 } // GmMultiPolyIntersectionSorterTerse::SwapAdjacents
+//------------------------------------------------------------------------------
+/// \brief Add endpoint polygon IDs that may be removed as duplicates.
+/// \param a_tChange: indexes of t-value changes.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectionSorterTerse::AddMissingEndpointIds(const VecInt& a_tChange)
+{
+  XM_ENSURE_TRUE_NO_ASSERT(a_tChange.size() >= 2);
+  XM_ENSURE_TRUE_NO_ASSERT(!m_d->m_ixs.empty());
+
+  // make sure all starting point polygons are included
+  if (m_d->m_ixs[0].m_t == 0.0)
+  {
+    int begin = a_tChange[0];
+    int end = a_tChange[1];
+    for (int i = begin; i < end; ++i)
+    {
+      m_d->m_polys1.insert(m_d->m_ixs[i].m_i);
+    }
+  }
+
+  // make sure all ending point polygons are included
+  if (m_d->m_ixs.back().m_t == 1.0)
+  {
+    int begin = a_tChange[a_tChange.size() - 2];
+    int end = a_tChange.back();
+    for (int i = begin; i < end; ++i)
+    {
+      m_d->m_polys2.insert(m_d->m_ixs[i].m_i);
+    }
+  }
+} // GmMultiPolyIntersectionSorterTerse::AddMissingEndpointIds
 //------------------------------------------------------------------------------
 /// \brief Copy intersections to polyids and tvalues when there are
 ///        2 intersections.
