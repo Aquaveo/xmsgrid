@@ -39,6 +39,7 @@ private:
   void RemoveCornerTouches();
   void RemoveDuplicateEdges();
   void SwapAdjacents();
+  void AddMissingEndpointIds(const std::vector<int>& a_toRemove);
   void IntersectionsToPolyIdsAndTValuesFor2(std::vector<int> &polyids,
                                             std::vector<double> &tvalues,
                                             std::vector<Pt3d> &a_pts) const;
