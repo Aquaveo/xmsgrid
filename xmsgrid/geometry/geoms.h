@@ -44,11 +44,191 @@ enum PtInOutOrOn_enum {
 
 //----- Global functions -------------------------------------------------------
 
+// Extents
+void gmAddToExtents(const Pt2d& a_pt, Pt3d& a_min, Pt3d& a_max);
+void gmAddToExtents(const Pt3d& a_pt, Pt2d& a_min, Pt2d& a_max);
+void gmAddToExtents(const Pt3d& a_pt, Pt3d& a_min, Pt3d& a_max);
+
+void gmExtents2D(const VecPt3d& a_points, Pt2d& a_min, Pt2d& a_max);
+void gmExtents2D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max);
+void gmExtents3D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max);
+
+void gmEnvelopeOfPts(const VecPt3d& a_pts, Pt3d& a_min, Pt3d& a_max);
+
+
+// Angles
+double gmAngleBetween2DVectors(double dxp, double dyp, double dxn, double dyn);
+double gmAngleBetween2DVectors(double dxp,
+                               double dyp,
+                               double dxn,
+                               double dyn,
+                               double a_magn,
+                               double a_magp);
+
+double gmAngleBetweenEdges(const Pt2d& p1, const Pt2d& p2, const Pt2d& p3);
+double gmAngleBetweenEdges(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3);
+double gmComputeDeviationInDirection(const Pt3d& a_p0, const Pt3d& a_p1, const Pt3d& a_p2);
+
+double gmBisectingAngle(const Pt3d& a_p1, const Pt3d& a_p2, const Pt3d& a_p3);
+double gmPerpendicularAngle(const Pt3d& a_pt1, const Pt3d& a_pt2);
+
+double gmConvertAngleToBetween0And360(double a_angle, bool a_InDegrees = true);
+
+Turn_enum gmTurn(const Pt3d& a_v1, const Pt3d& a_v2, const Pt3d& a_v3, double a_angtol = 0.0017453);
+
+
+// Barycenters
+int gmBaryPrepare(const Pt3d* p1,
+                  const Pt3d* p2,
+                  const Pt3d* p3,
+                  const Pt3d* norm,
+                  Pt3d* orig,
+                  double coef[6],
+                  int* dir,
+                  bool flag);
+int gmCartToBary(const Pt3d* cart, const Pt3d* orig, double coef[6], int dir, Pt3d* bary);
+
+
+// Points equivalence
+bool gmEqualPointsXY(double x1, double y1, double x2, double y2);
+bool gmEqualPointsXY(double x1, double y1, double x2, double y2, double tolerance);
+bool gmEqualPointsXY(const Pt2i& point1, const Pt2i& point2);
+bool gmEqualPointsXY(const Pt2d& a_pt1, const Pt2d& a_pt2, double tol);
+bool gmEqualPointsXY(const Pt3d& a_pt1, const Pt3d& a_pt2, double tol);
+bool gmEqualPointsXYZ(double x1, double y1, double z1, double x2, double y2, double z2);
+bool gmEqualPointsXYZ(double x1,
+                      double y1,
+                      double z1,
+                      double x2,
+                      double y2,
+                      double z2,
+                      double tolerance);
+bool gmEqualPointsXYZ(const Pt3d& pt1, const Pt3d& pt2, double tol);
+
+
+// Algebraic functions
+double gmCross2D(const double& dx1, const double& dy1, const double& dx2, const double& dy2);
+double gmCross2D(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B);
+void gmCross3D(const Pt3d& a_vec1, const Pt3d& a_vec2, Pt3d* a_vec3);
+inline double gmDot3D(const Pt3d& a_vec1, const Pt3d& a_vec2);
+void gmComponentMagnitudes(double* a_x, double* a_y, double* a_mag, double* a_dir, bool a_tomagdir);
+Pt3d gmCreateVector(const Pt3d& a_p1, const Pt3d& a_p2);
+
+
+// Polygon bounds
+int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt2i a_pt);
+int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt2d a_pt);
+int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt3d a_pt);
+int gmPointInPolygon2D(const Pt3d* a_verts, size_t a_num, double a_x, double a_y);
+int gmPointInPolygon2D(const Pt3d* a_verts, size_t a_num, Pt3d a_pt);
+int gmPointInPolygon2D(const VecPt3d& a_verts, const Pt3d& a_pt);
+template <typename T>
+int gmPointInPolygon2D(const T* theverts,
+                       const size_t numverts,
+                       const double xpt,
+                       const double ypt,
+                       const double tol);
+
+// Distance
+double gm2DDistanceToLineWithTol(const Pt3d* a_pt1,
+                                 const Pt3d* a_pt2,
+                                 double a_x,
+                                 double a_y,
+                                 double a_tol);
+
+double gmXyDistance(const Pt3d& pt1, const Pt3d& pt2);
+double gmXyDistance(double x1, double y1, double x2, double y2);
+double gmXyDistanceSquared(const Pt3d& pt1, const Pt3d& pt2);
+
+
+// Intersection
+bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
+                                    const Pt3d& one2,
+                                    const Pt3d& two1,
+                                    const Pt3d& two2,
+                                    double* xi,
+                                    double* yi,
+                                    double* zi1,
+                                    double* zi2,
+                                    double tol);
+int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
+                                      const Pt3d& a_pt2,
+                                      const Pt3d& a_t0,
+                                      const Pt3d& a_t1,
+                                      const Pt3d& a_t2,
+                                      Pt3d& a_IntersectPt);
+
+bool gmLinesIntersect(const Pt3d& one1, const Pt3d& one2, const Pt3d& two1, const Pt3d& two2);
+bool gmLinesCross(const Pt3d& a_segment1Point1,
+                  const Pt3d& a_segment1Point2,
+                  const Pt3d& a_segment2Point1,
+                  const Pt3d& a_segment2Point2);
+
+
+
+
+// Testing if points are in/on objects
+bool gmOnLineAndBetweenEndpointsWithTol(const Pt3d& a_pt1,
+                                        const Pt3d& a_pt2,
+                                        const double a_x,
+                                        const double a_y,
+                                        double a_tol);
+bool gmOnLineWithTol(const Pt3d& p1,
+                     const Pt3d& p2,
+                     const double x,
+                     const double y,
+                     const double tol);
+
+bool gmInsideOrOnLineWithTol(const Pt3d* p1,
+                             const Pt3d* p2,
+                             const Pt3d* inpoint,
+                             const double x,
+                             const double y,
+                             const double tol,
+                             double* dist = NULL);
+bool gmInsideOfLineWithTol(const Pt3d& a_vertex1,
+                           const Pt3d& a_vertex2,
+                           const Pt3d& a_oppositevertex,
+                           const double a_x,
+                           const double a_y,
+                           const double a_tol);
+
+PtInOutOrOn_enum gmPtInCircumcircle(const Pt3d& pt, Pt3d circumcirclePts[3]);
+bool gmPointInTriangleWithTol(const Pt3d* p1,
+                              const Pt3d* p2,
+                              const Pt3d* p3,
+                              double x,
+                              double y,
+                              double tol);
 bool gmPointInOrOnBox2d(const Pt3d& a_bMin, const Pt3d& a_bMax, const Pt3d& a_pt);
-bool gmBoxesOverlap2d(const Pt3d& a_b1Min,
-                      const Pt3d& a_b1Max,
-                      const Pt3d& a_b2Min,
-                      const Pt3d& a_b2Max);
+
+
+// Finding points on lines
+double gmFindClosestPtOnSegment(const Pt3d& a_pt1,
+                                const Pt3d& a_pt2,
+                                const Pt3d& a_pt,
+                                Pt3d& a_newpt,
+                                const double a_tol);
+
+double gmPtDistanceAlongSegment(const Pt3d& a_pt1,
+                                const Pt3d& a_pt2,
+                                const Pt3d& a_pt,
+                                const double a_tol);
+
+
+// Tolerance
+double gmComputeXyTol(const Pt3d& a_mn, const Pt3d& a_mx);
+double gmXyTol(bool a_set = false, double a_value = 1e-9);
+double gmZTol(bool a_set = false, double a_value = 1e-6);
+
+
+// Vertex ordering
+bool gmCounterClockwiseTri(const Pt3d& vtx0, const Pt3d& vtx1, const Pt3d& vtx2);
+void gmOrderPointsCounterclockwise(const VecPt3d& a_pts, VecInt& a_ccwOrder, int a_startindex = 0);
+void gmOrderPointsCounterclockwise(VecPt3d& a_pts);
+
+
+// Equation solving
 void gmCalculateNormalizedPlaneCoefficients(const Pt3d& p1,
                                             const Pt3d& p2,
                                             const Pt3d& p3,
@@ -63,9 +243,7 @@ void gmCalculateNormalizedPlaneCoefficients(const Pt3d* p1,
                                             double* b,
                                             double* c,
                                             double* d);
-double gmMiddleZ(const VecPt3d& a_points);
-PtInOutOrOn_enum gmPtInCircumcircle(const Pt3d& pt, Pt3d circumcirclePts[3]);
-double gmXyDistanceSquared(const Pt3d& pt1, const Pt3d& pt2);
+
 bool gmCircumcircleWithTol(const Pt3d* pt1,
                            const Pt3d* pt2,
                            const Pt3d* pt3,
@@ -73,129 +251,26 @@ bool gmCircumcircleWithTol(const Pt3d* pt1,
                            double* yc,
                            double* r2,
                            double tol);
-int gmCartToBary(const Pt3d* cart, const Pt3d* orig, double coef[6], int dir, Pt3d* bary);
-int gmBaryPrepare(const Pt3d* p1,
-                  const Pt3d* p2,
-                  const Pt3d* p3,
-                  const Pt3d* norm,
-                  Pt3d* orig,
-                  double coef[6],
-                  int* dir,
-                  bool flag);
+
+
+// Misc.
+bool gmBoxesOverlap2d(const Pt3d& a_b1Min,
+                      const Pt3d& a_b1Max,
+                      const Pt3d& a_b2Min,
+                      const Pt3d& a_b2Max);
+
 bool gmColinearWithTol(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3, const double tol);
-bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
-                                    const Pt3d& one2,
-                                    const Pt3d& two1,
-                                    const Pt3d& two2,
-                                    double* xi,
-                                    double* yi,
-                                    double* zi1,
-                                    double* zi2,
-                                    double tol);
-bool gmCounterClockwiseTri(const Pt3d& vtx0, const Pt3d& vtx1, const Pt3d& vtx2);
-double gmCross2D(const double& dx1, const double& dy1, const double& dx2, const double& dy2);
-double gmCross2D(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B);
-double gmAngleBetween2DVectors(double dxp, double dyp, double dxn, double dyn);
-double gmAngleBetween2DVectors(double dxp,
-                               double dyp,
-                               double dxn,
-                               double dyn,
-                               double a_magn,
-                               double a_magp);
-double gmAngleBetweenEdges(const Pt3d&, const Pt3d&, const Pt3d&);
-double gmAngleBetweenEdges(const Pt2d& p1, const Pt2d& p2, const Pt2d& p3);
-double gmComputeDeviationInDirection(const Pt3d&, const Pt3d&, const Pt3d&);
-bool gmOnLineAndBetweenEndpointsWithTol(const Pt3d& a_pt1,
-                                        const Pt3d& a_pt2,
-                                        const double a_x,
-                                        const double a_y,
-                                        double a_tol);
-bool gmOnLineWithTol(const Pt3d& vertex1,
-                     const Pt3d& vertex2,
-                     const double x,
-                     const double y,
-                     const double tol);
-void gmAddToExtents(const Pt3d& a_pt, Pt3d& a_min, Pt3d& a_max);
-void gmAddToExtents(const Pt3d& a_pt, Pt2d& a_min, Pt2d& a_max);
-void gmAddToExtents(const Pt2d& a_pt, Pt3d& a_min, Pt3d& a_max);
-double gmXyDistance(double x1, double y1, double x2, double y2);
-double gmXyDistance(const Pt3d& pt1, const Pt3d& pt2);
-Turn_enum gmTurn(const Pt3d& a_v1, const Pt3d& a_v2, const Pt3d& a_v3, double a_angtol = 0.0017453);
+
 Pt3d gmComputeCentroid(const VecPt3d& a_points);
 Pt3d gmComputePolygonCentroid(const VecPt3d& pts);
-bool gmLinesIntersect(const Pt3d& one1, const Pt3d& one2, const Pt3d& two1, const Pt3d& two2);
-bool gmLinesCross(const Pt3d& one1, const Pt3d& one2, const Pt3d& two1, const Pt3d& two2);
-int gmPointInPolygon2D(const Pt3d*, size_t, double, double);
-int gmPointInPolygon2D(const Pt3d*, size_t, double, double);
-int gmPointInPolygon2D(const Pt3d*, size_t, Pt3d);
-int gmPointInPolygon2D(const Pt2i*, size_t, Pt2d);
-int gmPointInPolygon2D(const Pt2i*, size_t, Pt2i);
-int gmPointInPolygon2D(const Pt2i*, size_t, Pt3d);
-int gmPointInPolygon2D(const VecPt3d&, const Pt3d&);
-template <typename T>
-int gmPointInPolygon2D(const T* theverts,
-                       const size_t numverts,
-                       const double xpt,
-                       const double ypt,
-                       const double tol);
-double gmComputeXyTol(const Pt3d& a_mn, const Pt3d& a_mx);
-double gmXyTol(bool a_set = false, double a_value = 1e-9);
-double gmZTol(bool a_set = false, double a_value = 1e-6);
-bool gmEqualPointsXY(double x1, double y1, double x2, double y2);
-bool gmEqualPointsXY(double x1, double y1, double x2, double y2, double tol);
-bool gmEqualPointsXY(const Pt2i&, const Pt2i&);
-bool gmEqualPointsXY(const Pt2d& a_pt1, const Pt2d& a_pt2, double tol);
-bool gmEqualPointsXY(const Pt3d& a_pt1, const Pt3d& a_pt2, double tol);
-bool gmEqualPointsXYZ(double x1, double y1, double z1, double x2, double y2, double z2);
-bool gmEqualPointsXYZ(double x1, double y1, double z1, double x2, double y2, double z2, double tol);
-bool gmEqualPointsXYZ(const Pt3d& pt1, const Pt3d& pt2, double tol);
-bool gmPointInTriangleWithTol(const Pt3d* p1,
-                              const Pt3d* p2,
-                              const Pt3d* p3,
-                              double x,
-                              double y,
-                              double tol);
-bool gmInsideOrOnLineWithTol(const Pt3d* p1,
-                             const Pt3d* p2,
-                             const Pt3d* inpoint,
-                             double x,
-                             double y,
-                             double tol,
-                             double* dist = NULL);
-double gmPolygonArea(const Pt3d* points, size_t npoints);
-VecPt3d gmArrayToVecPt3d(double* a_array, int a_size);
-void gmEnvelopeOfPts(const VecPt3d& a_pts, Pt3d& a_min, Pt3d& a_max);
-void gmOrderPointsCounterclockwise(const VecPt3d& pts, VecInt& ccwOrder, int startindex = 0);
-void gmOrderPointsCounterclockwise(VecPt3d& pts);
-double gmFindClosestPtOnSegment(const Pt3d& pt1,
-                                const Pt3d& pt2,
-                                const Pt3d& pt,
-                                Pt3d& newpt,
-                                const double tol);
-double gmPtDistanceAlongSegment(const Pt3d& pt1, const Pt3d& pt2, const Pt3d& pt, const double tol);
-bool gmInsideOfLineWithTol(const Pt3d& a_vertex1,
-                           const Pt3d& a_vertex2,
-                           const Pt3d& a_oppositevertex,
-                           const double a_x,
-                           const double a_y,
-                           const double a_tol);
-void gmExtents2D(const VecPt3d& a_pts, Pt2d& a_min, Pt2d& a_max);
-void gmExtents2D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max);
-void gmExtents3D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max);
-double gmPerpendicularAngle(const Pt3d& point1, const Pt3d& point2);
-double gmBisectingAngle(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3);
-void gmComponentMagnitudes(double* x, double* y, double* mag, double* dir, bool tomagdir);
-Pt3d gmCreateVector(const Pt3d& p1, const Pt3d& p2);
-double gmConvertAngleToBetween0And360(double a_angle, bool a_InDegrees = true);
-void gmCross3D(const Pt3d& a_vec1, const Pt3d& a_vec2, Pt3d* a_vec3);
-inline double gmDot3D(const Pt3d& a_vec1, const Pt3d& a_vec2);
-int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
-                                      const Pt3d& a_pt2,
-                                      const Pt3d& a_t0,
-                                      const Pt3d& a_t1,
-                                      const Pt3d& a_t2,
-                                      Pt3d& a_IntersectPt);
-double gm2DDistanceToLineWithTol(const Pt3d* pt1, const Pt3d* pt2, double x, double y, double tol);
+
 void gmGetConvexHull(const VecPt3d& a_pts, VecPt3d& a_hull, bool a_includeOn = false);
+
+double gmPolygonArea(const Pt3d* pts, size_t npoints);
+
+
+// Utility functions
+VecPt3d gmArrayToVecPt3d(double* a_array, int a_size);
+double gmMiddleZ(const VecPt3d& a_points);
 
 } // namespace xms
