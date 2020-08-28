@@ -43,7 +43,6 @@ namespace xms
 
 namespace
 {
-// TODO: Find a description
 //------------------------------------------------------------------------------
 /// \brief Test if an instance of a Turn_enum represents a right turn.
 /// \param turn: The Turn_enum instance to test.
@@ -61,238 +60,404 @@ bool isRightTurn(Turn_enum turn, bool includeCollinear)
 }
 
 //------------------------------------------------------------------------------
-/// \brief Check whether a point is in or on a box in 2D.
-/// \param[in] a_bMin Min x,y of box.
-/// \param[in] a_bMax Max x,y of box.
-/// \param[in] a_pt point being tested.
-/// \return Whether the point is on or on the box.
+/// \brief Updates a_min and a_max such that the coordinates of a_min are less
+///        than or equal to the respective coordinates of a_pt, and the
+///        coordinates of a_max are greater than or equal to the respective ones
+///        in a_pt.
+/// \param[in] a_pt: A point.
+/// \param[in,out] a_min: Minimum.
+/// \param[in,out] a_max: Maximum.
 //------------------------------------------------------------------------------
-bool gmPointInOrOnBox2d(const Pt3d& a_bMin, const Pt3d& a_bMax, const Pt3d& a_pt)
+void gmAddToExtents(const Pt2d& a_pt, Pt3d& a_min, Pt3d& a_max)
 {
-  if (a_pt.x < a_bMin.x || a_pt.y < a_bMin.y || a_pt.x > a_bMax.x || a_pt.y > a_bMax.y)
-    return false;
-  return true;
-} // gmPointInOrOnBox2d
+  a_min.x = std::min(a_pt.x, a_min.x);
+  a_min.y = std::min(a_pt.y, a_min.y);
+  a_max.x = std::max(a_pt.x, a_max.x);
+  a_max.y = std::max(a_pt.y, a_max.y);
+} // gmAddToExtents
 //------------------------------------------------------------------------------
-/// \brief Check if 2 boxes overlap in 2D.
-/// \param[in] a_b1Min Min x,y of first box.
-/// \param[in] a_b1Max Max x,y of first box.
-/// \param[in] a_b2Min Min x,y of second box.
-/// \param[in] a_b2Max Max x,y of second box.
-/// \return Whether the point is on or on the box.
+/// \brief Updates a_min and a_max such that the coordinates of a_min are less
+///        than or equal to the respective coordinates of a_pt, and the
+///        coordinates of a_max are greater than or equal to the respective ones
+///        in a_pt.
+/// \param[in] a_pt: A point.
+/// \param[in,out] a_min: Minimum.
+/// \param[in,out] a_max: Maximum.
 //------------------------------------------------------------------------------
-bool gmBoxesOverlap2d(const Pt3d& a_b1Min,
-                      const Pt3d& a_b1Max,
-                      const Pt3d& a_b2Min,
-                      const Pt3d& a_b2Max)
+void gmAddToExtents(const Pt3d& a_pt, Pt2d& a_min, Pt2d& a_max)
 {
-  if (a_b1Max.x < a_b2Min.x)
-    return false;
-  if (a_b1Min.x > a_b2Max.x)
-    return false;
-  if (a_b1Max.y < a_b2Min.y)
-    return false;
-  if (a_b1Min.y > a_b2Max.y)
-    return false;
-  return true;
-} // gmBoxesOverlap2d
+  a_min.x = std::min(a_pt.x, a_min.x);
+  a_min.y = std::min(a_pt.y, a_min.y);
+  a_max.x = std::max(a_pt.x, a_max.x);
+  a_max.y = std::max(a_pt.y, a_max.y);
+} // gmAddToExtents
 //------------------------------------------------------------------------------
-/// \brief Calculates the plane coefficients for a triangle.
-///        Given points, calculate coefficents for plane (ax+by+cz+d=0).
-/// \param[in] p1: First point.
-/// \param[in] p2: Second point.
-/// \param[in] p3: Third point.
-/// \param[out] a: Coefficient a.
-/// \param[out] b: Coefficient b.
-/// \param[out] c: Coefficient c.
-/// \param[out] d: Coefficient d.
+/// \brief Updates a_min and a_max such that the coordinates of a_min are less
+///        than or equal to the respective coordinates of a_pt, and the
+///        coordinates of a_max are greater than or equal to the respective ones
+///        in a_pt.
+/// \param[in] a_pt: A point.
+/// \param[in,out] a_min: Minimum.
+/// \param[in,out] a_max: Maximum.
 //------------------------------------------------------------------------------
-void gmCalculateNormalizedPlaneCoefficients(const Pt3d& p1,
-                                            const Pt3d& p2,
-                                            const Pt3d& p3,
-                                            double* a,
-                                            double* b,
-                                            double* c,
-                                            double* d)
+void gmAddToExtents(const Pt3d& a_pt, Pt3d& a_min, Pt3d& a_max)
 {
-  // call the other version
-  gmCalculateNormalizedPlaneCoefficients(&p1, &p2, &p3, a, b, c, d);
-} // gmCalculateNormalizedPlaneCoefficients
+  a_min.x = std::min(a_pt.x, a_min.x);
+  a_min.y = std::min(a_pt.y, a_min.y);
+  a_min.z = std::min(a_pt.z, a_min.z);
+  a_max.x = std::max(a_pt.x, a_max.x);
+  a_max.y = std::max(a_pt.y, a_max.y);
+  a_max.z = std::max(a_pt.z, a_max.z);
+} // gmAddToExtents
 //------------------------------------------------------------------------------
-/// \brief Calculates the plane coefficients for a triangle.
-///        Given points, calculate coefficents for plane (ax+by+cz+d=0).
-/// \param[in] p1: First point.
-/// \param[in] p2: Second point.
-/// \param[in] p3: Third point.
-/// \param[out] a: Coefficient a.
-/// \param[out] b: Coefficient b.
-/// \param[out] c: Coefficient c.
-/// \param[out] d: Coefficient d.
+/// \brief Get the 2D extents of a vector of points.
+/// \param[in] a_points: The points.
+/// \param[out] a_min: Minimum point (xy) of bounding rectangle.
+/// \param[out] a_max: Maximum point (xy) of bounding rectangle.
 //------------------------------------------------------------------------------
-void gmCalculateNormalizedPlaneCoefficients(const Pt3d* p1,
-                                            const Pt3d* p2,
-                                            const Pt3d* p3,
-                                            double* a,
-                                            double* b,
-                                            double* c,
-                                            double* d)
+void gmExtents2D(const VecPt3d& a_points, Pt2d& a_min, Pt2d& a_max)
 {
-  double x1(p1->x), y1(p1->y), z1(p1->z);
-  double x2(p2->x), y2(p2->y), z2(p2->z);
-  double x3(p3->x), y3(p3->y), z3(p3->z);
-  *a = (y1 * (z2 - z3) + y2 * (z3 - z1) + y3 * (z1 - z2));
-  *b = (z1 * (x2 - x3) + z2 * (x3 - x1) + z3 * (x1 - x2));
-  *c = (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
-  double mag(sqrt((*a) * (*a) + (*b) * (*b) + (*c) * (*c)));
-  *a /= mag;
-  *b /= mag;
-  *c /= mag;
-  *d = -(*a) * x1 - (*b) * y1 - (*c) * z1;
-} // gmCalculateNormalizedPlaneCoefficients
-//------------------------------------------------------------------------------
-/// \brief Find the z value halfway between the max and min z.
-/// \note  Different from the average z in that it ignores all but the min and
-///        max z when finding the midpoint.
-/// \param a_points: A vector of points.
-/// \return Middle z value.
-//------------------------------------------------------------------------------
-double gmMiddleZ(const VecPt3d& a_points)
-{
-  double zmin = XM_DBL_HIGHEST;
-  double zmax = XM_DBL_LOWEST;
-  for (size_t i = 0; i < a_points.size(); ++i)
-  {
-    double z = a_points[i].z;
-    zmin = std::min(zmin, z);
-    zmax = std::max(zmax, z);
-  }
-  return (zmin + zmax) / 2.0;
-} // gmMiddleZ
-//------------------------------------------------------------------------------
-/// \brief Check whether a point is in a circumcircle defined by three other
-///        points.
-/// \param pt: The point to check.
-/// \param circumcirclePts: 3 points on the circumcircle.
-/// \return Whether the point is in, out of, or on the circle.
-//------------------------------------------------------------------------------
-PtInOutOrOn_enum gmPtInCircumcircle(const Pt3d& pt, Pt3d circumcirclePts[3])
-{
-  double xc, yc, r2;
+  XM_ENSURE_TRUE_VOID_NO_ASSERT(!a_points.empty());
 
-  if (!gmCircumcircleWithTol(&circumcirclePts[0], &circumcirclePts[1], &circumcirclePts[2], &xc,
-                             &yc, &r2, gmXyTol()))
+  a_min.x = a_max.x = a_points.at(0).x;
+  a_min.y = a_max.y = a_points.at(0).y;
+  for (int i = 1; i < (int)a_points.size(); i++)
   {
-    return PT_ERROR;
+    gmAddToExtents(a_points[i], a_min, a_max);
   }
-  /* compute distance from (xc,yc) to pt squared */
-  double delta = sqrt(r2) - sqrt(sqr(pt.x - xc) + sqr(pt.y - yc));
-  if (fabs(delta) > gmXyTol())
-  {
-    if (delta > gmXyTol())
-    {
-      return PT_IN;
-    }
-    else
-    {
-      return PT_OUT;
-    }
-  }
-  return PT_ON;
-} // gmPtInCircumcircle
+} // gmExtents2D
 //------------------------------------------------------------------------------
-/// \brief Calculate 2D distance squared between two points.
-/// \param[in] pt1: First point.
-/// \param[in] pt2: Second point.
-/// \return Distance squared.
+/// \brief Get the 2D extents of a vector of points.
+/// \param[in] a_points: Vector of points.
+/// \param[in,out] a_min: Minimum value.
+/// \param[in,out] a_max: Maximum value.
 //------------------------------------------------------------------------------
-double gmXyDistanceSquared(const Pt3d& pt1, const Pt3d& pt2)
+void gmExtents2D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max)
 {
-  return (sqr(pt1.x - pt2.x) + sqr(pt1.y - pt2.y));
-} // gmXyDistanceSqared
-//------------------------------------------------------------------------------
-/// \brief Compute center & radius squared for circumcircle of triangle
-///        defined by the three points.
-/// \note  May fail if triangle has zero area.
-/// \param pt1: First vertex of the triangle.
-/// \param pt2: Second vertex of the triangle.
-/// \param pt3: Third vertex of the triangle.
-/// \param xc: Initialized to the circumcenter x coord.
-/// \param yc: Initialized to the circumcenter y coord.
-/// \param r2: Initialized to the radius squared of circumcircle.
-/// \param tol: Tolerance for geometric comparison.
-/// \return Whether the operation succeeded.
-//------------------------------------------------------------------------------
-bool gmCircumcircleWithTol(const Pt3d* pt1,
-                           const Pt3d* pt2,
-                           const Pt3d* pt3,
-                           double* xc,
-                           double* yc,
-                           double* r2,
-                           double tol)
-{
-  bool ok = true;
-  double det11, det12, det13, det21, det22, det23;
-  double determinate;
-  /* compute these */
-  det11 = pt1->x - pt2->x;
-  det12 = pt1->y - pt2->y;
-  det13 = det11 * (pt1->x + pt2->x) / 2.0 + det12 * (pt1->y + pt2->y) / 2.0;
+  XM_ENSURE_TRUE_VOID_NO_ASSERT(!a_points.empty());
 
-  det21 = pt3->x - pt2->x;
-  det22 = pt3->y - pt2->y;
-  det23 = det21 * (pt3->x + pt2->x) / 2.0 + det22 * (pt3->y + pt2->y) / 2.0;
-  /* compute determinant */
-  determinate = det11 * det22 - det12 * det21;
-  /* zero determinate indicates collinear pts */
-  if (fabs(determinate) < tol)
+  a_min.x = a_max.x = a_points.at(0).x;
+  a_min.y = a_max.y = a_points.at(0).y;
+  a_min.z = a_max.z = 0.0;
+  for (int i = 1; i < (int)a_points.size(); i++)
   {
-    ok = false;
-    determinate = tol;
+    gmAddToExtents((Pt2d)a_points[i], a_min, a_max);
   }
-  *xc = (det13 * det22 - det23 * det12) / determinate;
-  *yc = (det11 * det23 - det21 * det13) / determinate;
-  *r2 = sqr(pt1->x - *xc) + sqr(pt1->y - *yc);
-  return ok;
-} // gmCircumcircleWithTol
-// TODO: Meaning of parameters?
+} // gmExtents2D
 //------------------------------------------------------------------------------
-/// \brief Compute Barycentric coords for point.
-/// \note Use gmBaryPrepare to get the coefficients and direction.
-/// \param[in] cart: cart?
-/// \param[in] orig: orig?
-/// \param[in] coef: 6 coefficients.
-/// \param[in] dir: Direction.
-/// \param[out] bary: point?
-/// \return XM_SUCCESS, always.
+/// \brief Get the 3D extents of a vector of points.
+/// \param[in] a_points: The points.
+/// \param[out] a_min: Minimum point (xyz) of bounding box.
+/// \param[out] a_max: Maximum point (xyz) of bounding box.
 //------------------------------------------------------------------------------
-int gmCartToBary(const Pt3d* cart, const Pt3d* orig, double coef[6], int dir, Pt3d* bary)
+void gmExtents3D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max)
 {
-  double x, y, z;
-  x = cart->x - orig->x;
-  y = cart->y - orig->y;
-  z = cart->z - orig->z;
-  /* get magnitudes of the plane normal */
-  switch (dir)
+  XM_ENSURE_TRUE_VOID_NO_ASSERT(!a_points.empty());
+
+  a_min.x = a_max.x = a_points.at(0).x;
+  a_min.y = a_max.y = a_points.at(0).y;
+  a_min.z = a_max.z = a_points.at(0).z;
+  for (int i = 1; i < (int)a_points.size(); i++)
   {
-  case (0):
-    bary->x = coef[0] * y + coef[1] * z + coef[2];
-    bary->y = coef[3] * y + coef[4] * z + coef[5];
-    bary->z = 1.0 - bary->x - bary->y;
-    break;
-  case (1):
-    bary->x = coef[0] * z + coef[1] * x + coef[2];
-    bary->y = coef[3] * z + coef[4] * x + coef[5];
-    bary->z = 1.0 - bary->x - bary->y;
-    break;
-  case (2):
-    bary->x = coef[0] * x + coef[1] * y + coef[2];
-    bary->y = coef[3] * x + coef[4] * y + coef[5];
-    bary->z = 1.0 - bary->x - bary->y;
-    break;
+    gmAddToExtents(a_points[i], a_min, a_max);
   }
-  return (XM_SUCCESS);
-} // gmCartToBary
-// TODO: Figure out what coef and dir are for.
+} // gmExtents3D
+//------------------------------------------------------------------------------
+/// \brief Calculate the envelope of a vector of points
+/// \param[in] a_pts: Array of points
+/// \param[out] a_min: Min x,y,z of the points
+/// \param[out] a_max: Max x,y,z of the points
+//------------------------------------------------------------------------------
+void gmEnvelopeOfPts(const VecPt3d& a_pts, Pt3d& a_min, Pt3d& a_max)
+{
+  a_min = a_max = Pt3d();
+  XM_ENSURE_TRUE(!a_pts.empty());
+  a_min = a_max = a_pts.front();
+  for (size_t i = 0; i < a_pts.size(); ++i)
+  {
+    if (a_pts[i].x < a_min.x)
+      a_min.x = a_pts[i].x;
+    if (a_pts[i].y < a_min.y)
+      a_min.y = a_pts[i].y;
+    if (a_pts[i].z < a_min.z)
+      a_min.z = a_pts[i].z;
+    if (a_pts[i].x > a_max.x)
+      a_max.x = a_pts[i].x;
+    if (a_pts[i].y > a_max.y)
+      a_max.y = a_pts[i].y;
+    if (a_pts[i].z > a_max.z)
+      a_max.z = a_pts[i].z;
+  }
+} // gmEnvelopeOfPts
+//------------------------------------------------------------------------------
+/// \brief Compute the angle, in radians, between the edges p and n.
+///        based on a ccw rotation from p to n.
+/// \note Computed angle will be in the range [0-2PI).
+/// \param[in] dxp: x coordinate of vector p.
+/// \param[in] dyp: y coordinate of vector p.
+/// \param[in] dxn: x coordinate of vector n.
+/// \param[in] dyn: y coordinate of vector n.
+/// \return The angle between p and n.
+//------------------------------------------------------------------------------
+double gmAngleBetween2DVectors(double dxp, double dyp, double dxn, double dyn)
+{
+  double magn, magp;
+
+  magn = sqrt(sqr(dxn) + sqr(dyn));
+  magp = sqrt(sqr(dxp) + sqr(dyp));
+  return gmAngleBetween2DVectors(dxp, dyp, dxn, dyn, magn, magp);
+} // gmAngleBetween2DVectors
+//------------------------------------------------------------------------------
+/// \brief Compute the angle, in radians, between the edges p and n.
+///        based on a ccw rotation from p to n.
+/// \note Computed angle will be in the range [0-2PI).
+/// \param[in] dxp: x component of vector p.
+/// \param[in] dyp: y component of vector p.
+/// \param[in] dxn: x component of vector n.
+/// \param[in] dyn: y component of vector n.
+/// \param[in] a_magn: Magnitude of n.
+/// \param[in] a_magp: Magnitude of p.
+/// \return The angle between p and n.
+//------------------------------------------------------------------------------
+double gmAngleBetween2DVectors(double dxp,
+                               double dyp,
+                               double dxn,
+                               double dyn,
+                               double a_magn,
+                               double a_magp)
+{
+  double theangle, cosign;
+
+  if (a_magn == 0.0 || a_magp == 0.0)
+    return (0.0);
+  cosign = (dxn * dxp + dyn * dyp) / (a_magn * a_magp);
+  if (cosign > 1.0)
+    cosign = 1.0;
+  if (cosign < -1.0)
+    cosign = -1.0;
+  theangle = acos(cosign);
+  if (theangle == 0.0)
+  {
+    if ((dxn * dxp) + (dyn * dyp) < 0.0)
+      theangle = XM_PI;
+  }
+  else if (gmCross2D(dxp, dyp, dxn, dyn) < 0.0)
+    theangle = 2 * XM_PI - theangle;
+  return theangle;
+} // gmAngleBetween2DVectors
+//------------------------------------------------------------------------------
+/// \brief Compute the counter-clockwise angle, in radians, between the edges
+///        defined by p1-p2 and p2-p3.
+/// \note Computed angle will be in the range [0-2PI).
+/// \brief Returns the ccw angle (0-2pi) between p2-p1 and p2-p3
+/// \param[in] p1: Point 1.
+/// \param[in] p2: Point 2.
+/// \param[in] p3: Point 3.
+/// \return The angle between the two segments.
+//------------------------------------------------------------------------------
+double gmAngleBetweenEdges(const Pt2d& p1, const Pt2d& p2, const Pt2d& p3)
+{
+  double dxp, dyp, dxn, dyn;
+  /* compute the vectors */
+  dxp = p1.x - p2.x;
+  dyp = p1.y - p2.y;
+  dxn = p3.x - p2.x;
+  dyn = p3.y - p2.y;
+  return gmAngleBetween2DVectors(dxp, dyp, dxn, dyn);
+} // gmAngleBetweenEdges
+//------------------------------------------------------------------------------
+/// \brief Compute the counter-clockwise angle, in radians, between the edges
+///        defined by p1-p2 and p2-p3.
+/// \note Computed angle will be in the range [0-2PI).
+/// \brief Returns the ccw angle (0-2pi) between p2-p1 and p2-p3
+/// \param[in] p1: Point 1.
+/// \param[in] p2: Point 2.
+/// \param[in] p3: Point 3.
+/// \return The angle between the two segments.
+//------------------------------------------------------------------------------
+double gmAngleBetweenEdges(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3)
+{
+  double dxp, dyp, dxn, dyn;
+  /* compute the vectors */
+  dxp = p1.x - p2.x;
+  dyp = p1.y - p2.y;
+  dxn = p3.x - p2.x;
+  dyn = p3.y - p2.y;
+  return gmAngleBetween2DVectors(dxp, dyp, dxn, dyn);
+} // gmAngleBetweenEdges
+//------------------------------------------------------------------------------
+/// \brief Compute the deviation in direction from one segment to next.
+/// \note segment 1 is from a_p0 to a_p1, segment 2 is from a_p1 to a_p2.
+/// \note A magnitude of 0 results in a deviation of Pi. This indicates that
+///       there could be a discontinuity.
+/// \note This is a streamlined version of gmAngleBetweenEdges. That function
+///       computes a directed internal difference and requires an extra cross
+///       product and several compares and multiplies. This function still uses
+///       sqrt and acos, so the difference may not be significant.
+/// \param[in] a_p0: 1st point on 1st segment.
+/// \param[in] a_p1: 2nd point on 1st segment and 1st point on second segment.
+/// \param[in] a_p2: 2nd point on 2nd segment.
+/// \return A deviation between 0 and Pi.
+//------------------------------------------------------------------------------
+double gmComputeDeviationInDirection(const Pt3d& a_p0, const Pt3d& a_p1, const Pt3d& a_p2)
+{
+  double x1, y1, x2, y2, m, cosine_dev;
+  x1 = a_p1.x - a_p0.x;
+  y1 = a_p1.y - a_p0.y;
+  x2 = a_p2.x - a_p1.x;
+  y2 = a_p2.y - a_p1.y;
+  m = sqrt(x1 * x1 + y1 * y1) * sqrt(x2 * x2 + y2 * y2);
+  if (m > 0.0)
+  {
+    cosine_dev = Mmin((x1 * x2 + y1 * y2) / (m), 1.0);
+    cosine_dev = Mmax(cosine_dev, -1.0);
+    return acos(cosine_dev);
+  }
+  else
+  {
+    return XM_PI;
+  }
+} // gmComputeDeviationInDirection
+//------------------------------------------------------------------------------
+/// \brief Compute the counter-clockwise angle in [0, 2pi) which bisects
+///        another angle defined by two connected edges.
+/// \param[in] a_p1: The unshared endpoint of the first edge.
+/// \param[in] a_p2: The shared endpoint.
+/// \param[in] a_p3: The unshared endpoint of the second edge.
+/// \return Angle that bisects the edges.
+//------------------------------------------------------------------------------
+double gmBisectingAngle(const Pt3d& a_p1, const Pt3d& a_p2, const Pt3d& a_p3)
+{
+  double dxn, dyn, dxp, dyp, magn, magp, angletoedge1, theanglebetween;
+  double cosign;
+
+  dxp = a_p1.x - a_p2.x;
+  dyp = a_p1.y - a_p2.y;
+  dxn = a_p3.x - a_p2.x;
+  dyn = a_p3.y - a_p2.y;
+  angletoedge1 = atan2(dyp, dxp);
+  magn = sqrt(sqr(dxn) + sqr(dyn));
+  magp = sqrt(sqr(dxp) + sqr(dyp));
+  cosign = (dxn * dxp + dyn * dyp) / (magn * magp);
+  if (cosign > .99999)
+    cosign = 1.0;
+  if (cosign < -.99999)
+    cosign = -1.0;
+  theanglebetween = acos(cosign);
+  if (theanglebetween == 0.0)
+  {
+    if ((dxn * dxp) + (dyn * dyp) < 0.0)
+      theanglebetween = XM_PI;
+  }
+  else if (gmCross2D(dxp, dyp, dxn, dyn) < 0.0)
+    theanglebetween = 2 * XM_PI - theanglebetween;
+  return angletoedge1 + theanglebetween / 2.0;
+} // gmBisectingAngle
+//------------------------------------------------------------------------------
+/// \brief Compute the angle, in radians, perpendicular to an edge defined by
+///        two points.
+/// \param[in] a_pt1: The first point defining an edge.
+/// \param[in] a_pt2: The second point defining an edge.
+/// \return Angle perpendicular to the edge.
+//------------------------------------------------------------------------------
+double gmPerpendicularAngle(const Pt3d& a_pt1, const Pt3d& a_pt2)
+{
+  double hypot;
+  double deltax, deltay, arad, theangle;
+
+  deltax = a_pt1.x - a_pt2.x;
+  deltay = a_pt1.y - a_pt2.y;
+  hypot = sqrt(sqr(deltax) + sqr(deltay));
+  arad = deltax / hypot;
+  if (arad > .9999)
+    arad = 1.0;
+  else if (arad < -.9999)
+    arad = -1.0;
+  if (deltay >= 0.0)
+    theangle = acos(arad);
+  else
+    theangle = 2 * XM_PI - acos(arad);
+  return (theangle - (XM_PI / 2));
+} // gmPerpendicularAngle
+//------------------------------------------------------------------------------
+/// \brief Convert and map an angle to the range [0, 360) degrees.
+/// \note Angles that are too big or small are mapped to an equivalent angle
+///       in range.
+/// \param[in] a_angle: The angle to convert and map.
+/// \param[in] a_InDegrees: Whether the angle is in degrees (true) or radians
+///                         (false).
+/// \return An angle in the range [0, 360) degrees.
+//------------------------------------------------------------------------------
+double gmConvertAngleToBetween0And360(double a_angle, bool a_InDegrees /*= true*/)
+{
+  double ang = a_angle;
+
+  if (!a_InDegrees)
+  {
+    ang *= (180.0 / XM_PI);
+  }
+#if BOOST_OS_WINDOWS
+  while (LT_TOL(ang, 0.0, DBL_EPSILON) && _finite(ang))
+  {
+#else
+  while (LT_TOL(ang, 0.0, DBL_EPSILON) && std::isfinite(ang))
+  {
+#endif
+    ang += 360.0;
+  }
+#if BOOST_OS_WINDOWS
+  while (GTEQ_TOL(ang, 360.0, DBL_EPSILON) && _finite(ang))
+  {
+#else
+  while (GTEQ_TOL(ang, 360.0, DBL_EPSILON) && std::isfinite(ang))
+  {
+#endif
+    ang -= 360.0;
+  }
+
+  return ang;
+} // gmConvertAngleToBetween0And360
+//------------------------------------------------------------------------------
+/// \brief Determine if an angle is a left turn, a right turn, colinear 180
+///        degrees, or colinear 0 degrees.
+/// \note This function will only classify two segments as colinear if the angle
+///       between edges is less than an angle tol, or greater than 180-tol. In
+///       cases where this is not true, it will classify the turn as either
+///       TURN_COLINEAR_180 or TURN_COLINEAR_0.
+/// \param a_v1: Unshared endpoint of first segment.
+/// \param a_v2: Shared endpoint of segments.
+/// \param a_v3: Unshared endpoint of second segment.
+/// \param a_angtol: The sine of the minimum angle to be considered a turn at all,
+///                  i.e. sine(tol) as described in the note. Defaults to 0.0017453
+///                  (sine 0.1 and sine 179.9).
+/// \return The type of turn defined by the angle.
+//------------------------------------------------------------------------------
+Turn_enum gmTurn(const Pt3d& a_v1, const Pt3d& a_v2, const Pt3d& a_v3, double a_angtol /* = 0.0017453 */)
+{
+  // compute sin T = (v3-v2)x(v1-v2)/(d12*d32)
+  double dx32 = a_v3.x - a_v2.x;
+  double dy32 = a_v3.y - a_v2.y;
+  double dx12 = a_v1.x - a_v2.x;
+  double dy12 = a_v1.y - a_v2.y;
+  double d32 = sqrt(dx32 * dx32 + dy32 * dy32);
+  double d12 = sqrt(dx12 * dx12 + dy12 * dy12);
+  double mag = d12 * d32;
+  double sint = (dx32 * dy12 - dx12 * dy32) / mag;
+
+  // for 99.999 > T > 0.1 deg - sin T > 0.0017
+  if (sint > a_angtol)
+    return TURN_LEFT;
+  else if (sint < -a_angtol)
+    return TURN_RIGHT;
+
+  // compute cos T = (v3-v2)DOT(v1-v2)/(d12*d32)
+  // Near colinear case, Cosine should be near 1 or -1,
+  // -1 indicates 180 deg
+  double cost = (dx12 * dx32 + dy12 * dy32) / mag;
+  if (cost < 0.0)
+    return TURN_COLINEAR_180;
+  return TURN_COLINEAR_0;
+} // gmTurn
 //------------------------------------------------------------------------------
 /// \brief Compute the direction and coefficients of a triangle for use with
 ///        gmCartToBary.
@@ -302,8 +467,8 @@ int gmCartToBary(const Pt3d* cart, const Pt3d* orig, double coef[6], int dir, Pt
 /// \param norm: Triangle normal.
 /// \param orig: The origin of the triangle. Either used or initialized based
 ///              on value of flag.
-/// \param coef: ?
-/// \param dir: ?
+/// \param coef: Coefficients.
+/// \param dir: Direction.
 /// \param flag: Whether to use the given origin or initialize it.
 ///              If true, origin will be computed from the triangle as the
 ///              minimum XYZ of p1, p2, and p3 and orig will be initialized to
@@ -381,24 +546,581 @@ int gmBaryPrepare(const Pt3d* p1,
   return (XM_SUCCESS);
 } // gmBaryPrepare
 //------------------------------------------------------------------------------
-/// \brief Check whether three points are colinear.
-/// \param[in] p1: First point.
-/// \param[in] p2: Second point.
-/// \param[in] p3: Third point.
-/// \param[in] tol: Tolerance for geometric comparisons.
-/// \return Whether the points are colinear.
+/// \brief Compute Barycentric coords for point.
+/// \note Use gmBaryPrepare to get the coefficients and direction.
+/// \param[in] cart: Cartesian coordinates.
+/// \param[in] orig: Origin of Cartesian coordinates.
+/// \param[in] coef: Coefficients from gmBaryPrepare.
+/// \param[in] dir: Direction from gmBaryPrepare.
+/// \param[out] bary: Initialized to the Barycentric value.
+/// \return XM_SUCCESS, always.
 //------------------------------------------------------------------------------
-bool gmColinearWithTol(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3, const double tol)
+int gmCartToBary(const Pt3d* cart, const Pt3d* orig, double coef[6], int dir, Pt3d* bary)
 {
-  if (gmOnLineWithTol(p1, p2, p3.x, p3.y, tol))
-    return true;
-  else if (gmOnLineWithTol(p2, p3, p1.x, p1.y, tol))
-    return true;
-  else if (gmOnLineWithTol(p3, p1, p2.x, p2.y, tol))
+  double x, y, z;
+  x = cart->x - orig->x;
+  y = cart->y - orig->y;
+  z = cart->z - orig->z;
+  /* get magnitudes of the plane normal */
+  switch (dir)
+  {
+  case (0):
+    bary->x = coef[0] * y + coef[1] * z + coef[2];
+    bary->y = coef[3] * y + coef[4] * z + coef[5];
+    bary->z = 1.0 - bary->x - bary->y;
+    break;
+  case (1):
+    bary->x = coef[0] * z + coef[1] * x + coef[2];
+    bary->y = coef[3] * z + coef[4] * x + coef[5];
+    bary->z = 1.0 - bary->x - bary->y;
+    break;
+  case (2):
+    bary->x = coef[0] * x + coef[1] * y + coef[2];
+    bary->y = coef[3] * x + coef[4] * y + coef[5];
+    bary->z = 1.0 - bary->x - bary->y;
+    break;
+  }
+  return (XM_SUCCESS);
+} // gmCartToBary
+//------------------------------------------------------------------------------
+/// \brief Test if two points are equal to within gmXyTol().
+/// \param x1: x coordinate of point 1.
+/// \param y1: y coordinate of point 1.
+/// \param x2: x coordinate of point 2.
+/// \param y2: y coordinate of point 2.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXY(double x1, double y1, double x2, double y2)
+{
+  return gmEqualPointsXY(x1, y1, x2, y2, gmXyTol());
+} // gmEqualPointsXY
+//------------------------------------------------------------------------------
+/// \brief Test if two points are equal to within tolerance.
+/// \param x1: x coordinate of point 1.
+/// \param y1: y coordinate of point 1.
+/// \param x2: x coordinate of point 2.
+/// \param y2: y coordinate of point 2.
+/// \param tolerance: Tolerance.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXY(double x1, double y1, double x2, double y2, double tolerance)
+{
+  double dx = fabs(x1 - x2);
+  double dy = fabs(y1 - y2);
+  if (dx > tolerance || dy > tolerance)
+    return false;
+  else if (sqrt(dx * dx + dy * dy) <= tolerance)
     return true;
   else
     return false;
-} // gmColinearWithTol
+} // gmEqualPointsXY
+//------------------------------------------------------------------------------
+/// \brief Test if two points are exactly equal.
+/// \param point1: Point 1.
+/// \param point2: Point 2.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXY(const Pt2i& point1, const Pt2i& point2)
+{
+  if (point1.x == point2.x && point1.y == point2.y)
+    return true;
+  return false;
+} // gmEqualPointsXY
+//------------------------------------------------------------------------------
+/// \brief Test if two points are equal to within tolerance.
+/// \param a_pt1: Point 1.
+/// \param a_pt2: Point 2.
+/// \param tol: Tolerance.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXY(const Pt2d& a_pt1, const Pt2d& a_pt2, double tol)
+{
+  return gmEqualPointsXY(a_pt1.x, a_pt1.y, a_pt2.x, a_pt2.y, tol);
+} // gmEqualPointsXY
+//------------------------------------------------------------------------------
+/// \brief Test if two points are equal to within tolerance.
+/// \param a_pt1: Point 1.
+/// \param a_pt2: Point 2.
+/// \param tol: Tolerance.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXY(const Pt3d& a_pt1, const Pt3d& a_pt2, double tol)
+{
+  return gmEqualPointsXY(a_pt1.x, a_pt1.y, a_pt2.x, a_pt2.y, tol);
+} // gmEqualPointsXY
+//------------------------------------------------------------------------------
+/// \brief Test if two points are equal to within gmXyTol().
+/// \param x1: x of point 1.
+/// \param y1: y of point 1.
+/// \param z1: z of point 1.
+/// \param x2: x of point 2.
+/// \param y2: y of point 2.
+/// \param z2: z of point 2.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXYZ(double x1, double y1, double z1, double x2, double y2, double z2)
+{
+  return gmEqualPointsXYZ(x1, y1, z1, x2, y2, z2, gmXyTol());
+} // gmEqualPointsXYZ
+//------------------------------------------------------------------------------
+/// \brief Test if two points are equal to within tolerance.
+/// \param x1: x of point 1.
+/// \param y1: y of point 1.
+/// \param z1: z of point 1.
+/// \param x2: x of point 2.
+/// \param y2: y of point 2.
+/// \param z2: z of point 2.
+/// \param tolerance: Tolerance.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXYZ(double x1,
+                      double y1,
+                      double z1,
+                      double x2,
+                      double y2,
+                      double z2,
+                      double tolerance)
+{
+  if ((fabs(x1 - x2) <= tolerance) && (fabs(y1 - y2) <= tolerance) && (fabs(z1 - z2) <= tolerance))
+    return true;
+  return false;
+} // gmEqualPointsXYZ
+//------------------------------------------------------------------------------
+/// \brief Test if two points are equal to within tolerance.
+/// \param pt1: Point 1.
+/// \param pt2: Point 2.
+/// \param tol: Tolerance.
+/// \return Whether the points are considered equal.
+//------------------------------------------------------------------------------
+bool gmEqualPointsXYZ(const Pt3d& pt1, const Pt3d& pt2, double tol)
+{
+  return gmEqualPointsXYZ(pt1.x, pt1.y, pt1.z, pt2.x, pt2.y, pt2.z, tol);
+} // gmEqualPointsXYZ
+//------------------------------------------------------------------------------
+/// \brief Compute the cross product of two 2D vectors.
+/// \note vector 1 = dx1i + dy1j
+///       vector 2 = dx2i + dy2j
+/// \param dx1: x component of vector 1.
+/// \param dy1: y component of vector 1.
+/// \param dx2: x component of vector 2.
+/// \param dy2: y component of vector 2.
+/// \return cross product of 2 vectors.
+//------------------------------------------------------------------------------
+double gmCross2D(const double& dx1, const double& dy1, const double& dx2, const double& dy2)
+{
+  return (dx1 * dy2) - (dx2 * dy1);
+} // gmCross2D
+//------------------------------------------------------------------------------
+/// \brief Compute the cross product of two 2D points.
+/// \param[in] a_origin: origin point for the "vectors"
+/// \param[in] a_A: first vector
+/// \param[in] a_B: second vector
+/// \return the cross product
+//------------------------------------------------------------------------------
+double gmCross2D(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
+{
+  return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
+} // gmCross2D
+//------------------------------------------------------------------------------
+/// \brief Compute the cross product of two vectors.
+/// \param[in] a_vec1: First vector to cross.
+/// \param[in] a_vec2: Second vector to cross.
+/// \param[out] a_vec3: Initialized to the cross product.
+//------------------------------------------------------------------------------
+void gmCross3D(const Pt3d& a_vec1, const Pt3d& a_vec2, Pt3d* a_vec3)
+{
+  a_vec3->x = a_vec1.y * a_vec2.z - a_vec1.z * a_vec2.y;
+  a_vec3->y = a_vec1.z * a_vec2.x - a_vec1.x * a_vec2.z;
+  a_vec3->z = a_vec1.x * a_vec2.y - a_vec1.y * a_vec2.x;
+} // gmCross3D
+//------------------------------------------------------------------------------
+/// \brief Compute the dot product of two vectors.
+/// \note The dot product has the geometric interpretation as the length of the
+///       projection of a_vec1 onto the unit vector a_vec2 when the two vectors
+///       are placed so that their tails coincide.
+/// \param[in] a_vec1: First vector to dot.
+/// \param[in] a_vec2: Second vector to dot.
+/// \return The dot product.
+//------------------------------------------------------------------------------
+inline double gmDot3D(const Pt3d& a_vec1, const Pt3d& a_vec2)
+{
+  return (a_vec1.x * a_vec2.x + a_vec1.y * a_vec2.y + a_vec1.z * a_vec2.z);
+} // gmDot3D
+//------------------------------------------------------------------------------
+/// \brief Convert a magnitude and angle to xy components or vice versa.
+/// \param[in,out] a_x: Vector x component, either specified or calculated from
+///                     a_mag, a_dir.
+/// \param[in,out] a_y: Vector y component, either specified or calculated from
+///                     a_mag, a_dir.
+/// \param[in,out] a_mag: Vector magnitude, either specified or calculated from
+///                       a_x, a_y.
+/// \param[in,out] a_dir: Vector direction, in degrees, either specified or
+///                       calculated from a_x, a_y.
+/// \param[in] a_tomagdir: True to calculate a_mag and a_dir from a_x and a_y;
+///                        False to calculate a_x and a_y from a_mag and a_dir.
+//------------------------------------------------------------------------------
+void gmComponentMagnitudes(double* a_x, double* a_y, double* a_mag, double* a_dir, bool a_tomagdir)
+{
+  double rads;
+
+  if (a_tomagdir)
+  { // convert (x,y) to (mag,dir)
+    if (fabs(*a_x) < XM_ZERO_TOL && fabs(*a_y) < XM_ZERO_TOL)
+    {
+      *a_mag = 0.0;
+      *a_dir = 0.0;
+    }
+    else
+    {
+      if (*a_x == 0)
+        *a_x = XM_ZERO_TOL;
+      *a_mag = sqrt(sqr(*a_x) + sqr(*a_y));
+      *a_dir = (atan(*a_y / *a_x)) * (180 / XM_PI);
+      if (*a_x < 0)
+        (*a_dir) += 180;
+      if (*a_dir < 0)
+        (*a_dir) += 360;
+    }
+  }
+  else
+  { // convert (mag,dir) to (x,y)
+    rads = *a_dir * (XM_PI / 180);
+    *a_x = cos(rads) * *a_mag;
+    *a_y = sin(rads) * *a_mag;
+    if (fabs(*a_x) < XM_ZERO_TOL)
+      *a_x = 0;
+    if (fabs(*a_y) < XM_ZERO_TOL)
+      *a_y = 0;
+  }
+} // gmComponentMagnitudes
+//------------------------------------------------------------------------------
+/// \brief Create a vector representing the direction from one point to another.
+/// \param[in] a_p1: The point being pointed from.
+/// \param[in] a_p2: The point being pointed to.
+/// \return A vector with x,y,z components representing the direction.
+//------------------------------------------------------------------------------
+Pt3d gmCreateVector(const Pt3d& a_p1, const Pt3d& a_p2)
+{
+  Pt3d vector;
+  vector.x = a_p2.x - a_p1.x;
+  vector.y = a_p2.y - a_p1.y;
+  vector.z = a_p2.z - a_p1.z;
+  return vector;
+} // gmCreateVector
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+template <typename T>
+int gmPointInPolygon2D(const T* a_verts,
+                       const size_t a_num,
+                       const double a_x,
+                       const double a_y,
+                       const double a_tol)
+{
+  if (a_verts && a_num)
+  {
+    int nmleft = 0, nmrght = 0;
+    double dy2 = fabs(a_verts[0].y - a_y);
+    double diff;
+    for (size_t i = 0; i < a_num; i++)
+    {
+      size_t i2 = 0;
+      if (i != a_num - 1)
+        i2 = i + 1;
+      double dy1 = dy2;
+      dy2 = fabs(a_verts[i2].y - a_y);
+      if (dy1 <= a_tol)
+      {
+        if (dy2 <= a_tol)
+        {
+          // Case #1 - edge is on the same y value as the point
+          //         - see if the point is on the edge
+          if (((a_verts[i].x >= a_x) && (a_verts[i2].x <= a_x)) ||
+              ((a_verts[i].x <= a_x) && (a_verts[i2].x >= a_x)))
+            return (0);
+        }
+        else
+        {
+          // Case #2 - first vertex has same y value as point
+          //         - see if the point actually coincides with
+          //           the ith vertex
+          diff = a_verts[i].x - a_x;
+          if (fabs(diff) <= a_tol)
+            return (0);
+          else if (a_verts[i].y < a_verts[i2].y)
+          {
+            // edge ascends, classify as right or left
+            if (diff > 0)
+              ++nmrght;
+            else
+              ++nmleft;
+          }
+        }
+      }
+      else if (dy2 <= a_tol)
+      {
+        // Case #3 - 2nd vertex of edge lies on dividing plane
+        //         - see if the point actually coincides with
+        //           the i2-th vertex
+        diff = a_verts[i2].x - a_x;
+        if (fabs(diff) <= a_tol)
+          return (0);
+        else if (a_verts[i2].y < a_verts[i].y)
+        {
+          // if edge descends classify as right or left
+          if (diff > 0)
+            ++nmrght;
+          else
+            ++nmleft;
+        }
+      }
+      else if (((a_verts[i].y < a_y) && (a_verts[i2].y > a_y)) ||
+               ((a_verts[i].y > a_y) && (a_verts[i2].y < a_y)))
+      {
+        // Case #4 - edge cleanly intersects dividing plane
+        //         - flag edge as left, right or on edge
+        double val = a_verts[i].x + (a_verts[i2].x - a_verts[i].x) * (a_y - a_verts[i].y) /
+                                      (a_verts[i2].y - a_verts[i].y);
+        diff = val - a_x;
+        if (fabs(diff) <= a_tol)
+          return (0);
+        else if (diff > 0)
+          ++nmrght;
+        else
+          ++nmleft;
+      }
+    }
+    nmleft = nmleft % 2;
+    nmrght = nmrght % 2;
+    if (nmleft != nmrght)
+      return (-1); // this should never happen actually
+    else if (nmleft == 1)
+      return (1);
+    else
+      return (-1);
+  }
+  return (-1);
+} // gmPointInPolygon2D
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt2i a_pt)
+{
+  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
+} // gmPointInPolygon2D
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt2d a_pt)
+{
+  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
+} // gmPointInPolygon2D
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt3d a_pt)
+{
+  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
+} // gmPointInPolygon2D
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+int gmPointInPolygon2D(const Pt3d* a_verts, size_t a_num, double a_x, double a_y)
+{
+  return gmPointInPolygon2D(a_verts, a_num, a_x, a_y, gmXyTol());
+} // gmPointInPolygon2D
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+int gmPointInPolygon2D(const Pt3d* a_verts, size_t a_num, Pt3d a_pt)
+{
+  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
+} // gmPointInPolygon2D
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+int gmPointInPolygon2D(const VecPt3d& a_verts, const Pt3d& a_pt)
+{
+  return gmPointInPolygon2D(&a_verts[0], a_verts.size(), a_pt.x, a_pt.y, gmXyTol());
+} // gmPointInPolygon2D
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+template int gmPointInPolygon2D<Pt2i>(const Pt2i* a_verts,
+                                      const size_t a_num,
+                                      const double a_x,
+                                      const double a_y,
+                                      const double a_tol);
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+template int gmPointInPolygon2D<Pt2d>(const Pt2d* a_verts,
+                                      const size_t a_num,
+                                      const double a_x,
+                                      const double a_y,
+                                      const double a_tol);
+//------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note DON'T repeat the first point at the end of the polygon array
+/// \see EFastPointInPoly, gmPolygon
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num: Number of vertices in a_verts.
+/// \param[in] a_x: x coordinate of point to test.
+/// \param[in] a_y: y coordinate of point to test.
+/// \param[in] a_tol: Tolerance for geometric comparison.
+/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+//------------------------------------------------------------------------------
+template int gmPointInPolygon2D<Pt3d>(const Pt3d* a_verts,
+                                      const size_t a_num,
+                                      const double a_x,
+                                      const double a_y,
+                                      const double a_tol);
+//------------------------------------------------------------------------------
+/// \brief Compute the xy distance from a point to a line.
+/// \note Resulting distance will have correct magnitude, but sign may be wrong.
+/// \note Unlike gm2DDistanceToLineSegmentWithTol, the resulting distance may
+///       be closest to a point outside the segment defined by a_pt1 and a_pt2.
+/// \param[in] a_pt1: First point defining a line.
+/// \param[in] a_pt2: Second point defining a line.
+/// \param[in] a_x: x location of test point.
+/// \param[in] a_y: y location of test point.
+/// \param[in] a_tol: Tolerance used in geometric computations.
+/// \return Distance from the line to the test point.
+//------------------------------------------------------------------------------
+double gm2DDistanceToLineWithTol(const Pt3d* a_pt1,
+                                 const Pt3d* a_pt2,
+                                 double a_x,
+                                 double a_y,
+                                 double a_tol)
+{
+  double a1, b1, c, mag;
+  double dist;
+  // see if the (x,y) is on infinite line
+  a1 = a_pt2->x - a_pt1->x;
+  b1 = a_pt2->y - a_pt1->y;
+  mag = sqrt(a1 * a1 + b1 * b1);
+  // handle case of line segment with length < tol distance to either point (pt1)
+  if (mag <= a_tol)
+  {
+    return sqrt(sqr(a_pt1->x - a_x) + sqr(a_pt1->y - a_y));
+  }
+
+  // compute line equation
+  double a, b;
+  a = -b1 / mag;
+  b = a1 / mag;
+  c = -a * a_pt1->x - b * a_pt1->y;
+  // compute distance from the line to (x,y)
+  dist = a * a_x + b * a_y + c;
+
+  return dist;
+} // gm2DDistanceToLineWithTol
+//------------------------------------------------------------------------------
+/// \brief Compute the 2D distance in model units between 2 points.
+/// \note See gmActualDistance if you don't want the distance in model units.
+/// \param[in] pt1: Point 1.
+/// \param[in] pt2: Point 2.
+/// \return Distance between point 1 and 2.
+//------------------------------------------------------------------------------
+double gmXyDistance(const Pt3d& pt1, const Pt3d& pt2)
+{
+  return sqrt(sqr(pt1.x - pt2.x) + sqr(pt1.y - pt2.y));
+} // gmXyDistance
+//------------------------------------------------------------------------------
+/// \brief Compute the 2D distance in model units between 2 points.
+/// \note See gmActualDistance if you don't want the distance in model units.
+/// \param x1: x coord of location 1.
+/// \param y1: y coord of location 1.
+/// \param x2: x coord of location 2.
+/// \param y2: y coord of location 2.
+/// \return Distance between location 1 and 2.
+//------------------------------------------------------------------------------
+double gmXyDistance(double x1, double y1, double x2, double y2)
+{
+  return sqrt(sqr(x1 - x2) + sqr(y1 - y2));
+} // gmXyDistance
+//------------------------------------------------------------------------------
+/// \brief Calculate 2D distance squared between two points.
+/// \param[in] pt1: First point.
+/// \param[in] pt2: Second point.
+/// \return Distance squared.
+//------------------------------------------------------------------------------
+double gmXyDistanceSquared(const Pt3d& pt1, const Pt3d& pt2)
+{
+  return (sqr(pt1.x - pt2.x) + sqr(pt1.y - pt2.y));
+} // gmXyDistanceSqared
 //------------------------------------------------------------------------------
 /// \brief Find the plan projection intersection of two line segments.
 /// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
@@ -552,415 +1274,112 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
   return true;
 } // gmIntersectLineSegmentsWithTol
 //------------------------------------------------------------------------------
-/// \brief Check whether a triangle is wrapped counter clockwise.
-/// \param[in] vtx0: Triangle's first vertex.
-/// \param[in] vtx1: Triangle's first vertex.
-/// \param[in] vtx2: Triangle's first vertex.
-/// \return Whether vertex order is counter clockwise.
+/// \brief Determine if a line segment intersects a triangle.
+/// \param[in] a_pt1: First endpoint of the line segment.
+/// \param[in] a_pt2: Second endpoint of the line segment.
+/// \param[in] a_t0: First vertex defining a triangle.
+/// \param[in] a_t1: Second vertex defining a triangle.
+/// \param[in] a_t2: Third vertex defining a triangle.
+/// \param[out] a_IntersectPt: Initialized to the point of intersection, if
+///                            it exists.
+/// \return -1 if triangle is degenerate (a point or a line)
+///          0 if line does not intersect triangle
+///          1 if line does intersect triangle
+///          2 if line and triangle are in the same plane
+//
+// Copyright 2001, softSurfer (www.softsurfer.com)
+//   This code may be freely used and modified for any purpose providing that
+//   this copyright notice is included with it.  SoftSurfer makes no warranty
+//   for this code, and cannot be held liable for any real or imagined damage
+//   resulting from its use.  Users of this code must verify correctness for
+//   their application.
+// http://geometryalgorithms.com/Archive/algorithm_0105/algorithm_0105.htm
 //------------------------------------------------------------------------------
-bool gmCounterClockwiseTri(const Pt3d& vtx0, const Pt3d& vtx1, const Pt3d& vtx2)
+int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
+  const Pt3d& a_pt2,
+  const Pt3d& a_t0,
+  const Pt3d& a_t1,
+  const Pt3d& a_t2,
+  Pt3d& a_IntersectPt)
 {
-  double triarea1 = trArea(vtx0, vtx1, vtx2);
-  return (triarea1 > 0.0);
-} // gmCounterClockwiseTri
-//------------------------------------------------------------------------------
-/// \brief Compute the cross product of two 2D vectors.
-/// \note vector 1 = dx1i + dy1j
-///       vector 2 = dx2i + dy2j
-/// \param dx1: x component of vector 1.
-/// \param dy1: y component of vector 1.
-/// \param dx2: x component of vector 2.
-/// \param dy2: y component of vector 2.
-/// \return cross product of 2 vectors.
-//------------------------------------------------------------------------------
-double gmCross2D(const double& dx1, const double& dy1, const double& dx2, const double& dy2)
-{
-  return (dx1 * dy2) - (dx2 * dy1);
-} // gmCross2D
-//------------------------------------------------------------------------------
-/// \brief Compute the cross product of two 2D points.
-/// \param[in] a_origin: origin point for the "vectors"
-/// \param[in] a_A: first vector
-/// \param[in] a_B: second vector
-/// \return the cross product
-//------------------------------------------------------------------------------
-double gmCross2D(const Pt3d& a_origin, const Pt3d& a_A, const Pt3d& a_B)
-{
-  return (a_A.x - a_origin.x) * (a_B.y - a_origin.y) - (a_A.y - a_origin.y) * (a_B.x - a_origin.x);
-} // gmCross2D
-//------------------------------------------------------------------------------
-/// \brief Compute the angle, in radians, between the edges p and n.
-///        based on a ccw rotation from p to n.
-/// \note Computed angle will be in the range [0-2PI).
-/// \param[in] dxp: x coordinate of vector p.
-/// \param[in] dyp: y coordinate of vector p.
-/// \param[in] dxn: x coordinate of vector n.
-/// \param[in] dyn: y coordinate of vector n.
-/// \return The angle between p and n.
-//------------------------------------------------------------------------------
-double gmAngleBetween2DVectors(double dxp, double dyp, double dxn, double dyn)
-{
-  double magn, magp;
+  double a, b, r;
+  Pt3d dir, n, NullVector(0.0, 0.0, 0.0), u, v, w, w0;
 
-  magn = sqrt(sqr(dxn) + sqr(dyn));
-  magp = sqrt(sqr(dxp) + sqr(dyp));
-  return gmAngleBetween2DVectors(dxp, dyp, dxn, dyn, magn, magp);
-} // gmAngleBetween2DVectors
-//------------------------------------------------------------------------------
-/// \brief Compute the angle, in radians, between the edges p and n.
-///        based on a ccw rotation from p to n.
-/// \note Computed angle will be in the range [0-2PI).
-/// \param[in] dxp: x component of vector p.
-/// \param[in] dyp: y component of vector p.
-/// \param[in] dxn: x component of vector n.
-/// \param[in] dyn: y component of vector n.
-/// \param[in] a_magn: Magnitude of n.
-/// \param[in] a_magp: Magnitude of p.
-/// \return The angle between p and n.
-//------------------------------------------------------------------------------
-double gmAngleBetween2DVectors(double dxp,
-                               double dyp,
-                               double dxn,
-                               double dyn,
-                               double a_magn,
-                               double a_magp)
-{
-  double theangle, cosign;
+  // get the triangle edge vectors and plane normal
+  u = a_t1 - a_t0;
+  v = a_t2 - a_t0;
+  gmCross3D(u, v, &n);
 
-  if (a_magn == 0.0 || a_magp == 0.0)
-    return (0.0);
-  cosign = (dxn * dxp + dyn * dyp) / (a_magn * a_magp);
-  if (cosign > 1.0)
-    cosign = 1.0;
-  if (cosign < -1.0)
-    cosign = -1.0;
-  theangle = acos(cosign);
-  if (theangle == 0.0)
+  // check if the triangle is degenerate
+  if (n == NullVector)
   {
-    if ((dxn * dxp) + (dyn * dyp) < 0.0)
-      theangle = XM_PI;
+    return -1;
   }
-  else if (gmCross2D(dxp, dyp, dxn, dyn) < 0.0)
-    theangle = 2 * XM_PI - theangle;
-  return theangle;
-} // gmAngleBetween2DVectors
-//------------------------------------------------------------------------------
-/// \brief Compute the counter-clockwise angle, in radians, between the edges
-///        defined by p1-p2 and p2-p3.
-/// \note Computed angle will be in the range [0-2PI).
-/// \brief Returns the ccw angle (0-2pi) between p2-p1 and p2-p3
-/// \param[in] p1: Point 1.
-/// \param[in] p2: Point 2.
-/// \param[in] p3: Point 3.
-/// \return The angle between the two segments.
-//------------------------------------------------------------------------------
-double gmAngleBetweenEdges(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3)
-{
-  double dxp, dyp, dxn, dyn;
-  /* compute the vectors */
-  dxp = p1.x - p2.x;
-  dyp = p1.y - p2.y;
-  dxn = p3.x - p2.x;
-  dyn = p3.y - p2.y;
-  return gmAngleBetween2DVectors(dxp, dyp, dxn, dyn);
-} // gmAngleBetweenEdges
-//------------------------------------------------------------------------------
-/// \brief Compute the counter-clockwise angle, in radians, between the edges
-///        defined by p1-p2 and p2-p3.
-/// \note Computed angle will be in the range [0-2PI).
-/// \brief Returns the ccw angle (0-2pi) between p2-p1 and p2-p3
-/// \param[in] p1: Point 1.
-/// \param[in] p2: Point 2.
-/// \param[in] p3: Point 3.
-/// \return The angle between the two segments.
-//------------------------------------------------------------------------------
-double gmAngleBetweenEdges(const Pt2d& p1, const Pt2d& p2, const Pt2d& p3)
-{
-  double dxp, dyp, dxn, dyn;
-  /* compute the vectors */
-  dxp = p1.x - p2.x;
-  dyp = p1.y - p2.y;
-  dxn = p3.x - p2.x;
-  dyn = p3.y - p2.y;
-  return gmAngleBetween2DVectors(dxp, dyp, dxn, dyn);
-} // gmAngleBetweenEdges
-//------------------------------------------------------------------------------
-/// \brief Compute the deviation in direction from one segment to next.
-/// \note segment 1 is from a_p0 to a_p1, segment 2 is from a_p1 to a_p2.
-/// \note A magnitude of 0 results in a deviation of Pi. This indicates that
-///       there could be a discontinuity.
-/// \note This is a streamlined version of gmAngleBetweenEdges. That function
-///       computes a directed internal difference and requires an extra cross
-///       product and several compares and multiplies. This function still uses
-///       sqrt and acos, so the difference may not be significant.
-/// \param[in] a_p0: 1st point on 1st segment.
-/// \param[in] a_p1: 2nd point on 1st segment and 1st point on second segment.
-/// \param[in] a_p2: 2nd point on 2nd segment.
-/// \return A deviation between 0 and Pi.
-//------------------------------------------------------------------------------
-double gmComputeDeviationInDirection(const Pt3d& a_p0, const Pt3d& a_p1, const Pt3d& a_p2)
-{
-  double x1, y1, x2, y2, m, cosine_dev;
-  x1 = a_p1.x - a_p0.x;
-  y1 = a_p1.y - a_p0.y;
-  x2 = a_p2.x - a_p1.x;
-  y2 = a_p2.y - a_p1.y;
-  m = sqrt(x1 * x1 + y1 * y1) * sqrt(x2 * x2 + y2 * y2);
-  if (m > 0.0)
-  {
-    cosine_dev = Mmin((x1 * x2 + y1 * y2) / (m), 1.0);
-    cosine_dev = Mmax(cosine_dev, -1.0);
-    return acos(cosine_dev);
-  }
-  else
-  {
-    return XM_PI;
-  }
-} // gmComputeDeviationInDirection
-//------------------------------------------------------------------------------
-/// \brief Check if a point is on a line.
-/// \note Assumes points defining the line aren't the same.
-/// \note Be careful to consider the case where the points on the line are very
-///       close to each other, but not to the test point. In this case, this
-///       function will produce unreliable results because it will be
-///       susceptible to roundoff error. If you need to know if three points are
-///       colinear, use the gmColinear function instead.
-/// \param p1: First point on the line.
-/// \param p2: Second point on the line.
-/// \param x: x coord of point to test
-/// \param y: y coord of point to test
-/// \param tol: Tolerance for geometric comparison
-/// \return Whether (x,y) is on the line passing through p1 and p2.
-//------------------------------------------------------------------------------
-bool gmOnLineWithTol(const Pt3d& p1,
-                     const Pt3d& p2,
-                     const double x,
-                     const double y,
-                     const double tol)
-{
-  // compute vector components
-  double dx = p2.x - p1.x;
-  double dy = p2.y - p1.y;
-  double mag = sqrt(sqr(dx) + sqr(dy));
-  // check for extremely small segment
-  if (mag <= tol)
-    return gmEqualPointsXY(p1.x, p1.y, x, y);
-  else
-  {
-    double a = -dy / mag;
-    double b = dx / mag;
-    double c = -a * p2.x - b * p2.y;
-    // compute distance from line to (x,y)
-    double d = a * x + b * y + c;
-    return fabs(d) <= tol;
-  }
-} // gmOnLineWithTol
-//------------------------------------------------------------------------------
-/// \brief Check if a point is on a line segment.
-/// \note For simple test of colinearity, call gmOnLineWithTol or gmColinear.
-/// \param a_pt1: First location defining segment.
-/// \param a_pt2: Second location defining segment.
-/// \param a_x: x coord.
-/// \param a_y: y coord.
-/// \param a_tol: Tolerance for comparison.
-/// \return Whether the point (x,y) is on the line segment.
-//------------------------------------------------------------------------------
-bool gmOnLineAndBetweenEndpointsWithTol(const Pt3d& a_pt1,
-                                        const Pt3d& a_pt2,
-                                        const double a_x,
-                                        const double a_y,
-                                        double a_tol)
-{
-  if ((Mmin(a_pt1.x, a_pt2.x) - a_tol <= a_x && Mmax(a_pt1.x, a_pt2.x) + a_tol >= a_x) &&
-      (Mmin(a_pt1.y, a_pt2.y) - a_tol <= a_y && Mmax(a_pt1.y, a_pt2.y) + a_tol >= a_y))
-    return gmOnLineWithTol(a_pt1, a_pt2, a_x, a_y, a_tol) == true;
-  else
-    return false;
-} // gmOnLineAndBetweenEndpointsWithTol
-//------------------------------------------------------------------------------
-/// \brief Updates a_min and a_max such that the coordinates of a_min are less
-///        than or equal to the respective coordinates of a_pt, and the
-///        coordinates of a_max are greater than or equal to the respective ones
-///        in a_pt.
-/// \param[in] a_pt: A point.
-/// \param[in,out] a_min: Minimum.
-/// \param[in,out] a_max: Maximum.
-//------------------------------------------------------------------------------
-void gmAddToExtents(const Pt3d& a_pt, Pt3d& a_min, Pt3d& a_max)
-{
-  a_min.x = std::min(a_pt.x, a_min.x);
-  a_min.y = std::min(a_pt.y, a_min.y);
-  a_min.z = std::min(a_pt.z, a_min.z);
-  a_max.x = std::max(a_pt.x, a_max.x);
-  a_max.y = std::max(a_pt.y, a_max.y);
-  a_max.z = std::max(a_pt.z, a_max.z);
-} // gmAddToExtents
-//------------------------------------------------------------------------------
-/// \brief Updates a_min and a_max such that the coordinates of a_min are less
-///        than or equal to the respective coordinates of a_pt, and the
-///        coordinates of a_max are greater than or equal to the respective ones
-///        in a_pt.
-/// \param[in] a_pt: A point.
-/// \param[in,out] a_min: Minimum.
-/// \param[in,out] a_max: Maximum.
-//------------------------------------------------------------------------------
-void gmAddToExtents(const Pt3d& a_pt, Pt2d& a_min, Pt2d& a_max)
-{
-  a_min.x = std::min(a_pt.x, a_min.x);
-  a_min.y = std::min(a_pt.y, a_min.y);
-  a_max.x = std::max(a_pt.x, a_max.x);
-  a_max.y = std::max(a_pt.y, a_max.y);
-} // gmAddToExtents
-//------------------------------------------------------------------------------
-/// \brief Updates a_min and a_max such that the coordinates of a_min are less
-///        than or equal to the respective coordinates of a_pt, and the
-///        coordinates of a_max are greater than or equal to the respective ones
-///        in a_pt.
-/// \param[in] a_pt: A point.
-/// \param[in,out] a_min: Minimum.
-/// \param[in,out] a_max: Maximum.
-//------------------------------------------------------------------------------
-void gmAddToExtents(const Pt2d& a_pt, Pt3d& a_min, Pt3d& a_max)
-{
-  a_min.x = std::min(a_pt.x, a_min.x);
-  a_min.y = std::min(a_pt.y, a_min.y);
-  a_max.x = std::max(a_pt.x, a_max.x);
-  a_max.y = std::max(a_pt.y, a_max.y);
-} // gmAddToExtents
-//------------------------------------------------------------------------------
-/// \brief Compute the 2D distance in model units between 2 points.
-/// \note See gmActualDistance if you don't want the distance in model units.
-/// \param x1: x coord of location 1.
-/// \param y1: y coord of location 1.
-/// \param x2: x coord of location 2.
-/// \param y2: y coord of location 2.
-/// \return Distance between location 1 and 2.
-//------------------------------------------------------------------------------
-double gmXyDistance(double x1, double y1, double x2, double y2)
-{
-  return sqrt(sqr(x1 - x2) + sqr(y1 - y2));
-} // gmXyDistance
-//------------------------------------------------------------------------------
-/// \brief Compute the 2D distance in model units between 2 points.
-/// \note See gmActualDistance if you don't want the distance in model units.
-/// \param[in] pt1: Point 1.
-/// \param[in] pt2: Point 2.
-/// \return Distance between point 1 and 2.
-//------------------------------------------------------------------------------
-double gmXyDistance(const Pt3d& pt1, const Pt3d& pt2)
-{
-  return sqrt(sqr(pt1.x - pt2.x) + sqr(pt1.y - pt2.y));
-} // gmXyDistance
-//------------------------------------------------------------------------------
-/// \brief Determine if an angle is a left turn, a right turn, colinear 180
-///        degrees, or colinear 0 degrees.
-/// \note This function will only classify two segments as colinear if the angle
-///       between edges is less than an angle tol, or greater than 180-tol. In
-///       cases where this is not true, it will classify the turn as either
-///       TURN_COLINEAR_180 or TURN_COLINEAR_0.
-/// \param a_v1: Unshared endpoint of first segment.
-/// \param a_v2: Shared endpoint of segments.
-/// \param a_v3: Unshared endpoint of second segment.
-/// \param a_angtol: The sine of the minimum angle to be considered a turn at all,
-///                  i.e. sine(tol) as described in the note. Defaults to 0.0017453
-///                  (sine 0.1 and sine 179.9).
-/// \return The type of turn defined by the angle.
-//------------------------------------------------------------------------------
-Turn_enum gmTurn(const Pt3d& a_v1, const Pt3d& a_v2, const Pt3d& a_v3, double a_angtol)
-{
-  // compute sin T = (v3-v2)x(v1-v2)/(d12*d32)
-  double dx32 = a_v3.x - a_v2.x;
-  double dy32 = a_v3.y - a_v2.y;
-  double dx12 = a_v1.x - a_v2.x;
-  double dy12 = a_v1.y - a_v2.y;
-  double d32 = sqrt(dx32 * dx32 + dy32 * dy32);
-  double d12 = sqrt(dx12 * dx12 + dy12 * dy12);
-  double mag = d12 * d32;
-  double sint = (dx32 * dy12 - dx12 * dy32) / mag;
 
-  // for 99.999 > T > 0.1 deg - sin T > 0.0017
-  if (sint > a_angtol)
-    return TURN_LEFT;
-  else if (sint < -a_angtol)
-    return TURN_RIGHT;
+  // get the ray direction vector
+  dir = a_pt2 - a_pt1;
+  w0 = a_pt1 - a_t0;
+  a = -gmDot3D(n, w0);
+  b = gmDot3D(n, dir);
 
-  // compute cos T = (v3-v2)DOT(v1-v2)/(d12*d32)
-  // Near colinear case, Cosine should be near 1 or -1,
-  // -1 indicates 180 deg
-  double cost = (dx12 * dx32 + dy12 * dy32) / mag;
-  if (cost < 0.0)
-    return TURN_COLINEAR_180;
-  return TURN_COLINEAR_0;
-} // gmTurn
-//------------------------------------------------------------------------------
-/// \brief Compute the centroid of a set of points.
-/// \note The centroid this function computes is not the same as the centroid
-///       of a polygon.
-/// \param[in] a_points: A vector of points. Must not be empty. Order is
-///                      unimportant.
-/// \return The centroid.
-//------------------------------------------------------------------------------
-Pt3d gmComputeCentroid(const VecPt3d& a_points)
-{
-  Pt3d centroid;
-  size_t size = a_points.size();
-  for (size_t i = 0; i < size; ++i)
-    centroid += a_points[i];
-  return (centroid / (double)size);
-} // gmComputeCentroid
-//------------------------------------------------------------------------------
-/// \brief Compute the plan view centroid of a non-self-intersecting polygon.
-/// \param[in] pts: A vector of vertices defining the polygon.
-/// \return The centroid.
-//------------------------------------------------------------------------------
-Pt3d gmComputePolygonCentroid(const VecPt3d& pts)
-{
-  Pt3d centroid;
-  if (pts.empty())
-    return centroid;
-  // get offset to use in calculation below to fix precision issues
-  double xMax = XM_DBL_LOWEST, yMax = XM_DBL_LOWEST, xMin = XM_DBL_HIGHEST, yMin = XM_DBL_HIGHEST;
-  size_t i = 0;
-  for (i = 0; i < pts.size(); ++i)
+  // see if ray is parallel to the triangle
+  if (fabs(b) < XM_ZERO_TOL)
   {
-    double x = pts[i].x;
-    double y = pts[i].y;
-    xMax = (x > xMax) ? x : xMax;
-    yMax = (y > yMax) ? y : yMax;
-    xMin = (x < xMin) ? x : xMin;
-    yMin = (y < yMin) ? y : yMin;
+    // see if ray lies in triangle plane
+    if (a == 0)
+    {
+      return 2;
+    }
+    // else ray is disjoint from the triangle plane
+    else
+    {
+      return 0;
+    }
   }
-  double xOffset = (xMax + xMin) / 2.0;
-  double yOffset = (yMax + yMin) / 2.0;
-  // For all vertices except last
-  double signedArea = 0.0;
-  for (i = 0; i < pts.size() - 1; ++i)
+
+  // get the intersection point or ray with triangle plane
+  r = a / b;
+
+  // see if there is an intersection
+  // if (r < 0.0 || r > 1.0) {
+  if (r < -FLT_EPSILON || r > 1.0 + FLT_EPSILON)
   {
-    double x0 = pts[i].x - xOffset;
-    double y0 = pts[i].y - yOffset;
-    double x1 = pts[i + 1].x - xOffset;
-    double y1 = pts[i + 1].y - yOffset;
-    double a = x0 * y1 - x1 * y0;
-    signedArea += a;
-    centroid.x += (x0 + x1) * a;
-    centroid.y += (y0 + y1) * a;
+    return 0;
   }
-  // Do last vertex
-  double x0 = pts[i].x - xOffset;
-  double y0 = pts[i].y - yOffset;
-  double x1 = pts[0].x - xOffset;
-  double y1 = pts[0].y - yOffset;
-  double a = x0 * y1 - x1 * y0;
-  signedArea += a;
-  centroid.x += (x0 + x1) * a;
-  centroid.y += (y0 + y1) * a;
-  signedArea *= 0.5;
-  centroid.x /= (6.0 * signedArea);
-  centroid.y /= (6.0 * signedArea);
-  centroid.x += xOffset;
-  centroid.y += yOffset;
-  return centroid;
-} // gmComputePolygonCentroid
+
+  // intersect point of ray and plane
+  a_IntersectPt = a_pt1 + dir * r;
+
+  // see if the intersection is inside of the triangle
+  double D, uu, uv, vv, wu, wv;
+
+  uu = gmDot3D(u, u);
+  uv = gmDot3D(u, v);
+  vv = gmDot3D(v, v);
+  w = a_IntersectPt - a_t0;
+  wu = gmDot3D(w, u);
+  wv = gmDot3D(w, v);
+  D = uv * uv - uu * vv;
+
+  // get the test parametric coords
+  double s, t;
+
+  s = (uv * wv - vv * wu) / D;
+  if (s < 0.0 || s > 1.0)
+  {
+    // the intersect point is outside the triangle
+    return 0;
+  }
+  t = (uv * wu - uu * wv) / D;
+  if (t < 0.0 || (s + t) > 1.0)
+  {
+    // the intersect point is outside the triangle
+    return 0;
+  }
+
+  // the intersect point is inside the triangle
+  return 1;
+} // gmIntersectTriangleAndLineSegment
 //------------------------------------------------------------------------------
 /// \brief Check whether two plan projection line segments intersect.
 /// \note segment 1 = one1,one2  = one1 + lambda(one2 - one1)
@@ -1050,428 +1469,65 @@ bool gmLinesCross(const Pt3d& a_segment1Point1,
   return (result1 * result2 < 0 && result3 * result4 < 0);
 } // gmLinesCross
 //------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
+/// \brief Check if a point is on a line segment.
+/// \note For simple test of colinearity, call gmOnLineWithTol or gmColinear.
+/// \param a_pt1: First location defining segment.
+/// \param a_pt2: Second location defining segment.
+/// \param a_x: x coord.
+/// \param a_y: y coord.
+/// \param a_tol: Tolerance for comparison.
+/// \return Whether the point (x,y) is on the line segment.
 //------------------------------------------------------------------------------
-template <typename T>
-int gmPointInPolygon2D(const T* a_verts,
-                       const size_t a_num,
-                       const double a_x,
-                       const double a_y,
-                       const double a_tol)
+bool gmOnLineAndBetweenEndpointsWithTol(const Pt3d& a_pt1,
+  const Pt3d& a_pt2,
+  const double a_x,
+  const double a_y,
+  double a_tol)
 {
-  if (a_verts && a_num)
-  {
-    int nmleft = 0, nmrght = 0;
-    double dy2 = fabs(a_verts[0].y - a_y);
-    double diff;
-    for (size_t i = 0; i < a_num; i++)
-    {
-      size_t i2 = 0;
-      if (i != a_num - 1)
-        i2 = i + 1;
-      double dy1 = dy2;
-      dy2 = fabs(a_verts[i2].y - a_y);
-      if (dy1 <= a_tol)
-      {
-        if (dy2 <= a_tol)
-        {
-          // Case #1 - edge is on the same y value as the point
-          //         - see if the point is on the edge
-          if (((a_verts[i].x >= a_x) && (a_verts[i2].x <= a_x)) ||
-              ((a_verts[i].x <= a_x) && (a_verts[i2].x >= a_x)))
-            return (0);
-        }
-        else
-        {
-          // Case #2 - first vertex has same y value as point
-          //         - see if the point actually coincides with
-          //           the ith vertex
-          diff = a_verts[i].x - a_x;
-          if (fabs(diff) <= a_tol)
-            return (0);
-          else if (a_verts[i].y < a_verts[i2].y)
-          {
-            // edge ascends, classify as right or left
-            if (diff > 0)
-              ++nmrght;
-            else
-              ++nmleft;
-          }
-        }
-      }
-      else if (dy2 <= a_tol)
-      {
-        // Case #3 - 2nd vertex of edge lies on dividing plane
-        //         - see if the point actually coincides with
-        //           the i2-th vertex
-        diff = a_verts[i2].x - a_x;
-        if (fabs(diff) <= a_tol)
-          return (0);
-        else if (a_verts[i2].y < a_verts[i].y)
-        {
-          // if edge descends classify as right or left
-          if (diff > 0)
-            ++nmrght;
-          else
-            ++nmleft;
-        }
-      }
-      else if (((a_verts[i].y < a_y) && (a_verts[i2].y > a_y)) ||
-               ((a_verts[i].y > a_y) && (a_verts[i2].y < a_y)))
-      {
-        // Case #4 - edge cleanly intersects dividing plane
-        //         - flag edge as left, right or on edge
-        double val = a_verts[i].x + (a_verts[i2].x - a_verts[i].x) * (a_y - a_verts[i].y) /
-                                      (a_verts[i2].y - a_verts[i].y);
-        diff = val - a_x;
-        if (fabs(diff) <= a_tol)
-          return (0);
-        else if (diff > 0)
-          ++nmrght;
-        else
-          ++nmleft;
-      }
-    }
-    nmleft = nmleft % 2;
-    nmrght = nmrght % 2;
-    if (nmleft != nmrght)
-      return (-1); // this should never happen actually
-    else if (nmleft == 1)
-      return (1);
-    else
-      return (-1);
-  }
-  return (-1);
-} // gmPointInPolygon2D
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-int gmPointInPolygon2D(const Pt3d* a_verts, size_t a_num, double a_x, double a_y)
-{
-  return gmPointInPolygon2D(a_verts, a_num, a_x, a_y, gmXyTol());
-} // gmPointInPolygon2D
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-int gmPointInPolygon2D(const Pt3d* a_verts, size_t a_num, Pt3d a_pt)
-{
-  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
-} // gmPointInPolygon2D
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt2d a_pt)
-{
-  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
-} // gmPointInPolygon2D
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt3d a_pt)
-{
-  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
-} // gmPointInPolygon2D
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-int gmPointInPolygon2D(const Pt2i* a_verts, size_t a_num, Pt2i a_pt)
-{
-  return gmPointInPolygon2D(a_verts, a_num, a_pt.x, a_pt.y, gmXyTol());
-} // gmPointInPolygon2D
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-int gmPointInPolygon2D(const VecPt3d& a_verts, const Pt3d& a_pt)
-{
-  return gmPointInPolygon2D(&a_verts[0], a_verts.size(), a_pt.x, a_pt.y, gmXyTol());
-} // gmPointInPolygon2D
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-template int gmPointInPolygon2D<Pt3d>(const Pt3d* a_verts,
-                                      const size_t a_num,
-                                      const double a_x,
-                                      const double a_y,
-                                      const double a_tol);
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-template int gmPointInPolygon2D<Pt2d>(const Pt2d* a_verts,
-                                      const size_t a_num,
-                                      const double a_x,
-                                      const double a_y,
-                                      const double a_tol);
-//------------------------------------------------------------------------------
-/// \brief Determine whether a point is inside, on, or outside a polygon.
-/// \note DON'T repeat the first point at the end of the polygon array
-/// \see EFastPointInPoly, gmPolygon
-/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
-/// \param[in] a_num: Number of vertices in a_verts.
-/// \param[in] a_x: x coordinate of point to test.
-/// \param[in] a_y: y coordinate of point to test.
-/// \param[in] a_tol: Tolerance for geometric comparison.
-/// \return 1 if the point is inside the polygon, 0 if on, or -1 if outside.
-//------------------------------------------------------------------------------
-template int gmPointInPolygon2D<Pt2i>(const Pt2i* a_verts,
-                                      const size_t a_num,
-                                      const double a_x,
-                                      const double a_y,
-                                      const double a_tol);
-//------------------------------------------------------------------------------
-/// \brief  Given minimum and maximum extents, compute a tolerance for the xy
-///         plane to be used with geometric functions.
-/// \param a_mn: Minimum.
-/// \param a_mx: Maximum.
-/// \return Tolerance.
-//------------------------------------------------------------------------------
-double gmComputeXyTol(const Pt3d& a_mn, const Pt3d& a_mx)
-{
-  double d = gmXyDistance(a_mn, a_mx);
-  double const kFactor = 1e-9;
-  double xytol = d * kFactor;
-  if (xytol < kFactor)
-  {
-    xytol = kFactor;
-  }
-  return xytol;
-} // gmComputeXyTol
-//------------------------------------------------------------------------------
-/// \brief Get or set global xy tolerance for float operations.
-/// \note Always sets the first time it is called.
-/// \param a_set: True to set, false to get.
-/// \param a_value: The value if setting.
-/// \return XY tolerance.
-//------------------------------------------------------------------------------
-double gmXyTol(bool a_set /*false*/, double a_value /*1e-9*/)
-{
-  static double xytol = a_value;
-  if (a_set)
-    xytol = a_value;
-  return xytol;
-} // gmXyTol
-//------------------------------------------------------------------------------
-/// \brief  Get or set global z tolerance for float operations.
-/// \note Always sets the first time it is called.
-/// \param a_set: True to set, false to get.
-/// \param a_value: The value if setting.
-/// \return Z tolerance.
-//------------------------------------------------------------------------------
-double gmZTol(bool a_set, double a_value)
-{
-  static double ztol = a_value;
-  if (a_set)
-    ztol = a_value;
-  return ztol;
-} // gmZTol
-//------------------------------------------------------------------------------
-/// \brief Test if two points are equal to within tolerance.
-/// \param x1: x coordinate of point 1.
-/// \param y1: y coordinate of point 1.
-/// \param x2: x coordinate of point 2.
-/// \param y2: y coordinate of point 2.
-/// \param tolerance: Tolerance.
-/// \return Whether the points are considered equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXY(double x1, double y1, double x2, double y2, double tolerance)
-{
-  double dx = fabs(x1 - x2);
-  double dy = fabs(y1 - y2);
-  if (dx > tolerance || dy > tolerance)
-    return false;
-  else if (sqrt(dx * dx + dy * dy) <= tolerance)
-    return true;
+  if ((Mmin(a_pt1.x, a_pt2.x) - a_tol <= a_x && Mmax(a_pt1.x, a_pt2.x) + a_tol >= a_x) &&
+    (Mmin(a_pt1.y, a_pt2.y) - a_tol <= a_y && Mmax(a_pt1.y, a_pt2.y) + a_tol >= a_y))
+    return gmOnLineWithTol(a_pt1, a_pt2, a_x, a_y, a_tol) == true;
   else
     return false;
-} // gmEqualPointsXY
+} // gmOnLineAndBetweenEndpointsWithTol
 //------------------------------------------------------------------------------
-/// \brief Test if two points are equal to within gmXyTol().
-/// \param x1: x coordinate of point 1.
-/// \param y1: y coordinate of point 1.
-/// \param x2: x coordinate of point 2.
-/// \param y2: y coordinate of point 2.
-/// \return Whether the points are considered equal.
+/// \brief Check if a point is on a line.
+/// \note Assumes points defining the line aren't the same.
+/// \note Be careful to consider the case where the points on the line are very
+///       close to each other, but not to the test point. In this case, this
+///       function will produce unreliable results because it will be
+///       susceptible to roundoff error. If you need to know if three points are
+///       colinear, use the gmColinear function instead.
+/// \param p1: First point on the line.
+/// \param p2: Second point on the line.
+/// \param x: x coord of point to test
+/// \param y: y coord of point to test
+/// \param tol: Tolerance for geometric comparison
+/// \return Whether (x,y) is on the line passing through p1 and p2.
 //------------------------------------------------------------------------------
-bool gmEqualPointsXY(double x1, double y1, double x2, double y2)
+bool gmOnLineWithTol(const Pt3d& p1,
+                     const Pt3d& p2,
+                     const double x,
+                     const double y,
+                     const double tol)
 {
-  return gmEqualPointsXY(x1, y1, x2, y2, gmXyTol());
-} // gmEqualPointsXY
-//------------------------------------------------------------------------------
-/// \brief Test if two points are equal to within tolerance.
-/// \param a_pt1: Point 1.
-/// \param a_pt2: Point 2.
-/// \param tol: Tolerance.
-/// \return Whether the points are considered equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXY(const Pt2d& a_pt1, const Pt2d& a_pt2, double tol)
-{
-  return gmEqualPointsXY(a_pt1.x, a_pt1.y, a_pt2.x, a_pt2.y, tol);
-} // gmEqualPointsXY
-//------------------------------------------------------------------------------
-/// \brief Test if two points are equal to within tolerance.
-/// \param a_pt1: Point 1.
-/// \param a_pt2: Point 2.
-/// \param tol: Tolerance.
-/// \return Whether the points are considered equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXY(const Pt3d& a_pt1, const Pt3d& a_pt2, double tol)
-{
-  return gmEqualPointsXY(a_pt1.x, a_pt1.y, a_pt2.x, a_pt2.y, tol);
-} // gmEqualPointsXY
-//------------------------------------------------------------------------------
-/// \brief Test if two points are exactly equal.
-/// \param point1: Point 1.
-/// \param point2: Point 2.
-/// \return Whether the points are considered equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXY(const Pt2i& point1, const Pt2i& point2)
-{
-  if (point1.x == point2.x && point1.y == point2.y)
-    return true;
-  return false;
-} // gmEqualPointsXY
-//------------------------------------------------------------------------------
-/// \brief Test if two points are equal to within tolerance.
-/// \param x1: x of point 1.
-/// \param y1: y of point 1.
-/// \param z1: z of point 1.
-/// \param x2: x of point 2.
-/// \param y2: y of point 2.
-/// \param z2: z of point 2.
-/// \param tolerance: Tolerance.
-/// \return Whether the points are considered equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXYZ(double x1,
-                      double y1,
-                      double z1,
-                      double x2,
-                      double y2,
-                      double z2,
-                      double tolerance)
-{
-  if ((fabs(x1 - x2) <= tolerance) && (fabs(y1 - y2) <= tolerance) && (fabs(z1 - z2) <= tolerance))
-    return true;
-  return false;
-} // gmEqualPointsXYZ
-//------------------------------------------------------------------------------
-/// \brief Test if two points are equal to within gmXyTol().
-/// \param x1: x of point 1.
-/// \param y1: y of point 1.
-/// \param z1: z of point 1.
-/// \param x2: x of point 2.
-/// \param y2: y of point 2.
-/// \param z2: z of point 2.
-/// \return Whether the points are considered equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXYZ(double x1, double y1, double z1, double x2, double y2, double z2)
-{
-  return gmEqualPointsXYZ(x1, y1, z1, x2, y2, z2, gmXyTol());
-} // gmEqualPointsXYZ
-//------------------------------------------------------------------------------
-/// \brief Test if two points are equal to within tolerance.
-/// \param pt1: Point 1.
-/// \param pt2: Point 2.
-/// \param tol: Tolerance.
-/// \return Whether the points are considered equal.
-//------------------------------------------------------------------------------
-bool gmEqualPointsXYZ(const Pt3d& pt1, const Pt3d& pt2, double tol)
-{
-  return gmEqualPointsXYZ(pt1.x, pt1.y, pt1.z, pt2.x, pt2.y, pt2.z, tol);
-} // gmEqualPointsXYZ
-//------------------------------------------------------------------------------
-/// \brief Test whether a point is bounded by a triangle.
-/// \param[in] p1: First vertex of triangle.
-/// \param[in] p2: Second vertex of triangle.
-/// \param[in] p3: Third vertex of triangle.
-/// \param[in] x: x coordinate of point.
-/// \param[in] y: y coordinate of point.
-/// \param[in] tol: Tolerance.
-/// \return Whether the point is inside the triangle.
-//------------------------------------------------------------------------------
-bool gmPointInTriangleWithTol(const Pt3d* p1,
-                              const Pt3d* p2,
-                              const Pt3d* p3,
-                              double x,
-                              double y,
-                              double tol)
-{
-  if (gmInsideOrOnLineWithTol(p1, p2, p3, x, y, tol))
-    if (gmInsideOrOnLineWithTol(p2, p3, p1, x, y, tol))
-      if (gmInsideOrOnLineWithTol(p3, p1, p2, x, y, tol))
-        return true;
-  return false;
-} // gmPointInTriangleWithTol
+  // compute vector components
+  double dx = p2.x - p1.x;
+  double dy = p2.y - p1.y;
+  double mag = sqrt(sqr(dx) + sqr(dy));
+  // check for extremely small segment
+  if (mag <= tol)
+    return gmEqualPointsXY(p1.x, p1.y, x, y);
+  else
+  {
+    double a = -dy / mag;
+    double b = dx / mag;
+    double c = -a * p2.x - b * p2.y;
+    // compute distance from line to (x,y)
+    double d = a * x + b * y + c;
+    return fabs(d) <= tol;
+  }
+} // gmOnLineWithTol
 //------------------------------------------------------------------------------
 /// \brief Test if a point is on a line segment or on the same side of
 ///        the segment as another point.
@@ -1567,166 +1623,118 @@ bool gmInsideOrOnLineWithTol(const Pt3d* p1,
   }
 } // gmInsideOrOnLineWithTol
 //------------------------------------------------------------------------------
-/// \brief Compute 2d planview projection of area of polygon.
-/// \note If points are in CCW order, the area will be positive. If in CW order,
-///       it will be negative. The magnitude will be correct in either case.
-/// \param pts: Vertices defining the polygon. Do not repeat the last vertex.
-/// \param npoints: Number of points in the array.
-/// \return Area of the polygon.
+/// \brief Test if a point is on a line segment or on the same side of
+///        the line as another point.
+/// \note ASSERTs in debug if "inpoint" is on the line (within tol).
+/// \param[in] p1: First endpoint of the segment.
+/// \param[in] p2: Second endpoint of the segment.
+/// \param[in] inpoint: Point on the "in" side of the line
+/// \param[in] x: x coordinate of test point.
+/// \param[in] y: y coordinate of test point.
+/// \param[in] tol: Tolerance.
+/// \return Whether the test point is on the line or on the same side of the
+///         line as inpoint.
 //------------------------------------------------------------------------------
-double gmPolygonArea(const Pt3d* pts, size_t npoints)
+bool gmInsideOfLineWithTol(const Pt3d& a_vertex1,
+                           const Pt3d& a_vertex2,
+                           const Pt3d& a_oppositevertex,
+                           const double a_x,
+                           const double a_y,
+                           const double a_tol)
 {
-  if (npoints < 3)
-    return 0.0;
-  size_t id;
-  double area = 0.0;
-
-  // This implementation translates the polygon so the first point is at
-  // the origin. This reduces roundoff error due to large coordinates
-  // and reduces the number of computations because the first and last
-  // computations in the loop would be 0.
-  VecDbl x, y;
-  double x0 = pts[0].x;
-  double y0 = pts[0].y;
-  for (id = 1; id < npoints; id++)
+  double dx = a_vertex2.x - a_vertex1.x;
+  double dy = a_vertex2.y - a_vertex1.y;
+  double mag = sqrt(sqr(dx) + sqr(dy));
+  if (mag <= a_tol)
   {
-    x.push_back((pts[id].x - x0));
-    y.push_back((pts[id].y - y0));
+    return gmEqualPointsXY(a_vertex1.x, a_vertex1.y, a_x, a_y);
   }
-  for (id = 0; id < npoints - 2; id++)
+  else
   {
-    area += (x[id] * y[id + 1]);
-    area -= (y[id] * x[id + 1]);
+    double a = -dy / mag;
+    double b = dx / mag;
+    double c = -a * a_vertex1.x - b * a_vertex1.y;
+    /* compute the distance from the line to the Point */
+    double d1 = a * a_x + b * a_y + c;
+    /* compute the distance from the line to the opposite vertex */
+    double d2 = a * a_oppositevertex.x + b * a_oppositevertex.y + c;
+    if (fabs(d1) <= a_tol)
+      return false;
+    else if ((d1 < 0.0) && (d2 < 0.0))
+      return true;
+    else if ((d1 > 0.0) && (d2 > 0.0))
+      return true;
+    else
+      return false;
   }
-  area /= 2.0;
-
-  return (area);
-} // gmPolygonArea
+} // gmInsideOfLine
 //------------------------------------------------------------------------------
-/// \brief Converts an array of doubles to a VecPt3d with Z coordinates all 0.
-/// \note Useful in testing to create a VecPt3d from a C array of xy pairs.
-/// \param[in] a_array: Array of xy pairs ([x][y][x][y]...). Must have even
-///                     length.
-/// \param[in] a_size: Array size.
-/// \return Vector of Pt3d.
+/// \brief Check whether a point is in a circumcircle defined by three other
+///        points.
+/// \param pt: The point to check.
+/// \param circumcirclePts: 3 points on the circumcircle.
+/// \return Whether the point is in, out of, or on the circle.
 //------------------------------------------------------------------------------
-VecPt3d gmArrayToVecPt3d(double* a_array, int a_size)
+PtInOutOrOn_enum gmPtInCircumcircle(const Pt3d& pt, Pt3d circumcirclePts[3])
 {
-  VecPt3d v(a_size / 2);
-  for (int i = 0; i < a_size; i += 2)
+  double xc, yc, r2;
+
+  if (!gmCircumcircleWithTol(&circumcirclePts[0], &circumcirclePts[1], &circumcirclePts[2], &xc,
+    &yc, &r2, gmXyTol()))
   {
-    v[i / 2].x = a_array[i];
-    v[i / 2].y = a_array[i + 1];
+    return PT_ERROR;
   }
-  return v;
-} // gmArrayToVecPt3d
+  /* compute distance from (xc,yc) to pt squared */
+  double delta = sqrt(r2) - sqrt(sqr(pt.x - xc) + sqr(pt.y - yc));
+  if (fabs(delta) > gmXyTol())
+  {
+    if (delta > gmXyTol())
+    {
+      return PT_IN;
+    }
+    else
+    {
+      return PT_OUT;
+    }
+  }
+  return PT_ON;
+} // gmPtInCircumcircle
 //------------------------------------------------------------------------------
-/// \brief Calculate the envelope of a vector of points
-/// \param[in] a_pts: Array of points
-/// \param[out] a_min: Min x,y,z of the points
-/// \param[out] a_max: Max x,y,z of the points
+/// \brief Test whether a point is bounded by a triangle.
+/// \param[in] p1: First vertex of triangle.
+/// \param[in] p2: Second vertex of triangle.
+/// \param[in] p3: Third vertex of triangle.
+/// \param[in] x: x coordinate of point.
+/// \param[in] y: y coordinate of point.
+/// \param[in] tol: Tolerance.
+/// \return Whether the point is inside the triangle.
 //------------------------------------------------------------------------------
-void gmEnvelopeOfPts(const VecPt3d& a_pts, Pt3d& a_min, Pt3d& a_max)
+bool gmPointInTriangleWithTol(const Pt3d* p1,
+  const Pt3d* p2,
+  const Pt3d* p3,
+  double x,
+  double y,
+  double tol)
 {
-  a_min = a_max = Pt3d();
-  XM_ENSURE_TRUE(!a_pts.empty());
-  a_min = a_max = a_pts.front();
-  for (size_t i = 0; i < a_pts.size(); ++i)
-  {
-    if (a_pts[i].x < a_min.x)
-      a_min.x = a_pts[i].x;
-    if (a_pts[i].y < a_min.y)
-      a_min.y = a_pts[i].y;
-    if (a_pts[i].z < a_min.z)
-      a_min.z = a_pts[i].z;
-    if (a_pts[i].x > a_max.x)
-      a_max.x = a_pts[i].x;
-    if (a_pts[i].y > a_max.y)
-      a_max.y = a_pts[i].y;
-    if (a_pts[i].z > a_max.z)
-      a_max.z = a_pts[i].z;
-  }
-} // gmEnvelopeOfPts
-// TODO: Verify this documentation is correct.
+  if (gmInsideOrOnLineWithTol(p1, p2, p3, x, y, tol))
+    if (gmInsideOrOnLineWithTol(p2, p3, p1, x, y, tol))
+      if (gmInsideOrOnLineWithTol(p3, p1, p2, x, y, tol))
+        return true;
+  return false;
+} // gmPointInTriangleWithTol
 //------------------------------------------------------------------------------
-/// \brief Determine how to sort a vector of points such that they are in
-///        counter-clockwise order relative to their centroid.
-/// \param[in] a_pts: Array of points.
-/// \param[out] a_ccwOrder: Initialized to a map of
-///                         Index=>IndexThatShouldBeThere.
-/// \param[in] a_startindex: The index of the point that should start the
-///                          polygon.
+/// \brief Check whether a point is in or on a box in 2D.
+/// \param[in] a_bMin Min x,y of box.
+/// \param[in] a_bMax Max x,y of box.
+/// \param[in] a_pt point being tested.
+/// \return Whether the point is on or on the box.
 //------------------------------------------------------------------------------
-void gmOrderPointsCounterclockwise(const VecPt3d& a_pts, VecInt& a_ccwOrder, int a_startindex)
+bool gmPointInOrOnBox2d(const Pt3d& a_bMin, const Pt3d& a_bMax, const Pt3d& a_pt)
 {
-  int numnodes = (int)a_pts.size();
-
-  // compute centroid of points
-  Pt2d center;
-  double sumx = 0.0;
-  double sumy = 0.0;
-  for (int i = 0; i < numnodes; i++)
-  {
-    sumx += a_pts[i].x;
-    sumy += a_pts[i].y;
-  }
-
-  center.x = sumx / numnodes;
-  center.y = sumy / numnodes;
-
-  // compute polar angle for each node about the centroid of the element
-  // along with the original point index
-  std::vector<std::pair<float, int> > angleIndex(numnodes);
-  for (int i = 0; i < numnodes; i++)
-  {
-    float angle = (float)(atan2(a_pts[i].y - center.y, a_pts[i].x - center.x));
-    angleIndex[i] = std::pair<float, int>(angle, i);
-  }
-
-  std::stable_sort(angleIndex.begin(), angleIndex.end());
-
-  // find where starting index is in sorted array
-  auto startIter = angleIndex.begin();
-  while (startIter != angleIndex.end() && startIter->second != a_startindex)
-  {
-    ++startIter;
-  }
-  if (startIter == angleIndex.end())
-    startIter = angleIndex.begin();
-
-  // assign the result preserving the order with a_startindex the first node
-  a_ccwOrder.resize(numnodes, 0);
-  size_t j = 0;
-  for (auto iter = startIter; iter != angleIndex.end(); ++iter)
-  {
-    a_ccwOrder[j] = iter->second;
-    j++;
-  }
-  for (auto iter = angleIndex.begin(); iter != startIter; ++iter)
-  {
-    a_ccwOrder[j] = iter->second;
-    j++;
-  }
-} // gmOrderPointsCounterclockwise
-// TODO: Verify this documentation is correct.
-//------------------------------------------------------------------------------
-/// \brief Sort a vector of points such that they are in counter-clockwise order
-///        relative to their centroid.
-/// \param[in,out] a_pts: Vector of points. Sorted by this function.
-//------------------------------------------------------------------------------
-void gmOrderPointsCounterclockwise(VecPt3d& a_pts)
-{
-  if (a_pts.empty())
-    return;
-
-  VecInt ccwOrder;
-  VecPt3d pts(a_pts);
-  gmOrderPointsCounterclockwise(pts, ccwOrder);
-  for (size_t i = 0; i < ccwOrder.size(); ++i)
-  {
-    a_pts[i] = pts[ccwOrder[i]];
-  }
-} // gmOrderPointsCounterclockwise
+  if (a_pt.x < a_bMin.x || a_pt.y < a_bMin.y || a_pt.x > a_bMax.x || a_pt.y > a_bMax.y)
+    return false;
+  return true;
+} // gmPointInOrOnBox2d
 //------------------------------------------------------------------------------
 /// \brief Find the closest point on a segment to another point.
 /// \param[in] a_pt1: First endpoint of segment.
@@ -1796,438 +1804,349 @@ double gmPtDistanceAlongSegment(const Pt3d& a_pt1,
   return t;
 } // gmPtDistanceAlongSegment
 //------------------------------------------------------------------------------
-/// \brief Test if a point is on a line segment or on the same side of
-///        the line as another point.
-/// \note ASSERTs in debug if "inpoint" is on the line (within tol).
-/// \param[in] p1: First endpoint of the segment.
-/// \param[in] p2: Second endpoint of the segment.
-/// \param[in] inpoint: Point on the "in" side of the line
-/// \param[in] x: x coordinate of test point.
-/// \param[in] y: y coordinate of test point.
-/// \param[in] tol: Tolerance.
-/// \return Whether the test point is on the line or on the same side of the
-///         line as inpoint.
+/// \brief  Given minimum and maximum extents, compute a tolerance for the xy
+///         plane to be used with geometric functions.
+/// \param a_mn: Minimum.
+/// \param a_mx: Maximum.
+/// \return Tolerance.
 //------------------------------------------------------------------------------
-bool gmInsideOfLineWithTol(const Pt3d& a_vertex1,
-                           const Pt3d& a_vertex2,
-                           const Pt3d& a_oppositevertex,
-                           const double a_x,
-                           const double a_y,
-                           const double a_tol)
+double gmComputeXyTol(const Pt3d& a_mn, const Pt3d& a_mx)
 {
-  double dx = a_vertex2.x - a_vertex1.x;
-  double dy = a_vertex2.y - a_vertex1.y;
-  double mag = sqrt(sqr(dx) + sqr(dy));
-  if (mag <= a_tol)
+  double d = gmXyDistance(a_mn, a_mx);
+  double const kFactor = 1e-9;
+  double xytol = d * kFactor;
+  if (xytol < kFactor)
   {
-    return gmEqualPointsXY(a_vertex1.x, a_vertex1.y, a_x, a_y);
+    xytol = kFactor;
   }
+  return xytol;
+} // gmComputeXyTol
+//------------------------------------------------------------------------------
+/// \brief Get or set global xy tolerance for float operations.
+/// \note Always sets the first time it is called.
+/// \param a_set: True to set, false to get.
+/// \param a_value: The value if setting.
+/// \return XY tolerance.
+//------------------------------------------------------------------------------
+double gmXyTol(bool a_set /*false*/, double a_value /*1e-9*/)
+{
+  static double xytol = a_value;
+  if (a_set)
+    xytol = a_value;
+  return xytol;
+} // gmXyTol
+//------------------------------------------------------------------------------
+/// \brief  Get or set global z tolerance for float operations.
+/// \note Always sets the first time it is called.
+/// \param a_set: True to set, false to get.
+/// \param a_value: The value if setting.
+/// \return Z tolerance.
+//------------------------------------------------------------------------------
+double gmZTol(bool a_set, double a_value)
+{
+  static double ztol = a_value;
+  if (a_set)
+    ztol = a_value;
+  return ztol;
+} // gmZTol
+//------------------------------------------------------------------------------
+/// \brief Check whether a triangle is wrapped counter clockwise.
+/// \param[in] vtx0: Triangle's first vertex.
+/// \param[in] vtx1: Triangle's first vertex.
+/// \param[in] vtx2: Triangle's first vertex.
+/// \return Whether vertex order is counter clockwise.
+//------------------------------------------------------------------------------
+bool gmCounterClockwiseTri(const Pt3d& vtx0, const Pt3d& vtx1, const Pt3d& vtx2)
+{
+  double triarea1 = trArea(vtx0, vtx1, vtx2);
+  return (triarea1 > 0.0);
+} // gmCounterClockwiseTri
+//------------------------------------------------------------------------------
+/// \brief Determine how to sort a vector of points such that they are in
+///        counter-clockwise order relative to their centroid.
+/// \param[in] a_pts: Array of points.
+/// \param[out] a_ccwOrder: Initialized to a vector mapping indices to points.
+/// \param[in] a_startindex: The index of the point that should start the
+///                          polygon.
+//------------------------------------------------------------------------------
+void gmOrderPointsCounterclockwise(const VecPt3d& a_pts, VecInt& a_ccwOrder, int a_startindex)
+{
+  int numnodes = (int)a_pts.size();
+
+  // compute centroid of points
+  Pt2d center;
+  double sumx = 0.0;
+  double sumy = 0.0;
+  for (int i = 0; i < numnodes; i++)
+  {
+    sumx += a_pts[i].x;
+    sumy += a_pts[i].y;
+  }
+
+  center.x = sumx / numnodes;
+  center.y = sumy / numnodes;
+
+  // compute polar angle for each node about the centroid of the element
+  // along with the original point index
+  std::vector<std::pair<float, int> > angleIndex(numnodes);
+  for (int i = 0; i < numnodes; i++)
+  {
+    float angle = (float)(atan2(a_pts[i].y - center.y, a_pts[i].x - center.x));
+    angleIndex[i] = std::pair<float, int>(angle, i);
+  }
+
+  std::stable_sort(angleIndex.begin(), angleIndex.end());
+
+  // find where starting index is in sorted array
+  auto startIter = angleIndex.begin();
+  while (startIter != angleIndex.end() && startIter->second != a_startindex)
+  {
+    ++startIter;
+  }
+  if (startIter == angleIndex.end())
+    startIter = angleIndex.begin();
+
+  // assign the result preserving the order with a_startindex the first node
+  a_ccwOrder.resize(numnodes, 0);
+  size_t j = 0;
+  for (auto iter = startIter; iter != angleIndex.end(); ++iter)
+  {
+    a_ccwOrder[j] = iter->second;
+    j++;
+  }
+  for (auto iter = angleIndex.begin(); iter != startIter; ++iter)
+  {
+    a_ccwOrder[j] = iter->second;
+    j++;
+  }
+} // gmOrderPointsCounterclockwise
+//------------------------------------------------------------------------------
+/// \brief Sort a vector of points such that they are in counter-clockwise order
+///        relative to their centroid.
+/// \param[in,out] a_pts: Vector of points. Sorted by this function.
+//------------------------------------------------------------------------------
+void gmOrderPointsCounterclockwise(VecPt3d& a_pts)
+{
+  if (a_pts.empty())
+    return;
+
+  VecInt ccwOrder;
+  VecPt3d pts(a_pts);
+  gmOrderPointsCounterclockwise(pts, ccwOrder);
+  for (size_t i = 0; i < ccwOrder.size(); ++i)
+  {
+    a_pts[i] = pts[ccwOrder[i]];
+  }
+} // gmOrderPointsCounterclockwise
+//------------------------------------------------------------------------------
+/// \brief Calculates the plane coefficients for a triangle.
+///        Given points, calculate coefficents for plane (ax+by+cz+d=0).
+/// \param[in] p1: First point.
+/// \param[in] p2: Second point.
+/// \param[in] p3: Third point.
+/// \param[out] a: Coefficient a.
+/// \param[out] b: Coefficient b.
+/// \param[out] c: Coefficient c.
+/// \param[out] d: Coefficient d.
+//------------------------------------------------------------------------------
+void gmCalculateNormalizedPlaneCoefficients(const Pt3d& p1,
+                                            const Pt3d& p2,
+                                            const Pt3d& p3,
+                                            double* a,
+                                            double* b,
+                                            double* c,
+                                            double* d)
+{
+  // call the other version
+  gmCalculateNormalizedPlaneCoefficients(&p1, &p2, &p3, a, b, c, d);
+} // gmCalculateNormalizedPlaneCoefficients
+//------------------------------------------------------------------------------
+/// \brief Calculates the plane coefficients for a triangle.
+///        Given points, calculate coefficents for plane (ax+by+cz+d=0).
+/// \param[in] p1: First point.
+/// \param[in] p2: Second point.
+/// \param[in] p3: Third point.
+/// \param[out] a: Coefficient a.
+/// \param[out] b: Coefficient b.
+/// \param[out] c: Coefficient c.
+/// \param[out] d: Coefficient d.
+//------------------------------------------------------------------------------
+void gmCalculateNormalizedPlaneCoefficients(const Pt3d* p1,
+                                            const Pt3d* p2,
+                                            const Pt3d* p3,
+                                            double* a,
+                                            double* b,
+                                            double* c,
+                                            double* d)
+{
+  double x1(p1->x), y1(p1->y), z1(p1->z);
+  double x2(p2->x), y2(p2->y), z2(p2->z);
+  double x3(p3->x), y3(p3->y), z3(p3->z);
+  *a = (y1 * (z2 - z3) + y2 * (z3 - z1) + y3 * (z1 - z2));
+  *b = (z1 * (x2 - x3) + z2 * (x3 - x1) + z3 * (x1 - x2));
+  *c = (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+  double mag(sqrt((*a) * (*a) + (*b) * (*b) + (*c) * (*c)));
+  *a /= mag;
+  *b /= mag;
+  *c /= mag;
+  *d = -(*a) * x1 - (*b) * y1 - (*c) * z1;
+} // gmCalculateNormalizedPlaneCoefficients
+//------------------------------------------------------------------------------
+/// \brief Compute center & radius squared for circumcircle of triangle
+///        defined by the three points.
+/// \note  May fail if triangle has zero area.
+/// \param pt1: First vertex of the triangle.
+/// \param pt2: Second vertex of the triangle.
+/// \param pt3: Third vertex of the triangle.
+/// \param xc: Initialized to the circumcenter x coord.
+/// \param yc: Initialized to the circumcenter y coord.
+/// \param r2: Initialized to the radius squared of circumcircle.
+/// \param tol: Tolerance for geometric comparison.
+/// \return Whether the operation succeeded.
+//------------------------------------------------------------------------------
+bool gmCircumcircleWithTol(const Pt3d* pt1,
+                           const Pt3d* pt2,
+                           const Pt3d* pt3,
+                           double* xc,
+                           double* yc,
+                           double* r2,
+                           double tol)
+{
+  bool ok = true;
+  double det11, det12, det13, det21, det22, det23;
+  double determinate;
+  /* compute these */
+  det11 = pt1->x - pt2->x;
+  det12 = pt1->y - pt2->y;
+  det13 = det11 * (pt1->x + pt2->x) / 2.0 + det12 * (pt1->y + pt2->y) / 2.0;
+
+  det21 = pt3->x - pt2->x;
+  det22 = pt3->y - pt2->y;
+  det23 = det21 * (pt3->x + pt2->x) / 2.0 + det22 * (pt3->y + pt2->y) / 2.0;
+  /* compute determinant */
+  determinate = det11 * det22 - det12 * det21;
+  /* zero determinate indicates collinear pts */
+  if (fabs(determinate) < tol)
+  {
+    ok = false;
+    determinate = tol;
+  }
+  *xc = (det13 * det22 - det23 * det12) / determinate;
+  *yc = (det11 * det23 - det21 * det13) / determinate;
+  *r2 = sqr(pt1->x - *xc) + sqr(pt1->y - *yc);
+  return ok;
+} // gmCircumcircleWithTol
+//------------------------------------------------------------------------------
+/// \brief Check if 2 boxes overlap in 2D.
+/// \param[in] a_b1Min Min x,y of first box.
+/// \param[in] a_b1Max Max x,y of first box.
+/// \param[in] a_b2Min Min x,y of second box.
+/// \param[in] a_b2Max Max x,y of second box.
+/// \return Whether the point is on or on the box.
+//------------------------------------------------------------------------------
+bool gmBoxesOverlap2d(const Pt3d& a_b1Min,
+                      const Pt3d& a_b1Max,
+                      const Pt3d& a_b2Min,
+                      const Pt3d& a_b2Max)
+{
+  if (a_b1Max.x < a_b2Min.x)
+    return false;
+  if (a_b1Min.x > a_b2Max.x)
+    return false;
+  if (a_b1Max.y < a_b2Min.y)
+    return false;
+  if (a_b1Min.y > a_b2Max.y)
+    return false;
+  return true;
+} // gmBoxesOverlap2d
+//------------------------------------------------------------------------------
+/// \brief Check whether three points are colinear.
+/// \param[in] p1: First point.
+/// \param[in] p2: Second point.
+/// \param[in] p3: Third point.
+/// \param[in] tol: Tolerance for geometric comparisons.
+/// \return Whether the points are colinear.
+//------------------------------------------------------------------------------
+bool gmColinearWithTol(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3, const double tol)
+{
+  if (gmOnLineWithTol(p1, p2, p3.x, p3.y, tol))
+    return true;
+  else if (gmOnLineWithTol(p2, p3, p1.x, p1.y, tol))
+    return true;
+  else if (gmOnLineWithTol(p3, p1, p2.x, p2.y, tol))
+    return true;
   else
-  {
-    double a = -dy / mag;
-    double b = dx / mag;
-    double c = -a * a_vertex1.x - b * a_vertex1.y;
-    /* compute the distance from the line to the Point */
-    double d1 = a * a_x + b * a_y + c;
-    /* compute the distance from the line to the opposite vertex */
-    double d2 = a * a_oppositevertex.x + b * a_oppositevertex.y + c;
-    if (fabs(d1) <= a_tol)
-      return false;
-    else if ((d1 < 0.0) && (d2 < 0.0))
-      return true;
-    else if ((d1 > 0.0) && (d2 > 0.0))
-      return true;
-    else
-      return false;
-  }
-} // gmInsideOfLine
+    return false;
+} // gmColinearWithTol
 //------------------------------------------------------------------------------
-/// \brief Get the 2D extents of a vector of points.
-/// \param[in] a_points: The points.
-/// \param[out] a_min: Minimum point (xy) of bounding rectangle.
-/// \param[out] a_max: Maximum point (xy) of bounding rectangle.
+/// \brief Compute the centroid of a set of points.
+/// \note The centroid this function computes is not the same as the centroid
+///       of a polygon.
+/// \param[in] a_points: A vector of points. Must not be empty. Order is
+///                      unimportant.
+/// \return The centroid.
 //------------------------------------------------------------------------------
-void gmExtents2D(const VecPt3d& a_points, Pt2d& a_min, Pt2d& a_max)
+Pt3d gmComputeCentroid(const VecPt3d& a_points)
 {
-  XM_ENSURE_TRUE_VOID_NO_ASSERT(!a_points.empty());
-
-  a_min.x = a_max.x = a_points.at(0).x;
-  a_min.y = a_max.y = a_points.at(0).y;
-  for (int i = 1; i < (int)a_points.size(); i++)
-  {
-    gmAddToExtents(a_points[i], a_min, a_max);
-  }
-} // gmExtents2D
+  Pt3d centroid;
+  size_t size = a_points.size();
+  for (size_t i = 0; i < size; ++i)
+    centroid += a_points[i];
+  return (centroid / (double)size);
+} // gmComputeCentroid
 //------------------------------------------------------------------------------
-/// \brief Get the 2D extents of a vector of points.
-/// \param[in] a_points: Vector of points.
-/// \param[in,out] a_min: Minimum value.
-/// \param[in,out] a_max: Maximum value.
+/// \brief Compute the plan view centroid of a non-self-intersecting polygon.
+/// \param[in] pts: A vector of vertices defining the polygon.
+/// \return The centroid.
 //------------------------------------------------------------------------------
-void gmExtents2D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max)
+Pt3d gmComputePolygonCentroid(const VecPt3d& pts)
 {
-  XM_ENSURE_TRUE_VOID_NO_ASSERT(!a_points.empty());
-
-  a_min.x = a_max.x = a_points.at(0).x;
-  a_min.y = a_max.y = a_points.at(0).y;
-  a_min.z = a_max.z = 0.0;
-  for (int i = 1; i < (int)a_points.size(); i++)
+  Pt3d centroid;
+  if (pts.empty())
+    return centroid;
+  // get offset to use in calculation below to fix precision issues
+  double xMax = XM_DBL_LOWEST, yMax = XM_DBL_LOWEST, xMin = XM_DBL_HIGHEST, yMin = XM_DBL_HIGHEST;
+  size_t i = 0;
+  for (i = 0; i < pts.size(); ++i)
   {
-    gmAddToExtents((Pt2d)a_points[i], a_min, a_max);
+    double x = pts[i].x;
+    double y = pts[i].y;
+    xMax = (x > xMax) ? x : xMax;
+    yMax = (y > yMax) ? y : yMax;
+    xMin = (x < xMin) ? x : xMin;
+    yMin = (y < yMin) ? y : yMin;
   }
-} // gmExtents2D
-//------------------------------------------------------------------------------
-/// \brief Get the 3D extents of a vector of points.
-/// \param[in] a_points: The points.
-/// \param[out] a_min: Minimum point (xyz) of bounding box.
-/// \param[out] a_max: Maximum point (xyz) of bounding box.
-//------------------------------------------------------------------------------
-void gmExtents3D(const VecPt3d& a_points, Pt3d& a_min, Pt3d& a_max)
-{
-  XM_ENSURE_TRUE_VOID_NO_ASSERT(!a_points.empty());
-
-  a_min.x = a_max.x = a_points.at(0).x;
-  a_min.y = a_max.y = a_points.at(0).y;
-  a_min.z = a_max.z = a_points.at(0).z;
-  for (int i = 1; i < (int)a_points.size(); i++)
+  double xOffset = (xMax + xMin) / 2.0;
+  double yOffset = (yMax + yMin) / 2.0;
+  // For all vertices except last
+  double signedArea = 0.0;
+  for (i = 0; i < pts.size() - 1; ++i)
   {
-    gmAddToExtents(a_points[i], a_min, a_max);
+    double x0 = pts[i].x - xOffset;
+    double y0 = pts[i].y - yOffset;
+    double x1 = pts[i + 1].x - xOffset;
+    double y1 = pts[i + 1].y - yOffset;
+    double a = x0 * y1 - x1 * y0;
+    signedArea += a;
+    centroid.x += (x0 + x1) * a;
+    centroid.y += (y0 + y1) * a;
   }
-} // gmExtents3D
-//------------------------------------------------------------------------------
-/// \brief Compute the angle, in radians, perpendicular to an edge defined by
-///        two points.
-/// \param[in] a_pt1: The first point defining an edge.
-/// \param[in] a_pt2: The second point defining an edge.
-/// \return Angle perpendicular to the edge.
-//------------------------------------------------------------------------------
-double gmPerpendicularAngle(const Pt3d& a_pt1, const Pt3d& a_pt2)
-{
-  double hypot;
-  double deltax, deltay, arad, theangle;
-
-  deltax = a_pt1.x - a_pt2.x;
-  deltay = a_pt1.y - a_pt2.y;
-  hypot = sqrt(sqr(deltax) + sqr(deltay));
-  arad = deltax / hypot;
-  if (arad > .9999)
-    arad = 1.0;
-  else if (arad < -.9999)
-    arad = -1.0;
-  if (deltay >= 0.0)
-    theangle = acos(arad);
-  else
-    theangle = 2 * XM_PI - acos(arad);
-  return (theangle - (XM_PI / 2));
-} // gmPerpendicularAngle
-//------------------------------------------------------------------------------
-/// \brief Compute the counter-clockwise angle in [0, 2pi) which bisects
-///        another angle defined by two connected edges.
-/// \param[in] a_p1: The unshared endpoint of the first edge.
-/// \param[in] a_p2: The shared endpoint.
-/// \param[in] a_p3: The unshared endpoint of the second edge.
-/// \return Angle that bisects the edges.
-//------------------------------------------------------------------------------
-double gmBisectingAngle(const Pt3d& a_p1, const Pt3d& a_p2, const Pt3d& a_p3)
-{
-  double dxn, dyn, dxp, dyp, magn, magp, angletoedge1, theanglebetween;
-  double cosign;
-
-  dxp = a_p1.x - a_p2.x;
-  dyp = a_p1.y - a_p2.y;
-  dxn = a_p3.x - a_p2.x;
-  dyn = a_p3.y - a_p2.y;
-  angletoedge1 = atan2(dyp, dxp);
-  magn = sqrt(sqr(dxn) + sqr(dyn));
-  magp = sqrt(sqr(dxp) + sqr(dyp));
-  cosign = (dxn * dxp + dyn * dyp) / (magn * magp);
-  if (cosign > .99999)
-    cosign = 1.0;
-  if (cosign < -.99999)
-    cosign = -1.0;
-  theanglebetween = acos(cosign);
-  if (theanglebetween == 0.0)
-  {
-    if ((dxn * dxp) + (dyn * dyp) < 0.0)
-      theanglebetween = XM_PI;
-  }
-  else if (gmCross2D(dxp, dyp, dxn, dyn) < 0.0)
-    theanglebetween = 2 * XM_PI - theanglebetween;
-  return angletoedge1 + theanglebetween / 2.0;
-} // gmBisectingAngle
-//------------------------------------------------------------------------------
-/// \brief Convert a magnitude and angle to xy components or vice versa.
-/// \param[in,out] a_x: Vector x component, either specified or calculated from
-///                     a_mag, a_dir.
-/// \param[in,out] a_y: Vector y component, either specified or calculated from
-///                     a_mag, a_dir.
-/// \param[in,out] a_mag: Vector magnitude, either specified or calculated from
-///                       a_x, a_y.
-/// \param[in,out] a_dir: Vector direction, in degrees, either specified or
-///                       calculated from a_x, a_y.
-/// \param[in] a_tomagdir: True to calculate a_mag and a_dir from a_x and a_y;
-///                        False to calculate a_x and a_y from a_mag and a_dir.
-//------------------------------------------------------------------------------
-void gmComponentMagnitudes(double* a_x, double* a_y, double* a_mag, double* a_dir, bool a_tomagdir)
-{
-  double rads;
-
-  if (a_tomagdir)
-  { // convert (x,y) to (mag,dir)
-    if (fabs(*a_x) < XM_ZERO_TOL && fabs(*a_y) < XM_ZERO_TOL)
-    {
-      *a_mag = 0.0;
-      *a_dir = 0.0;
-    }
-    else
-    {
-      if (*a_x == 0)
-        *a_x = XM_ZERO_TOL;
-      *a_mag = sqrt(sqr(*a_x) + sqr(*a_y));
-      *a_dir = (atan(*a_y / *a_x)) * (180 / XM_PI);
-      if (*a_x < 0)
-        (*a_dir) += 180;
-      if (*a_dir < 0)
-        (*a_dir) += 360;
-    }
-  }
-  else
-  { // convert (mag,dir) to (x,y)
-    rads = *a_dir * (XM_PI / 180);
-    *a_x = cos(rads) * *a_mag;
-    *a_y = sin(rads) * *a_mag;
-    if (fabs(*a_x) < XM_ZERO_TOL)
-      *a_x = 0;
-    if (fabs(*a_y) < XM_ZERO_TOL)
-      *a_y = 0;
-  }
-} // gmComponentMagnitudes
-//------------------------------------------------------------------------------
-/// \brief Create a vector representing the direction from one point to another.
-/// \param[in] a_p1: The point being pointed from.
-/// \param[in] a_p2: The point being pointed to.
-/// \return A vector with x,y,z components representing the direction.
-//------------------------------------------------------------------------------
-Pt3d gmCreateVector(const Pt3d& a_p1, const Pt3d& a_p2)
-{
-  Pt3d vector;
-  vector.x = a_p2.x - a_p1.x;
-  vector.y = a_p2.y - a_p1.y;
-  vector.z = a_p2.z - a_p1.z;
-  return vector;
-} // gmCreateVector
-//------------------------------------------------------------------------------
-/// \brief Convert and map an angle to the range [0, 360) degrees.
-/// \note Angles that are too big or small are mapped to an equivalent angle
-///       in range.
-/// \param[in] a_angle: The angle to convert and map.
-/// \param[in] a_InDegrees: Whether the angle is in degrees (true) or radians
-///                         (false).
-/// \return An angle in the range [0, 360) degrees.
-//------------------------------------------------------------------------------
-double gmConvertAngleToBetween0And360(double a_angle, bool a_InDegrees /*= true*/
-)
-{
-  double ang = a_angle;
-
-  if (!a_InDegrees)
-  {
-    ang *= (180.0 / XM_PI);
-  }
-  // TODO: Is Boost really superior to the standard library here?
-#if BOOST_OS_WINDOWS
-  while (LT_TOL(ang, 0.0, DBL_EPSILON) && _finite(ang))
-  {
-#else
-  while (LT_TOL(ang, 0.0, DBL_EPSILON) && std::isfinite(ang))
-  {
-#endif
-    ang += 360.0;
-  }
-#if BOOST_OS_WINDOWS
-  while (GTEQ_TOL(ang, 360.0, DBL_EPSILON) && _finite(ang))
-  {
-#else
-  while (GTEQ_TOL(ang, 360.0, DBL_EPSILON) && std::isfinite(ang))
-  {
-#endif
-    ang -= 360.0;
-  }
-
-  return ang;
-} // gmConvertAngleToBetween0And360
-//------------------------------------------------------------------------------
-/// \brief Compute the cross product of two vectors.
-/// \param[in] a_vec1: First vector to cross.
-/// \param[in] a_vec2: Second vector to cross.
-/// \param[out] a_vec3: Initialized to the cross product.
-//------------------------------------------------------------------------------
-void gmCross3D(const Pt3d& a_vec1, const Pt3d& a_vec2, Pt3d* a_vec3)
-{
-  a_vec3->x = a_vec1.y * a_vec2.z - a_vec1.z * a_vec2.y;
-  a_vec3->y = a_vec1.z * a_vec2.x - a_vec1.x * a_vec2.z;
-  a_vec3->z = a_vec1.x * a_vec2.y - a_vec1.y * a_vec2.x;
-} // gmCross3D
-//------------------------------------------------------------------------------
-/// \brief Compute the dot product of two vectors.
-/// \note The dot product has the geometric interpretation as the length of the
-///       projection of a_vec1 onto the unit vector a_vec2 when the two vectors
-///       are placed so that their tails coincide.
-/// \param[in] a_vec1: First vector to dot.
-/// \param[in] a_vec2: Second vector to dot.
-/// \return The dot product.
-//------------------------------------------------------------------------------
-inline double gmDot3D(const Pt3d& a_vec1, const Pt3d& a_vec2)
-{
-  return (a_vec1.x * a_vec2.x + a_vec1.y * a_vec2.y + a_vec1.z * a_vec2.z);
-} // gmDot3D
-//------------------------------------------------------------------------------
-/// \brief Determine if a line segment intersects a triangle.
-/// \param[in] a_pt1: First endpoint of the line segment.
-/// \param[in] a_pt2: Second endpoint of the line segment.
-/// \param[in] a_t0: First vertex defining a triangle.
-/// \param[in] a_t1: Second vertex defining a triangle.
-/// \param[in] a_t2: Third vertex defining a triangle.
-/// \param[out] a_IntersectPt: Initialized to the point of intersection, if
-///                            it exists.
-/// \return -1 if triangle is degenerate (a point or a line)
-///          0 if line does not intersect triangle
-///          1 if line does intersect triangle
-///          2 if line and triangle are in the same plane
-//
-// Copyright 2001, softSurfer (www.softsurfer.com)
-//   This code may be freely used and modified for any purpose providing that
-//   this copyright notice is included with it.  SoftSurfer makes no warranty
-//   for this code, and cannot be held liable for any real or imagined damage
-//   resulting from its use.  Users of this code must verify correctness for
-//   their application.
-// http://geometryalgorithms.com/Archive/algorithm_0105/algorithm_0105.htm
-//------------------------------------------------------------------------------
-int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
-                                      const Pt3d& a_pt2,
-                                      const Pt3d& a_t0,
-                                      const Pt3d& a_t1,
-                                      const Pt3d& a_t2,
-                                      Pt3d& a_IntersectPt)
-{
-  double a, b, r;
-  Pt3d dir, n, NullVector(0.0, 0.0, 0.0), u, v, w, w0;
-
-  // get the triangle edge vectors and plane normal
-  u = a_t1 - a_t0;
-  v = a_t2 - a_t0;
-  gmCross3D(u, v, &n);
-
-  // check if the triangle is degenerate
-  if (n == NullVector)
-  {
-    return -1;
-  }
-
-  // get the ray direction vector
-  dir = a_pt2 - a_pt1;
-  w0 = a_pt1 - a_t0;
-  a = -gmDot3D(n, w0);
-  b = gmDot3D(n, dir);
-
-  // see if ray is parallel to the triangle
-  if (fabs(b) < XM_ZERO_TOL)
-  {
-    // see if ray lies in triangle plane
-    if (a == 0)
-    {
-      return 2;
-    }
-    // else ray is disjoint from the triangle plane
-    else
-    {
-      return 0;
-    }
-  }
-
-  // get the intersection point or ray with triangle plane
-  r = a / b;
-
-  // see if there is an intersection
-  // if (r < 0.0 || r > 1.0) {
-  if (r < -FLT_EPSILON || r > 1.0 + FLT_EPSILON)
-  {
-    return 0;
-  }
-
-  // intersect point of ray and plane
-  a_IntersectPt = a_pt1 + dir * r;
-
-  // see if the intersection is inside of the triangle
-  double D, uu, uv, vv, wu, wv;
-
-  uu = gmDot3D(u, u);
-  uv = gmDot3D(u, v);
-  vv = gmDot3D(v, v);
-  w = a_IntersectPt - a_t0;
-  wu = gmDot3D(w, u);
-  wv = gmDot3D(w, v);
-  D = uv * uv - uu * vv;
-
-  // get the test parametric coords
-  double s, t;
-
-  s = (uv * wv - vv * wu) / D;
-  if (s < 0.0 || s > 1.0)
-  {
-    // the intersect point is outside the triangle
-    return 0;
-  }
-  t = (uv * wu - uu * wv) / D;
-  if (t < 0.0 || (s + t) > 1.0)
-  {
-    // the intersect point is outside the triangle
-    return 0;
-  }
-
-  // the intersect point is inside the triangle
-  return 1;
-} // gmIntersectTriangleAndLineSegment
-//------------------------------------------------------------------------------
-/// \brief Compute the xy distance from a point to a line.
-/// \note Resulting distance will have correct magnitude, but sign may be wrong.
-/// \note Unlike gm2DDistanceToLineSegmentWithTol, the resulting distance may
-///       be closest to a point outside the segment defined by a_pt1 and a_pt2.
-/// \param[in] a_pt1: First point defining a line.
-/// \param[in] a_pt2: Second point defining a line.
-/// \param[in] a_x: x location of test point.
-/// \param[in] a_y: y location of test point.
-/// \param[in] a_tol: Tolerance used in geometric computations.
-/// \return Distance from the line to the test point.
-//------------------------------------------------------------------------------
-double gm2DDistanceToLineWithTol(const Pt3d* a_pt1,
-                                 const Pt3d* a_pt2,
-                                 double a_x,
-                                 double a_y,
-                                 double a_tol)
-{
-  double a1, b1, c, mag;
-  double dist;
-  // see if the (x,y) is on infinite line
-  a1 = a_pt2->x - a_pt1->x;
-  b1 = a_pt2->y - a_pt1->y;
-  mag = sqrt(a1 * a1 + b1 * b1);
-  // handle case of line segment with length < tol distance to either point (pt1)
-  if (mag <= a_tol)
-  {
-    return sqrt(sqr(a_pt1->x - a_x) + sqr(a_pt1->y - a_y));
-  }
-
-  // compute line equation
-  double a, b;
-  a = -b1 / mag;
-  b = a1 / mag;
-  c = -a * a_pt1->x - b * a_pt1->y;
-  // compute distance from the line to (x,y)
-  dist = a * a_x + b * a_y + c;
-
-  return dist;
-} // gm2DDistanceToLineWithTol
+  // Do last vertex
+  double x0 = pts[i].x - xOffset;
+  double y0 = pts[i].y - yOffset;
+  double x1 = pts[0].x - xOffset;
+  double y1 = pts[0].y - yOffset;
+  double a = x0 * y1 - x1 * y0;
+  signedArea += a;
+  centroid.x += (x0 + x1) * a;
+  centroid.y += (y0 + y1) * a;
+  signedArea *= 0.5;
+  centroid.x /= (6.0 * signedArea);
+  centroid.y /= (6.0 * signedArea);
+  centroid.x += xOffset;
+  centroid.y += yOffset;
+  return centroid;
+} // gmComputePolygonCentroid
 //------------------------------------------------------------------------------
 /// \brief Calculate convex hull using Monotone chain aka Andrew's algorithm.
 /// \param[in] a_pts: The input points.
@@ -2287,7 +2206,79 @@ void gmGetConvexHull(const VecPt3d& a_pts, VecPt3d& a_hull, bool a_includeOn /*=
   a_hull = lower;
   a_hull.insert(a_hull.end(), upper.begin(), upper.end());
 } // gmGetConvexHull
+//------------------------------------------------------------------------------
+/// \brief Compute 2d planview projection of area of polygon.
+/// \note If points are in CCW order, the area will be positive. If in CW order,
+///       it will be negative. The magnitude will be correct in either case.
+/// \param pts: Vertices defining the polygon. Do not repeat the last vertex.
+/// \param npoints: Number of points in the array.
+/// \return Area of the polygon.
+//------------------------------------------------------------------------------
+double gmPolygonArea(const Pt3d* pts, size_t npoints)
+{
+  if (npoints < 3)
+    return 0.0;
+  size_t id;
+  double area = 0.0;
 
+  // This implementation translates the polygon so the first point is at
+  // the origin. This reduces roundoff error due to large coordinates
+  // and reduces the number of computations because the first and last
+  // computations in the loop would be 0.
+  VecDbl x, y;
+  double x0 = pts[0].x;
+  double y0 = pts[0].y;
+  for (id = 1; id < npoints; id++)
+  {
+    x.push_back((pts[id].x - x0));
+    y.push_back((pts[id].y - y0));
+  }
+  for (id = 0; id < npoints - 2; id++)
+  {
+    area += (x[id] * y[id + 1]);
+    area -= (y[id] * x[id + 1]);
+  }
+  area /= 2.0;
+
+  return (area);
+} // gmPolygonArea
+//------------------------------------------------------------------------------
+/// \brief Converts an array of doubles to a VecPt3d with Z coordinates all 0.
+/// \note Useful in testing to create a VecPt3d from a C array of xy pairs.
+/// \param[in] a_array: Array of xy pairs ([x][y][x][y]...). Must have even
+///                     length.
+/// \param[in] a_size: Array size.
+/// \return Vector of Pt3d.
+//------------------------------------------------------------------------------
+VecPt3d gmArrayToVecPt3d(double* a_array, int a_size)
+{
+  VecPt3d v(a_size / 2);
+  for (int i = 0; i < a_size; i += 2)
+  {
+    v[i / 2].x = a_array[i];
+    v[i / 2].y = a_array[i + 1];
+  }
+  return v;
+} // gmArrayToVecPt3d
+//------------------------------------------------------------------------------
+/// \brief Find the z value halfway between the max and min z.
+/// \note  Different from the average z in that it ignores all but the min and
+///        max z when finding the midpoint.
+/// \param a_points: A vector of points.
+/// \return Middle z value.
+//------------------------------------------------------------------------------
+double gmMiddleZ(const VecPt3d& a_points)
+{
+  double zmin = XM_DBL_HIGHEST;
+  double zmax = XM_DBL_LOWEST;
+  for (size_t i = 0; i < a_points.size(); ++i)
+  {
+    double z = a_points[i].z;
+    zmin = std::min(zmin, z);
+    zmax = std::max(zmax, z);
+  }
+  return (zmin + zmax) / 2.0;
+} // gmMiddleZ
 } // namespace xms
 
 //----- Tests ------------------------------------------------------------------
