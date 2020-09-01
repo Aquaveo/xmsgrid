@@ -1048,6 +1048,42 @@ template int gmPointInPolygon2D<Pt3d>(const Pt3d* a_verts,
                                       const double a_y,
                                       const double a_tol);
 //------------------------------------------------------------------------------
+/// \brief Compute the minimum 2D distance from a point to a line segment.
+/// \note The closest point may be one of the endpoints of the segment.
+/// \param pt1: First point defining the line segment.
+/// \param pt2: Second point defining the line segment.
+/// \param pt3: The point to find the distance to.
+/// \return Minimum distance from the point to the line segment.
+//------------------------------------------------------------------------------
+double gm2DDistanceToLineSegment(const Pt3d& pt1, const Pt3d& pt2, const Pt3d& pt3)
+{
+  return gm2DDistanceToLineSegmentWithTol(&pt1, &pt2, pt3.x, pt3.y, gmXyTol());
+} // gm2DDistanceToLineSegment
+//------------------------------------------------------------------------------
+/// \brief Compute the minimum 2D distance from a point to a line segment.
+/// \note The closest point may be one of the endpoints of the segment.
+/// \param pt1: First point defining the line segment.
+/// \param pt2: Second point defining the line segment.
+/// \param x: x coordinate of the point.
+/// \param y: y coordinate of the point.
+/// \param tol: Tolerance for geometric comparisons.
+/// \return Minimum distance from the point to the line segment.
+//------------------------------------------------------------------------------
+double gm2DDistanceToLineSegmentWithTol(const Pt3d* pt1,
+                                        const Pt3d* pt2,
+                                        double x,
+                                        double y,
+                                        double tol)
+{
+  Pt3d pt(x, y, 0.0);
+  Pt3d newpt;
+
+  if (gmFindClosestPtOnSegment(*pt1, *pt2, pt, newpt, &tol) == 0.0)
+    return sqrt(sqr(pt1->x - x) + sqr(pt1->y - y));
+  else
+    return sqrt(sqr(pt.x - newpt.x) + sqr(pt.y - newpt.y));
+} // gm2DDistanceToLineSegmentWithTol
+//------------------------------------------------------------------------------
 /// \brief Compute the xy distance from a point to a line.
 /// \note Resulting distance will have correct magnitude, but sign may be wrong.
 /// \note Unlike gm2DDistanceToLineSegmentWithTol, the resulting distance may
@@ -1121,6 +1157,43 @@ double gmXyDistanceSquared(const Pt3d& pt1, const Pt3d& pt2)
 {
   return (sqr(pt1.x - pt2.x) + sqr(pt1.y - pt2.y));
 } // gmXyDistanceSqared
+//------------------------------------------------------------------------------
+/// \brief Compute the minimum 3D distance from a point to a plane.
+/// \param pt1: First point defining the plane.
+/// \param pt2: Second point defining the plane.
+/// \param pt3: Third point defining the plane.
+/// \param thePoint: The point to find the distance to.
+/// \returns The 3D distance from thePoint to the plane.
+//------------------------------------------------------------------------------
+double gmDistanceFromPointToPlane(const Pt3d& pt1,
+                                  const Pt3d& pt2,
+                                  const Pt3d& pt3,
+                                  const Pt3d& thePoint)
+{
+  double a, b, c, d;
+  Pt3d vec1, vec2;
+  double mag;
+  double d1;
+
+  vec1.x = pt1.x - pt2.x;
+  vec1.y = pt1.y - pt2.y;
+  vec1.z = pt1.z - pt2.z;
+  vec2.x = pt3.x - pt2.x;
+  vec2.y = pt3.y - pt2.y;
+  vec2.z = pt3.z - pt2.z;
+  a = vec1.y * vec2.z - vec1.z * vec2.y;
+  b = vec1.z * vec2.x - vec1.x * vec2.z;
+  c = vec1.x * vec2.y - vec1.y * vec2.x;
+  mag = sqrt(sqr(a) + sqr(b) + sqr(c));
+  a /= mag;
+  b /= mag;
+  c /= mag;
+  d = -a * pt1.x - b * pt1.y - c * pt1.z;
+  /* compute the distance from the plane to the Point */
+  d1 = a * thePoint.x + b * thePoint.y + c * thePoint.z + d;
+  return d1;
+
+} // gmDistanceFromPointToPlane
 //------------------------------------------------------------------------------
 /// \brief Find the plan projection intersection of two line segments.
 /// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
@@ -1736,6 +1809,37 @@ bool gmPointInOrOnBox2d(const Pt3d& a_bMin, const Pt3d& a_bMax, const Pt3d& a_pt
   return true;
 } // gmPointInOrOnBox2d
 //------------------------------------------------------------------------------
+/// \brief Find the distance along a segment for the location
+///        closest to a point.
+/// \param[in] a_pt1: First point of segment.
+/// \param[in] a_pt2: Second point of segment.
+/// \param[in] a_pt: Test point.
+/// \param[in] a_tol: Tolerance.
+/// \return Parametric value along the line of the point that is the closest
+///         location to the test point.
+//------------------------------------------------------------------------------
+double gmPtDistanceAlongSegment(const Pt3d& a_pt1,
+                                const Pt3d& a_pt2,
+                                const Pt3d& a_pt,
+                                const double a_tol)
+{
+  double dx, dy, t;
+
+  dx = a_pt2.x - a_pt1.x;
+  dy = a_pt2.y - a_pt1.y;
+
+  if ((dx == 0.0 && dy == 0.0) || (sqrt(dx * dx + dy * dy) <= a_tol))
+  {
+    t = -1.0;
+  }
+  else
+  {
+    t = ((a_pt.x - a_pt1.x) * dx + (a_pt.y - a_pt1.y) * dy) / (dx * dx + dy * dy);
+  }
+
+  return t;
+} // gmPtDistanceAlongSegment
+//------------------------------------------------------------------------------
 /// \brief Find the closest point on a segment to another point.
 /// \param[in] a_pt1: First endpoint of segment.
 /// \param[in] a_pt2: Second endpoint of segment.
@@ -1772,37 +1876,6 @@ double gmFindClosestPtOnSegment(const Pt3d& a_pt1,
   }
   return t;
 } // gmFindClosestPtOnSegment
-//------------------------------------------------------------------------------
-/// \brief Find the distance along a segment for the location
-///        closest to a point.
-/// \param[in] a_pt1: First point of segment.
-/// \param[in] a_pt2: Second point of segment.
-/// \param[in] a_pt: Test point.
-/// \param[in] a_tol: Tolerance.
-/// \return Parametric value along the line of the point that is the closest
-///         location to the test point.
-//------------------------------------------------------------------------------
-double gmPtDistanceAlongSegment(const Pt3d& a_pt1,
-                                const Pt3d& a_pt2,
-                                const Pt3d& a_pt,
-                                const double a_tol)
-{
-  double dx, dy, t;
-
-  dx = a_pt2.x - a_pt1.x;
-  dy = a_pt2.y - a_pt1.y;
-
-  if ((dx == 0.0 && dy == 0.0) || (sqrt(dx * dx + dy * dy) <= a_tol))
-  {
-    t = -1.0;
-  }
-  else
-  {
-    t = ((a_pt.x - a_pt1.x) * dx + (a_pt.y - a_pt1.y) * dy) / (dx * dx + dy * dy);
-  }
-
-  return t;
-} // gmPtDistanceAlongSegment
 //------------------------------------------------------------------------------
 /// \brief  Given minimum and maximum extents, compute a tolerance for the xy
 ///         plane to be used with geometric functions.
@@ -2242,6 +2315,32 @@ double gmPolygonArea(const Pt3d* pts, size_t npoints)
 
   return (area);
 } // gmPolygonArea
+//------------------------------------------------------------------------------
+/// \brief Find a 2d unit vector perpendicular to a 2D vector defined
+///        by two points.
+/// \note Ignores Z values of points when finding perpendicular vector.
+/// \returns The perpendicular unit vector. Z component is 0.
+//------------------------------------------------------------------------------
+void gmUnitVector2DPerp(const Pt3d& p1, const Pt3d& p2, Pt3d* v)
+{
+  double x, y, dist;
+
+  if (v)
+  {
+    /* determine 2d vector from p1 to p2 */
+    x = p2.x - p1.x;
+    y = p2.y - p1.y;
+    /* compute vector length */
+    dist = sqrt(sqr(x) + sqr(y));
+    /* get unit vector values */
+    x /= dist;
+    y /= dist;
+    /* return perpendicular vector */
+    v->x = y;
+    v->y = -x;
+    v->z = 0.0;
+  }
+} // gmUnitVector2DPerp
 //------------------------------------------------------------------------------
 /// \brief Converts an array of doubles to a VecPt3d with Z coordinates all 0.
 /// \note Useful in testing to create a VecPt3d from a C array of xy pairs.
