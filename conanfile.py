@@ -51,15 +51,17 @@ class XmsgridConan(ConanFile):
         if self.options.xms and self.settings.compiler.version == "12":
             self.requires("boost/1.60.0@aquaveo/testing")
             self.requires("zlib/1.2.11@conan/stable")
-        else:
+        elif self.settings.compiler == 'Visual Studio':
             self.requires("boost/1.66.0@conan/stable")
+        else:
+            self.requires("boost/1.73.0")
         # Pybind if not Visual studio 2013
         if not (self.settings.compiler == 'Visual Studio' \
                 and self.settings.compiler.version == "12") \
                 and self.options.pybind:
             self.requires("pybind11/2.2.2@aquaveo/stable")
 
-        self.requires("xmscore/[>=3.0.5,<4.0.0]@aquaveo/stable")
+        self.requires("xmscore/[>=3.2.2,<4.0.0]@aquaveo/stable")
 
     def build(self):
         cmake = CMake(self)
