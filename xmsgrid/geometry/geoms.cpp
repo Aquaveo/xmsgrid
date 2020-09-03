@@ -34,6 +34,10 @@
 namespace xms
 {
 //----- Constants / Enumerations -----------------------------------------------
+#define LEFT_MASK 1
+#define RIGHT_MASK 2
+#define BOTTOM_MASK 4
+#define TOP_MASK 8
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -43,6 +47,16 @@ namespace xms
 
 namespace
 {
+//------------------------------------------------------------------------------
+/// \brief Compute the cross product of two 2d vectors.
+/// \param v0: First vector.
+/// \param v1: Second vector.
+/// \return The cross product.
+//------------------------------------------------------------------------------
+static double gmiCross2D(const Pt2d& v0, const Pt2d& v1)
+{
+  return v0.x * v1.y - v0.y * v1.x;
+}
 //------------------------------------------------------------------------------
 /// \brief Test if an instance of a Turn_enum represents a right turn.
 /// \param turn: The Turn_enum instance to test.
@@ -57,6 +71,108 @@ bool isRightTurn(Turn_enum turn, bool includeCollinear)
   else
     return turn == TURN_RIGHT;
 } // isRightTurn
+//------------------------------------------------------------------------------
+/// \brief Adds a new point to an array of points, resizing the array if
+///        necessary.
+/// \author MJK.
+/// \param points: The array to add a point to.
+/// \param n: The index of the last point in the array. Initialized to the index
+///           of the new last point in the array.
+/// \param a: x coordinate of the new point.
+/// \param b: y coordinate of the new point.
+/// \param numalloced: The size of the array. Initialized to the new size of
+///                    the array if the array is resized.
+/// \return Whether the operation could be completed.
+//------------------------------------------------------------------------------
+bool gmiOutputMpoint3Vert(Pt3d* points[], int* n, double a, double b, int* numalloced)
+{
+  (*n)++;
+  if (*n > *numalloced)
+  { /* See if array is big enough. If not, add some more */
+    *numalloced += 25;
+    *points = (Pt3d*)realloc(*points, *numalloced * sizeof(Pt3d));
+    if (!*points)
+    {
+      // gnNullMemoryErrorMessage("cpiOutputVert");
+      return false;
+    }
+  }
+  (*points)[(*n) - 1].x = a;
+  (*points)[(*n) - 1].y = b;
+  return true;
+} // gmiOutputMpoint3Vert
+//------------------------------------------------------------------------------
+/// \brief Find the plan projection intersection of two line segments.
+/// \note line v01 defined by points p0 and p1.
+///       line v23 defined by points p2 and p3.
+/// \param p0: First point on first line.
+/// \param p1: Second point on first line.
+/// \param p2: First point on second line.
+/// \param p3: Second point on second line.
+/// \param xi: x coordinate of intersection point.
+/// \param yi: y coordinate of intersection point.
+/// \param t01: % distance (0.0 to 1.0) of intersection on line 1 from p0.
+/// \param t23: % distance (0.0 to 1.0) of intersection on line 2 from p2.
+/// \return Whether the lines intersect.
+//------------------------------------------------------------------------------
+static bool gmiIntersectLines2D(const Pt3d& p0,
+  const Pt3d& p1,
+  const Pt3d& p2,
+  const Pt3d& p3,
+  double* xi,
+  double* yi,
+  double& t01,
+  double& t23)
+{
+  // Derivation Notes (Rob Zundel)
+  // Let vab be the vector from 2d point pa to point pb; OR vab = pb - pa;
+  // So v01 and v23 represent the vectors from points p0 to p1 and p2 to p3.
+  // Let pt be any point on v23 = p2 + t*v23.
+  // let cross(va, vb) = va.x*vb.y - vb.x*va.y
+  // At the intersection point pi (on v23), pi = p2 + i*v23
+  // then v0i is parallel to v01 and cross(v01,v0i) == 0,
+  // 0 = cross(v01,v0i) = v01.x*v0i.y - v01.y*v0i.x
+  //   = v01.x*(pi.y - p0.y) - v01.y*(pi.x - p0.x)
+  //   = v01.x*(p2.y + i*v23.y - p0.y) - v01.y*(p2.x + i*(v23.x) - p0.x)
+  //   = v01.x*(p2.y-p0.y) - v01.y*(p2.x-p0.x) + i*(v01.x*v23.y - v01.y*v23.x)
+  //    = v01.x* v02.y      - v01.y*v02.x       + i*(cross(v01,v23))
+  //   = cross(v01,v02) + i*cross(v01,v23)
+  // i = -cross(v01,v02) / cross(v01,v23)
+  //   = cross(v02,v01)/cross(v01,v23)
+
+  // for pj = p0 + j*(v01) as the point on v01 that intersect with v23
+  // 0 = cross(v23,v2j) = v23.x*v2j.y - v23.y*v2j.x
+  //   = v23.x*(pj-p2).y - v23.y*(pj-p2).x
+  //   = v23.x*(p0.y + j*v01.y - p2.y) - v23.y*(p0.x + j*v01.x - p2.x)
+  //   = v23.x*v20.y - v23.y*v20.x + j*(v23.x*v01.y - v23.y*v01.x)
+  //   = cross(v23,v20) + j*(cross(v23,v01))
+  // j = -cross(v23,v20) / cross(v23,v01) = cross(v20,v23) / cross(v23,v01)
+  //   =  cross(v02,v23) / cross(v01,v23)
+
+  Pt2d v01(p1);
+  v01 -= p0;
+  Pt2d v23(p3);
+  v23 -= p2;
+  Pt2d v02(p2);
+  v02 -= p0;
+
+  // The angle between the lines, and hence this cross product will be 0 if the
+  // lines are parallel.  Avoid division by zero.
+  double v01xv23 = gmiCross2D(v01, v23);
+  if (EQ_EPS(fabs(v01xv23), 0.0, DBL_EPSILON))
+  {
+    return false;
+  }
+  // t01,t23 are i,j in explanation above. Parameters of intersection points
+  // from p0 to p1 and from p2 to p3, respectively.
+  t01 = (v01xv23 ? gmiCross2D(v02, v23) / v01xv23 : 0);
+  t23 = (v01xv23 ? gmiCross2D(v02, v01) / v01xv23 : 0);
+
+  // compute intersection
+  *xi = p2.x + t23 * v23.x;
+  *yi = p2.y + t23 * v23.y;
+  return true;
+} // gmiIntersectLines2D
 }
 
 //------------------------------------------------------------------------------
@@ -245,6 +361,31 @@ double gmAngleBetween2DVectors(double dxp,
     theangle = 2 * XM_PI - theangle;
   return theangle;
 } // gmAngleBetween2DVectors
+//-----------------------------------------------------------------------------
+/// \brief Compute the counter-clockwise angle in radians between two vectors.
+/// \note Resulting angle will be in range [0, 2pi).
+/// \param v1: The first vector.
+/// \param v2: The second vector.
+/// \return The angle between vectors.
+//-----------------------------------------------------------------------------
+double gmAngleBetween3DVectors(const Pt3d& v1, const Pt3d& v2)
+{
+  double mag1, mag2, theangle, cosign;
+
+  mag1 = sqrt(v1.x * v1.x + v1.y * v1.y + v1.z * v1.z);
+  if (mag1 < 1e-20)
+    mag1 = 1e-20;
+  mag2 = sqrt(v2.x * v2.x + v2.y * v2.y + v2.z * v2.z);
+  if (mag2 < 1e-20)
+    mag2 = 1e-20;
+  cosign = (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) / (mag1 * mag2);
+  if (cosign > .99999)
+    cosign = 1.0;
+  if (cosign < -.99999)
+    cosign = -1.0;
+  theangle = acos(cosign);
+  return theangle;
+} // gmAngleBetween3DVectors
 //------------------------------------------------------------------------------
 /// \brief Compute the counter-clockwise angle, in radians, between the edges
 ///        defined by p1-p2 and p2-p3.
@@ -380,6 +521,32 @@ double gmPerpendicularAngle(const Pt3d& a_pt1, const Pt3d& a_pt2)
   return (theangle - (XM_PI / 2));
 } // gmPerpendicularAngle
 //------------------------------------------------------------------------------
+/// \brief Find a 2d unit vector perpendicular to a 2D vector defined
+///        by two points.
+/// \note Ignores Z values of points when finding perpendicular vector.
+/// \returns The perpendicular unit vector. Z component is 0.
+//------------------------------------------------------------------------------
+void gmUnitVector2DPerp(const Pt3d& p1, const Pt3d& p2, Pt3d* v)
+{
+  double x, y, dist;
+
+  if (v)
+  {
+    /* determine 2d vector from p1 to p2 */
+    x = p2.x - p1.x;
+    y = p2.y - p1.y;
+    /* compute vector length */
+    dist = sqrt(sqr(x) + sqr(y));
+    /* get unit vector values */
+    x /= dist;
+    y /= dist;
+    /* return perpendicular vector */
+    v->x = y;
+    v->y = -x;
+    v->z = 0.0;
+  }
+} // gmUnitVector2DPerp
+//------------------------------------------------------------------------------
 /// \brief Convert and map an angle to the range [0, 360) degrees.
 /// \note Angles that are too big or small are mapped to an equivalent angle
 ///       in range.
@@ -417,6 +584,37 @@ double gmConvertAngleToBetween0And360(double a_angle, bool a_InDegrees /*= true*
 
   return ang;
 } // gmConvertAngleToBetween0And360
+//------------------------------------------------------------------------------
+/// \brief Convert a counterclockwise angle starting on the positive x-axis to
+///        a clockwise angle starting on the positive y-axis, or vice versa.
+/// \note You can pass an angle in either form to get an angle in the other form
+///       back.
+/// \param a_angle: The angle to convert.
+/// \return The converted angle.
+///
+///  north_coord(-north_coord) = x_axis_coord(-x_axis_coord)
+///
+///                      0(0) = 90(-270)
+///                           |
+///                           |
+/// 270(-90) = 180(180) ------*------ 90(-270) = 0(0)
+///                           |
+///                           |
+///                  180(180) = 270(-90)
+//------------------------------------------------------------------------------
+void gmConvertAngleBetweenXAndNorth(double* a_angle)
+{
+  // put between 0 and 360
+  while (*a_angle < 0.0)
+    *a_angle += 360.0;
+  while (*a_angle > 360.0)
+    *a_angle -= 360.0;
+
+  if (*a_angle <= 90.0)
+    *a_angle = 90.0 - *a_angle;
+  else
+    *a_angle = 450.0 - *a_angle;
+} // gmConvertAngleBetweenXAndNorth
 //------------------------------------------------------------------------------
 /// \brief Determine if an angle is a left turn, a right turn, colinear 180
 ///        degrees, or colinear 0 degrees.
@@ -458,6 +656,75 @@ Turn_enum gmTurn(const Pt3d& a_v1, const Pt3d& a_v2, const Pt3d& a_v3, double a_
     return TURN_COLINEAR_180;
   return TURN_COLINEAR_0;
 } // gmTurn
+//------------------------------------------------------------------------------
+/// \brief Determine if angle v1-v2-v3 is a left turn.
+/// \note Collinear is counted as left if the angle is 180 degrees, but not 0.
+/// \param v1: The independent endpoint of the first line segment.
+/// \param v2: The shared endpoint.
+/// \param v3: The independent endpoint of the second line segment.
+/// \return Whether the angle is a left turn.
+//------------------------------------------------------------------------------
+bool gmLeftTurn(const Pt2d* v1, const Pt2d* v2, const Pt2d* v3)
+{
+  Pt3d p1, p2, p3;
+
+  p1.x = v1->x;
+  p1.y = v1->y;
+  p1.z = 0.0;
+  p2.x = v2->x;
+  p2.y = v2->y;
+  p2.z = 0.0;
+  p3.x = v3->x;
+  p3.y = v3->y;
+  p3.z = 0.0;
+  return gmLeftTurn(&p1, &p2, &p3);
+} // gmLeftTurn
+//------------------------------------------------------------------------------
+/// \brief Determine if angle v1-v2-v3 is a left turn.
+/// \note Collinear is counted as left if the angle is 180 degrees, but not 0.
+/// \param v1: The independent endpoint of the first line segment.
+/// \param v2: The shared endpoint.
+/// \param v3: The independent endpoint of the second line segment.
+/// \return Whether the angle is a left turn.
+//------------------------------------------------------------------------------
+bool gmLeftTurn(const Pt3d* v1, const Pt3d* v2, const Pt3d* v3)
+{
+  return (gmTurn(*v1, *v2, *v3) == TURN_LEFT || gmTurn(*v1, *v2, *v3) == TURN_COLINEAR_180);
+} // gmLeftTurn
+//------------------------------------------------------------------------------
+/// \brief Determine if angle v1-v2-v3 is a left turn.
+/// \note Collinear is not counted as a left turn.
+/// \param v1: The independent endpoint of the first line segment.
+/// \param v2: The shared endpoint.
+/// \param v3: The independent endpoint of the second line segment.
+/// \return Whether the angle is a left turn.
+//------------------------------------------------------------------------------
+bool gmStrictlyLeftTurn(const Pt3d* v1, const Pt3d* v2, const Pt3d* v3)
+{
+  return (gmTurn(*v1, *v2, *v3) == TURN_LEFT);
+} // gmStrictlyLeftTurn
+//------------------------------------------------------------------------------
+/// \brief Compute Cartesian coords given a triangle & Barycentric coords.
+/// \param p1: First vertex of the triangle.
+/// \param p2: Second vertex of the triangle.
+/// \param p3: Third vertex of the triangle.
+/// \param bary: Barycentric coordinates.
+/// \param cart: Cartesian coordinates.
+/// \return XM_SUCCESS, always
+//------------------------------------------------------------------------------
+int gmBaryToCart(const Pt3d* p1, const Pt3d* p2, const Pt3d* p3, const Pt3d* bary, Pt3d* cart)
+{
+  double x, y, z;
+
+  x = bary->x;
+  y = bary->y;
+  z = bary->z;
+
+  cart->x = x * p1->x + y * p2->x + z * p3->x;
+  cart->y = x * p1->y + y * p2->y + z * p3->y;
+  cart->z = x * p1->z + y * p2->z + z * p3->z;
+  return (XM_SUCCESS);
+} // gmBaryToCart
 //------------------------------------------------------------------------------
 /// \brief Compute the direction and coefficients of a triangle for use with
 ///        gmCartToBary.
@@ -734,6 +1001,19 @@ void gmCross3D(const Pt3d& a_vec1, const Pt3d& a_vec2, Pt3d* a_vec3)
   a_vec3->z = a_vec1.x * a_vec2.y - a_vec1.y * a_vec2.x;
 } // gmCross3D
 //------------------------------------------------------------------------------
+/// \brief Perform a dot product of two vectors.
+/// \note The dot product has the geometric interpretation as the length of the
+///       projection of a_vec1 onto the unit vector a_vec2 when the two vectors
+///       are placed so that their tails coincide.
+/// \param[in] a_vec1: First vector to dot.
+/// \param[in] a_vec2: Second vector to dot.
+/// \return The dot product.
+//------------------------------------------------------------------------------
+inline float gmDot3D(const Pt3f& vec1, const Pt3f& vec2)
+{
+  return (vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z);
+} // gmDot3D
+//------------------------------------------------------------------------------
 /// \brief Compute the dot product of two vectors.
 /// \note The dot product has the geometric interpretation as the length of the
 ///       projection of a_vec1 onto the unit vector a_vec2 when the two vectors
@@ -746,6 +1026,94 @@ inline double gmDot3D(const Pt3d& a_vec1, const Pt3d& a_vec2)
 {
   return (a_vec1.x * a_vec2.x + a_vec1.y * a_vec2.y + a_vec1.z * a_vec2.z);
 } // gmDot3D
+//------------------------------------------------------------------------------
+/// \brief Perform the operation sum = vec1 + scale * vec2
+/// \param scale: Scale value for vec2.
+/// \param vec1: Unscaled vector to add.
+/// \param vec2: Vector to scale and add.
+/// \param sum: Initialized to the result of the operation.
+/// \return XM_SUCCESS, always.
+//------------------------------------------------------------------------------
+int gmVectorAdd(double scale, const Pt3d& vec1, const Pt3d& vec2, Pt3d* sum)
+{
+  sum->x = vec1.x + scale * vec2.x;
+  sum->y = vec1.y + scale * vec2.y;
+  sum->z = vec1.z + scale * vec2.z;
+  return (XM_SUCCESS);
+}
+//------------------------------------------------------------------------------
+/// \brief Average two 3D points.
+/// \param a: The first point.
+/// \param b: The second point.
+/// \param result: Initialized to the average of a and b.
+/// \author   MJK
+//------------------------------------------------------------------------------
+void gmVectorAverage(const Pt3d& a, const Pt3d& b, Pt3d* result)
+{
+  result->x = (a.x + b.x) * 0.5;
+  result->y = (a.y + b.y) * 0.5;
+  result->z = (a.z + b.z) * 0.5;
+} // gmVectorAverage
+//------------------------------------------------------------------------------
+/// \brief Average two 4D points as if they were 3D points.
+/// \note: This only averages the location not the scalar value
+/// \param a: The first point.
+/// \param b: The second point.
+/// \param result: Initialized to the average of a and b.
+//------------------------------------------------------------------------------
+void gmVectorAverage(const Pt4d& a, const Pt4d& b, Pt4d* result)
+{
+  result->x = (a.x + b.x) * 0.5;
+  result->y = (a.y + b.y) * 0.5;
+  result->z = (a.z + b.z) * 0.5;
+} // gmVectorAverage
+//------------------------------------------------------------------------------
+/// \brief Rotate a 2D vector by an angle in degrees.
+/// \param in: The vector to rotate.
+/// \param a_angle: The angle to rotate the vector by.
+/// \param out: Initialized to the rotated vector.
+//------------------------------------------------------------------------------
+void gmVectorRotate2D(const Pt3d& in, double a_angle, Pt3d& out)
+{
+  double rad(a_angle * DEGREES_TO_RADIANS);
+  double cosangle(cos(rad));
+  double sinangle(sin(rad));
+  out.x = cosangle * in.x - sinangle * in.y;
+  out.y = sinangle * in.x + cosangle * in.y;
+} // gmVectorRotate2D
+//------------------------------------------------------------------------------
+/// \brief Perform the operation dif = vec1 - vec2
+/// \param vec1: Left hand side vector to subtract.
+/// \param vec2: Vector to subtract.
+/// \param dif: Initialized to the result of the operation.
+//------------------------------------------------------------------------------
+void gmVectorSubtract(const Pt3d* vec1, const Pt3d* vec2, Pt3d* dif)
+{
+  dif->x = vec1->x - vec2->x;
+  dif->y = vec1->y - vec2->y;
+  dif->z = vec1->z - vec2->z;
+} // gmVectorSubtract
+//------------------------------------------------------------------------------
+/// \brief Create a unit vector representing the direction from one
+///        point to another.
+/// \param p1: The point to point from.
+/// \param p2: The point to point to.
+/// \return A unit vector with x,y,z components representing the direction.
+//------------------------------------------------------------------------------
+Pt3d gmUnitVector(const Pt3d& p1, const Pt3d& p2)
+{
+  double d;
+  Pt3d vector;
+
+  vector = gmCreateVector(p1, p2);
+  d = sqrt(sqr(vector.x) + sqr(vector.y) + sqr(vector.z));
+  if (d < 1e-20)
+    d = 1e-20;
+  vector.x = vector.x / d;
+  vector.y = vector.y / d;
+  vector.z = vector.z / d;
+  return vector;
+} // gmUnitVector
 //------------------------------------------------------------------------------
 /// \brief Convert a magnitude and angle to xy components or vice versa.
 /// \param[in,out] a_x: Vector x component, either specified or calculated from
@@ -1048,6 +1416,492 @@ template int gmPointInPolygon2D<Pt3d>(const Pt3d* a_verts,
                                       const double a_y,
                                       const double a_tol);
 //------------------------------------------------------------------------------
+/// \brief Determine whether a point is inside, on, or outside a polygon.
+/// \note See unit tests. Doesn't check if point is actually in the plane of
+///       the polygon. You'd need gmDistanceFromPointToPlane for that.
+/// \param[in] a_verts: The polygon in CW or CCW order (doesn't matter which).
+/// \param[in] a_num:   Number of verts in a_verts.
+/// \param[in] a_x:     X coordinate of point to test.
+/// \param[in] a_y:     Y coordinate of point to test.
+/// \param[in] a_tol:   Tolerance.
+/// \return 1 if the point is inside the polygon, 0 if on, -1 if outside, -999
+///         on error.
+//------------------------------------------------------------------------------
+int gmPointInPolygon3DWithTol(const Pt3d& pt,
+  int nvtx,
+  const Pt3d* vertex,
+  const int* poly,
+  const Pt3d& nrm,
+  double tol)
+{
+  register int i, id0, id1;
+  register double diff, val;
+  int plndir, divdir, nmcrs1, nmcrs2;
+  double p0, p1, p2;
+  p0 = fabs(nrm.x);
+  p1 = fabs(nrm.y);
+  p2 = fabs(nrm.z);
+  if ((p0 <= p1) && (p0 <= p2))
+  {
+    plndir = 0;
+    if (p1 <= p2)
+      divdir = 1;
+    else
+      divdir = 2;
+  }
+  else if ((p1 <= p0) && (p1 <= p2))
+  {
+    plndir = 1;
+    if (p0 <= p2)
+      divdir = 0;
+    else
+      divdir = 2;
+  }
+  else
+  {
+    plndir = 2;
+    if (p0 <= p1)
+      divdir = 0;
+    else
+      divdir = 1;
+  }
+  /* init counters for edges above & below */
+  nmcrs1 = 0;
+  nmcrs2 = 0;
+  /* process each edge                        */
+  for (i = 0; i < nvtx; ++i)
+  {
+    id0 = poly[i];
+    if (i == nvtx - 1)
+      id1 = poly[0];
+    else
+      id1 = poly[i + 1];
+    if (plndir == 0)
+    {
+      /* case #1 and #2 - first vertex lies on
+      dividing plane                           */
+      if (fabs(vertex[id0].x - pt.x) <= tol)
+      {
+        if (fabs(vertex[id1].x - pt.x) <= tol)
+        {
+          if (divdir == 1)
+          {
+            if ((vertex[id0].y >= pt.y && vertex[id1].y <= pt.y) ||
+              (vertex[id0].y <= pt.y && vertex[id1].y >= pt.y))
+              return (0);
+          }
+          else
+          {
+            if ((vertex[id0].z >= pt.z && vertex[id1].z <= pt.z) ||
+              (vertex[id0].z <= pt.z && vertex[id1].z >= pt.z))
+              return (0);
+          }
+        }
+        else
+        {
+          if (divdir == 1)
+            diff = vertex[id0].y - pt.y;
+          else
+            diff = vertex[id0].z - pt.z;
+          if (fabs(diff) <= tol)
+            return (0);
+          else if (vertex[id0].x < vertex[id1].x)
+          {
+            if (diff > tol)
+              ++nmcrs1;
+            else
+              ++nmcrs2;
+          }
+        }
+      }
+      /* case #3 - second vertex of edge lies
+      on dividing plane                      */
+      else if (fabs(vertex[id1].x - pt.x) <= tol)
+      {
+        if (divdir == 1)
+          diff = vertex[id1].y - pt.y;
+        else
+          diff = vertex[id1].z - pt.z;
+        if (fabs(diff) <= tol)
+          return (0);
+        else if (vertex[id1].x < vertex[id0].x)
+        {
+          if (diff > tol)
+            ++nmcrs1;
+          else
+            ++nmcrs2;
+        }
+      }
+      /* case #4 - edge cleanly intersects
+      dividing plane                          */
+      else if ((vertex[id0].x < pt.x && vertex[id1].x > pt.x) ||
+        (vertex[id0].x > pt.x && vertex[id1].x < pt.x))
+      {
+        if (divdir == 1)
+        {
+          val = vertex[id0].y + (vertex[id1].y - vertex[id0].y) * (pt.x - vertex[id0].x) /
+            (vertex[id1].x - vertex[id0].x);
+          diff = val - pt.y;
+        }
+        else
+        {
+          val = vertex[id0].z + (vertex[id1].z - vertex[id0].z) * (pt.x - vertex[id0].x) /
+            (vertex[id1].x - vertex[id0].x);
+          diff = val - pt.z;
+        }
+        if (fabs(diff) <= tol)
+          return (0);
+        else if (diff > tol)
+          ++nmcrs1;
+        else
+          ++nmcrs2;
+      }
+    }
+    else if (plndir == 1)
+    {
+      /* case #1 and #2 - first vertex lies on
+      dividing plane                           */
+      if (fabs(vertex[id0].y - pt.y) <= tol)
+      {
+        if (fabs(vertex[id1].y - pt.y) <= tol)
+        {
+          if (divdir == 0)
+          {
+            if ((vertex[id0].x >= pt.x && vertex[id1].x <= pt.x) ||
+              (vertex[id0].x <= pt.x && vertex[id1].x >= pt.x))
+              return (0);
+          }
+          else
+          {
+            if ((vertex[id0].z >= pt.z && vertex[id1].z <= pt.z) ||
+              (vertex[id0].z <= pt.z && vertex[id1].z >= pt.z))
+              return (0);
+          }
+        }
+        else
+        {
+          if (divdir == 0)
+            diff = vertex[id0].x - pt.x;
+          else
+            diff = vertex[id0].z - pt.z;
+          if (fabs(diff) <= tol)
+            return (0);
+          else if (vertex[id0].y < vertex[id1].y)
+          {
+            if (diff > tol)
+              ++nmcrs1;
+            else
+              ++nmcrs2;
+          }
+        }
+      }
+      /* case #3 - second vertex of edge lies
+      on dividing plane                      */
+      else if (fabs(vertex[id1].y - pt.y) <= tol)
+      {
+        if (divdir == 0)
+          diff = vertex[id1].x - pt.x;
+        else
+          diff = vertex[id1].z - pt.z;
+        if (fabs(diff) <= tol)
+          return (0);
+        else if (vertex[id1].y < vertex[id0].y)
+        {
+          if (diff > tol)
+            ++nmcrs1;
+          else
+            ++nmcrs2;
+        }
+      }
+      /* case #4 - edge cleanly intersects
+      dividing plane                          */
+      else if ((vertex[id0].y < pt.y && vertex[id1].y > pt.y) ||
+        (vertex[id0].y > pt.y && vertex[id1].y < pt.y))
+      {
+        if (divdir == 0)
+        {
+          val = vertex[id0].x + (vertex[id1].x - vertex[id0].x) * (pt.y - vertex[id0].y) /
+            (vertex[id1].y - vertex[id0].y);
+          diff = val - pt.x;
+        }
+        else
+        {
+          val = vertex[id0].z + (vertex[id1].z - vertex[id0].z) * (pt.y - vertex[id0].y) /
+            (vertex[id1].y - vertex[id0].y);
+          diff = val - pt.z;
+        }
+        if (fabs(diff) <= tol)
+          return (0);
+        else if (diff > tol)
+          ++nmcrs1;
+        else
+          ++nmcrs2;
+      }
+    }
+    else
+    {
+      /* case #1 and #2 - first vertex lies on
+      dividing plane                           */
+      if (fabs(vertex[id0].z - pt.z) <= tol)
+      {
+        if (fabs(vertex[id1].z - pt.z) <= tol)
+        {
+          if (divdir == 1)
+          {
+            if ((vertex[id0].y >= pt.y && vertex[id1].y <= pt.y) ||
+              (vertex[id0].y <= pt.y && vertex[id1].y >= pt.y))
+              return (0);
+          }
+          else
+          {
+            if ((vertex[id0].x >= pt.x && vertex[id1].x <= pt.x) ||
+              (vertex[id0].x <= pt.x && vertex[id1].x >= pt.x))
+              return (0);
+          }
+        }
+        else
+        {
+          if (divdir == 1)
+            diff = vertex[id0].y - pt.y;
+          else
+            diff = vertex[id0].x - pt.x;
+          if (fabs(diff) <= tol)
+            return (0);
+          else if (vertex[id0].z < vertex[id1].z)
+          {
+            if (diff > tol)
+              ++nmcrs1;
+            else
+              ++nmcrs2;
+          }
+        }
+      }
+      /* case #3 - second vertex of edge lies
+      on dividing plane                      */
+      else if (fabs(vertex[id1].z - pt.z) <= tol)
+      {
+        if (divdir == 1)
+          diff = vertex[id1].y - pt.y;
+        else
+          diff = vertex[id1].x - pt.x;
+        if (fabs(diff) <= tol)
+          return (0);
+        else if (vertex[id1].z < vertex[id0].z)
+        {
+          if (diff > tol)
+            ++nmcrs1;
+          else
+            ++nmcrs2;
+        }
+      }
+      /* case #4 - edge cleanly intersects
+      dividing plane                          */
+      else if ((vertex[id0].z < pt.z && vertex[id1].z > pt.z) ||
+        (vertex[id0].z > pt.z && vertex[id1].z < pt.z))
+      {
+        if (divdir == 1)
+        {
+          val = vertex[id0].y + (vertex[id1].y - vertex[id0].y) * (pt.z - vertex[id0].z) /
+            (vertex[id1].z - vertex[id0].z);
+          diff = val - pt.y;
+        }
+        else
+        {
+          val = vertex[id0].x + (vertex[id1].x - vertex[id0].x) * (pt.z - vertex[id0].z) /
+            (vertex[id1].z - vertex[id0].z);
+          diff = val - pt.x;
+        }
+        if (fabs(diff) <= tol)
+          return (0);
+        else if (diff > tol)
+          ++nmcrs1;
+        else
+          ++nmcrs2;
+      }
+    }
+  }
+  nmcrs1 = nmcrs1 % 2;
+  nmcrs2 = nmcrs2 % 2;
+  if (nmcrs1 != nmcrs2)
+  {
+    printf("error here in CLPT");
+    return -999;
+  }
+  else if (nmcrs1 == 1)
+    return (1); /* return point in */
+  else
+    return (-1); /* return point out */
+} //  gmPointInPolygon3DWithTol
+//------------------------------------------------------------------------------
+/// \brief Check if two points are separated by a distance of at most radius.
+/// \param pt1: First point.
+/// \param pt2: Second point.
+/// \param radius: The maximum distance between the two points.
+/// \return Whether the two points are within the radius of each other.
+//------------------------------------------------------------------------------
+bool gmPointsInRadiusXY(const Pt3d& pt1, const Pt3d& pt2, double radius)
+
+{
+  return gmPointsInRadiusXY(pt1.x, pt1.y, pt2.x, pt2.y, radius);
+} // gmPointsInRadiusXY
+//------------------------------------------------------------------------------
+/// \brief Check if two points are separated by a distance of at most radius.
+/// \param x1: x coordinate of the first point.
+/// \param y1: y coordinate of the first point.
+/// \param x2: x coordinate of the second point.
+/// \param y2: y coordinate of the second point.
+/// \param radius: The maximum distance between the two points.
+/// \return Whether the two points are within radius of each other.
+//------------------------------------------------------------------------------
+bool gmPointsInRadiusXY(double x1, double y1, double x2, double y2, double radius)
+{
+  if ((fabs(x2 - x1) < radius) && (fabs(y2 - y1) < radius) && (Mdist(x2, y2, x1, y1) < radius))
+  {
+    return true;
+  }
+  return false;
+} // gmPointsInRadiusXY
+//------------------------------------------------------------------------------
+/// \brief Check whether a point is in a circumcircle defined by three other
+///        points.
+/// \param pt: The point to check.
+/// \param circumcirclePts: 3 points on the circumcircle.
+/// \return Whether the point is in, out of, or on the circle.
+//------------------------------------------------------------------------------
+PtInOutOrOn_enum gmPtInCircumcircle(const Pt3d& pt, Pt3d circumcirclePts[3])
+{
+  double xc, yc, r2;
+
+  if (!gmCircumcircleWithTol(&circumcirclePts[0], &circumcirclePts[1], &circumcirclePts[2], &xc,
+    &yc, &r2, gmXyTol()))
+  {
+    return PT_ERROR;
+  }
+  /* compute distance from (xc,yc) to pt squared */
+  double delta = sqrt(r2) - sqrt(sqr(pt.x - xc) + sqr(pt.y - yc));
+  if (fabs(delta) > gmXyTol())
+  {
+    if (delta > gmXyTol())
+    {
+      return PT_IN;
+    }
+    else
+    {
+      return PT_OUT;
+    }
+  }
+  return PT_ON;
+} // gmPtInCircumcircle
+//------------------------------------------------------------------------------
+/// \brief Check whether a point is in or on a box in 2D.
+/// \param[in] a_bMin Min x,y of box.
+/// \param[in] a_bMax Max x,y of box.
+/// \param[in] a_pt point being tested.
+/// \return Whether the point is on or on the box.
+//------------------------------------------------------------------------------
+bool gmPointInOrOnBox2d(const Pt3d& a_bMin, const Pt3d& a_bMax, const Pt3d& a_pt)
+{
+  if (a_pt.x < a_bMin.x || a_pt.y < a_bMin.y || a_pt.x > a_bMax.x || a_pt.y > a_bMax.y)
+    return false;
+  return true;
+} // gmPointInOrOnBox2d
+//------------------------------------------------------------------------------
+/// \brief Test whether a point is in a rectangle.
+/// \param thepoint: The point to test.
+/// \param tl: The top left corner of the rectangle.
+/// \param br: The bottom right corner of the rectangle.
+/// \return Whether the point is inside the rectangle.
+//------------------------------------------------------------------------------
+bool gmPointInRect(const Pt2i& thepoint, const Pt2i& tl, const Pt2i& br)
+{
+  if ((thepoint.x >= tl.x) && (thepoint.x <= br.x))
+  {
+    if ((thepoint.y >= tl.y) && (thepoint.y <= br.y))
+    {
+      return true;
+    }
+  }
+
+  return false;
+} // gmPointInRect
+//------------------------------------------------------------------------------
+/// \brief Test whether a point is in a rectangle.
+/// \param thepoint: The point to test.
+/// \param tl: The top left corner of the rectangle.
+/// \param br: The bottom right corner of the rectangle.
+/// \return Whether the point is inside the rectangle.
+//------------------------------------------------------------------------------
+bool gmPointInRect(const Pt3d& a_pt, const Pt3d& a_tl, const Pt3d& a_br)
+{
+  return (gmPointInRect2(a_pt, a_tl.y, a_br.y, a_tl.x, a_br.x) == true);
+} // gmPointInRect
+//------------------------------------------------------------------------------
+/// \brief Test whether a point is in a rectangle.
+/// \param thepoint: The point to test.
+/// \param etop: The top edge of the rectangle.
+/// \param ebottom: The bottom edge of the rectangle.
+/// \param eleft: The left edge of the rectangle.
+/// \param eright: The right edge of the rectangle.
+/// \return Whether the point is inside the rectangle.
+//------------------------------------------------------------------------------
+bool gmPointInRect2(const Pt3d& thepoint, double etop, double ebottom, double eleft, double eright)
+{
+  double swap;
+  if (etop < ebottom)
+  {
+    swap = etop;
+    etop = ebottom;
+    ebottom = swap;
+  }
+  if (eleft > eright)
+  {
+    swap = eleft;
+    eleft = eright;
+    eright = swap;
+  }
+
+  if ((thepoint.x <= eright) && (thepoint.x >= eleft))
+    if ((thepoint.y <= etop) && (thepoint.y >= ebottom))
+      return true;
+  return false;
+} // gmPointInRect2
+//------------------------------------------------------------------------------
+/// \brief Test whether a point is bounded by a triangle.
+/// \param[in] p1: First vertex of triangle.
+/// \param[in] p2: Second vertex of triangle.
+/// \param[in] p3: Third vertex of triangle.
+/// \param[in] x: x coordinate of point.
+/// \param[in] y: y coordinate of point.
+/// \return Whether the point is inside the triangle.
+//------------------------------------------------------------------------------
+bool gmPointInTriangle(const Pt3d* p1, const Pt3d* p2, const Pt3d* p3, double x, double y)
+{
+  return gmPointInTriangleWithTol(p1, p2, p3, x, y, gmXyTol());
+} // gmPointInTriangle
+//------------------------------------------------------------------------------
+/// \brief Test whether a point is bounded by a triangle.
+/// \param[in] p1: First vertex of triangle.
+/// \param[in] p2: Second vertex of triangle.
+/// \param[in] p3: Third vertex of triangle.
+/// \param[in] x: x coordinate of point.
+/// \param[in] y: y coordinate of point.
+/// \param[in] tol: Tolerance.
+/// \return Whether the point is inside the triangle.
+//------------------------------------------------------------------------------
+bool gmPointInTriangleWithTol(const Pt3d* p1,
+  const Pt3d* p2,
+  const Pt3d* p3,
+  double x,
+  double y,
+  double tol)
+{
+  if (gmInsideOrOnLineWithTol(p1, p2, p3, x, y, tol))
+    if (gmInsideOrOnLineWithTol(p2, p3, p1, x, y, tol))
+      if (gmInsideOrOnLineWithTol(p3, p1, p2, x, y, tol))
+        return true;
+  return false;
+} // gmPointInTriangleWithTol
+//------------------------------------------------------------------------------
 /// \brief Compute the minimum 2D distance from a point to a line segment.
 /// \note The closest point may be one of the endpoints of the segment.
 /// \param pt1: First point defining the line segment.
@@ -1158,6 +2012,124 @@ double gmXyDistanceSquared(const Pt3d& pt1, const Pt3d& pt2)
   return (sqr(pt1.x - pt2.x) + sqr(pt1.y - pt2.y));
 } // gmXyDistanceSqared
 //------------------------------------------------------------------------------
+/// \brief Compute the 3d distance between two points.
+/// \param p1: The first point.
+/// \param p2: The second point.
+/// \return The distance between the points.
+//------------------------------------------------------------------------------
+double gmXYZDistanceBetweenPoints(const Pt4d& p1, const Pt4d& p2)
+{
+  double dx(p1.x - p2.x);
+  double dy(p1.y - p2.y);
+  double dz(p1.z - p2.z);
+  double d(sqrt(dx * dx + dy * dy + dz * dz));
+  return (d);
+}
+//------------------------------------------------------------------------------
+/// \brief Compute the 3d distance between two points.
+/// \param p1: The first point.
+/// \param p2: The second point.
+/// \return The distance between the points.
+//------------------------------------------------------------------------------
+double gmXYZDistanceBetweenPoints(const Pt3d& p1, const Pt3d& p2)
+{
+  double dx(p1.x - p2.x);
+  double dy(p1.y - p2.y);
+  double dz(p1.z - p2.z);
+  double d(sqrt(dx * dx + dy * dy + dz * dz));
+  return (d);
+}
+//------------------------------------------------------------------------------
+/// \brief Compute the 3d distance squared between two points.
+/// \param p1: The first point.
+/// \param p2: The second point.
+/// \return The distance squared between the points.
+//------------------------------------------------------------------------------
+double gmXYZDistanceSquared(const Pt3d& p1, const Pt3d& p2)
+{
+  double dx, dy, dz, d;
+  dx = p1.x - p2.x;
+  dy = p1.y - p2.y;
+  dz = p1.z - p2.z;
+  d = dx * dx + dy * dy + dz * dz;
+  return (d);
+} // gmXYZDistanceSquared
+//------------------------------------------------------------------------------
+/// \brief Compute the great circle distance between two latitude/longitude
+///        points in meters.
+/// \param[in] a_pt1: Point1. x = longitude, y = latitude. Can be negative.
+/// \param[in] a_pt2: Point2. x = longitude, y = latitude. Can be negative.
+/// \return The great circle distance between the two points.
+//------------------------------------------------------------------------------
+double gmGreatCircleDistanceMeters(const Pt2d& a_pt1, const Pt2d& a_pt2)
+{
+  // See Haversine formula. Assumes the earth is a sphere.
+
+  const double kEarthRadiusMeters = 6.371e6;
+  // Convert degrees to radians
+  double lat1r = a_pt1.y * XM_PI / 180.0;
+  double lon1r = a_pt1.x * XM_PI / 180.0;
+  double lat2r = a_pt2.y * XM_PI / 180.0;
+  double lon2r = a_pt2.x * XM_PI / 180.0;
+  double u = sin((lat2r - lat1r) / 2);
+  double v = sin((lon2r - lon1r) / 2);
+  return 2.0 * kEarthRadiusMeters * asin(sqrt(u * u + cos(lat1r) * cos(lat2r) * v * v));
+} // gmGreatCircleDistanceMeters
+//------------------------------------------------------------------------------
+/// \brief Find the minimum distance between two lines, the two closest points
+///        on the lines, and the t values of those points.
+/// \param p0: A point on the first line.
+/// \param p1: Another point on the first line.
+/// \param q0: A point on the second line.
+/// \param q1: Another point on the second line.
+/// \param ip1: The point on the first line which is closest to the second line.
+/// \param ip2: The point on the second line which is closest to the first line.
+/// \param t: The t value for ip1.
+/// \param s: The t value for ip2.
+/// \param tol: Tolerance for geometric comparison.
+/// \return Distance between closest points if found, or -1 if lines parallel.
+//------------------------------------------------------------------------------
+double gmMinDistBetweenLinesWithTol(const Pt3d* p0,
+  const Pt3d* p1,
+  const Pt3d* q0,
+  const Pt3d* q1,
+  Pt3d* ip1,
+  Pt3d* ip2,
+  double* t,
+  double* s,
+  double tol)
+{
+  Pt3d u, v, r, d;
+  double ru, rv, uu, uv, vv, den;
+  /* generate vector from p0 to p1  */
+  gmVectorSubtract(p1, p0, &v);
+  /* generate vector from q0 to q1  */
+  gmVectorSubtract(q1, q0, &u);
+  /* generate vector from q0 to p0  */
+  gmVectorSubtract(q0, p0, &r);
+  /* compute dot products */
+  ru = gmDot3D(r, u);
+  rv = gmDot3D(r, v);
+  uu = gmDot3D(u, u);
+  uv = gmDot3D(u, v);
+  vv = gmDot3D(v, v);
+  /* compute denominator */
+  den = uv * uv - uu * vv;
+  /* see if the lines are parallel */
+  if (LT_EPS(fabs(den), tol, DBL_EPSILON))
+    return -1;
+  else
+  {
+    *t = (rv * uu - ru * uv) / den;
+    *s = -1 * (rv + (*t) * vv) / uv;
+    *t = *t * -1;
+    gmVectorAdd(*t, *p0, v, ip1);
+    gmVectorAdd(*s, *q0, u, ip2);
+    gmVectorSubtract(ip2, ip1, &d);
+    return gmDot3D(d, d);
+  }
+} // gmMinDistBetweenLines
+//------------------------------------------------------------------------------
 /// \brief Compute the minimum 3D distance from a point to a plane.
 /// \param pt1: First point defining the plane.
 /// \param pt2: Second point defining the plane.
@@ -1192,8 +2164,505 @@ double gmDistanceFromPointToPlane(const Pt3d& pt1,
   /* compute the distance from the plane to the Point */
   d1 = a * thePoint.x + b * thePoint.y + c * thePoint.z + d;
   return d1;
-
 } // gmDistanceFromPointToPlane
+//------------------------------------------------------------------------------
+/// \brief Clip a convex polygon in NDC space.
+/// \param npts: The number of points in the vertex array. Initialized to the
+///              number of points in the clipped vertex array.
+/// \param pts: Array of the polygon's vertices. Initialized to the array of the
+///             clipped polygon's vertices.
+//------------------------------------------------------------------------------
+void gmClipNDCPoly(int* npts, Pt4d* pts)
+{
+  register int i, k, tmpnpts;
+  double dx, dy, fracx, fracy;
+  double x0, y0, x1, y1;
+  Pt4d oldpts[10], *curr, *prev;
+
+  tmpnpts = *npts;
+  for (k = 1; k < 5; k++)
+  {
+    curr = prev = nullptr;
+    *npts = tmpnpts;
+    for (i = 0; i < tmpnpts; i++)
+    {
+      memcpy(&oldpts[i], &pts[i], sizeof(Pt4d));
+    }
+    tmpnpts = 0;
+    for (i = 1; i <= *npts; i++)
+    {
+      prev = &oldpts[i - 1];
+      if (i < *npts)
+        curr = &oldpts[i];
+      else
+        curr = &oldpts[0];
+      switch (k)
+      {
+      case 1: /* clip to x-min                            */
+        if (i > 0 && prev)
+        {
+          if ((curr->x > 0.0 && prev->x < 0.0) || (curr->x < 0.0 && prev->x > 0.0))
+          {
+            x0 = curr->x;
+            y0 = curr->y;
+            x1 = prev->x;
+            y1 = prev->y;
+            pts[tmpnpts].x = 0.0;
+            if (y0 == y1)
+              pts[tmpnpts].y = y0;
+            else
+            {
+              dx = x1 - x0;
+              dy = y1 - y0;
+              fracx = (0.0 - x0) / dx;
+              pts[tmpnpts].y = y0 + fracx * dy;
+              pts[tmpnpts].z = curr->z + fracx * (prev->z - curr->z);
+            }
+            tmpnpts++;
+          }
+        }
+        if (curr->x >= 0.0)
+        {
+          memcpy(&pts[tmpnpts], curr, sizeof(Pt4d));
+          tmpnpts++;
+        }
+        break;
+
+      case 2: /* clip to y-min                            */
+        if (i > 0 && prev)
+        {
+          if ((curr->y > 0.0 && prev->y < 0.0) || (curr->y < 0.0 && prev->y > 0.0))
+          {
+            x0 = curr->x;
+            y0 = curr->y;
+            x1 = prev->x;
+            y1 = prev->y;
+            pts[tmpnpts].y = 0.0;
+            if (x0 == x1)
+              pts[tmpnpts].x = x0;
+            else
+            {
+              dx = x1 - x0;
+              dy = y1 - y0;
+              fracy = (0.0 - y0) / dy;
+              pts[tmpnpts].x = x0 + fracy * dx;
+              pts[tmpnpts].z = curr->z + fracy * (prev->z - curr->z);
+            }
+            tmpnpts++;
+          }
+        }
+        if (curr->y >= 0.0)
+        {
+          memcpy(&pts[tmpnpts], curr, sizeof(Pt4d));
+          tmpnpts++;
+        }
+        break;
+
+      case 3: /* clip to x-max                            */
+        if (i > 0 && prev)
+        {
+          if ((curr->x > 1.0 && prev->x < 1.0) || (curr->x < 1.0 && prev->x > 1.0))
+          {
+            x0 = curr->x;
+            y0 = curr->y;
+            x1 = prev->x;
+            y1 = prev->y;
+            pts[tmpnpts].x = 1.0;
+            if (y0 == y1)
+              pts[tmpnpts].y = y0;
+            else
+            {
+              dx = x1 - x0;
+              dy = y1 - y0;
+              fracx = (1.0 - x0) / dx;
+              pts[tmpnpts].y = y0 + fracx * dy;
+              pts[tmpnpts].z = curr->z + fracx * (prev->z - curr->z);
+            }
+            tmpnpts++;
+          }
+        }
+        if (curr->x <= 1.0)
+        {
+          memcpy(&pts[tmpnpts], curr, sizeof(Pt4d));
+          tmpnpts++;
+        }
+
+        break;
+      case 4: /* clip to y-max                            */
+        if (i > 0 && prev)
+        {
+          if ((curr->y > 1.0 && prev->y < 1.0) || (curr->y < 1.0 && prev->y > 1.0))
+          {
+            x0 = curr->x;
+            y0 = curr->y;
+            x1 = prev->x;
+            y1 = prev->y;
+            pts[tmpnpts].y = 1.0;
+            if (x0 == x1)
+              pts[tmpnpts].x = x0;
+            else
+            {
+              dx = x1 - x0;
+              dy = y1 - y0;
+              fracy = (1.0 - y0) / dy;
+              pts[tmpnpts].x = x0 + fracy * dx;
+              pts[tmpnpts].z = curr->z + fracy * (prev->z - curr->z);
+            }
+            tmpnpts++;
+          }
+        }
+        if (curr->y <= 1.0)
+        {
+          memcpy(&pts[tmpnpts], curr, sizeof(Pt4d));
+          tmpnpts++;
+        }
+
+        break;
+      }
+    }
+  }
+  *npts = tmpnpts;
+} // gmClipNDCPoly
+//------------------------------------------------------------------------------
+/// \brief Clip a polygon to a rectangle.
+/// \author MJK
+/// \param pts: Array of vertices of the unclipped polygon.
+/// \param n: Number of vertices of the unclipped polygon.
+/// \param outpts: Initialized to the vertices in the clipped polygon.
+/// \param outCount: Initialized to the number of vertices in the
+///                  clipped polygon.
+/// \param xMax: Maximum x coordinate of bounding box.
+/// \param xMin: Minimum x coordinate of bounding box.
+/// \param yMax: Maximum y coordinate of bounding box.
+/// \param yMin: Minimum y coordinate of bounding box.
+/// \return: Whether the operation could be completed.
+//------------------------------------------------------------------------------
+bool gmClipMpoint3PolyToRect(Pt3d pts[],
+                             int n,
+                             Pt3d* outpts[],
+                             int* outCount,
+                             double xMax,
+                             double xMin,
+                             double yMax,
+                             double yMin)
+{
+  // Adapted from Computer Graphics Principles and Practice,
+  // Liang - Barsky algorithm on page 935-937.
+  // Modified to better handle horizontal and vertical lines.
+
+  double xIn, xOut, yIn, yOut;     /* Coordinates of entry and exit points */
+  double tOut1, tIn2, tOut2;       /* Parameter values of same */
+  double tInX, tOutX, tInY, tOutY; /* Parameter values for intersections */
+  double deltaX, deltaY;           /* Direction of edge */
+  int i, numalloced = 25;
+
+  *outCount = 0; /* Initialize output vertex counter */
+  /* Malloc a big chunk at first so we don't have to realloc for each point */
+  if (*outpts)
+  {
+    free(*outpts);
+    *outpts = nullptr;
+  }
+  *outpts = (Pt3d*)malloc(numalloced * sizeof(Pt3d));
+  if (!*outpts)
+  {
+    // gnNullMemoryErrorMessage("gmClipMpoint3PolyToRect");
+    return false;
+  }
+
+  for (i = 0; i < n; i++)
+  {
+    if (i < n - 1)
+    {
+      deltaX = pts[i + 1].x - pts[i].x; /* Determine direction of edge */
+      deltaY = pts[i + 1].y - pts[i].y;
+    }
+    else
+    {
+      deltaX = pts[0].x - pts[i].x;
+      deltaY = pts[0].y - pts[i].y;
+    }
+    if (deltaX > 0.0 || (deltaX == 0.0 && pts[i].x > xMax))
+    {
+      /* headed right */
+      xIn = xMin;
+      xOut = xMax;
+    }
+    else
+    {
+      /* headed left */
+      xIn = xMax;
+      xOut = xMin;
+    }
+    if (deltaY > 0.0 || (deltaY == 0.0 && pts[i].y > yMax))
+    {
+      /* headed up */
+      yIn = yMin;
+      yOut = yMax;
+    }
+    else
+    {
+      /* headed down */
+      yIn = yMax;
+      yOut = yMin;
+    }
+
+    /* Find the t values for the x and y exit points. */
+    if (deltaX != 0.0) /* non vertical line */
+      tOutX = (xOut - pts[i].x) / deltaX;
+    else if (pts[i].x <= xMax && xMin <= pts[i].x) /* vert. line in rectangle */
+      tOutX = XM_DBL_HIGHEST;
+    else /* vertical line outside the rectangle */
+      tOutX = XM_DBL_LOWEST;
+
+    if (deltaY != 0.0) /* non horizontal line */
+      tOutY = (yOut - pts[i].y) / deltaY;
+    else if (pts[i].y <= yMax && yMin <= pts[i].y) /* horiz. line in rectangle */
+      tOutY = XM_DBL_HIGHEST;
+    else /* horizontal line outside the rectangle */
+      tOutY = XM_DBL_LOWEST;
+
+    /* Order the two exit points */
+    tOut1 = Mmin(tOutX, tOutY);
+    tOut2 = Mmax(tOutX, tOutY);
+
+    if (tOut2 > 0.0)
+    {                    /* There could be output - compute tIn2. */
+      if (deltaX != 0.0) /* non vertical line */
+        tInX = (xIn - pts[i].x) / deltaX;
+      else                    /* vertical line */
+        tInX = XM_DBL_LOWEST; /* (negative infinity) */
+      if (deltaY != 0.0)      /* non horizontal line */
+        tInY = (yIn - pts[i].y) / deltaY;
+      else                    /* horizontal line */
+        tInY = XM_DBL_LOWEST; /* (negative infinity) */
+
+      tIn2 = Mmax(tInX, tInY);
+
+      if (tOut1 < tIn2)
+      { /* segment leaves rect before it enters */
+        if (0.0 < tOut1 && tOut1 <= 1.0)
+        {
+          /* Line crosses over intermediate corner region, add corner point */
+          if (tInX < tInY)
+            gmiOutputMpoint3Vert(outpts, outCount, xOut, yIn, &numalloced);
+          else
+            gmiOutputMpoint3Vert(outpts, outCount, xIn, yOut, &numalloced);
+        }
+      }
+      else
+      { /* Line crosses through window */
+        if (0.0 < tOut1 && tIn2 <= 1.0)
+        { /* Visible segment */
+          if (0.0 < tIn2)
+          {                  /* segment starts outside of rectangle */
+            if (tInX > tInY) /* clip to the Y boundary */
+              gmiOutputMpoint3Vert(outpts, outCount, xIn, pts[i].y + tInX * deltaY, &numalloced);
+            else /* clip to the X boundary */
+              gmiOutputMpoint3Vert(outpts, outCount, pts[i].x + tInY * deltaX, yIn, &numalloced);
+          }
+          else
+          { /* segment starts inside rectangle */
+          }
+          if (1.0 > tOut1)
+          {                    /* segment leaves the rectangle; needs a clip */
+            if (tOutX < tOutY) /* clip to the X boundary */
+              gmiOutputMpoint3Vert(outpts, outCount, xOut, pts[i].y + tOutX * deltaY, &numalloced);
+            else /* clip to the Y boundary */
+              gmiOutputMpoint3Vert(outpts, outCount, pts[i].x + tOutY * deltaX, yOut, &numalloced);
+          }
+          else
+          { /* segment ends inside rectangle, add next point */
+            if (i < n - 1)
+              gmiOutputMpoint3Vert(outpts, outCount, pts[i + 1].x, pts[i + 1].y, &numalloced);
+            else
+              gmiOutputMpoint3Vert(outpts, outCount, pts[0].x, pts[0].y, &numalloced);
+          }
+        }
+      }
+      if (0.0 < tOut2 && tOut2 <= 1.0) /* add corner point */
+        gmiOutputMpoint3Vert(outpts, outCount, xOut, yOut, &numalloced);
+    }
+  }
+  /* Get rid of any extra memory we may have allocated */
+  *outpts = (Pt3d*)realloc(*outpts, *outCount * sizeof(Pt3d));
+  return true;
+} // gmClipMpoint3PolyToRect
+//------------------------------------------------------------------------------
+/// \brief Get the Boundary Coordinates and OutCode for a 2D node.
+/// \author   Mark Belnap, Michael Kennard
+/// \param x: x coordinate of the node.
+/// \param y: y coordinate of the node.
+/// \param minx: Minimum x coordinate to clip to.
+/// \param maxx: Maximum x coordinate to clip to.
+/// \param miny: Minimum y coordinate to clip to.
+/// \param maxy: Maximum y coordinate to clip to.
+/// \return The clip codes in four bits of the int.
+//------------------------------------------------------------------------------
+int gmComputeClipCodes2(double x, double y, double minx, double maxx, double miny, double maxy)
+{
+  int OC = 0;
+
+  if (x - minx < 0.0)
+    OC = OC | LEFT_MASK; /* x is to the left of minx   */
+  if (maxx - x < 0.0)
+    OC = OC | RIGHT_MASK; /* x is to the right of maxx  */
+  if (y - miny < 0.0)
+    OC = OC | TOP_MASK; /* y is above the top of maxy */
+  if (maxy - y < 0.0)
+    OC = OC | BOTTOM_MASK; /* y is below the bottom maxy  */
+  return OC;
+} // gmComputeClipCodes2
+//------------------------------------------------------------------------------
+/// \brief Clip a line segment to fit inside a bounding box.
+/// \pre OC1 and OC2 are outcodes computed by gmComputeClipCodes2.
+/// \param x1: x coordinate of first endpoint of line segment. Initialized to
+///            clipped value.
+/// \param y1: y coordinate of first endpoint of line segment. Initialized to
+///            clipped value.
+/// \param x2: x coordinate of second endpoint of line segment. Initialized to
+///            clipped value.
+/// \param y2: y coordinate of second endpoint of line segment. Initialized to
+///            clipped value.
+/// \param OC1: OutCodes for the first endpoint, as computed
+///             by gmComputeClipCodes2.
+/// \param OC1: OutCodes for the second endpoint, as computed
+///             by gmComputeClipCodes2.
+/// \param minx: Minimum x coordinate to clip to.
+/// \param maxx: Maximum x coordinate to clip to.
+/// \param miny: Minimum y coordinate to clip to.
+/// \param maxy: Maximum y coordinate to clip to.
+/// \return XM_SUCCESS if the clipped line is within the bounding box and
+///         should be drawn, else XM_FAILURE.
+/// \author Mark Belnap
+//------------------------------------------------------------------------------
+int gmClipLine(double* x1,
+               double* y1,
+               double* x2,
+               double* y2,
+               int OC1,
+               int OC2,
+               double minx,
+               double maxx,
+               double miny,
+               double maxy)
+{
+  int out1, out2; /* whether point 1 or 2 is outside */
+                  /* of a particular side       */
+  double t;
+
+  /* trivially accept line if possible  */
+  if (!(OC1 | OC2))
+    return (XM_SUCCESS);
+  /* trivially reject line if possible  */
+  if (OC1 & OC2)
+    return (XM_FAILURE);
+  /*-------1---------2---------C---------c---------5---------6----------7-------*/
+  /* clip left side if necessary */
+  out1 = OC1 & LEFT_MASK;
+  out2 = OC2 & LEFT_MASK;
+  if (out1)
+  { /* point one is outside to the left */
+    t = (minx - *x1) / (*x2 - *x1);
+    *x1 = (1.0 - t) * (*x1) + t * (*x2);
+    *y1 = (1.0 - t) * (*y1) + t * (*y2);
+    OC1 = gmComputeClipCodes2(*x1, *y1, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  else if (out2)
+  { /* point two is outside to the left */
+    t = (minx - *x2) / (*x1 - *x2);
+    *x2 = (1.0 - t) * (*x2) + t * (*x1);
+    *y2 = (1.0 - t) * (*y2) + t * (*y1);
+    OC2 = gmComputeClipCodes2(*x2, *y2, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  /*-------1---------2---------C---------c---------5---------6----------7-------*/
+  /* clip right side if necessary */
+  out1 = OC1 & RIGHT_MASK;
+  out2 = OC2 & RIGHT_MASK;
+  if (out1)
+  { /* point one is outside to the right */
+    t = (*x1 - maxx) / (*x1 - *x2);
+    *x1 = (1.0 - t) * (*x1) + t * (*x2);
+    *y1 = (1.0 - t) * (*y1) + t * (*y2);
+    OC1 = gmComputeClipCodes2(*x1, *y1, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  else if (out2)
+  { /* point two is outside to the right */
+    t = (*x2 - maxx) / (*x2 - *x1);
+    *x2 = (1.0 - t) * (*x2) + t * (*x1);
+    *y2 = (1.0 - t) * (*y2) + t * (*y1);
+    OC2 = gmComputeClipCodes2(*x2, *y2, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  /*-------1---------2---------C---------c---------5---------6----------7-------*/
+  /* clip top side if necessary */
+  out1 = OC1 & TOP_MASK;
+  out2 = OC2 & TOP_MASK;
+  if (out1)
+  { /* point one is outside to the top */
+    t = (miny - *y1) / (*y2 - *y1);
+    *x1 = (1.0 - t) * (*x1) + t * (*x2);
+    *y1 = (1.0 - t) * (*y1) + t * (*y2);
+    OC1 = gmComputeClipCodes2(*x1, *y1, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  else if (out2)
+  { /* point two is outside to the top */
+    t = (miny - *y2) / (*y1 - *y2);
+    *x2 = (1.0 - t) * (*x2) + t * (*x1);
+    *y2 = (1.0 - t) * (*y2) + t * (*y1);
+    OC2 = gmComputeClipCodes2(*x2, *y2, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  /*-------1---------2---------C---------c---------5---------6----------7-------*/
+  /* clip bottom side if necessary */
+  out1 = OC1 & BOTTOM_MASK;
+  out2 = OC2 & BOTTOM_MASK;
+  if (out1)
+  { /* point one is outside to the bottom */
+    t = (*y1 - maxy) / (*y1 - *y2);
+    *x1 = (1.0 - t) * (*x1) + t * (*x2);
+    *y1 = (1.0 - t) * (*y1) + t * (*y2);
+    OC1 = gmComputeClipCodes2(*x1, *y1, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  else if (out2)
+  { /* point two is outside to the bottom */
+    t = (*y2 - maxy) / (*y2 - *y1);
+    *x2 = (1.0 - t) * (*x2) + t * (*x1);
+    *y2 = (1.0 - t) * (*y2) + t * (*y1);
+    OC2 = gmComputeClipCodes2(*x2, *y2, minx, maxx, miny, maxy);
+    if (!(OC1 | OC2)) /* trivially accept line if possible  */
+      return (XM_SUCCESS);
+    if (OC1 & OC2) /* trivially reject line if possible  */
+      return (XM_FAILURE);
+  }
+  return XM_SUCCESS;
+} // gmClipLine
 //------------------------------------------------------------------------------
 /// \brief Find the plan projection intersection of two line segments.
 /// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
@@ -1347,112 +2816,213 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
   return true;
 } // gmIntersectLineSegmentsWithTol
 //------------------------------------------------------------------------------
-/// \brief Determine if a line segment intersects a triangle.
-/// \param[in] a_pt1: First endpoint of the line segment.
-/// \param[in] a_pt2: Second endpoint of the line segment.
-/// \param[in] a_t0: First vertex defining a triangle.
-/// \param[in] a_t1: Second vertex defining a triangle.
-/// \param[in] a_t2: Third vertex defining a triangle.
-/// \param[out] a_IntersectPt: Initialized to the point of intersection, if
-///                            it exists.
-/// \return -1 if triangle is degenerate (a point or a line)
-///          0 if line does not intersect triangle
-///          1 if line does intersect triangle
-///          2 if line and triangle are in the same plane
-//
-// Copyright 2001, softSurfer (www.softsurfer.com)
-//   This code may be freely used and modified for any purpose providing that
-//   this copyright notice is included with it.  SoftSurfer makes no warranty
-//   for this code, and cannot be held liable for any real or imagined damage
-//   resulting from its use.  Users of this code must verify correctness for
-//   their application.
-// http://geometryalgorithms.com/Archive/algorithm_0105/algorithm_0105.htm
-//------------------------------------------------------------------------------
-int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
-  const Pt3d& a_pt2,
-  const Pt3d& a_t0,
-  const Pt3d& a_t1,
-  const Pt3d& a_t2,
-  Pt3d& a_IntersectPt)
+/// \brief Find the plan projection intersection of two line segments.
+/// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
+///        segment 2 = two1,two2  = two1 + mu (two2 - two1).
+/// \param one1: First point on segment 1.
+/// \param one2: Second point on segment 1.
+/// \param two1: First point on segment 2.
+/// \param two2: Second point on segment 2.
+/// \param xi: Initialized to the x coord of intersection.
+/// \param yi: Initialized to the y coord of intersection.
+/// \param zi1: Initialized to the z coord of intersection on segment 1.
+/// \param zi2: Initialized to the z coord of intersection on segemnt 2.
+/// \param: Ignored.
+/// \return Whether the line segments intersect.
+bool gmIntersectLineSegmentsNoTol(const Pt3d& one1,
+                                  const Pt3d& one2,
+                                  const Pt3d& two1,
+                                  const Pt3d& two2,
+                                  double* xi,
+                                  double* yi,
+                                  double* zi1,
+                                  double* zi2,
+                                  double)
 {
-  double a, b, r;
-  Pt3d dir, n, NullVector(0.0, 0.0, 0.0), u, v, w, w0;
-
-  // get the triangle edge vectors and plane normal
-  u = a_t1 - a_t0;
-  v = a_t2 - a_t0;
-  gmCross3D(u, v, &n);
-
-  // check if the triangle is degenerate
-  if (n == NullVector)
+  return gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, xi, yi, zi1, zi2, 0.0);
+} // gmIntersectLineSegmentsNoTol
+//------------------------------------------------------------------------------
+/// \brief Finds the intersection of a 2d line with a 2d line segment.
+/// \param p1: First point on line segment.
+/// \param p2: Second point on line segment.
+/// \param l1: First point on line.
+/// \param l2: Second point on line.
+/// \param inter: Point of intersection.
+/// \return Whether the line and segment intersect.
+//------------------------------------------------------------------------------
+bool gmIntersectSegmentWithLine(const Pt2d& p1,
+                                const Pt2d& p2,
+                                const Pt2d& l1,
+                                const Pt2d& l2,
+                                Pt2d* inter)
+{
+  return gmIntersectSegmentWithLine(p1, p2, l1, l2, inter, gmXyTol());
+}
+//------------------------------------------------------------------------------
+/// \brief Finds the intersection of a 2d line with a 2d line segment.
+/// \param p1: First point on line segment.
+/// \param p2: Second point on line segment.
+/// \param l1: First point on line.
+/// \param l2: Second point on line.
+/// \param inter: Point of intersection.
+/// \param tol: Ignored.
+/// \return Whether the line and segment intersect.
+//------------------------------------------------------------------------------
+bool gmIntersectSegmentWithLine(const Pt2d& p1,
+                                const Pt2d& p2,
+                                const Pt2d& l1,
+                                const Pt2d& l2,
+                                Pt2d* inter,
+                                double /*tol*/)
+{
+  double a1(p2.x - p1.x), b1(p2.y - p1.y), a2(l2.x - l1.x), b2(l2.y - l1.y);
+  /* see if lines are parallel */
+  double cross((a1 * b2) - (b1 * a2));
+  // AKZ 3/7/2011 - changed to compare to zero avoids divide by ZERO but
+  //                handles small vectors
+  if (cross == 0.0)
+    return false;
+  /* compute t of intersection on segment */
+  double t1((b2 * (l1.x - p1.x) + a2 * (p1.y - l1.y)) / cross);
+  /* make sure intersection is on segment */
+  if ((t1 < 0) || (t1 > 1))
+    return false;
+  /* compute intersection */
+  inter->x = p1.x + t1 * a1;
+  inter->y = p1.y + t1 * b1;
+  return true;
+} // gmIntersectSegmentWithLine
+//------------------------------------------------------------------------------
+/// \brief Finds the intersection of a 2d line with a 2d line segment.
+/// \param p1: First point on line segment.
+/// \param p2: Second point on line segment.
+/// \param l1: First point on line.
+/// \param l2: Second point on line.
+/// \param inter: Point of intersection.
+/// \return Whether the line and segment intersect.
+//------------------------------------------------------------------------------
+bool gmIntersectSegmentWithLine(const Pt3d& p1,
+                                const Pt3d& p2,
+                                const Pt3d& l1,
+                                const Pt3d& l2,
+                                Pt3d* inter)
+{
+  return gmIntersectSegmentWithLine(p1, p2, l1, l2, inter, gmXyTol());
+}
+//------------------------------------------------------------------------------
+/// \brief Finds the intersection of a 2d line with a 2d line segment.
+/// \param p1: First point on line segment.
+/// \param p2: Second point on line segment.
+/// \param l1: First point on line.
+/// \param l2: Second point on line.
+/// \param inter: Point of intersection.
+/// \param tol: Tolerance for geometric comparison.
+/// \return Whether the line and segment intersect.
+//------------------------------------------------------------------------------
+bool gmIntersectSegmentWithLine(const Pt3d& p1,
+                                const Pt3d& p2,
+                                const Pt3d& l1,
+                                const Pt3d& l2,
+                                Pt3d* inter,
+                                double tol)
+{
+  Pt2d pt1(p1);
+  Pt2d pt2(p2);
+  Pt2d ln1(l1);
+  Pt2d ln2(l2);
+  Pt2d intertemp;
+  // call the mpoint2 version
+  bool ok(gmIntersectSegmentWithLine(pt1, pt2, ln1, ln2, &intertemp, tol));
+  inter->x = intertemp.x;
+  inter->y = intertemp.y;
+  inter->z = 0.0;
+  return ok;
+} // gmIntersectSegmentWithLine
+//------------------------------------------------------------------------------
+/// \brief Find the plan projection intersection of two lines.
+/// \param one1: First point on first line.
+/// \param one2: Second point on first line.
+/// \param two1: First point on second line.
+/// \param two2: Second point on second line.
+/// \param xi: x coordinate of intersection point.
+/// \param yi: y coordinate of intersection point.
+/// \param tol: Ignored.
+/// \return Whether the lines intersect.
+//------------------------------------------------------------------------------
+bool gmIntersectLines(const Pt3d& one1,
+                      const Pt3d& one2,
+                      const Pt3d& two1,
+                      const Pt3d& two2,
+                      double* xi,
+                      double* yi,
+                      double /*tol*/)
+{
+  double onet(0.0), twot(0.0);
+  return gmiIntersectLines2D(one1, one2, two1, two2, xi, yi, onet, twot);
+} // gmIntersectLines
+//------------------------------------------------------------------------------
+/// \brief Find the plan projection intersection of two lines.
+/// \param one1: First point on first line.
+/// \param one2: Second point on first line.
+/// \param two1: First point on second line.
+/// \param two2: Second point on second line.
+/// \param xi: x coordinate of intersection point.
+/// \param yi: y coordinate of intersection point.
+/// \param zi: z coordinate of intersection point.
+/// \param tol: Ignored.
+/// \return Whether the lines intersect.
+//------------------------------------------------------------------------------
+bool gmIntersectLines(const Pt3d& one1,
+                      const Pt3d& one2,
+                      const Pt3d& two1,
+                      const Pt3d& two2,
+                      double* xi,
+                      double* yi,
+                      double* zi,
+                      double /*tol*/)
+{
+  double c1(two2.z - two1.z);
+  double onet(0.0), twot(0.);
+  if (gmiIntersectLines2D(one1, one2, two1, two2, xi, yi, onet, twot))
   {
-    return -1;
+    *zi = two1.z + twot * c1;
+    return true;
   }
-
-  // get the ray direction vector
-  dir = a_pt2 - a_pt1;
-  w0 = a_pt1 - a_t0;
-  a = -gmDot3D(n, w0);
-  b = gmDot3D(n, dir);
-
-  // see if ray is parallel to the triangle
-  if (fabs(b) < XM_ZERO_TOL)
+  return false;
+} // gmIntersectLines
+//------------------------------------------------------------------------------
+/// \brief Find the plan projection intersection of two lines.
+/// \param one1: First point on line 1.
+/// \param one2: Second point on line 1.
+/// \param two1: First point on line 2.
+/// \param two2: Second point on line 2.
+/// \param xi: x coordinate of intersection point.
+/// \param yi: y coordinate of intersection point.
+/// \param zi: z coordinate of intersection point on line 1.
+/// \param onet: % distance (0.0 to 1.0) of intersection on line 1 from p0.
+/// \param twot: % distance (0.0 to 1.0) of intersection on line 2 from p2.
+/// \return Whether the two lines intersect.
+//------------------------------------------------------------------------------
+bool gmIntersectLines(const Pt3d& one1,
+                      const Pt3d& one2,
+                      const Pt3d& two1,
+                      const Pt3d& two2,
+                      double* xi,
+                      double* yi,
+                      double* zi,
+                      double& onet,
+                      double& twot,
+                      double /*tol*/)
+{
+  onet = twot = 0.0;
+  if (gmiIntersectLines2D(one1, one2, two1, two2, xi, yi, onet, twot))
   {
-    // see if ray lies in triangle plane
-    if (a == 0)
-    {
-      return 2;
-    }
-    // else ray is disjoint from the triangle plane
-    else
-    {
-      return 0;
-    }
+    double c1(two2.z - two1.z);
+    *zi = two1.z + twot * c1;
+    return true;
   }
-
-  // get the intersection point or ray with triangle plane
-  r = a / b;
-
-  // see if there is an intersection
-  // if (r < 0.0 || r > 1.0) {
-  if (r < -FLT_EPSILON || r > 1.0 + FLT_EPSILON)
-  {
-    return 0;
-  }
-
-  // intersect point of ray and plane
-  a_IntersectPt = a_pt1 + dir * r;
-
-  // see if the intersection is inside of the triangle
-  double D, uu, uv, vv, wu, wv;
-
-  uu = gmDot3D(u, u);
-  uv = gmDot3D(u, v);
-  vv = gmDot3D(v, v);
-  w = a_IntersectPt - a_t0;
-  wu = gmDot3D(w, u);
-  wv = gmDot3D(w, v);
-  D = uv * uv - uu * vv;
-
-  // get the test parametric coords
-  double s, t;
-
-  s = (uv * wv - vv * wu) / D;
-  if (s < 0.0 || s > 1.0)
-  {
-    // the intersect point is outside the triangle
-    return 0;
-  }
-  t = (uv * wu - uu * wv) / D;
-  if (t < 0.0 || (s + t) > 1.0)
-  {
-    // the intersect point is outside the triangle
-    return 0;
-  }
-
-  // the intersect point is inside the triangle
-  return 1;
-} // gmIntersectTriangleAndLineSegment
+  return false;
+} // gmIntersectLines
 //------------------------------------------------------------------------------
 /// \brief Check whether two plan projection line segments intersect.
 /// \note segment 1 = one1,one2  = one1 + lambda(one2 - one1)
@@ -1542,6 +3112,533 @@ bool gmLinesCross(const Pt3d& a_segment1Point1,
   return (result1 * result2 < 0 && result3 * result4 < 0);
 } // gmLinesCross
 //------------------------------------------------------------------------------
+/// \brief Determine if a line segment intersects a triangle.
+/// \param[in] a_pt1: First endpoint of the line segment.
+/// \param[in] a_pt2: Second endpoint of the line segment.
+/// \param[in] a_t0: First vertex defining a triangle.
+/// \param[in] a_t1: Second vertex defining a triangle.
+/// \param[in] a_t2: Third vertex defining a triangle.
+/// \param[out] a_IntersectPt: Initialized to the point of intersection, if
+///                            it exists.
+/// \return -1 if triangle is degenerate (a point or a line)
+///          0 if line does not intersect triangle
+///          1 if line does intersect triangle
+///          2 if line and triangle are in the same plane
+//
+// Copyright 2001, softSurfer (www.softsurfer.com)
+//   This code may be freely used and modified for any purpose providing that
+//   this copyright notice is included with it.  SoftSurfer makes no warranty
+//   for this code, and cannot be held liable for any real or imagined damage
+//   resulting from its use.  Users of this code must verify correctness for
+//   their application.
+// http://geometryalgorithms.com/Archive/algorithm_0105/algorithm_0105.htm
+//------------------------------------------------------------------------------
+int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
+                                      const Pt3d& a_pt2,
+                                      const Pt3d& a_t0,
+                                      const Pt3d& a_t1,
+                                      const Pt3d& a_t2,
+                                      Pt3d& a_IntersectPt)
+{
+  double a, b, r;
+  Pt3d dir, n, NullVector(0.0, 0.0, 0.0), u, v, w, w0;
+
+  // get the triangle edge vectors and plane normal
+  u = a_t1 - a_t0;
+  v = a_t2 - a_t0;
+  gmCross3D(u, v, &n);
+
+  // check if the triangle is degenerate
+  if (n == NullVector)
+  {
+    return -1;
+  }
+
+  // get the ray direction vector
+  dir = a_pt2 - a_pt1;
+  w0 = a_pt1 - a_t0;
+  a = -gmDot3D(n, w0);
+  b = gmDot3D(n, dir);
+
+  // see if ray is parallel to the triangle
+  if (fabs(b) < XM_ZERO_TOL)
+  {
+    // see if ray lies in triangle plane
+    if (a == 0)
+    {
+      return 2;
+    }
+    // else ray is disjoint from the triangle plane
+    else
+    {
+      return 0;
+    }
+  }
+
+  // get the intersection point or ray with triangle plane
+  r = a / b;
+
+  // see if there is an intersection
+  // if (r < 0.0 || r > 1.0) {
+  if (r < -FLT_EPSILON || r > 1.0 + FLT_EPSILON)
+  {
+    return 0;
+  }
+
+  // intersect point of ray and plane
+  a_IntersectPt = a_pt1 + dir * r;
+
+  // see if the intersection is inside of the triangle
+  double D, uu, uv, vv, wu, wv;
+
+  uu = gmDot3D(u, u);
+  uv = gmDot3D(u, v);
+  vv = gmDot3D(v, v);
+  w = a_IntersectPt - a_t0;
+  wu = gmDot3D(w, u);
+  wv = gmDot3D(w, v);
+  D = uv * uv - uu * vv;
+
+  // get the test parametric coords
+  double s, t;
+
+  s = (uv * wv - vv * wu) / D;
+  if (s < 0.0 || s > 1.0)
+  {
+    // the intersect point is outside the triangle
+    return 0;
+  }
+  t = (uv * wu - uu * wv) / D;
+  if (t < 0.0 || (s + t) > 1.0)
+  {
+    // the intersect point is outside the triangle
+    return 0;
+  }
+
+  // the intersect point is inside the triangle
+  return 1;
+} // gmIntersectTriangleAndLineSegment
+//------------------------------------------------------------------------------
+/// \brief Test whether a 3d ray intersects a 3d triangle.
+/// \note Algorithm taken from Graphics Gems I.
+/// \pre Triangle vertices must be in counter clockwise order.
+/// \param origin: Origin of the ray.
+/// \param vert1: A point on the ray.
+/// \param v30: First vertex of the triangle.
+/// \param v31: Second vertex of the triangle.
+/// \param v32: Third vertex of the triangle.
+/// \param theisect: Initialized to the point where the ray intersects the
+///                  triangle, if they intersect. Value is undefined otherwise.
+/// \return Whether the ray intersects the triangle.
+//------------------------------------------------------------------------------
+bool gmLineAndTriangleIntersect(const Pt3d& origin,
+                                const Pt3d& vert1,
+                                const Pt3d& v30,
+                                const Pt3d& v31,
+                                const Pt3d& v32,
+                                Pt3d* theisect /*NULL*/)
+{
+  Pt3d vector;
+  double t, d, denom;
+  double u0, u1, u2, v0, v1, v2;
+  double alpha, beta;
+  Pt3d normal, isect;
+  Pt3d v20, v21, v22, isect2;
+  bool inter;
+  int plane;
+  double abx, aby, abz;
+
+  /* convert the line segment into a ray */
+
+  vector.x = vert1.x - origin.x;
+  vector.y = vert1.y - origin.y;
+  vector.z = vert1.z - origin.z;
+
+  /* determine the plane coefficients */
+
+  normal = gmComputePlaneNormal(v30, v31, v32);
+  d = -normal.x * v30.x - normal.y * v30.y - normal.z * v30.z;
+
+  /* detrmine the ray intersection with the plane of the triangle */
+  denom = gmDot3D(normal, vector);
+  if (denom == 0.0) // orthogonal vectors no unique intersection
+    return false;
+  t = -(d + gmDot3D(normal, origin)) / denom;
+  isect.x = origin.x + vector.x * t;
+  isect.y = origin.y + vector.y * t;
+  isect.z = origin.z + vector.z * t;
+
+  if (theisect)
+    *theisect = isect;
+  /* now determine if the intersection point was inside triangle */
+  /* map the triangle to the best 2d plane */
+
+  abx = fabs(normal.x);
+  aby = fabs(normal.y);
+  abz = fabs(normal.z);
+  if (GTEQ_EPS(abx, aby, FLT_EPSILON) && GTEQ_EPS(abx, abz, FLT_EPSILON))
+    plane = 0;
+  else if (GTEQ_EPS(aby, abx, FLT_EPSILON) && GTEQ_EPS(aby, abz, FLT_EPSILON))
+    plane = 1;
+  else
+    plane = 2;
+
+  v20 = gmProjectVectorToPlane(v30, plane);
+  v21 = gmProjectVectorToPlane(v31, plane);
+  v22 = gmProjectVectorToPlane(v32, plane);
+  isect2 = gmProjectVectorToPlane(isect, plane);
+
+  u0 = isect2.x - v20.x;
+  v0 = isect2.y - v20.y;
+  u1 = v21.x - v20.x;
+  u2 = v22.x - v20.x;
+  v1 = v21.y - v20.y;
+  v2 = v22.y - v20.y;
+
+  if (EQ_EPS(u1, 0.0, FLT_EPSILON))
+  {
+    beta = u0 / u2;
+    if (GTEQ_EPS(beta, 0.0, FLT_EPSILON) && LTEQ_EPS(beta, 1.0, FLT_EPSILON))
+    {
+      alpha = (v0 - beta * v2) / v1;
+      inter = ((alpha >= 0.) && ((alpha + beta) <= 1.));
+    }
+    else
+      inter = false;
+  }
+  else
+  {
+    beta = (v0 * u1 - u0 * v1) / (v2 * u1 - u2 * v1);
+    if (GTEQ_EPS(beta, 0.0, FLT_EPSILON) && LTEQ_EPS(beta, 1.0, FLT_EPSILON))
+    {
+      alpha = (u0 - beta * u2) / u1;
+      inter = (GTEQ_EPS(alpha, 0.0, FLT_EPSILON) && LTEQ_EPS((alpha + beta), 1.0, FLT_EPSILON));
+    }
+    else
+      inter = false;
+  }
+  return (inter);
+
+} // gmLineAndTriangleIntersect
+//------------------------------------------------------------------------------
+/// \brief Find the points of intersection of a line segment with a sphere.
+/// \param a_l1: First endpoint of the line segment.
+/// \param a_l2: Second endpoint of the line segment.
+/// \param a_sc: Center of the sphere.
+/// \param a_r: Radius of the sphere.
+/// \param a_pts: Initialized to contain the points of intersection. May have
+///               0, 1, or 2 values depending on number of intersections.
+//------------------------------------------------------------------------------
+void gmSphereLineIntersection(const Pt3d& a_l1,
+                              const Pt3d& a_l2,
+                              const Pt3d& a_sc,
+                              double a_r,
+                              VecPt3d& a_pts)
+{
+  // This function returns a pointer array which first index indicates
+  // the number of intersection point, followed by coordinate pairs.
+  a_pts.clear();
+
+  double a, b, c, i;
+
+  a = sqr(a_l2.x - a_l1.x) + sqr(a_l2.y - a_l1.y) + sqr(a_l2.z - a_l1.z);
+  b = 2 * ((a_l2.x - a_l1.x) * (a_l1.x - a_sc.x) + (a_l2.y - a_l1.y) * (a_l1.y - a_sc.y) +
+           (a_l2.z - a_l1.z) * (a_l1.z - a_sc.z));
+  c = sqr(a_sc.x) + sqr(a_sc.y) + sqr(a_sc.z) + sqr(a_l1.x) + sqr(a_l1.y) + sqr(a_l1.z) -
+      2 * (a_sc.x * a_l1.x + a_sc.y * a_l1.y + a_sc.z * a_l1.z) - sqr(a_r);
+  i = b * b - 4 * a * c;
+
+  if (LT_EPS(i, 0.0, DBL_EPSILON))
+  {
+    // no intersection
+  }
+  else if (EQ_EPS(i, 0.0, DBL_EPSILON))
+  {
+    // one intersection
+    double mu = -b / (2 * a);
+    a_pts.push_back(Pt3d(a_l1.x + mu * (a_l2.x - a_l1.x), a_l1.y + mu * (a_l2.y - a_l1.y),
+                         a_l1.z + mu * (a_l2.z - a_l1.z)));
+  }
+  else // i > 0.0
+  {
+    // two intersections
+
+    // first intersection
+    double mu = (-b + sqrt(sqr(b) - 4 * a * c)) / (2 * a);
+    a_pts.push_back(Pt3d(a_l1.x + mu * (a_l2.x - a_l1.x), a_l1.y + mu * (a_l2.y - a_l1.y),
+                         a_l1.z + mu * (a_l2.z - a_l1.z)));
+
+    // second intersection
+    mu = (-b - sqrt(sqr(b) - 4 * a * c)) / (2 * a);
+    a_pts.push_back(Pt3d(a_l1.x + mu * (a_l2.x - a_l1.x), a_l1.y + mu * (a_l2.y - a_l1.y),
+                         a_l1.z + mu * (a_l2.z - a_l1.z)));
+  }
+} // gmSphereLineIntersection
+
+//------------------------------------------------------------------------------
+/// \brief Check whether any intersections between a plane and aconvex polygon
+///        occurs.
+/// \param pln: Coefficients in the plane equation. Ordered a, b, c, d.
+/// \param nnodes: Ignored.
+/// \param poly: Polygon vertices.
+/// \param tripln: Plane equation for triangle.
+/// \param seg: Coordinates of intx points.
+/// \param tol: Tolerance for geometric comparison.
+/// \return 0 if no intersection
+///         1 if intersection
+///         2 if polygon lies on the plane (up)
+///         3 if polygon lies on the plane (down)
+//------------------------------------------------------------------------------
+int gmIntersectPlnWithPolWithTol(const double pln[4],
+                                 int /*nnodes*/,
+                                 Pt3d* poly,
+                                 const double tripln[4],
+                                 Pt3d seg[2],
+                                 double tol)
+{
+  int npts, stat;
+  double d1, d2, d3, len1, len2, len3, percent;
+  Pt3d *pt1, *pt2, *pt3, polvec, plnvec, segvec, lftvec;
+  /* get local copy of plane direction vector*/
+  plnvec.x = pln[0];
+  plnvec.y = pln[1];
+  plnvec.z = pln[2];
+  /* check for polygon laying on the plane   */
+  if (fabs(tripln[0] - pln[0]) < tol && fabs(tripln[1] - pln[1]) < tol &&
+      fabs(tripln[2] - pln[2]) < tol && fabs(tripln[3] - pln[3]) < tol)
+    return (2);
+  if (fabs(tripln[0] + pln[0]) < tol && fabs(tripln[1] + pln[1]) < tol &&
+      fabs(tripln[2] + pln[2]) < tol && fabs(tripln[3] + pln[3]) < tol)
+    return (3);
+  /* get distance for the 3 pts from plane */
+  pt1 = &poly[0];
+  d1 = gmDot3D(plnvec, *pt1) + pln[3];
+  len1 = fabs(d1);
+  pt2 = &poly[1];
+  d2 = gmDot3D(plnvec, *pt2) + pln[3];
+  len2 = fabs(d2);
+  pt3 = &poly[2];
+  d3 = gmDot3D(plnvec, *pt3) + pln[3];
+  len3 = fabs(d3);
+  npts = 0;
+  /* check first edge for an intersection */
+  if (d1 * d2 < 0.0 && len1 > tol && len2 > tol)
+  {
+    /* clean intersection */
+    percent = len1 / (len1 + len2);
+    seg[npts].x = pt1->x + percent * (pt2->x - pt1->x);
+    seg[npts].y = pt1->y + percent * (pt2->y - pt1->y);
+    seg[npts].z = pt1->z + percent * (pt2->z - pt1->z);
+    ++npts;
+  }
+  else if (len1 < tol && len2 < tol)
+  {
+    /* polygon edge lies on plane */
+    seg[0].x = pt1->x;
+    seg[0].y = pt1->y;
+    seg[0].z = pt1->z;
+    seg[1].x = pt2->x;
+    seg[1].y = pt2->y;
+    seg[1].z = pt2->z;
+    npts = 2;
+  }
+  else if (len1 < tol)
+  {
+    /* polygon edge starts on plane */
+    seg[npts].x = pt1->x;
+    seg[npts].y = pt1->y;
+    seg[npts].z = pt1->z;
+    ++npts;
+  }
+  /* check second edge for an intersection */
+  if (d2 * d3 < 0.0 && len2 > tol && len3 > tol)
+  {
+    /* clean intersection */
+    percent = len2 / (len2 + len3);
+    seg[npts].x = pt2->x + percent * (pt3->x - pt2->x);
+    seg[npts].y = pt2->y + percent * (pt3->y - pt2->y);
+    seg[npts].z = pt2->z + percent * (pt3->z - pt2->z);
+    ++npts;
+  }
+  else if (len2 < tol && len3 < tol)
+  {
+    /* polygon edge lies on plane */
+    seg[0].x = pt2->x;
+    seg[0].y = pt2->y;
+    seg[0].z = pt2->z;
+    seg[1].x = pt3->x;
+    seg[1].y = pt3->y;
+    seg[1].z = pt3->z;
+    npts = 2;
+  }
+  else if (len2 < tol)
+  {
+    /* polygon edge starts on plane */
+    seg[npts].x = pt2->x;
+    seg[npts].y = pt2->y;
+    seg[npts].z = pt2->z;
+    ++npts;
+  }
+  /* check third edge for an intersection */
+  if (d3 * d1 < 0.0 && len3 > tol && len1 > tol)
+  {
+    /* clean intersection */
+    percent = len3 / (len3 + len1);
+    seg[npts].x = pt3->x + percent * (pt1->x - pt3->x);
+    seg[npts].y = pt3->y + percent * (pt1->y - pt3->y);
+    seg[npts].z = pt3->z + percent * (pt1->z - pt3->z);
+    ++npts;
+  }
+  else if (len3 < tol && len1 < tol)
+  {
+    /* polygon edge lies on plane */
+    seg[0].x = pt3->x;
+    seg[0].y = pt3->y;
+    seg[0].z = pt3->z;
+    seg[1].x = pt1->x;
+    seg[1].y = pt1->y;
+    seg[1].z = pt1->z;
+    npts = 2;
+  }
+  else if (len3 < tol)
+  {
+    /* polygon edge starts on plane */
+    seg[npts].x = pt3->x;
+    seg[npts].y = pt3->y;
+    seg[npts].z = pt3->z;
+    ++npts;
+  }
+
+  if (npts < 2)
+    stat = 0;
+  else
+  {
+    /* make sure line direction is right */
+    segvec.x = seg[1].x - seg[0].x;
+    polvec.x = tripln[0];
+    segvec.y = seg[1].y - seg[0].y;
+    polvec.y = tripln[1];
+    segvec.z = seg[1].z - seg[0].z;
+    polvec.z = tripln[2];
+    gmCross3D(segvec, polvec, &lftvec);
+    d1 = gmDot3D(lftvec, plnvec);
+    if (d1 < 0.0)
+    { /* wrong direction, swap */
+      segvec.x = seg[0].x;
+      segvec.y = seg[0].y;
+      segvec.z = seg[0].z;
+      seg[0].x = seg[1].x;
+      seg[0].y = seg[1].y;
+      seg[0].z = seg[1].z;
+      seg[1].x = segvec.x;
+      seg[1].y = segvec.y;
+      seg[1].z = segvec.z;
+    }
+    stat = 1;
+  }
+  return (stat);
+} // gmIntersectPlnWithPolWithTol
+//------------------------------------------------------------------------------
+/// \brief Determines whether a point is inside, outside, or on a plane defined
+///        by three points.
+/// \pre Points must not be coincident.
+/// \param point1: First point defining the plane.
+/// \param point2: Second point defining the plane.
+/// \param point3: Third point defining the plane.
+/// \param oppositepoint: A point on the "inside" of the plane.
+/// \param x: x coordinate of a point to test.
+/// \param y: y coordinate of a point to test.
+/// \param z: z coordinate of a point to test.
+/// \param tolerance: Tolerance for geometric comparison.
+/// \return 0 if the point is on the plane
+///         1 if the point is on the same side of the plane as oppositepoint
+///         2 if the point is on the opposite side of the plane from oppositepoint
+//------------------------------------------------------------------------------
+int gmClassifyPointFromPlane(const Pt3d& point1,
+                             const Pt3d& point2,
+                             const Pt3d& point3,
+                             const Pt3d& oppositepoint,
+                             double x,
+                             double y,
+                             double z,
+                             double tolerance)
+{
+  double a, b, c, d;
+  Pt3d vec1, vec2, pt;
+  double mag;
+
+  vec1.x = point1.x - point2.x;
+  vec1.y = point1.y - point2.y;
+  vec1.z = point1.z - point2.z;
+  vec2.x = point3.x - point2.x;
+  vec2.y = point3.y - point2.y;
+  vec2.z = point3.z - point2.z;
+  a = vec1.y * vec2.z - vec1.z * vec2.y;
+  b = vec1.z * vec2.x - vec1.x * vec2.z;
+  c = vec1.x * vec2.y - vec1.y * vec2.x;
+  mag = sqrt(sqr(a) + sqr(b) + sqr(c));
+  a /= mag;
+  b /= mag;
+  c /= mag;
+  d = -a * point2.x - b * point2.y - c * point2.z;
+
+  pt.x = x;
+  pt.y = y;
+  pt.z = z;
+  return (gmClassifyPointFromPlane(a, b, c, d, oppositepoint, pt, tolerance));
+} // gmClassifyPointFromPlane
+//------------------------------------------------------------------------------
+/// \brief Determines whether a point is inside, outside, or on a plane defined
+///        by its plane coefficients.
+/// \param a: a coefficient in the plane's equation.
+/// \param b: b coefficient in the plane's equation.
+/// \param c: c coefficient in the plane's equation.
+/// \param d: d constant in the plane's equation.
+/// \param oppositepoint: A point on the "inside" of the plane.
+/// \param pt: The point to test.
+/// \param tolerance: Tolerance for geometric comparison.
+/// \return 0 if the point is on the plane
+///         1 if the point is on the same side of the plane as oppositepoint
+///         2 if the point is on the opposite side of the plane from oppositepoint
+//------------------------------------------------------------------------------
+int gmClassifyPointFromPlane(double a,
+                             double b,
+                             double c,
+                             double d,
+                             const Pt3d& oppositepoint,
+                             const Pt3d& pt,
+                             double tolerance)
+{
+  double d1, d2;
+  /* compute distance from plane to Point */
+  d1 = a * pt.x + b * pt.y + c * pt.z + d;
+  if (fabs(d1) <= tolerance)
+    return (0); /* On plane */
+                /* compute distance from plane to oppositepoint */
+  d2 = a * oppositepoint.x + b * oppositepoint.y + c * oppositepoint.z + d;
+  if (((d1 < 0.0) && (d2 < 0.0)) || ((d1 > 0.0) && (d2 > 0.0)))
+    return (1); /* Inside plane */
+  else
+    return (2); /* Outside plane */
+} // gmClassifyPointFromPlane
+//------------------------------------------------------------------------------
+/// \brief Test if a point is on a line segment.
+/// \note For simple test of colinearity, call gmOnLine or gmColinear.
+/// \param p1: First endpoint of the segment.
+/// \param p2: Second endpoint of the segment.
+/// \param x: x coordinate of the point to test.
+/// \param y: y coordinate of the point to test.
+/// \return Whether the point is on the line segment.
+//------------------------------------------------------------------------------
+bool gmOnLineAndBetweenEndpoints(const Pt3d* p1, const Pt3d* p2, const double x, const double y)
+{
+  if ((Mmin(p1->x, p2->x) - gmXyTol() <= x && Mmax(p1->x, p2->x) + gmXyTol() >= x) &&
+    (Mmin(p1->y, p2->y) - gmXyTol() <= y && Mmax(p1->y, p2->y) + gmXyTol() >= y))
+    return gmOnLine(p1, p2, x, y);
+  else
+    return false;
+} // gmOnLineAndBetweenEndpoints
+//------------------------------------------------------------------------------
 /// \brief Check if a point is on a line segment.
 /// \note For simple test of colinearity, call gmOnLineWithTol or gmColinear.
 /// \param a_pt1: First location defining segment.
@@ -1552,10 +3649,10 @@ bool gmLinesCross(const Pt3d& a_segment1Point1,
 /// \return Whether the point (x,y) is on the line segment.
 //------------------------------------------------------------------------------
 bool gmOnLineAndBetweenEndpointsWithTol(const Pt3d& a_pt1,
-  const Pt3d& a_pt2,
-  const double a_x,
-  const double a_y,
-  double a_tol)
+                                        const Pt3d& a_pt2,
+                                        const double a_x,
+                                        const double a_y,
+                                        double a_tol)
 {
   if ((Mmin(a_pt1.x, a_pt2.x) - a_tol <= a_x && Mmax(a_pt1.x, a_pt2.x) + a_tol >= a_x) &&
     (Mmin(a_pt1.y, a_pt2.y) - a_tol <= a_y && Mmax(a_pt1.y, a_pt2.y) + a_tol >= a_y))
@@ -1563,6 +3660,92 @@ bool gmOnLineAndBetweenEndpointsWithTol(const Pt3d& a_pt1,
   else
     return false;
 } // gmOnLineAndBetweenEndpointsWithTol
+//------------------------------------------------------------------------------
+/// \brief Test if a point is in the middle third of a line segment.
+/// \param v1: The point to test.
+/// \param v2: The first endpoint of the segment.
+/// \param v3: The second endpoint of the segment.
+/// \param tol: Tolerance for geometric comparison.
+//------------------------------------------------------------------------------
+bool gmMiddleThird(const Pt3d* v1, const Pt3d* v2, const Pt3d* v3)
+{
+  return gmMiddleThirdWithTol(*v1, *v2, *v3, gmXyTol());
+} // gmMiddleThird
+//------------------------------------------------------------------------------
+/// \brief Test if a point is in the middle third of a line segment.
+/// \param v1: The point to test.
+/// \param v2: The first endpoint of the segment.
+/// \param v3: The second endpoint of the segment.
+/// \param tol: Tolerance for geometric comparison.
+//------------------------------------------------------------------------------
+bool gmMiddleThirdWithTol(const Pt3d& v1, const Pt3d& v2, const Pt3d& v3, double tol)
+{
+  double dist, m1, m2, dx, dy, b1, b2; /* y = mx + b */
+  double fval;
+  Pt3d pt, p1, p2;
+
+  /* get distance and other parameters */
+  dist = gm2DDistanceToLineSegmentWithTol(&v2, &v3, v1.x, v1.y, tol);
+  dx = v3.x - v2.x;
+  dy = v3.y - v2.y;
+  if (dist > Mdist(v3.x, v3.y, v2.x, v2.y) / 3.0)
+    return false;
+  /* get test point on line */
+  if (dist <= tol)
+  {
+    pt.x = v1.x;
+    pt.y = v1.y;
+  }
+  else if (dx == 0.0)
+  {
+    pt.x = v2.x;
+    pt.y = v1.y;
+  }
+  else if (dy == 0.0)
+  {
+    pt.y = v2.y;
+    pt.x = v1.x;
+  }
+  else
+  {
+    /* find intersection of lines */
+    m1 = dy / dx;
+    b1 = v3.y - m1 * v3.x;
+    m2 = -1 / m1;
+    b2 = v1.y - m2 * v1.x;
+    pt.x = (b2 - b1) / (m1 - m2);
+    pt.y = m1 * pt.x + b1;
+  }
+  /* get control points on line */
+  p1.x = v2.x + (dx / 3.0);
+  p1.y = v2.y + (dy / 3.0);
+  p2.x = v3.x - (dx / 3.0);
+  p2.y = v3.y - (dy / 3.0);
+  if ((p1.x > p2.x && p1.y < p2.y) || (p1.y > p2.y && p1.x < p2.x))
+  {
+#define SWAP(a, b, c) (c = a, a = b, b = c) ///< Swaps
+    SWAP(p1.x, p2.x, fval);
+  }
+  /* check if pt is between p1 and p2 */
+  if ((pt.x <= p2.x && pt.x >= p1.x) && (pt.y <= p2.y && pt.y >= p1.y) ||
+    (pt.x <= p1.x && pt.x >= p2.x) && (pt.y <= p1.y && pt.y >= p2.y))
+    return true;
+  else
+    return false;
+} // gmMiddleThirdWithTol
+//------------------------------------------------------------------------------
+/// \brief Test if a point is on a line.
+/// \note Robust collinear test requires use of gmColinear.
+/// \param p1: A point on the line.
+/// \param p2: Another point on the line.
+/// \param x: x coordinate of the point to test.
+/// \param y: y coordinate of the point to test.
+/// \return Whether the point is on the line.
+//------------------------------------------------------------------------------
+bool gmOnLine(const Pt3d* p1, const Pt3d* p2, const double x, const double y)
+{
+  return gmOnLineWithTol(*p1, *p2, x, y, gmXyTol());
+} // gmOnLine
 //------------------------------------------------------------------------------
 /// \brief Check if a point is on a line.
 /// \note Assumes points defining the line aren't the same.
@@ -1601,6 +3784,24 @@ bool gmOnLineWithTol(const Pt3d& p1,
     return fabs(d) <= tol;
   }
 } // gmOnLineWithTol
+//------------------------------------------------------------------------------
+/// \brief Test if a point is on a line segment or on the same side of
+///        the segment as another point.
+/// \param[in] p1: First endpoint of the segment.
+/// \param[in] p2: Second endpoint of the segment.
+/// \param[in] oppositepoint: Point on the "in" side of the segment.
+/// \param[in] x: x coordinate of point.
+/// \param[in] y: y coordinate of point.
+/// \return Whether the point is inside or on the line.
+//------------------------------------------------------------------------------
+bool gmInsideOrOnLine(const Pt3d* p1,
+                      const Pt3d* p2,
+                      const Pt3d* oppositepoint,
+                      const double x,
+                      const double y)
+{
+  return gmInsideOrOnLineWithTol(p1, p2, oppositepoint, x, y, gmXyTol());
+} // gmInsideOrOnLine
 //------------------------------------------------------------------------------
 /// \brief Test if a point is on a line segment or on the same side of
 ///        the segment as another point.
@@ -1740,74 +3941,54 @@ bool gmInsideOfLineWithTol(const Pt3d& a_vertex1,
     else
       return false;
   }
-} // gmInsideOfLine
+} // gmInsideOfLineWithTol
 //------------------------------------------------------------------------------
-/// \brief Check whether a point is in a circumcircle defined by three other
-///        points.
-/// \param pt: The point to check.
-/// \param circumcirclePts: 3 points on the circumcircle.
-/// \return Whether the point is in, out of, or on the circle.
+/// \brief Returns the squared distance from a point to the nearest point on a
+///        line segment.
+/// \param p1: First endpoint of the line segment.
+/// \param p2: Second endpoint of the line segment.
+/// \param q: Point to find distance from.
+/// \param thepoint: Initialized to the nearest point on the line segment to q.
+/// \return The distance squared from q to the line segment.
 //------------------------------------------------------------------------------
-PtInOutOrOn_enum gmPtInCircumcircle(const Pt3d& pt, Pt3d circumcirclePts[3])
+double gmNearestPointOnLineSegment2D(const Pt3d& p1, const Pt3d& p2, const Pt3d& q, Pt3d* thepoint)
 {
-  double xc, yc, r2;
+  Pt3d deltap1p2(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z),
+    deltaqp1(q.x - p1.x, q.y - p1.y, q.z - p1.z);
+  double t(0.0);
+  // compute t of line segment perpendicular to line segment and q
+  if ((deltap1p2.x * deltap1p2.x + deltap1p2.y * deltap1p2.y) != 0.0)
+  {
+    t = ((deltap1p2.x * deltaqp1.x + deltap1p2.y * deltaqp1.y) /
+         (deltap1p2.x * deltap1p2.x + deltap1p2.y * deltap1p2.y));
+  }
+  else
+  {
+    // p1 and p2 are at the same location--return the squared distance
+    // between p1 and q
+    deltap1p2 = Pt3d(q.x - p1.x, q.y - p1.y, 0.0);
+    return (deltap1p2.x * deltap1p2.x + deltap1p2.y * deltap1p2.y);
+  }
 
-  if (!gmCircumcircleWithTol(&circumcirclePts[0], &circumcirclePts[1], &circumcirclePts[2], &xc,
-    &yc, &r2, gmXyTol()))
+  if (t >= 1.0)
   {
-    return PT_ERROR;
+    // point is outside line segment but closest to p2
+    *thepoint = p2;
   }
-  /* compute distance from (xc,yc) to pt squared */
-  double delta = sqrt(r2) - sqrt(sqr(pt.x - xc) + sqr(pt.y - yc));
-  if (fabs(delta) > gmXyTol())
+  else if (t <= 0.0)
   {
-    if (delta > gmXyTol())
-    {
-      return PT_IN;
-    }
-    else
-    {
-      return PT_OUT;
-    }
+    // point is outside line segment but closest to p1
+    *thepoint = p1;
   }
-  return PT_ON;
-} // gmPtInCircumcircle
-//------------------------------------------------------------------------------
-/// \brief Test whether a point is bounded by a triangle.
-/// \param[in] p1: First vertex of triangle.
-/// \param[in] p2: Second vertex of triangle.
-/// \param[in] p3: Third vertex of triangle.
-/// \param[in] x: x coordinate of point.
-/// \param[in] y: y coordinate of point.
-/// \param[in] tol: Tolerance.
-/// \return Whether the point is inside the triangle.
-//------------------------------------------------------------------------------
-bool gmPointInTriangleWithTol(const Pt3d* p1,
-  const Pt3d* p2,
-  const Pt3d* p3,
-  double x,
-  double y,
-  double tol)
-{
-  if (gmInsideOrOnLineWithTol(p1, p2, p3, x, y, tol))
-    if (gmInsideOrOnLineWithTol(p2, p3, p1, x, y, tol))
-      if (gmInsideOrOnLineWithTol(p3, p1, p2, x, y, tol))
-        return true;
-  return false;
-} // gmPointInTriangleWithTol
-//------------------------------------------------------------------------------
-/// \brief Check whether a point is in or on a box in 2D.
-/// \param[in] a_bMin Min x,y of box.
-/// \param[in] a_bMax Max x,y of box.
-/// \param[in] a_pt point being tested.
-/// \return Whether the point is on or on the box.
-//------------------------------------------------------------------------------
-bool gmPointInOrOnBox2d(const Pt3d& a_bMin, const Pt3d& a_bMax, const Pt3d& a_pt)
-{
-  if (a_pt.x < a_bMin.x || a_pt.y < a_bMin.y || a_pt.x > a_bMax.x || a_pt.y > a_bMax.y)
-    return false;
-  return true;
-} // gmPointInOrOnBox2d
+  else
+  {
+    // compute the nearest point on the line
+    *thepoint = p1 + t * deltap1p2;
+  }
+  // compute the distance
+  deltap1p2 = Pt3d(q.x - thepoint->x, q.y - thepoint->y, 0.0);
+  return (deltap1p2.x * deltap1p2.x + deltap1p2.y * deltap1p2.y);
+} // gmNearestPointOnLineSegment2D
 //------------------------------------------------------------------------------
 /// \brief Find the distance along a segment for the location
 ///        closest to a point.
@@ -1877,6 +4058,96 @@ double gmFindClosestPtOnSegment(const Pt3d& a_pt1,
   return t;
 } // gmFindClosestPtOnSegment
 //------------------------------------------------------------------------------
+/// \brief Find the closest point on a segment to another point.
+/// \param pt1: First endpoint of segment.
+/// \param pt2: Second endpoint of segment.
+/// \param pt: Point used to find closest point on the segment.
+/// \param[in] dx: pt2->x - pt1->x  (passed in for potential efficiency).
+/// \param[in] dy: pt2->y - pt1->y  (passed in for potential efficiency).
+/// \param[in] mag2: Length of segment squared (leave squared for efficiency).
+/// \param[out] newpt: Initialized to the point on the segment closest to pt.
+/// \return The 2D distance from pt to newpt.
+//------------------------------------------------------------------------------
+double gmFindClosestPtOnSegment2D(const Pt3d& pt1,
+  const Pt3d& pt2,
+  const Pt3d& pt,
+  double dx,
+  double dy,
+  double mag2,
+  Pt3d* newpt)
+{
+  double t;
+
+  // compute t of line segment perpendicular to line segment and pt
+  t = ((pt.x - pt1.x) * dx + (pt.y - pt1.y) * dy) / mag2;
+
+  if (t <= 0.0)
+  { /* point is outside line segment but closest to pt1 */
+    newpt->x = pt1.x;
+    newpt->y = pt1.y;
+    newpt->z = pt1.z;
+  }
+  else if (t >= 1.0)
+  { /* point is outside line segment but closest to pt2 */
+    newpt->x = pt2.x;
+    newpt->y = pt2.y;
+    newpt->z = pt2.z;
+  }
+  else
+  { /* compute the nearest point on the line */
+    newpt->x = pt1.x + t * dx;
+    newpt->y = pt1.y + t * dy;
+    newpt->z = pt1.z;
+  }
+
+  return sqrt(sqr(newpt->x - pt.x) + sqr(newpt->y - pt.y));
+
+} // gmFindClosestPtOnSegment2D
+//------------------------------------------------------------------------------
+/// \brief Find the closest point on a segment to another point.
+/// \param pt1: First endpoint of segment.
+/// \param pt2: Second endpoint of segment.
+/// \param pt: Point used to find closest point on the segment.
+/// \param newpt: Initialized to the point on the segment (pt1, pt2) that is
+///               closest to pt.
+/// \param a_tol: Tolerance.
+/// \return The 3D distance from pt to newpt.
+//------------------------------------------------------------------------------
+double gmFindClosestPtOnSegment3D(const Pt3d& pt1, const Pt3d& pt2, const Pt3d& pt, Pt3d* newpt)
+{
+  double dx, dy, dz, mag2, t;
+
+  dx = pt2.x - pt1.x;
+  dy = pt2.y - pt1.y;
+  dz = pt2.z - pt1.z;
+  mag2 = dx * dx + dy * dy + dz * dz;
+
+  /* compute t of line segment perpendicular to line segment and pt */
+  t = ((pt.x - pt1.x) * dx + (pt.y - pt1.y) * dy + (pt.z - pt1.z) * dz) / mag2;
+
+  if (t <= 0.0)
+  { /* point is outside line segment but closest to pt1 */
+    newpt->x = pt1.x;
+    newpt->y = pt1.y;
+    newpt->z = pt1.z;
+  }
+  else if (t >= 1.0)
+  { /* point is outside line segment but closest to pt2 */
+    newpt->x = pt2.x;
+    newpt->y = pt2.y;
+    newpt->z = pt2.z;
+  }
+  else
+  { /* compute the nearest point on the line */
+    newpt->x = pt1.x + t * dx;
+    newpt->y = pt1.y + t * dy;
+    newpt->z = pt1.z + t * dz;
+  }
+
+  return sqrt(sqr(newpt->x - pt.x) + sqr(newpt->y - pt.y) + sqr(newpt->z - pt.z));
+
+} // gmFindClosestPtOnSegment3D
+//------------------------------------------------------------------------------
 /// \brief  Given minimum and maximum extents, compute a tolerance for the xy
 ///         plane to be used with geometric functions.
 /// \param a_mn: Minimum.
@@ -1934,6 +4205,152 @@ bool gmCounterClockwiseTri(const Pt3d& vtx0, const Pt3d& vtx1, const Pt3d& vtx2)
   double triarea1 = trArea(vtx0, vtx1, vtx2);
   return (triarea1 > 0.0);
 } // gmCounterClockwiseTri
+//------------------------------------------------------------------------------
+/// \brief Determine if a quadrilateral is wrapped clockwise or
+///        counter clockwise.
+/// \param da1: First vertex of the quadrilateral.
+/// \param db1: Second vertex of the quadrilateral.
+/// \param da2: Third vertex of the quadrilateral.
+/// \param db2: Fourth vertex of the quadrilateral.
+/// \return Whether the quad is wrapped counter clockwise.
+//------------------------------------------------------------------------------
+bool gmCounterClockwiseQuad(const Pt3d& da1, const Pt3d& db1, const Pt3d& da2, const Pt3d& db2)
+{
+  double quadrea1 = (da1.x * db1.y + db1.x * da2.y + da2.x * db2.y + db2.x * da1.y - da1.y * db1.x -
+                     db1.y * da2.x - da2.y * db2.x - db2.y * da1.x);
+  bool ccwWrap = (quadrea1 > 0.0);
+
+  return ccwWrap;
+} // gmCounterClockwiseQuad
+//------------------------------------------------------------------------------
+/// \brief Reorder a clockwise polygon's vertices to be counter clockwise. No
+///        effect on polygons that are already counter clockwise.
+/// \pre The last point must not be the same as the first. The polygon's
+///      vertices must be in either clockwise or counter clockwise order.
+/// \author MMB copied this function from myiMakePolygonCounterclockwise 9-20-95
+///         to make it external an more general.
+/// \param pts: An array of points defining the polygon's vertices.
+/// \param numpts: The number of points in the array.
+//------------------------------------------------------------------------------
+void gmMakePolygonClockwise(Pt3d* pts, int numpts)
+{
+  long i, halfcount;
+  Pt3d temppt;
+
+  /* See if the polygon was input in CW order by checking the sign
+  on the polygon area. (CCW = positive area) */
+
+  if (gmPolygonArea(pts, numpts) > 0)
+  {
+    /* reverse the polygon */
+    halfcount = numpts / 2;
+    for (i = 0; i < halfcount; i++)
+    {
+      temppt = pts[i];
+      pts[i] = pts[numpts - 1 - i];
+      pts[numpts - 1 - i] = temppt;
+    }
+  }
+} // gmMakePolygonClockwise
+//------------------------------------------------------------------------------
+/// \brief Reorder a clockwise polygon's vertices to be counter clockwise. No
+///        effect on polygons that are already counter clockwise.
+/// \pre The last point must not be the same as the first. The polygon's
+///      vertices must be in either clockwise or counter clockwise order.
+/// \author MMB copied this function from myiMakePolygonCounterclockwise 9-20-95
+///         to make it external an more general.
+/// \param pts: An array of points defining the polygon's vertices.
+/// \param numpts: The number of points in the array.
+//------------------------------------------------------------------------------
+void gmMakePolygonClockwise(Pt2i* pts, int numpts)
+{
+  long i, halfcount;
+  Pt2i temppt;
+
+  /* See if the polygon was input in CCW order by checking the sign
+  on the polygon area. (CW = negative area) */
+
+  if (gmPolygonArea(pts, numpts) > 0)
+  {
+    /* reverse the polygon */
+    halfcount = numpts / 2;
+    for (i = 0; i < halfcount; i++)
+    {
+      temppt = pts[i];
+      pts[i] = pts[numpts - 1 - i];
+      pts[numpts - 1 - i] = temppt;
+    }
+  }
+} // gmMakePolygonClockwise
+//------------------------------------------------------------------------------
+/// \brief Reorder a clockwise polygon's vertices to be counter clockwise. No
+///        effect on polygons that are already counter clockwise.
+/// \pre The last point must not be the same as the first. The polygon's
+///      vertices must be in either clockwise or counter clockwise order.
+/// \author MMB copied this function from myiMakePolygonCounterclockwise 9-20-95
+///         to make it external an more general.
+/// \param pts: An array of points defining the polygon's vertices.
+/// \param numpts: The number of points in the array.
+//------------------------------------------------------------------------------
+void gmMakePolygonCounterclockwise(Pt2i* pts, int numpts)
+{
+  long i, halfcount;
+  Pt2i temppt;
+
+  /* See if the polygon was input in CCW order by checking the sign
+  on the polygon area. (CCW = positive area) */
+
+  if (gmPolygonArea(pts, numpts) < 0)
+  {
+    /* reverse the polygon */
+    halfcount = numpts / 2;
+    for (i = 0; i < halfcount; i++)
+    {
+      temppt.x = pts[i].x;
+      temppt.y = pts[i].y;
+      pts[i].x = pts[numpts - 1 - i].x;
+      pts[i].y = pts[numpts - 1 - i].y;
+      pts[numpts - 1 - i].x = temppt.x;
+      pts[numpts - 1 - i].y = temppt.y;
+    }
+  }
+} // gmMakePolygonCounterclockwise
+//------------------------------------------------------------------------------
+/// \brief Reorder a clockwise polygon's vertices to be counter clockwise. No
+///        effect on polygons that are already counter clockwise.
+/// \pre The last point must not be the same as the first. The polygon's
+///      vertices must be in either clockwise or counter clockwise order.
+/// \author MMB copied this function from myiMakePolygonCounterclockwise 9-20-95
+///         to make it external an more general.
+/// \param pts: An array of points defining the polygon's vertices.
+/// \param numpts: The number of points in the array.
+//------------------------------------------------------------------------------
+void gmMakePolygonCounterclockwise(Pt3d* pts, int numpts)
+{
+  long i, halfcount;
+  Pt3d temppt;
+
+  /* See if the polygon was input in CCW order by checking the sign
+  on the polygon area. (CCW = positive area) */
+
+  if (gmPolygonArea(pts, numpts) < 0)
+  {
+    /* reverse the polygon */
+    halfcount = numpts / 2;
+    for (i = 0; i < halfcount; i++)
+    {
+      temppt.x = pts[i].x;
+      temppt.y = pts[i].y;
+      temppt.z = pts[i].z;
+      pts[i].x = pts[numpts - 1 - i].x;
+      pts[i].y = pts[numpts - 1 - i].y;
+      pts[i].z = pts[numpts - 1 - i].z;
+      pts[numpts - 1 - i].x = temppt.x;
+      pts[numpts - 1 - i].y = temppt.y;
+      pts[numpts - 1 - i].z = temppt.z;
+    }
+  }
+} // gmMakePolygonCounterclockwise
 //------------------------------------------------------------------------------
 /// \brief Determine how to sort a vector of points such that they are in
 ///        counter-clockwise order relative to their centroid.
@@ -2012,6 +4429,207 @@ void gmOrderPointsCounterclockwise(VecPt3d& a_pts)
   }
 } // gmOrderPointsCounterclockwise
 //------------------------------------------------------------------------------
+/// \brief Compute the normal to the plane defined by three points in the plane.
+/// \note Normal will not been normalized.
+/// \pre The points are assumed to be ordered CCW and non-colinear.
+/// \param point1: The first point.
+/// \param point2: The second point.
+/// \param point3: The third point.
+/// \return A normal vector for the plane.
+//------------------------------------------------------------------------------
+Pt3f gmComputePlaneNormal(const Pt3f& point1, const Pt3f& point2, const Pt3f& point3)
+{
+  Pt3f vec1, vec2, normal;
+
+  vec1.x = point3.x - point2.x;
+  vec1.y = point3.y - point2.y;
+  vec1.z = point3.z - point2.z;
+  vec2.x = point1.x - point2.x;
+  vec2.y = point1.y - point2.y;
+  vec2.z = point1.z - point2.z;
+  normal.x = vec1.y * vec2.z - vec1.z * vec2.y;
+  normal.y = vec1.z * vec2.x - vec1.x * vec2.z;
+  normal.z = vec1.x * vec2.y - vec1.y * vec2.x;
+  return normal;
+} // gmComputePlaneNormal
+//------------------------------------------------------------------------------
+/// \brief Compute the normal to the plane defined by three points in the plane.
+/// \note Normal will not been normalized.
+/// \pre The points are assumed to be ordered CCW and non-colinear.
+/// \param point1: The first point.
+/// \param point2: The second point.
+/// \param point3: The third point.
+/// \return A normal vector for the plane.
+//------------------------------------------------------------------------------
+Pt3d gmComputePlaneNormal(const Pt3d& point1, const Pt3d& point2, const Pt3d& point3)
+{
+  Pt3d vec1, vec2, normal;
+
+  vec1.x = point3.x - point2.x;
+  vec1.y = point3.y - point2.y;
+  vec1.z = point3.z - point2.z;
+  vec2.x = point1.x - point2.x;
+  vec2.y = point1.y - point2.y;
+  vec2.z = point1.z - point2.z;
+  normal.x = vec1.y * vec2.z - vec1.z * vec2.y;
+  normal.y = vec1.z * vec2.x - vec1.x * vec2.z;
+  normal.z = vec1.x * vec2.y - vec1.y * vec2.x;
+  return normal;
+} // gmComputePlaneNormal
+//------------------------------------------------------------------------------
+/// \brief Compute the normal to the plane defined by three points in the plane.
+/// \note Normal will not been normalized.
+/// \pre The points are assumed to be ordered CCW and non-colinear.
+/// \param point1: The first point.
+/// \param point2: The second point.
+/// \param point3: The third point.
+/// \return A normal vector for the plane.
+//------------------------------------------------------------------------------
+Pt3d gmComputePlaneNormal(const Pt4d& point1, const Pt4d& point2, const Pt4d& point3)
+{
+  Pt3d vec1, vec2, normal;
+
+  vec1.x = point3.x - point2.x;
+  vec1.y = point3.y - point2.y;
+  vec1.z = point3.z - point2.z;
+  vec2.x = point1.x - point2.x;
+  vec2.y = point1.y - point2.y;
+  vec2.z = point1.z - point2.z;
+  normal.x = vec1.y * vec2.z - vec1.z * vec2.y;
+  normal.y = vec1.z * vec2.x - vec1.x * vec2.z;
+  normal.z = vec1.x * vec2.y - vec1.y * vec2.x;
+  return normal;
+} // gmComputePlaneNormal
+//------------------------------------------------------------------------------
+/// \brief Compute the normal to the plane defined by three points in the plane.
+/// \note Normal will not been normalized.
+/// \pre The points are assumed to be ordered CCW and non-colinear.
+/// \param pt1: The first point.
+/// \param pt2: The second point.
+/// \param pt3: The third point.
+/// \return A normal vector for the plane.
+//------------------------------------------------------------------------------
+Pt3f gmComputeUnitPlaneNormal(const Pt3f& pt1, const Pt3f& pt2, const Pt3f& pt3)
+{
+  Pt3f normal;
+
+  normal = gmComputePlaneNormal(pt1, pt2, pt3);
+  gmNormalizeXYZ(normal, &normal);
+  return (normal);
+} // gmComputeUnitPlaneNormal
+//------------------------------------------------------------------------------
+/// \brief Compute the normal to the plane defined by three points in the plane.
+/// \note Normal will not been normalized.
+/// \pre The points are assumed to be ordered CCW and non-colinear.
+/// \param pt1: The first point.
+/// \param pt2: The second point.
+/// \param pt3: The third point.
+/// \return A normal vector for the plane.
+//------------------------------------------------------------------------------
+Pt3d gmComputeUnitPlaneNormal(const Pt3d& pt1, const Pt3d& pt2, const Pt3d& pt3)
+{
+  Pt3d normal;
+
+  normal = gmComputePlaneNormal(pt1, pt2, pt3);
+  gmNormalizeXYZ(normal, &normal);
+  return (normal);
+} // gmComputeUnitPlaneNormal
+//------------------------------------------------------------------------------
+/// \brief Calculate the plane coefficients for a triangle.
+/// \note Plane ==> ax+by+cz+d=0
+/// \param p1: First vertex of the triangle.
+/// \param p2: Second vertex of the triangle.
+/// \param p3: Third vertex of the triangle.
+/// \param a: Initialized to the x coefficient of the plane equation.
+/// \param b: Initialized to the y coefficient of the plane equation.
+/// \param c: Initialized to the z coefficient of the plane equation.
+/// \param d: Initialized to the d constant of the plane equation.
+//------------------------------------------------------------------------------
+void gmCalculatePlaneCoeffs(const Pt3d& point1,
+                            const Pt3d& point2,
+                            const Pt3d& point3,
+                            double* a,
+                            double* b,
+                            double* c,
+                            double* d)
+{
+  gmCalculatePlaneCoeffs(&point1, &point2, &point3, a, b, c, d);
+} // gmCalculatePlaneCoeffs
+//------------------------------------------------------------------------------
+/// \brief Calculate the plane coefficients for a triangle.
+/// \note Plane ==> ax+by+cz+d=0
+/// \param p1: First vertex of the triangle.
+/// \param p2: Second vertex of the triangle.
+/// \param p3: Third vertex of the triangle.
+/// \param a: Initialized to the x coefficient of the plane equation.
+/// \param b: Initialized to the y coefficient of the plane equation.
+/// \param c: Initialized to the z coefficient of the plane equation.
+/// \param d: Initialized to the d constant of the plane equation.
+//------------------------------------------------------------------------------
+void gmCalculatePlaneCoefficients(const Pt3d* p1,
+                                  const Pt3d* p2,
+                                  const Pt3d* p3,
+                                  double* a,
+                                  double* b,
+                                  double* c,
+                                  double* d)
+{
+  gmCalculatePlaneCoeffs(p1, p2, p3, a, b, c, d);
+} // gmCalculatePlaneCoefficients
+//------------------------------------------------------------------------------
+/// \brief Calculate the plane coefficients for a triangle.
+/// \note Plane ==> ax+by+cz+d=0
+/// \param p1: First vertex of the triangle.
+/// \param p2: Second vertex of the triangle.
+/// \param p3: Third vertex of the triangle.
+/// \param a: Initialized to the x coefficient of the plane equation.
+/// \param b: Initialized to the y coefficient of the plane equation.
+/// \param c: Initialized to the z coefficient of the plane equation.
+/// \param d: Initialized to the d constant of the plane equation.
+//------------------------------------------------------------------------------
+void gmCalculatePlaneCoeffs(const Pt3d* p1,
+                            const Pt3d* p2,
+                            const Pt3d* p3,
+                            double* a,
+                            double* b,
+                            double* c,
+                            double* d,
+                            double tol /*=XM_ZERO_TOL*/)
+{
+  double x1(p1->x), y1(p1->y), z1(p1->z);
+  double x2(p2->x), y2(p2->y), z2(p2->z);
+  double x3(p3->x), y3(p3->y), z3(p3->z);
+  double dx23(x2 - x3), dx31(x3 - x1), dx12(x1 - x2);
+  double dy23(y2 - y3), dy31(y3 - y1), dy12(y1 - y2);
+  double dz23(z2 - z3), dz31(z3 - z1), dz12(z1 - z2);
+  *a = (y1 * dz23 + y2 * dz31 + y3 * dz12);
+  *b = (z1 * dx23 + z2 * dx31 + z3 * dx12);
+  *c = (x1 * dy23 + x2 * dy31 + x3 * dy12);
+  // normalize if c is small
+  if (*c < tol)
+  {
+    double mag(sqrt((*a) * (*a) + (*b) * (*b) + (*c) * (*c)));
+    // JDH BUGFIX #394 BEG
+    if (mag < tol)
+    {
+      // compute tight tol
+      double tolscale(Mmax3(fabs(dy23), fabs(dy31), fabs(dy12)));
+      tolscale = Mmax(tolscale, Mmax3(fabs(dx23), fabs(dx31), fabs(dx12)));
+      tolscale = Mmax(tolscale, Mmax3(fabs(dz23), fabs(dz31), fabs(dz12)));
+      if (mag < tolscale * tol)
+      {
+        *a = *b = *c = *d = 0.0;
+        return;
+      }
+    }
+    // JDH BUGFIX #394 END
+    *a /= mag;
+    *b /= mag;
+    *c /= mag;
+  }
+  *d = -(*a) * x1 - (*b) * y1 - (*c) * z1;
+} // gmCalculatePlaneCoeffs
+//------------------------------------------------------------------------------
 /// \brief Calculates the plane coefficients for a triangle.
 ///        Given points, calculate coefficents for plane (ax+by+cz+d=0).
 /// \param[in] p1: First point.
@@ -2065,6 +4683,720 @@ void gmCalculateNormalizedPlaneCoefficients(const Pt3d* p1,
   *d = -(*a) * x1 - (*b) * y1 - (*c) * z1;
 } // gmCalculateNormalizedPlaneCoefficients
 //------------------------------------------------------------------------------
+/// \brief Finds three points on a plane given the coefficients of its equation.
+/// \note plane equation: ax+by+cz+d=0
+/// \param p1: Initialized to the first point in the plane.
+/// \param p2: Initialized to the second point in the plane.
+/// \param p3: Initialized to the third point in the plane.
+/// \param a: The a coefficient in the equation of the plane.
+/// \param b: The b coefficient in the equation of the plane.
+/// \param c: The c coefficient in the equation of the plane.
+/// \param d: The d constant in the equation of the plane.
+//------------------------------------------------------------------------------
+void gmCalculatePointsFromPlane(Pt3d* p1,
+                                Pt3d* p2,
+                                Pt3d* p3,
+                                double a,
+                                double b,
+                                double c,
+                                double d)
+{
+  double vx, vy, vz;
+  Pt3d delta1, delta2;
+
+  if (a >= b && a >= c)
+  {
+    p1->y = p1->z = 1.0;
+    p1->x = (b + c + d) / a;
+    p1->x = -p1->x;
+  }
+  else if (b >= c)
+  {
+    p1->x = p1->z = 1.0;
+    p1->y = (a + c + d) / b;
+    p1->y = -p1->y;
+  }
+  else
+  {
+    p1->x = p1->y = 1.0;
+    p1->z = (a + b + d) / c;
+    p1->z = -p1->z;
+  }
+
+  vx = vy = vz = 0.0;
+  if (a <= b && a <= c)
+    vx = 1.0;
+  else if (b <= c)
+    vy = 1.0;
+  else
+    vz = 1.0;
+
+  delta1.x = (b * vz) - (c * vy);
+  delta1.y = (c * vx) - (a * vz);
+  delta1.z = (a * vy) - (b * vx);
+  p2->x = p1->x + delta1.x;
+  p2->y = p1->y + delta1.y;
+  p2->z = p1->z + delta1.z;
+
+  delta2.x = (b * delta1.z) - (c * delta1.y);
+  delta2.y = (c * delta1.x) - (a * delta1.z);
+  delta2.z = (a * delta1.y) - (b * delta1.x);
+  p3->x = p1->x + delta2.x;
+  p3->y = p1->y + delta2.y;
+  p3->z = p1->z + delta2.z;
+
+} // gmCalculatePointsFromPlane
+//------------------------------------------------------------------------------
+/// \brief Calculates the z value from an x and y value and the plane
+///        coefficients.
+/// \param x: x coordinate.
+/// \param y: y coordinate.
+/// \param a: a coefficient in the plane's equation.
+/// \param b: b coefficient in the plane's equation.
+/// \param c: c coefficient in the plane's equation.
+/// \param d: d constant in the plane's equation.
+/// \return z, such that ax+by+cz+d=0.
+//------------------------------------------------------------------------------
+double gmCalculateZFromPlaneCoefficients(double x, double y, double a, double b, double c, double d)
+{
+  return -(a / c) * x - (b / c) * y - d / c;
+} // gmCalculateZFromPlaneCoefficients
+//------------------------------------------------------------------------------
+/// \brief Compute the midpoint of two points.
+/// \param The first point.
+/// \param The second point.
+/// \return The midpoint.
+//------------------------------------------------------------------------------
+Pt3d gmInterpolateMpoint3(const Pt3d& p1, const Pt3d& p2)
+{
+  Pt3d thepoint;
+  thepoint.x = (p1.x + p2.x) / 2;
+  thepoint.y = (p1.y + p2.y) / 2;
+  thepoint.z = (p1.z + p2.z) / 2;
+  return thepoint;
+} // gmInterpolateMpoint3
+//------------------------------------------------------------------------------
+/// \brief Fit a 1d spline through an array of values.
+/// \param in: An array of values.
+/// \param nin: The number of values.
+/// \param nout: The number of points in the spline.
+/// \param bias: Bias.
+/// \return: An array of values for the spline.
+//------------------------------------------------------------------------------
+double* gmDistributeValues(const double* in, int nin, int nout, double bias)
+{
+#define NUMSPLINEINTERVALS 20 /* # if pts/segment of the spline */
+  int i, j, i0, i1;
+  double s, s1, s_squ, s1_squ, ds, dl, frac, suml, tempbias;
+  double v1, v2, tprime, d, x, tmp1, tmp2;
+  double *din, *dout, *out;
+  /* Get memory for operation */
+  din = (double*)malloc((nin) * sizeof(double));
+  out = (double*)malloc((nout) * sizeof(double));
+  dout = (double*)malloc((nout) * sizeof(double));
+  /* CHECK FOR XM_SUCCESS */
+  if (din == nullptr || out == nullptr || dout == nullptr)
+  {
+    if (din)
+      free(din);
+    if (out)
+      free(out);
+    if (dout)
+      free(dout);
+    return nullptr;
+  }
+  /* put input nodes into spline points */
+  out[0] = in[0];              /* 1st point is the same */
+  out[nout - 1] = in[nin - 1]; /* Last point is the same */
+  if (nout > 2)
+  {
+    /* compute interior spline tangents */
+    for (i = 1; i < nin - 1; ++i)
+      din[i] = (in[i + 1] - in[i - 1]) * 0.5;
+    /* end spline tangents */
+    if (nin > 2)
+    {
+      din[0] = 2.0 * (in[1] - in[0]) - din[1];
+      din[i] = 2.0 * (in[i] - in[i - 1]) - din[i - 1];
+    }
+    else
+      din[0] = din[1] = in[1] - in[0];
+    /* Compute total length of spline */
+    ds = 1.0 / NUMSPLINEINTERVALS;
+    suml = 0.0;
+    for (i0 = 0, i1 = 1; i1 < nin; ++i0, ++i1)
+    {
+      s = ds;
+      s_squ = s * s;
+      s1 = s - 1.0;
+      s1_squ = s1 * s1;
+      v1 = in[i0];
+      for (j = 0; j < NUMSPLINEINTERVALS; ++j)
+      {
+        v2 = (2 * (s + 0.5) * s1_squ) * in[i0] + (s * s1_squ) * din[i0] -
+             (2 * s_squ * (s - 1.5)) * in[i1] + (s_squ * s1) * din[i1];
+        suml += v2 - v1;
+        s += ds;
+        s_squ = s * s;
+        s1 = s - 1.0;
+        s1_squ = s1 * s1;
+        v1 = v2;
+      }
+    }
+    /* calculate the bias dout */
+    if (bias > 1.0)
+      tempbias = 1 / bias;
+    else
+      tempbias = bias;
+    s = pow(10.0, (log10(tempbias) / (nout - 2)));
+    x = d = 1.0;
+    for (i0 = 1; i0 < nout - 1; ++i0)
+    {
+      x *= s;
+      d += x;
+    }
+    dout[0] = 0.0;
+    tprime = dout[1] = 1 / d;
+    for (i0 = 2; i0 < nout - 1; ++i0)
+    {
+      tprime *= s;
+      dout[i0] = dout[i0 - 1] + tprime;
+    }
+    dout[nout - 1] = 1.0;
+    /* invert & swap if elems getting larger */
+    if (bias > 1.0)
+    {
+      for (i0 = 0, i1 = nout - 1; i0 <= i1; ++i0, --i1)
+      {
+        tmp1 = 1.0 - dout[i0];
+        tmp2 = 1.0 - dout[i1];
+        dout[i0] = tmp2;
+        dout[i1] = tmp1;
+      }
+    }
+    /* scale up to length */
+    for (i0 = 1; i0 < nout; ++i0)
+      dout[i0] *= suml;
+    /* Compute new point coords */
+    i = 1;
+    suml = 0.0;
+    for (i0 = 0, i1 = 1; i1 < nin && i < nout - 1; ++i0, ++i1)
+    {
+      s = ds;
+      s_squ = s * s;
+      s1 = s - 1.0;
+      s1_squ = s1 * s1;
+      v1 = in[i0];
+      for (j = 0; j < NUMSPLINEINTERVALS && i < nout - 1; ++j)
+      {
+        v2 = (2 * (s + 0.5) * s1_squ) * in[i0] + (s * s1_squ) * din[i0] -
+             (2 * s_squ * (s - 1.5)) * in[i1] + (s_squ * s1) * din[i1];
+        dl = v2 - v1;
+        while ((suml + dl >= dout[i]) && (i < nout - 1))
+        {
+          frac = (dout[i] - suml) / dl;
+          out[i] = v1 + frac * (v2 - v1);
+          ++i;
+        }
+        suml += dl;
+        s += ds;
+        s_squ = s * s;
+        s1 = s - 1.0;
+        s1_squ = s1 * s1;
+        v1 = v2;
+      }
+    }
+  }
+  free(dout);
+  free(din);
+  return out;
+} // gmDistributeValues
+//------------------------------------------------------------------------------
+/// \brief Subdivide a line segment into intervals.
+/// \note Return value will be malloced but not freed here.
+/// \param endpt1: The first endpoint.
+/// \param endpt2: The second endpoint.
+/// \param numdiv: The number of divisions.
+/// \return An array of points of size numdiv, where each point is on the line
+///         segment and equidistint from each other.
+//------------------------------------------------------------------------------
+Pt3d* gmLinearSubdivideLine(const Pt3d& endpt1, const Pt3d& endpt2, int numdiv)
+{
+  bool firsttime = true;
+  int i;
+  Pt3d* middlepts;
+  double xspacing, yspacing, zspacing;
+
+  middlepts = (Pt3d*)malloc((numdiv - 1) * sizeof(Pt3d));
+  if (middlepts == nullptr)
+  {
+    // gnNullMemoryErrorMessage("gmLinearSubdivideLine");
+    return nullptr;
+  }
+
+  xspacing = (endpt2.x - endpt1.x) / numdiv;
+  yspacing = (endpt2.y - endpt1.y) / numdiv;
+  zspacing = (endpt2.z - endpt1.z) / numdiv;
+  for (i = 0; i < numdiv - 1; i++)
+  {
+    if (firsttime)
+    {
+      middlepts[i].x = endpt1.x + xspacing;
+      middlepts[i].y = endpt1.y + yspacing;
+      middlepts[i].z = endpt1.z + zspacing;
+      firsttime = false;
+    }
+    else
+    {
+      middlepts[i].x = middlepts[i - 1].x + xspacing;
+      middlepts[i].y = middlepts[i - 1].y + yspacing;
+      middlepts[i].z = middlepts[i - 1].z + zspacing;
+    }
+  }
+  return (middlepts);
+} // gmLinearSubdivideLine
+
+//------------------------------------------------------------------------------
+/// \brief Take all values in col1 and extrapolate them across to col2 to create
+///        newcol.
+/// \note All memory should already have been allocated. The newcol will have
+///       the same number of points as col1 (np1).
+/// \param col1: First column of values.
+/// \param col2: Second column of values.
+/// \param newcol: Column of new values.
+/// \param pcnt: Initialized to the size of newcol.
+/// \param np1: Number of values in col1.
+/// \param np2: Number of values in col2.
+/// \param tol: Tolerance for geometric comparison.
+//------------------------------------------------------------------------------
+void gmExtrapolatePointsWithTol(const Pt3d* col1,
+                                const Pt3d* col2,
+                                Pt3d* newcol,
+                                double* pcnt,
+                                int np1,
+                                int np2,
+                                double tol)
+{
+  int i, j;
+  double dist1, dist2, len1, len2, delta, pcnt1, pcnt2;
+
+  /* get length of the two columns */
+  for (len1 = 0.0, i = 1; i < np1; i++)
+    len1 += Mdist(col1[i].x, col1[i].y, col1[i - 1].x, col1[i - 1].y);
+  for (len2 = 0.0, i = 1; i < np2; i++)
+    len2 += Mdist(col2[i].x, col2[i].y, col2[i - 1].x, col2[i - 1].y);
+  /* set first and last points of newcol */
+  newcol[0] = col2[0];
+  pcnt[0] = 0.0;
+  newcol[np1 - 1] = col2[np2 - 1];
+  pcnt[np1 - 1] = 1.0;
+  /* loop through the middle points */
+  for (dist1 = dist2 = 0.0, i = j = 1; i < np1 - 1; i++)
+  {
+    delta = Mdist(col1[i].x, col1[i].y, col1[i - 1].x, col1[i - 1].y);
+    /* see if two points are the same */
+    if (fabs(delta) < tol)
+    {
+      newcol[i] = newcol[i - 1];
+      pcnt[i] = pcnt[i - 1];
+    }
+    /* otherwise, do the extrapolation */
+    else
+    {
+      dist1 += delta;
+      /* find percent of length reached on col1 */
+      pcnt1 = pcnt[i] = dist1 / len1;
+      /* find where this percent is located on col2.
+         this is based on the following two equations:
+         1.  (dist2 + val) / (len2) = pcnt1
+             -> solve this for "val"
+         2.  pcnt2 = (val) / (delta)
+             where pcnt2 is the percentage from col2[j-1]
+             to col2[j] to get the correct point */
+
+      delta = Mdist(col2[j].x, col2[j].y, col2[j - 1].x, col2[j - 1].y);
+      while (((dist2 + delta) / len2) < pcnt1)
+      {
+        dist2 += delta;
+        j++;
+        delta = Mdist(col2[j].x, col2[j].y, col2[j - 1].x, col2[j - 1].y);
+      }
+      pcnt2 = ((len2 * pcnt1) - (dist2)) / delta; /*delta should never be zero*/
+                                                  /* now put the new point in newcol */
+      newcol[i].x = col2[j].x * pcnt2 + col2[j - 1].x * (1.0 - pcnt2);
+      newcol[i].y = col2[j].y * pcnt2 + col2[j - 1].y * (1.0 - pcnt2);
+      newcol[i].z = col2[j].z * pcnt2 + col2[j - 1].z * (1.0 - pcnt2);
+    }
+  }
+} // gmExtrapolatePointsWithTol
+//------------------------------------------------------------------------------
+/// \brief Normalize a 3D vector.
+/// \param vect The vector to scale.
+/// \param norm Initialized to the scaled vector.
+//------------------------------------------------------------------------------
+void gmNormalizeXYZ(const Pt3d& vect, Pt3d* norm)
+{
+  register double magvec;
+  register double x, y, z;
+
+  x = vect.x;
+  y = vect.y;
+  z = vect.z;
+  if ((magvec = sqrt(x * x + y * y + z * z)) < 1e-9)
+  {
+    norm->x = 0.0;
+    norm->y = 0.0;
+    norm->z = 0.0;
+    return;
+  }
+  magvec = 1.0 / magvec;
+  norm->x = x * magvec;
+  norm->y = y * magvec;
+  norm->z = z * magvec;
+} // gmNormalizeXYZ
+//------------------------------------------------------------------------------
+/// \brief Normalize a 3D vector.
+/// \param vect The vector to scale.
+/// \param norm Initialized to the scaled vector.
+//------------------------------------------------------------------------------
+void gmNormalizeXYZ(const Pt3f& vect, Pt3f* norm)
+{
+  register float magvec;
+  register float x, y, z;
+
+  x = vect.x;
+  y = vect.y;
+  z = vect.z;
+  if ((magvec = sqrt(x * x + y * y + z * z)) < 1e-9)
+  {
+    norm->x = 0.0;
+    norm->y = 0.0;
+    norm->z = 0.0;
+    return;
+  }
+  magvec = (float)(1.0 / magvec);
+  norm->x = x * magvec;
+  norm->y = y * magvec;
+  norm->z = z * magvec;
+} // gmNormalizeXYZ
+//------------------------------------------------------------------------------
+/// \brief Normalize a 3D vector.
+/// \param vect The vector to scale.
+/// \param norm Initialized to the scaled vector.
+/// \return The magnitude of vect if it isn't zero, or -1.0 otherwise.
+//------------------------------------------------------------------------------
+double gmNormalizeXYZWithMag(const Pt3d& vect, Pt3d* norm)
+{
+  register double magsq, magvec;
+  register double x, y, z;
+
+  x = vect.x;
+  y = vect.y;
+  z = vect.z;
+  magsq = x * x + y * y + z * z;
+  if ((magvec = sqrt(magsq)) < 1e-9)
+  {
+    norm->x = 0.0;
+    norm->y = 0.0;
+    norm->z = 0.0;
+    return -1.0;
+  }
+  magvec = 1.0 / magvec;
+  norm->x = x * magvec;
+  norm->y = y * magvec;
+  norm->z = z * magvec;
+  return (sqrt(magsq));
+} // gmNormalizeXYZWithMag
+//------------------------------------------------------------------------------
+/// \brief Normalize a 3D vector.
+/// \param vect The vector to scale.
+/// \param norm Initialized to the scaled vector.
+/// \param magvec Initialized to the magnitude of vect if the magnitude is
+///        nonzero, else -1.0.
+/// \return Whether the magnitude was nonzero.
+//------------------------------------------------------------------------------
+int gmNormalizeXYWithMag(const Pt2d& vect, Pt2d* norm, double* magvec)
+{
+  double magsq;
+  double x, y;
+  double asmallnum = 0.00001;
+
+  if (*magvec == -1.0)
+    asmallnum = 0.0001;
+  x = vect.x;
+  y = vect.y;
+  magsq = x * x + y * y;
+  if (((*magvec) = sqrt(magsq)) < asmallnum)
+  {
+    norm->x = 0.0;
+    norm->y = 0.0;
+    return XM_FAILURE;
+  }
+  x /= (*magvec);
+  y /= (*magvec);
+  norm->x = x;
+  norm->y = y;
+  return XM_SUCCESS;
+} // gmNormalizeXYWithMag
+//------------------------------------------------------------------------------
+/// \brief Compute 2d planview projection of area of polygon.
+/// \note If points are in CCW order, the area will be positive. If in CW order,
+///       it will be negative. The magnitude will be correct in either case.
+/// \param pts: Vertices defining the polygon. Do not repeat the last point.
+/// \param npoints: Number of points in the array.
+/// \return Area of the polygon.
+//------------------------------------------------------------------------------
+double gmPolygonArea(const Pt2i* pts, size_t npoints)
+{
+  size_t id;
+  double area = 0.0;
+
+  if (npoints < 3)
+    return area;
+
+  // This implementation translates the polygon so the first point is at
+  // the origin. This reduces roundoff error due to large coordinates
+  // and reduces the number of computations because the first and last
+  // computations in the loop would be 0.
+  VecInt x, y;
+  int x0 = pts[0].x;
+  int y0 = pts[0].y;
+  for (id = 1; id < npoints; id++)
+  {
+    x.push_back((pts[id].x - x0));
+    y.push_back((pts[id].y - y0));
+  }
+  for (id = 0; id < npoints - 2; id++)
+  {
+    area += (x[id] * y[id + 1]);
+    area -= (y[id] * x[id + 1]);
+  }
+  area /= 2.0;
+  return (area);
+
+} // gmPolygonArea
+//------------------------------------------------------------------------------
+/// \brief Compute 2d planview projection of area of polygon.
+/// \note If points are in CCW order, the area will be positive. If in CW order,
+///       it will be negative. The magnitude will be correct in either case.
+/// \param pts: Vertices defining the polygon. Do not repeat the last vertex.
+/// \param npoints: Number of points in the array.
+/// \return Area of the polygon.
+//------------------------------------------------------------------------------
+double gmPolygonArea(const Pt3d* pts, size_t npoints)
+{
+  if (npoints < 3)
+    return 0.0;
+  size_t id;
+  double area = 0.0;
+
+  // This implementation translates the polygon so the first point is at
+  // the origin. This reduces roundoff error due to large coordinates
+  // and reduces the number of computations because the first and last
+  // computations in the loop would be 0.
+  VecDbl x, y;
+  double x0 = pts[0].x;
+  double y0 = pts[0].y;
+  for (id = 1; id < npoints; id++)
+  {
+    x.push_back((pts[id].x - x0));
+    y.push_back((pts[id].y - y0));
+  }
+  for (id = 0; id < npoints - 2; id++)
+  {
+    area += (x[id] * y[id + 1]);
+    area -= (y[id] * x[id + 1]);
+  }
+  area /= 2.0;
+
+  return (area);
+} // gmPolygonArea
+//------------------------------------------------------------------------------
+/// \brief Caluculate the volume of a tetrahedron.
+/// \note The vertices are assumed to be noncoincident.
+/// \note Equivalent to gmTetrahedronVolume2, but accepts different
+///       vertex types.
+/// \param point1: First vertex of the tetrahedron.
+/// \param point2: Second vertex of the tetrahedron.
+/// \param point3: Third vertex of the tetrahedron.
+/// \param point4: Fourth vertex of the tetrahedron.
+/// \param error: Always initialized to false.
+/// \return The volume of the tetrahedron.
+//------------------------------------------------------------------------------
+double gmTetrahedronVolumeMpoint3(const Pt3d& point1,
+                                  const Pt3d& point2,
+                                  const Pt3d& point3,
+                                  const Pt3d& point4,
+                                  bool* error)
+{
+  // Implementation uses the following formula:
+  //                          |  1.0  x1  y1  z1  |
+  //         volume = (1/6) * |  1.0  x2  y2  z2  |
+  //                          |  1.0  x3  y3  z3  |
+  //                          |  1.0  x4  y4  z4  |
+  double C41, C42, C43, C44;
+  double determinant;
+
+  *error = false;
+
+  /* calculate the cofactors of the 4x4 matrix */
+  C41 = point1.x * point2.y * point3.z + point1.y * point2.z * point3.x +
+        point1.z * point2.x * point3.y -
+        (point1.z * point2.y * point3.x + point1.y * point2.x * point3.z +
+         point1.x * point2.z * point3.y);
+  C42 = 1.0 * point2.y * point3.z + point1.y * point2.z * 1.0 + point1.z * 1.0 * point3.y -
+        (point1.z * point2.y * 1.0 + point1.y * 1.0 * point3.z + 1.0 * point2.z * point3.y);
+  C43 = point2.x * 1.0 * point3.z + 1.0 * point2.z * point1.x + point1.z * point3.x * 1.0 -
+        (point1.z * 1.0 * point2.x + 1.0 * point3.x * point2.z + point1.x * point3.z * 1.0);
+  C44 = point1.x * point2.y * 1.0 + point1.y * 1.0 * point3.x + 1.0 * point2.x * point3.y -
+        (1.0 * point2.y * point3.x + point1.y * point2.x * 1.0 + point1.x * 1.0 * point3.y);
+
+  determinant = -C41 + (point4.x) * C42 - (point4.y) * C43 + (point4.z) * C44;
+  return determinant / 6.0;
+} // gmTetrahedronVolumeMpoint3
+//------------------------------------------------------------------------------
+/// \brief Project a 3d vector to the specified plane.
+/// \param vector: The vector to project.
+/// \param plane: 0 for YZ plane, 1 for XZ plane, 2 for XY plane.
+/// \return Projected 2d vector.
+//------------------------------------------------------------------------------
+Pt3d gmProjectVectorToPlane(const Pt3d& vector, int plane)
+{
+  Pt3d vector2D;
+
+  switch (plane)
+  {
+  case 0:
+    vector2D.x = vector.y;
+    vector2D.y = vector.z;
+    break;
+  case 1:
+    vector2D.x = vector.x;
+    vector2D.y = vector.z;
+    break;
+  case 2:
+    vector2D.x = vector.x;
+    vector2D.y = vector.y;
+    break;
+  }
+  vector2D.z = 0.0;
+  return vector2D;
+
+} // gmProjectVectorToPlane
+//------------------------------------------------------------------------------
+/// \brief Find the best XYZ plane to project a triangle onto.
+/// \pre Assumes v0,v1,v2 are in CCW order.
+/// \note The largest component of the normal to the plane is the winner.
+/// \param v0: First vertex of the triangle.
+/// \param v1: Second vertex of the triangle.
+/// \param v2: Third vertex of the triangle.
+/// \return 0 for yz plane, 1 for xz plane, 2 for xy plane.
+//------------------------------------------------------------------------------
+int gmProjectTriangleToPln(const Pt3d& v0, const Pt3d& v1, const Pt3d& v2)
+{
+  Pt3d normal;
+  int plane;
+  double abx, aby, abz;
+
+  normal = gmComputePlaneNormal(v0, v1, v2);
+
+  abx = fabs(normal.x);
+  aby = fabs(normal.y);
+  abz = fabs(normal.z);
+  if (abx >= aby && abx >= abz)
+    plane = 0;
+  else if (aby >= abx && aby >= abz)
+    plane = 1;
+  else
+    plane = 2;
+  return plane;
+} // gmProjectTriangleToPln
+//------------------------------------------------------------------------------
+/// \brief Test if three nodes are collinear.
+/// \note Result is insensitive to the order of the nodes.
+/// \param p1: The first point.
+/// \param p2: The second point.
+/// \param p3: The third point.
+/// \return Whether the nodes are colinear.
+//------------------------------------------------------------------------------
+bool gmColinear(const Pt3d* p1, const Pt3d* p2, const Pt3d* p3)
+{
+  return gmColinearWithTol(*p1, *p2, *p3, gmXyTol());
+} // gmColinear
+//------------------------------------------------------------------------------
+/// \brief Check whether three points are colinear.
+/// \param[in] p1: First point.
+/// \param[in] p2: Second point.
+/// \param[in] p3: Third point.
+/// \param[in] tol: Tolerance for geometric comparisons.
+/// \return Whether the points are colinear.
+//------------------------------------------------------------------------------
+bool gmColinearWithTol(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3, const double tol)
+{
+  if (gmOnLineWithTol(p1, p2, p3.x, p3.y, tol))
+    return true;
+  else if (gmOnLineWithTol(p2, p3, p1.x, p1.y, tol))
+    return true;
+  else if (gmOnLineWithTol(p3, p1, p2.x, p2.y, tol))
+    return true;
+  else
+    return false;
+} // gmColinearWithTol
+//------------------------------------------------------------------------------
+/// \brief Test if four vertices are coplanar.
+/// \note Result is insensitive to the order of the vertices.
+/// \param v1: First vertex.
+/// \param v2: Second vertex.
+/// \param v3: Third vertex.
+/// \param v4: Fourth vertex.
+/// \param tolerance: Tolerance for geometric comparisons.
+/// \return Whether the vertices are coplanar.
+//------------------------------------------------------------------------------
+bool gmCoplanarWithTol(const Pt3d& v1,
+                       const Pt3d& v2,
+                       const Pt3d& v3,
+                       const Pt3d& v4,
+                       double tolerance)
+{
+  Pt3d oppositepoint;
+  oppositepoint.x = oppositepoint.y = oppositepoint.z = 0.0;
+  /* gmClassifyPointFromPlane needs the parameter, oppositepoint.  However,
+     it is not used to determine if a point is on the plane.  Hence, it is
+     set simply to 0 */
+
+  if (gmClassifyPointFromPlane(v1, v2, v3, oppositepoint, v4.x, v4.y, v4.z, tolerance) == 0)
+    return true;
+  else if (gmClassifyPointFromPlane(v1, v2, v4, oppositepoint, v3.x, v3.y, v3.z, tolerance) == 0)
+    return true;
+  else if (gmClassifyPointFromPlane(v1, v3, v4, oppositepoint, v2.x, v2.y, v2.z, tolerance) == 0)
+    return true;
+  else if (gmClassifyPointFromPlane(v2, v3, v4, oppositepoint, v1.x, v1.y, v1.z, tolerance) == 0)
+    return true;
+  else
+    return false;
+} // gmCoplanarWithTol
+//------------------------------------------------------------------------------
+/// \brief Compute center & radius squared for circumcircle of triangle defined
+///        by three points.
+/// \note This function may fail if the triangle's area is 0.
+/// \param pt1: First point of the triangle.
+/// \param pt2: Second point of the triangle.
+/// \param pt3: Third point of the triangle.
+/// \param xc: x coordinate of the center of the circle.
+/// \param yc: y coordinate of the center of the circle.
+/// \param r2: Radius squared of the circle.
+/// \return Whether the function succeeded.
+//------------------------------------------------------------------------------
+bool gmCircumcircle(const Pt3d* pt1,
+                    const Pt3d* pt2,
+                    const Pt3d* pt3,
+                    double* xc,
+                    double* yc,
+                    double* r2)
+{
+  return gmCircumcircleWithTol(pt1, pt2, pt3, xc, yc, r2, gmXyTol());
+} // gmCircumcircle
+//------------------------------------------------------------------------------
 /// \brief Compute center & radius squared for circumcircle of triangle
 ///        defined by the three points.
 /// \note  May fail if triangle has zero area.
@@ -2110,6 +5442,91 @@ bool gmCircumcircleWithTol(const Pt3d* pt1,
   return ok;
 } // gmCircumcircleWithTol
 //------------------------------------------------------------------------------
+/// \brief Converts an array of doubles to a VecPt3d with Z coordinates all 0.
+/// \note Useful in testing to create a VecPt3d from a C array of xy pairs.
+/// \param[in] a_array: Array of xy pairs ([x][y][x][y]...). Must have even
+///                     length.
+/// \param[in] a_size: Array size.
+/// \return Vector of Pt3d.
+//------------------------------------------------------------------------------
+VecPt3d gmArrayToVecPt3d(double* a_array, int a_size)
+{
+  VecPt3d v(a_size / 2);
+  for (int i = 0; i < a_size; i += 2)
+  {
+    v[i / 2].x = a_array[i];
+    v[i / 2].y = a_array[i + 1];
+  }
+  return v;
+} // gmArrayToVecPt3d
+//------------------------------------------------------------------------------
+/// \brief Test if all three values are within a tolerance of each other.
+/// \param z1: The first value.
+/// \param z1: The second value.
+/// \param z1: The third value.
+/// \param tol: Tolerance for comparison.
+/// \return Whether all three values are within a tolerance of each other.
+//------------------------------------------------------------------------------
+int gmThreeEqualZSWithTol(double z1, double z2, double z3, double tol)
+{
+  double maxz, minz;
+  maxz = Mmax3(z1, z2, z3);
+  minz = Mmin3(z1, z2, z3);
+  if (fabs(maxz - minz) < tol)
+    return true;
+  return false;
+} // gmThreeEqualZSWithTol
+//------------------------------------------------------------------------------
+/// \brief Convert a vector of Pt3d to three vectors of doubles.
+/// \note May silently fail in release mode with one or more vectors
+///       over-allocated if insufficient memory.
+/// \param a_pt: Vector of points to convert.
+/// \param a_x: Initialized to the x coordinates of the points in a_pt.
+/// \param a_y: Initialized to the y coordinates of the points in a_pt.
+/// \param a_z: Initialized to the z coordinates of the points in a_pt.
+//------------------------------------------------------------------------------
+void gmSplitPtVector(const VecPt3d& a_pt, VecDbl& a_x, VecDbl& a_y, VecDbl& a_z)
+{
+  try
+  {
+    a_x.resize(a_pt.size(), 0.0);
+    a_y.resize(a_pt.size(), 0.0);
+    a_z.resize(a_pt.size(), 0.0);
+    for (int i = 0; i < (int)a_pt.size(); ++i)
+    {
+      a_x.at(i) = a_pt.at(i).x;
+      a_y.at(i) = a_pt.at(i).y;
+      a_z.at(i) = a_pt.at(i).z;
+    }
+  }
+  catch (std::exception&)
+  {
+    XM_ASSERT(false);
+  }
+} // gmSplitPtVector
+//------------------------------------------------------------------------------
+/// \brief Removes adjacent points that are duplicates in 2D.
+/// \param a_pts: Vector of points to remove adjacent duplicates from.
+/// \param a_tol: Ignored. Implicitely uses gmXyTol() instead.
+//------------------------------------------------------------------------------
+void gmRemoveAdjacentDuplicatePoints2D(VecPt3d& a_pts, double /*a_tol*/)
+{
+  for (VecPt3d::iterator itr = a_pts.begin(); itr != a_pts.end();)
+  {
+    VecPt3d::iterator itrNext = itr;
+    ++itrNext;
+    if (itrNext != a_pts.end() &&
+      gmEqualPointsXY(itr->x, itr->y, itrNext->x, itrNext->y, gmXyTol()))
+    {
+      itr = a_pts.erase(itr);
+    }
+    else
+    {
+      ++itr;
+    }
+  }
+} // gmRemoveAdjacentDuplicatePoints2D
+//------------------------------------------------------------------------------
 /// \brief Check if 2 boxes overlap in 2D.
 /// \param[in] a_b1Min Min x,y of first box.
 /// \param[in] a_b1Max Max x,y of first box.
@@ -2133,24 +5550,60 @@ bool gmBoxesOverlap2d(const Pt3d& a_b1Min,
   return true;
 } // gmBoxesOverlap2d
 //------------------------------------------------------------------------------
-/// \brief Check whether three points are colinear.
-/// \param[in] p1: First point.
-/// \param[in] p2: Second point.
-/// \param[in] p3: Third point.
-/// \param[in] tol: Tolerance for geometric comparisons.
-/// \return Whether the points are colinear.
+/// \brief Check if 2 boxes overlap in 3d.
+/// \param[in] a_b1Min Min x,y of first box.
+/// \param[in] a_b1Max Max x,y of first box.
+/// \param[in] a_b2Min Min x,y of second box.
+/// \param[in] a_b2Max Max x,y of second box.
+/// \return 1 if they overlap, else 0.
 //------------------------------------------------------------------------------
-bool gmColinearWithTol(const Pt3d& p1, const Pt3d& p2, const Pt3d& p3, const double tol)
+int gmBoxOverlap(const Pt3d& min1, const Pt3d& max1, const Pt3d& min2, const Pt3d& max2)
 {
-  if (gmOnLineWithTol(p1, p2, p3.x, p3.y, tol))
-    return true;
-  else if (gmOnLineWithTol(p2, p3, p1.x, p1.y, tol))
-    return true;
-  else if (gmOnLineWithTol(p3, p1, p2.x, p2.y, tol))
-    return true;
-  else
+  int overlap = 0;
+  if (min1.x < max2.x)
+    if (min2.x < max1.x)
+      if (min1.y < max2.y)
+        if (min2.y < max1.y)
+          if (min1.z < max2.z)
+            if (min2.z < max1.z)
+              overlap = 1;
+  return overlap;
+} // gmBoxOverlap
+//------------------------------------------------------------------------------
+/// \brief Compute the line equation coefficients of a line that passes through
+///        two points.
+/// \pre The distance between the two points must be greater than the tolerance.
+/// \param pt1: A point on the line.
+/// \param pt2: Another point on the line.
+/// \param a: Initialized to the a coefficient in the line equation.
+/// \param b: Initialized to the b coefficient in the line equation.
+/// \param c: Initialized to the c constant in the line equation.
+/// \param tol: Tolerance for geometric comparison.
+/// \return Whether the precondition was met.
+//------------------------------------------------------------------------------
+bool gmComputeLineEquation(const Pt3d& pt1,
+                           const Pt3d& pt2,
+                           double& a,
+                           double& b,
+                           double& c,
+                           double tol)
+{
+  double a1, b1, mag;
+  /* see if the (x,y) is on infinite line */
+  a1 = pt2.x - pt1.x;
+  b1 = pt2.y - pt1.y;
+  mag = sqrt(a1 * a1 + b1 * b1);
+  /* handle case of line segment with length < tol*/
+  if (mag <= tol)
+  {
     return false;
-} // gmColinearWithTol
+  }
+  /* compute line equation */
+  a = -b1 / mag;
+  b = a1 / mag;
+  c = -a * pt1.x - b * pt1.y;
+  return true;
+} // gmComputeLineEquation
 //------------------------------------------------------------------------------
 /// \brief Compute the centroid of a set of points.
 /// \note The centroid this function computes is not the same as the centroid
@@ -2221,6 +5674,58 @@ Pt3d gmComputePolygonCentroid(const VecPt3d& pts)
   return centroid;
 } // gmComputePolygonCentroid
 //------------------------------------------------------------------------------
+/// \brief Find the z value halfway between the max and min z.
+/// \note  Different from the average z in that it ignores all but the min and
+///        max z when finding the midpoint.
+/// \param a_points: A vector of points.
+/// \return Middle z value.
+//------------------------------------------------------------------------------
+double gmMiddleZ(const VecPt3d& a_points)
+{
+  double zmin = XM_DBL_HIGHEST;
+  double zmax = XM_DBL_LOWEST;
+  for (size_t i = 0; i < a_points.size(); ++i)
+  {
+    double z = a_points[i].z;
+    zmin = std::min(zmin, z);
+    zmax = std::max(zmax, z);
+  }
+  return (zmin + zmax) / 2.0;
+} // gmMiddleZ
+//------------------------------------------------------------------------------
+/// \brief Determine which nodes to use to split a quadrilateral
+///        element into a triangular element.
+/// \note da1-da2 and db1-db2 should be the quad's diagonals.
+/// \param da1: First vertex of the quadrilateral.
+/// \param db1: Second vertex of the quadrilateral.
+/// \param da2: Third vertex of the quadrilateral.
+/// \param db2: Fourth vertex of the quadrilateral.
+/// \return True to split into da1-db1-da2 and da1-da2-db2.
+///         False to split into da1-db1-db2 and db1-da2-db2.
+//------------------------------------------------------------------------------
+bool gmQuadToTriAreaCheck(const Pt3d& da1, const Pt3d& db1, const Pt3d& da2, const Pt3d& db2)
+{
+  bool usea = false;
+  bool tri1 = false, tri2 = false;
+  // square of the diagonals
+  double da = sqr(da1.x - da2.x) + sqr(da1.y - da2.y);
+  double db = sqr(db1.x - db2.x) + sqr(db1.y - db2.y);
+
+  if (da < db)
+  {
+    tri1 = gmCounterClockwiseTri(da1, db1, da2);
+    tri2 = gmCounterClockwiseTri(da1, da2, db2);
+    usea = tri1 && tri2;
+  }
+  else
+  {
+    tri1 = gmCounterClockwiseTri(da1, db1, db2);
+    tri2 = gmCounterClockwiseTri(db2, db1, da2);
+    usea = !tri1 || !tri2;
+  }
+  return usea;
+}
+//------------------------------------------------------------------------------
 /// \brief Calculate convex hull using Monotone chain aka Andrew's algorithm.
 /// \param[in] a_pts: The input points.
 /// \param[out] a_hull: The convex hull polygon. First point is NOT repeated.
@@ -2280,104 +5785,69 @@ void gmGetConvexHull(const VecPt3d& a_pts, VecPt3d& a_hull, bool a_includeOn /*=
   a_hull.insert(a_hull.end(), upper.begin(), upper.end());
 } // gmGetConvexHull
 //------------------------------------------------------------------------------
-/// \brief Compute 2d planview projection of area of polygon.
-/// \note If points are in CCW order, the area will be positive. If in CW order,
-///       it will be negative. The magnitude will be correct in either case.
-/// \param pts: Vertices defining the polygon. Do not repeat the last vertex.
-/// \param npoints: Number of points in the array.
-/// \return Area of the polygon.
+/// \brief Calculate the celerity at a node.
+/// \note Taken from some FORTRAN code.
+/// \param period: Period.
+/// \param depth: Depth.
+/// \param gravity: Gravity.
 //------------------------------------------------------------------------------
-double gmPolygonArea(const Pt3d* pts, size_t npoints)
+double gmCalculateCelerity(double period, double depth, double gravity)
 {
-  if (npoints < 3)
-    return 0.0;
-  size_t id;
-  double area = 0.0;
+  double w, fx, gx, vx, wx, fpr;
+  double wavelength, celerity, k;
 
-  // This implementation translates the polygon so the first point is at
-  // the origin. This reduces roundoff error due to large coordinates
-  // and reduces the number of computations because the first and last
-  // computations in the loop would be 0.
-  VecDbl x, y;
-  double x0 = pts[0].x;
-  double y0 = pts[0].y;
-  for (id = 1; id < npoints; id++)
-  {
-    x.push_back((pts[id].x - x0));
-    y.push_back((pts[id].y - y0));
-  }
-  for (id = 0; id < npoints - 2; id++)
-  {
-    area += (x[id] * y[id + 1]);
-    area -= (y[id] * x[id + 1]);
-  }
-  area /= 2.0;
+  if (depth < 0.5)
+    depth = .5;
 
-  return (area);
-} // gmPolygonArea
-//------------------------------------------------------------------------------
-/// \brief Find a 2d unit vector perpendicular to a 2D vector defined
-///        by two points.
-/// \note Ignores Z values of points when finding perpendicular vector.
-/// \returns The perpendicular unit vector. Z component is 0.
-//------------------------------------------------------------------------------
-void gmUnitVector2DPerp(const Pt3d& p1, const Pt3d& p2, Pt3d* v)
-{
-  double x, y, dist;
+  w = 2.0 * XM_PI / period;
+  gx = w * w * depth / gravity;
+  vx = 1.0;
+  do
+  {
+    wx = tanh(vx);
+    fx = (vx * wx) - gx;
+    fpr = vx * (1.0 - wx * wx) + wx;
+    vx = vx - (fx / fpr);
+  } while (fabs(fx) > 0.1e-3);
+  wavelength = 2.0 * XM_PI * depth / vx;
+  k = vx / depth;
+  celerity = sqrt((gravity / k) * tanh(vx));
 
-  if (v)
-  {
-    /* determine 2d vector from p1 to p2 */
-    x = p2.x - p1.x;
-    y = p2.y - p1.y;
-    /* compute vector length */
-    dist = sqrt(sqr(x) + sqr(y));
-    /* get unit vector values */
-    x /= dist;
-    y /= dist;
-    /* return perpendicular vector */
-    v->x = y;
-    v->y = -x;
-    v->z = 0.0;
-  }
-} // gmUnitVector2DPerp
+  return (celerity);
+} // gmCalculateCelerity
 //------------------------------------------------------------------------------
-/// \brief Converts an array of doubles to a VecPt3d with Z coordinates all 0.
-/// \note Useful in testing to create a VecPt3d from a C array of xy pairs.
-/// \param[in] a_array: Array of xy pairs ([x][y][x][y]...). Must have even
-///                     length.
-/// \param[in] a_size: Array size.
-/// \return Vector of Pt3d.
+/// \brief Calculate the transition wavelength at a depth.
+/// \note Taken from some FORTRAN code.
+/// \param period: Period.
+/// \param depth: Depth.
+/// \param gravity: Gravity.
+/// \return The wavelength.
 //------------------------------------------------------------------------------
-VecPt3d gmArrayToVecPt3d(double* a_array, int a_size)
+double gmCalculateWavelength(double period, double depth, double gravity)
 {
-  VecPt3d v(a_size / 2);
-  for (int i = 0; i < a_size; i += 2)
+  double w, fx, gx, vx, wx, fpr;
+  double wavelength;
+
+  if (depth < 0.0)
+    depth = .5;
+
+  w = 2.0 * XM_PI / period;
+  gx = w * w * depth / gravity;
+  vx = 1.0;
+  do
   {
-    v[i / 2].x = a_array[i];
-    v[i / 2].y = a_array[i + 1];
-  }
-  return v;
-} // gmArrayToVecPt3d
-//------------------------------------------------------------------------------
-/// \brief Find the z value halfway between the max and min z.
-/// \note  Different from the average z in that it ignores all but the min and
-///        max z when finding the midpoint.
-/// \param a_points: A vector of points.
-/// \return Middle z value.
-//------------------------------------------------------------------------------
-double gmMiddleZ(const VecPt3d& a_points)
-{
-  double zmin = XM_DBL_HIGHEST;
-  double zmax = XM_DBL_LOWEST;
-  for (size_t i = 0; i < a_points.size(); ++i)
-  {
-    double z = a_points[i].z;
-    zmin = std::min(zmin, z);
-    zmax = std::max(zmax, z);
-  }
-  return (zmin + zmax) / 2.0;
-} // gmMiddleZ
+    wx = tanh(vx);
+    fx = (vx * wx) - gx;
+    fpr = vx * (1.0 - wx * wx) + wx;
+    vx = vx - (fx / fpr);
+  } while (fabs(fx) > 0.1e-3);
+  wavelength = 2.0 * XM_PI * depth / vx;
+
+  return (wavelength);
+} // gmCalculateWavelength
+
+
+
 } // namespace xms
 
 //----- Tests ------------------------------------------------------------------
