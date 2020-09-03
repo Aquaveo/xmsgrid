@@ -24,8 +24,6 @@
 
 //----- Namespace declaration --------------------------------------------------
 
-// namespace xms {
-
 ////////////////////////////////////////////////////////////////////////////////
 class GeomsXmsngUnitTests : public CxxTest::TestSuite
 {
@@ -77,6 +75,29 @@ public:
   void test_gmPointInPolygon2D();
 };
 
-//} // namespace xms
+////////////////////////////////////////////////////////////////////////////////
+class GeomsUnitTest : public CxxTest::TestSuite
+{
+public:
+  void test_gmCounterClockwise();
+  void test_gmQuadToTriAreaCheck();
+  void test_gmConvertAngleBetweenXAndNorth();
+  void test_gmAddToExtents();
+  void test_gmExtents2D();
+  void test_gmExtents3D();
+  void test_gmEqualPoints();
+  void test_gmPolygonArea();
+  void test_gmPointInPolygon3DWithTol();
+  void test_gmIntersectLineSegmentsWithTol();
+  void test_gmIntersectLineSegmentsWithTol2();
+  void test_gmMakePolygonClockwise();
+  void test_gmCounterClockwiseQuad();
+  void test_gmAngleBetween2DVectors();
+  void test_gmAngleBetweenEdges();
+  void test_gmBaryPrepare();
+  void test_gmIntersectLines();
+  void test_gmMiddleThirdWithTol();
+  void testGreatCircleDistanceMeters();
+}; // class GeomsUnitTest
 
 #endif
