@@ -6250,4 +6250,885 @@ void GeomsXmsngIntermediateTests::test_gmPointInPolygon2D()
   }
 } // GeomsXmsngIntermediateTests::test_gmPointInPolygon2D
 
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTests::test_gmCounterClockwise()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmCounterClockwise");
+
+  //  2
+  //  | \
+    //  0---1
+
+  Pt3d pt0(0, 0, 0);
+  Pt3d pt1(10, 0, 0);
+  Pt3d pt2(0, 10, 0);
+
+  TS_ASSERT_EQUALS(gmCounterClockwiseTri(pt0, pt1, pt2), true);
+  TS_ASSERT_EQUALS(gmCounterClockwiseTri(pt0, pt2, pt1), false);
+} // GeomsUnitTest::test_gmCounterClockwise
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTests::test_gmQuadToTriAreaCheck()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmQuadToTriAreaCheck");
+
+  //  3---2
+  //  |   |
+  //  0---1
+
+  Pt3d pt0(0, 0, 0);
+  Pt3d pt1(10, 0, 0);
+  Pt3d pt2(10, 10, 0);
+  Pt3d pt3(0, 10, 0);
+
+  TS_ASSERT_EQUALS(gmQuadToTriAreaCheck(pt0, pt1, pt2, pt3), false);
+  TS_ASSERT_EQUALS(gmQuadToTriAreaCheck(pt0, pt3, pt2, pt1), true);
+} // GeomsUnitTest::test_gmQuadToTriAreaCheck
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmConvertAngleBetweenXAndNorth()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmConvertAngleBetweenXAndNorth");
+
+  double angle;
+  const double DELTA = 0.01;
+
+  angle = 0.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 90.0, DELTA);
+
+  angle = 90.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 0.0, DELTA);
+
+  angle = 180.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 270.0, DELTA);
+
+  angle = 270.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 180.0, DELTA);
+
+  angle = 360.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 90.0, DELTA);
+
+  angle = 450.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 0.0, DELTA);
+
+  angle = -90.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 180.0, DELTA);
+
+  angle = -180.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 270.0, DELTA);
+
+  angle = -270.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 0.0, DELTA);
+
+  angle = -360.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 90.0, DELTA);
+
+  angle = -450.0;
+  gmConvertAngleBetweenXAndNorth(&angle);
+  TS_ASSERT_DELTA(angle, 180.0, DELTA);
+
+} // GeomsUnitTest::test_gmConvertAngleBetweenXAndNorth
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmAddToExtents()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmAddToExtents");
+
+  Pt3d min;
+  min = XM_DBL_HIGHEST;
+  Pt3d max;
+  max = XM_DBL_LOWEST;
+  const double DELTA = 0.0001;
+
+  gmAddToExtents(Pt3d(0, 0, 0), min, max);
+  TS_ASSERT_DELTA_PT3D(min, Pt3d(0, 0, 0), DELTA);
+  TS_ASSERT_DELTA_PT3D(max, Pt3d(0, 0, 0), DELTA);
+
+  gmAddToExtents(Pt3d(1, 0, 0), min, max);
+  TS_ASSERT_DELTA_PT3D(min, Pt3d(0, 0, 0), DELTA);
+  TS_ASSERT_DELTA_PT3D(max, Pt3d(1, 0, 0), DELTA);
+
+  gmAddToExtents(Pt3d(0, 0, -1), min, max);
+  TS_ASSERT_DELTA_PT3D(min, Pt3d(0, 0, -1), DELTA);
+  TS_ASSERT_DELTA_PT3D(max, Pt3d(1, 0, 0), DELTA);
+
+  gmAddToExtents(Pt3d(1, 0, -1), min, max);
+  TS_ASSERT_DELTA_PT3D(min, Pt3d(0, 0, -1), DELTA);
+  TS_ASSERT_DELTA_PT3D(max, Pt3d(1, 0, 0), DELTA);
+
+} // GeomsUnitTest::test_gmAddToExtents
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmExtents2D()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmExtents2D");
+
+  const double DELTA = 0.0001;
+  Pt2d mn, mx;
+  Pt3d mn3, mx3;
+
+  VecPt3d points = { { 0, 0, 0 }, { -1, -1, -1 }, { 1, 0, 0 } };
+  gmExtents2D(points, mn, mx);
+  TS_ASSERT_DELTA_PT2D(mn, Pt2d(-1, -1), DELTA);
+  TS_ASSERT_DELTA_PT2D(mx, Pt2d(1, 0), DELTA);
+
+  gmExtents2D(points, mn3, mx3);
+  TS_ASSERT_DELTA_PT2D(mn3, Pt3d(-1, -1, 0), DELTA);
+  TS_ASSERT_DELTA_PT2D(mx3, Pt3d(1, 0, 0), DELTA);
+
+} // GeomsUnitTest::test_gmExtents2D
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmExtents3D()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmExtents3D");
+
+  const double DELTA = 0.0001;
+  Pt3d min, max;
+
+  VecPt3d points = { { 0, 0, 0 }, { -1, -1, -1 }, { 1, 0, 0 } };
+  gmExtents3D(points, min, max);
+  TS_ASSERT_DELTA_PT3D(min, Pt3d(-1, -1, -1), DELTA);
+  TS_ASSERT_DELTA_PT3D(max, Pt3d(1, 0, 0), DELTA);
+
+} // GeomsUnitTest::test_gmExtents3D
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmEqualPoints()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmEqualPoints");
+
+  double old_g_xytol = gmXyTol();
+  gmXyTol(true, 0.00001);
+
+  // XY
+
+  TS_ASSERT_EQUALS(gmEqualPointsXY(0.0, 0.0, 0.0, 0.0), true);
+  TS_ASSERT_EQUALS(gmEqualPointsXY(0.0, 0.0, 0.0, 0.0, gmXyTol()), true);
+  TS_ASSERT_EQUALS(gmEqualPointsXY(Pt2i(0, 0), Pt2i(0, 0)), true);
+  TS_ASSERT_EQUALS(gmEqualPointsXY(Pt2d(0, 0), Pt2d(0, 0), gmXyTol()), true);
+  TS_ASSERT_EQUALS(gmEqualPointsXY(Pt3d(0, 0, 0), Pt3d(0, 0, 0), gmXyTol()), true);
+
+  // XYZ
+
+  TS_ASSERT_EQUALS(gmEqualPointsXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0), true);
+  TS_ASSERT_EQUALS(gmEqualPointsXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, gmXyTol()), true);
+  TS_ASSERT_EQUALS(gmEqualPointsXYZ(Pt3d(0, 0, 0), Pt3d(0, 0, 0), gmXyTol()), true);
+
+  gmXyTol(true, old_g_xytol);
+
+} // GeomsUnitTest::test_gmEqualPoints
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmPolygonArea()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmPolygonArea");
+
+  const double DELTA = 1e-5;
+
+  // CCW (positive)
+  VecPt3d pts1 = { { 0, 0, 0 }, { 5, 0, 5 }, { 5, 5, 0 }, { 0, 5, 0 } };
+  TS_ASSERT_DELTA(gmPolygonArea(&pts1[0], static_cast<int>(pts1.size())), 25.0, DELTA);
+
+  // CW (negative)
+  VecPt3d pts2 = { { 0, 0, 0 }, { 0, 5, 0 }, { 5, 5, 0 }, { 5, 0, 5 } };
+  TS_ASSERT_DELTA(gmPolygonArea(&pts2[0], static_cast<int>(pts2.size())), -25.0, DELTA);
+  // Remove this green build return when updated to the new xmsgrid library with the correct
+  // function
+  TS_GREEN_BUILD_RETURN;
+  // Test a single point to make sure it doesn't crash (see bug 0011900: Mapping Shapefile to
+  // Features crashes WMS)
+  VecPt3d ptsBogus = { { 0, 0, 0 } };
+  TS_ASSERT_DELTA(gmPolygonArea(&ptsBogus[0], static_cast<int>(ptsBogus.size())), 0.0, DELTA);
+} // GeomsUnitTest::test_gmPolygonArea
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmPointInPolygon3DWithTol()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmPointInPolygon3DWithTol");
+
+  // Vertical triangle looking down (you only see the edge)
+  //
+  //       y
+  //       ^
+  //       |
+  //    15 -    *
+  //       |    |
+  //    10 -    |
+  //       |    |
+  //     5 -    *
+  //       |
+  //     0 +----|----|----|--> x
+  //       0    5   10   15
+
+  // Set up the polygon, plane and normals
+  VecPt3d verts = { { 5, 5, 0 }, { 5, 5, 5 }, { 5, 15, 5 } };
+  VecInt ids = { 0, 1, 2 };
+  Pt3d pt;
+  Pt3d nrm;
+  double d;
+  gmCalculateNormalizedPlaneCoefficients(verts[0], verts[1], verts[2], &nrm.x, &nrm.y, &nrm.z, &d);
+
+  // Point to the right
+  //
+  //       y
+  //       ^
+  //       |
+  //    15 -    *
+  //       |    |
+  //    10 -    |    +
+  //       |    |
+  //     5 -    *
+  //       |
+  //     0 +----|----|----|--> x
+  //       0    5   10   15
+
+  // This test shows that gmPointInPolygon3DWithTol says the point is on
+  // the polygon, which it is if you are talking about the perpendicular
+  // projection of the point onto the plane, but it's not if you are thinking
+  // about it in 3d. You'd need to also call gmDistanceFromPointToPlane to
+  // see if it's actually in the plane.
+
+  pt.Set(10, 10, 5);
+  TS_ASSERT_EQUALS(gmPointInPolygon3DWithTol(pt, 3, &verts[0], &ids[0], nrm, XM_ZERO_TOL), 0);
+
+  // Point on edge
+  //
+  //       y
+  //       ^
+  //       |
+  //    15 -    *
+  //       |    |
+  //    10 -    +
+  //       |    |
+  //     5 -    *
+  //       |
+  //     0 +----|----|----|--> x
+  //       0    5   10   15
+
+  pt.Set(5, 10, 5);
+  TS_ASSERT_EQUALS(gmPointInPolygon3DWithTol(pt, 3, &verts[0], &ids[0], nrm, XM_ZERO_TOL), 0);
+
+  // Point inside poly
+  //
+  //       y
+  //       ^
+  //       |
+  //    15 -    *
+  //       |    |
+  //    10 -    +
+  //       |    |
+  //     5 -    *
+  //       |
+  //     0 +----|----|----|--> x
+  //       0    5   10   15
+
+  pt.Set(5, 10, 4);
+  TS_ASSERT_EQUALS(gmPointInPolygon3DWithTol(pt, 3, &verts[0], &ids[0], nrm, XM_ZERO_TOL), 1);
+
+  // Point in plane but outside poly
+  //
+  //       y
+  //       ^    +
+  //       |
+  //    15 -    *
+  //       |    |
+  //    10 -    |
+  //       |    |
+  //     5 -    *
+  //       |
+  //     0 +----|----|----|--> x
+  //       0    5   10   15
+
+  pt.Set(5, 20, 4);
+  TS_ASSERT_EQUALS(gmPointInPolygon3DWithTol(pt, 3, &verts[0], &ids[0], nrm, XM_ZERO_TOL), -1);
+
+} // GeomsUnitTest::test_gmPointInPolygon3DWithTol
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmIntersectLineSegmentsWithTol()
+{
+  Pt3d one1, one2;
+  Pt3d two1, two2;
+  Pt3d out1;
+  double xi, yi, zi1, zi2;
+  double tol(0.0);
+  xi = yi = zi1 = zi2 = 0.0;
+
+  // Do some simple examples
+  one1.Set(-5.0, 0.0, 10.0);
+  one2.Set(5.0, 0.0, -10.0);
+  two1.Set(0.0, -5.0, 50.0);
+  two2.Set(0.0, 5.0, 100.0);
+
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol) == true);
+  Pt3d outTest(0.0, 0.0, 0.0);
+  TS_ASSERT(gmEqualPointsXYZ(outTest, out1, tol));
+  if (!_finite(zi2))
+  {
+    TS_FAIL("infinite");
+    return;
+  }
+  TS_ASSERT_DELTA(75.0, zi2, 0.000001);
+
+  // Swap segments one and two
+  std::swap(one1, two1);
+  std::swap(one2, two2);
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol) == true);
+  outTest.z = 75.0;
+  TS_ASSERT(gmEqualPointsXYZ(outTest, out1, tol));
+  TS_ASSERT_DELTA(0.0, zi2, 0.000001);
+
+  // We are counting colinear as not intersecting for the purposes of this
+  one1.Set(0.0, 0.0, 0.0);
+  one2.Set(10.0, 0.0, 0.0);
+  two1.Set(5.0, 0.0, 0.0);
+  two2.Set(15.0, 0.0, 0.0);
+  TS_ASSERT_EQUALS(false, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol) == true);
+
+  // These points were causing trouble with the original implementation
+  // because we shouldn't intersect but we were finding one
+  // (due to tolerance?)
+  one1.Set(-88.17592213795, 30.2297178671644, 0.0);
+  one2.Set(-88.1711631843, 30.229083809523, 0.0);
+  two1.Set(-88.17116253901, 30.229083723548, 0.0);
+  two2.Set(-88.1727133856442, 30.2309557578415, 0.0);
+  tol = 0.000001;
+  TS_ASSERT_EQUALS(false, gmIntersectLineSegmentsNoTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2) == true);
+
+  // endpoints in common
+  one1.Set(0.000000, -32.000000, 0.000000);
+  one2.Set(480.000000, 38.000000, 0.000000);
+  two1.Set(480.000000, 40.000000, 0.000000);
+  two2.Set(480.000000, 38.000000, 0.000000);
+  tol = 0.001000;
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &xi, &yi, &zi1,
+    &zi2, tol) == true);
+  TS_ASSERT_DELTA(480.000000, xi, tol);
+  TS_ASSERT_DELTA(38.000000, yi, tol);
+  TS_ASSERT_DELTA(0.000000, zi1, tol);
+  TS_ASSERT_DELTA(0.000000, zi2, tol);
+
+  // endpoints almost in common
+  one1.Set(0.000000, -32.000000, 0.000000);
+  one2.Set(480.000000, 38.000500, 0.000000);
+  two1.Set(480.000000, 40.000000, 0.000000);
+  two2.Set(480.000000, 38.000000, 0.000000);
+  tol = 0.001000;
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &xi, &yi, &zi1,
+    &zi2, tol) == true);
+  TS_ASSERT_DELTA(480.000000, xi, tol);
+  TS_ASSERT_DELTA(38.000500, yi, tol);
+  TS_ASSERT_DELTA(0.000000, zi1, tol);
+  TS_ASSERT_DELTA(0.000000, zi2, tol);
+
+  // endpoint almost touches segment
+  one1.Set(0.000000, 0.000000, 0.000000);
+  one2.Set(1.000000, 1.000000, 0.000000);
+  two1.Set(1.000000, 0.000000, 0.000000);
+  two2.Set(0.500100, 0.499900, 0.000000);
+  tol = 0.001000;
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &xi, &yi, &zi1,
+    &zi2, tol) == true);
+  TS_ASSERT_DELTA(0.500000, xi, tol);
+  TS_ASSERT_DELTA(0.500000, yi, tol);
+  TS_ASSERT_DELTA(0.000000, zi1, tol);
+  TS_ASSERT_DELTA(0.000000, zi2, tol);
+
+} // GeomsUnitTest::test_gmIntersectLineSegmentsWithTol
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmIntersectLineSegmentsWithTol2()
+{
+  // This situation was causing problems because it should be within tolerance
+  Pt3d one1, one2;
+  Pt3d two1, two2;
+  Pt3d out1;
+  double zi2(0.0);
+  double tol(0.00000479);
+
+  one1.Set(206257.24738645, 4769600.0000167, 10.0);
+  one2.Set(216317.41982991, 4769600.000011, -10.0);
+  two1.Set(200000.0, 4769600.000021, 50.0);
+  two2.Set(207182.99426299, 4769600.000021, 100.0);
+
+  Pt3d ip1, ip2;
+  double t(0.0), s(0.0);
+  double mindist(gmMinDistBetweenLinesWithTol(&one1, &one2, &two1, &two2, &ip1, &ip2, &t, &s, tol));
+  TS_ASSERT_LESS_THAN(mindist, tol);
+
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol));
+
+  // parallel, overlapping in x not y
+  one1.Set(10.0, 10.0, 0.0);
+  one2.Set(20.0, 10.0, 10.0);
+  two1.Set(5.0, 20.0, 20.0);
+  two2.Set(15.0, 20.0, 15.0);
+
+  TS_ASSERT_EQUALS(false, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol));
+
+  //  crossing
+  one1.Set(10.0, 10.0, 0.0);
+  one2.Set(25.0, 25.0, 10.0);
+  two1.Set(10.0, 15.0, 20.0);
+  two2.Set(20.0, 10.0, 15.0);
+
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol));
+
+  // overlapping in x and y, not crossing, within tolerance
+  one1.Set(10.0, 10.0, 0.0);
+  one2.Set(25.0, 25.0, 0.0);
+  two1.Set(15.0, 30.00000473, 0.0);
+  two2.Set(35.0, 20.00000473, 0.0);
+
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol));
+
+  // overlapping in x and y, not crossing, out of tolerance
+  one1.Set(10.0, 10.0, 0.0);
+  one2.Set(25.0, 25.0, 0.0);
+  two1.Set(15.0, 30.00000480, 0.0);
+  two2.Set(35.0, 20.00000480, 0.0);
+
+  TS_ASSERT_EQUALS(false, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol));
+
+  // overlapping in x (at end) and y, not crossing, within tolerance
+  one1.Set(10.0, 10.0, 0.0);
+  one2.Set(25.0, 25.0, 0.0);
+  two1.Set(25.0, 25.00000473, 0.0);
+  two2.Set(45.0, 15.00000473, 0.0);
+
+  TS_ASSERT_EQUALS(true, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol));
+
+  // overlapping in y not x, not crossing, within tolerance
+  one1.Set(10.0, 10.0, 0.0);
+  one2.Set(25.0, 25.0, 0.0);
+  two1.Set(25.1, 25.00000473, 0.0);
+  two2.Set(45.1, 15.00000473, 0.0);
+
+  TS_ASSERT_EQUALS(false, gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, &out1.x, &out1.y,
+    &out1.z, &zi2, tol));
+} // GeomsUnitTest::test_gmIntersectLineSegmentsWithTol2
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmMakePolygonClockwise()
+{
+  //   10-  3--2                         10-  0--1
+  //        |  |           ==>                |  |
+  //    0-  0--1                          0-  3--2
+  //        0  10                             0  10
+
+  // Pt2i version
+  {
+    VecPt2i pts = { { 0, 0 }, { 10, 0 }, { 10, 10 }, { 0, 10 } };
+    gmMakePolygonClockwise(&pts[0], static_cast<int>(pts.size()));
+
+    TS_ASSERT_EQUALS(pts.at(0), Pt2i(0, 10));
+    TS_ASSERT_EQUALS(pts.at(1), Pt2i(10, 10));
+    TS_ASSERT_EQUALS(pts.at(2), Pt2i(10, 0));
+    TS_ASSERT_EQUALS(pts.at(3), Pt2i(0, 0));
+  }
+
+  // Pt3d version
+  {
+    VecPt3d pts = { { 0, 0, 0 }, { 10, 0, 0 }, { 10, 10, 0 }, { 0, 10, 0 } };
+    gmMakePolygonClockwise(&pts[0], static_cast<int>(pts.size()));
+
+    TS_ASSERT_EQUALS(pts.at(0), Pt3d(0, 10, 0));
+    TS_ASSERT_EQUALS(pts.at(1), Pt3d(10, 10, 0));
+    TS_ASSERT_EQUALS(pts.at(2), Pt3d(10, 0, 0));
+    TS_ASSERT_EQUALS(pts.at(3), Pt3d(0, 0, 0));
+  }
+
+  // Already clockwise (no change)
+  //
+  //   10-  1--2                         10-  1--2
+  //        |  |           ==>                |  |
+  //    0-  0--3                          0-  0--3
+  //        0  10                             0  10
+
+  // Pt2i version
+  {
+    VecPt2i pts = { { 0, 0 }, { 0, 10 }, { 10, 10 }, { 10, 0 } };
+    gmMakePolygonClockwise(&pts[0], static_cast<int>(pts.size()));
+
+    TS_ASSERT_EQUALS(pts.at(0), Pt2i(0, 0));
+    TS_ASSERT_EQUALS(pts.at(1), Pt2i(0, 10));
+    TS_ASSERT_EQUALS(pts.at(2), Pt2i(10, 10));
+    TS_ASSERT_EQUALS(pts.at(3), Pt2i(10, 0));
+  }
+
+  // Pt3d version
+  {
+    VecPt3d pts = { { 0, 0, 0 }, { 0, 10, 0 }, { 10, 10, 0 }, { 10, 0, 0 } };
+    gmMakePolygonClockwise(&pts[0], static_cast<int>(pts.size()));
+
+    TS_ASSERT_EQUALS(pts.at(0), Pt3d(0, 0, 0));
+    TS_ASSERT_EQUALS(pts.at(1), Pt3d(0, 10, 0));
+    TS_ASSERT_EQUALS(pts.at(2), Pt3d(10, 10, 0));
+    TS_ASSERT_EQUALS(pts.at(3), Pt3d(10, 0, 0));
+  }
+
+} // GeomsUnitTest::test_gmMakePolygonClockwise
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+// void GeomsUnitTest::test_gmCounterClockwise ()
+//{
+//  //TS_FAIL("GeomsUnitTest::test_gmCounterClockwise");
+//
+//  //  2
+//  //  | \
+//  //  0---1
+//
+//  Pt3d pt0(0,0,0);
+//  Pt3d pt1(10,0,0);
+//  Pt3d pt2(0,10,0);
+//
+//  TS_ASSERT_EQUALS(gmCounterClockwiseTri(pt0, pt1, pt2), true);
+//  TS_ASSERT_EQUALS(gmCounterClockwiseTri(pt0, pt2, pt1), false);
+//} // GeomsUnitTest::test_gmCounterClockwise
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmCounterClockwiseQuad()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmCounterClockwiseQuad");
+
+  //  3---2
+  //  |   |
+  //  0---1
+
+  Pt3d pt0(0, 0, 0);
+  Pt3d pt1(10, 0, 0);
+  Pt3d pt2(10, 10, 0);
+  Pt3d pt3(0, 10, 0);
+
+  TS_ASSERT_EQUALS(gmCounterClockwiseQuad(pt0, pt1, pt2, pt3), true);
+  TS_ASSERT_EQUALS(gmCounterClockwiseQuad(pt0, pt3, pt2, pt1), false);
+} // GeomsUnitTest::test_gmCounterClockwiseQuad
+//------------------------------------------------------------------------------
+///// \brief
+//------------------------------------------------------------------------------
+// void GeomsUnitTest::test_gmQuadToTriAreaCheck ()
+//{
+//  //TS_FAIL("GeomsUnitTest::test_gmQuadToTriAreaCheck");
+//
+//  //  3---2
+//  //  |   |
+//  //  0---1
+//
+//  Pt3d pt0(0,0,0);
+//  Pt3d pt1(10,0,0);
+//  Pt3d pt2(10,10,0);
+//  Pt3d pt3(0,10,0);
+//
+//  TS_ASSERT_EQUALS(gmQuadToTriAreaCheck(pt0, pt1, pt2, pt3), false);
+//  TS_ASSERT_EQUALS(gmQuadToTriAreaCheck(pt0, pt3, pt2, pt1), true);
+//} // GeomsUnitTest::test_gmQuadToTriAreaCheck
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmAngleBetween2DVectors()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmAngleBetween2DVectors");
+
+  const double DELTA = 1e-4;
+  double a;
+
+  a = RADIANS_TO_DEGREES * gmAngleBetween2DVectors(10, 0, 5, 5);
+  TS_ASSERT_DELTA(a, 45, DELTA);
+  a = RADIANS_TO_DEGREES * gmAngleBetween2DVectors(5, 5, 10, 0);
+  TS_ASSERT_DELTA(a, 315, DELTA);
+  a = RADIANS_TO_DEGREES * gmAngleBetween2DVectors(10, 0, 0, 10);
+  TS_ASSERT_DELTA(a, 90, DELTA);
+
+} // GeomsUnitTest::test_gmQuadToTriAreaCheck
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmAngleBetweenEdges()
+{
+  // TS_FAIL("GeomsUnitTest::test_gmAngleBetweenEdges");
+
+  const double DELTA = 1e-4;
+  const double TO_DEG = RADIANS_TO_DEGREES;
+  double a, am, b, bm, c, cm;
+
+  {
+    Pt3d p0(0, 0, 0), p1(10, 0, 0), p2(10, 5, 0);
+
+    //  5         c 2
+    //       a    b |
+    //  0  0--------1
+    //     0       10
+
+    a = TO_DEG * gmAngleBetweenEdges(p1, p0, p2);
+    TS_ASSERT_DELTA(a, 26.565, DELTA);
+    am = TO_DEG * gmAngleBetweenEdges(p2, p0, p1);
+    TS_ASSERT_DELTA(am, 333.4349, DELTA);
+    b = TO_DEG * gmAngleBetweenEdges(p2, p1, p0);
+    TS_ASSERT_DELTA(b, 90, DELTA);
+    bm = TO_DEG * gmAngleBetweenEdges(p0, p1, p2);
+    TS_ASSERT_DELTA(bm, 270, DELTA);
+    c = TO_DEG * gmAngleBetweenEdges(p0, p2, p1);
+    TS_ASSERT_DELTA(c, 63.4349, DELTA);
+    cm = TO_DEG * gmAngleBetweenEdges(p1, p2, p0);
+    TS_ASSERT_DELTA(cm, 296.5650, DELTA);
+  }
+
+  {
+    Pt3d p0(0, 0, 0), p1(10, 0, 0), p2(10, -5, 0);
+
+    //     0       10
+    //  0  0--------1
+    //       a    b |
+    // -5         c 2
+
+    a = TO_DEG * gmAngleBetweenEdges(p1, p0, p2);
+    TS_ASSERT_DELTA(a, 333.4349, DELTA);
+    am = TO_DEG * gmAngleBetweenEdges(p2, p0, p1);
+    TS_ASSERT_DELTA(am, 26.5650, DELTA);
+    b = TO_DEG * gmAngleBetweenEdges(p2, p1, p0);
+    TS_ASSERT_DELTA(b, 270, DELTA);
+    bm = TO_DEG * gmAngleBetweenEdges(p0, p1, p2);
+    TS_ASSERT_DELTA(bm, 90, DELTA);
+    c = TO_DEG * gmAngleBetweenEdges(p0, p2, p1);
+    TS_ASSERT_DELTA(c, 296.5650, DELTA);
+    cm = TO_DEG * gmAngleBetweenEdges(p1, p2, p0);
+    TS_ASSERT_DELTA(cm, 63.4349, DELTA);
+  }
+
+} // GeomsUnitTest::test_gmAngleBetweenEdges
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmBaryPrepare()
+{
+  // 20 2
+  //    | \
+    //    |  \
+    // 10 0---1
+  //    10  20
+
+  Pt3d pt0(10, 10, 0);
+  Pt3d pt1(20, 10, 0);
+  Pt3d pt2(10, 20, 0);
+  Pt3d norm(0, 0, 1); // normal to the triangle
+  Pt3d orig(0, 0, 0);
+  double coef[6];
+  int dir = 0;
+  bool flag = true;
+  const double kDelta = 1e-5;
+
+  int r = gmBaryPrepare(&pt0, &pt1, &pt2, &norm, &orig, coef, &dir, flag);
+
+  TS_ASSERT_EQUALS(r, XM_SUCCESS);
+  TS_ASSERT_DELTA_PT3D(orig, Pt3d(10, 10, 0), kDelta);
+  TS_ASSERT_DELTA(coef[0], -0.1, kDelta);
+  TS_ASSERT_DELTA(coef[1], -0.1, kDelta);
+  TS_ASSERT_DELTA(coef[2], 1.0, kDelta);
+  TS_ASSERT_DELTA(coef[3], 0.1, kDelta);
+  TS_ASSERT_DELTA(coef[4], 0.0, kDelta);
+  TS_ASSERT_DELTA(coef[5], 0.0, kDelta);
+  TS_ASSERT_EQUALS(dir, 2);
+
+  Pt3d node(0, 0, 0);
+  Pt3d bary(0, 0, 0);
+  gmCartToBary(&node, &orig, coef, dir, &bary);
+  TS_ASSERT_DELTA_PT3D(bary, Pt3d(3.0, -1.0, -1.0), kDelta);
+
+  node = pt0;
+  gmCartToBary(&node, &orig, coef, dir, &bary);
+  TS_ASSERT_DELTA_PT3D(bary, Pt3d(1, 0, 0), kDelta);
+
+  node = pt1;
+  gmCartToBary(&node, &orig, coef, dir, &bary);
+  TS_ASSERT_DELTA_PT3D(bary, Pt3d(0, 1, 0), kDelta);
+
+  node = pt2;
+  gmCartToBary(&node, &orig, coef, dir, &bary);
+  TS_ASSERT_DELTA_PT3D(bary, Pt3d(0, 0, 1), kDelta);
+
+  node.Set(15, 10, 0);
+  gmCartToBary(&node, &orig, coef, dir, &bary);
+  TS_ASSERT_DELTA_PT3D(bary, Pt3d(.5, .5, 0), kDelta);
+
+  node.Set(15, 15, 0);
+  gmCartToBary(&node, &orig, coef, dir, &bary);
+  TS_ASSERT_DELTA_PT3D(bary, Pt3d(0, .5, .5), kDelta);
+
+  node.Set(10, 15, 0);
+  gmCartToBary(&node, &orig, coef, dir, &bary);
+  TS_ASSERT_DELTA_PT3D(bary, Pt3d(.5, 0, .5), kDelta);
+
+} // GeomsUnitTest::test_gmBaryPrepare
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmIntersectLines()
+{
+  using xms::Pt3d;
+  using xms::gmIntersectLines;
+
+  double xi, yi, zi, onet, twot, tol(1000); // tol is ignored
+  const double tolerance(1e-5);
+  bool rv;
+
+  {
+    //      |
+    //  ----|----
+    //      |
+
+    Pt3d one1(0, 0), one2(100, 0, 50), two1(50, 50, 200), two2(50, -50, 100);
+    rv = gmIntersectLines(one1, one2, two1, two2, &xi, &yi, &zi, onet, twot, tol);
+    TS_ASSERT_EQUALS(rv, true);
+    TS_ASSERT_DELTA(xi, 50, tolerance);
+    TS_ASSERT_DELTA(yi, 0, tolerance);
+    TS_ASSERT_DELTA(zi, 150, tolerance);
+    TS_ASSERT_DELTA(onet, 0.5, tolerance);
+    TS_ASSERT_DELTA(twot, 0.5, tolerance);
+  }
+
+  {
+    //  ---------
+    //
+    //  ---------
+
+    Pt3d one1(0, 0), one2(100, 0, 50), two1(0, 50, 200), two2(100, 50, 100);
+    rv = gmIntersectLines(one1, one2, two1, two2, &xi, &yi, &zi, onet, twot, tol);
+    TS_ASSERT_EQUALS(rv, false);
+    TS_ASSERT_DELTA(onet, 0.0, tolerance);
+    TS_ASSERT_DELTA(twot, 0.0, tolerance);
+  }
+  {
+    //      |
+    //  ----|
+    //      |
+
+    Pt3d one1(0, 0), one2(50, 0, 50), two1(50, 50, 200), two2(50, -50, 100);
+    rv = gmIntersectLines(one1, one2, two1, two2, &xi, &yi, &zi, onet, twot, tol);
+    TS_ASSERT_EQUALS(rv, true);
+    TS_ASSERT_DELTA(xi, 50, tolerance);
+    TS_ASSERT_DELTA(yi, 0, tolerance);
+    TS_ASSERT_DELTA(zi, 150, tolerance);
+    TS_ASSERT_DELTA(onet, 1.0, tolerance);
+    TS_ASSERT_DELTA(twot, 0.5, tolerance);
+  }
+  {
+    //      |
+    //  ----*
+
+    Pt3d one1(0, 0), one2(50, 0, 50), two1(50, 50, 200), two2(50, 0, 100);
+    rv = gmIntersectLines(one1, one2, two1, two2, &xi, &yi, &zi, onet, twot, tol);
+    TS_ASSERT_EQUALS(rv, true);
+    TS_ASSERT_DELTA(xi, 50, tolerance);
+    TS_ASSERT_DELTA(yi, 0, tolerance);
+    TS_ASSERT_DELTA(zi, 100, tolerance);
+    TS_ASSERT_DELTA(onet, 1.0, tolerance);
+    TS_ASSERT_DELTA(twot, 1.0, tolerance);
+  }
+  {
+    //      |
+    //
+    //  ----*
+
+    Pt3d one1(0, 0), one2(50, 0), two1(50, 50), two2(50, 10);
+    rv = gmIntersectLines(one1, one2, two1, two2, &xi, &yi, &zi, onet, twot, tol);
+    TS_ASSERT_EQUALS(rv, true);
+    TS_ASSERT_DELTA(xi, 50, tolerance);
+    TS_ASSERT_DELTA(yi, 0, tolerance);
+    TS_ASSERT_DELTA(zi, 0, tolerance);
+    TS_ASSERT_DELTA(onet, 1.0, tolerance);
+    TS_ASSERT_DELTA(twot, 1.25, tolerance);
+  }
+  {
+    //  ----  ----
+
+    Pt3d one1(0, 0), one2(50, 0), two1(60, 0), two2(100, 0);
+    rv = gmIntersectLines(one1, one2, two1, two2, &xi, &yi, &zi, onet, twot, tol);
+    TS_ASSERT_EQUALS(rv, false);
+  }
+} // GeomsUnitTest::test_gmIntersectLines
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmMiddleThirdWithTol()
+{
+  const double tol = 1e-5;
+
+  // Test horizontally
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 2, 0, 0 }, { 0, 0, 0 }, { 9, 0, 0 }, tol), false);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 3, 0, 0 }, { 0, 0, 0 }, { 9, 0, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 4, 0, 0 }, { 0, 0, 0 }, { 9, 0, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 5, 0, 0 }, { 0, 0, 0 }, { 9, 0, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 6, 0, 0 }, { 0, 0, 0 }, { 9, 0, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 7, 0, 0 }, { 0, 0, 0 }, { 9, 0, 0 }, tol), false);
+
+  // Test vertically
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 2, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), false);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 3, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 4, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 5, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 6, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), true);
+  TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 7, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), false);
+} // GeomsUnitTest::test_gmMiddleThirdWithTol
+//------------------------------------------------------------------------------
+/// \brief Test gmGreatCircleDistanceMeters.
+//------------------------------------------------------------------------------
+void GeomsUnitTest::testGreatCircleDistanceMeters()
+{
+  const double kDelta = 1e-5;
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 1, 0 }), 111194.92664455874, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 0, 1 }), 111194.92664455874, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 1, 0 }, { 0, 0 }), 111194.92664455874, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 1 }, { 0, 0 }), 111194.92664455874, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { -1, 0 }), 111194.92664455874, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 0, -1 }), 111194.92664455874, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ -1, 0 }, { 0, 0 }), 111194.92664455874, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, -1 }, { 0, 0 }), 111194.92664455874, kDelta);
+
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 0, 90 }), 10007543.398010287, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 90, 0 }), 10007543.398010287, kDelta);
+
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 180, 0 }), 20015086.796020571, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 359, 0 }), 111194.92664456471, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 360, 0 }), 1.5604449514735575e-9, kDelta);
+  TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 361, 0 }), 111194.92664455590, kDelta);
+} // GeomsUnitTest::testGreatCircleDistanceMeters
+
 #endif
