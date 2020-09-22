@@ -5,9 +5,9 @@ Grid library for XMS products
 Master Branch Status
 --------------------
 
-[![Build Status](https://travis-ci.org/Aquaveo/xmsgrid.svg?branch=master)](https://travis-ci.org/Aquaveo/xmsgrid)
-
-[![Build status](https://ci.appveyor.com/api/projects/status/tkgmhrs31cc4l3ph?svg=true)](https://ci.appveyor.com/project/Aquaveo/xmsgrid)
+![Linux-CI](https://github.com/Aquaveo/xmsgrid/workflows/Linux-CI/badge.svg)
+![Mac-CI](https://github.com/Aquaveo/xmsgrid/workflows/Mac-CI/badge.svg)
+![Windows-CI](https://github.com/Aquaveo/xmsgrid/workflows/Windows-CI/badge.svg)
 
 Prerequisites
 --------------
