@@ -507,7 +507,6 @@ bool GmPtSearchImpl::PtInRTree(const Pt3d& a_pt, const double a_tol)
 /// nearest points to a point that is included in the RTree.
 /// \param a_ptIdx The index of the point a_pt. a_pt is in the RTree and we
 /// don't want it in the results.
-/// \param a_ptIdx The index of the point in the Rtree
 /// \param a_pt The location we are interested in.
 /// \param a_distance The distance from the point where we want to find
 /// additional points
