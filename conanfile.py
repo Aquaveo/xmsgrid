@@ -50,7 +50,7 @@ class XmsgridConan(ConanFile):
         self.requires("boost/1.74.0@aquaveo/stable")
         if self.options.pybind:
             self.requires("pybind11/2.5.0@aquaveo/testing")
-        self.requires("xmscore/[>=4.0.0,<5.0.0]@aquaveo/testing")
+        self.requires("xmscore/4.0.0-rc1@aquaveo/testing")
 
     def build(self):
         cmake = CMake(self)
