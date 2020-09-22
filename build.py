@@ -49,16 +49,6 @@ if __name__ == "__main__":
         pybind_updated_builds.append([settings, options, env_vars, build_requires])
     builder.builds = pybind_updated_builds
 
-    xms_updated_builds = []
-    for settings, options, env_vars, build_requires, reference in builder.items:
-        # xms option
-        if settings['compiler'] == 'Visual Studio' and 'MD' in settings['compiler.runtime']:
-            xms_options = dict(options)
-            xms_options.update({'xmsgrid:xms': True})
-            xms_updated_builds.append([settings, xms_options, env_vars, build_requires])
-        xms_updated_builds.append([settings, options, env_vars, build_requires])
-    builder.builds = xms_updated_builds
-
     testing_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # testing option
