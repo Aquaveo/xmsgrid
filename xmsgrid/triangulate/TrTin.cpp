@@ -19,7 +19,7 @@
 #include <sstream>
 
 // 4. External library headers
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/export.hpp>
@@ -40,6 +40,7 @@
 // 6. Non-shared code headers
 
 //----- Namespace declaration --------------------------------------------------
+using namespace boost::placeholders;
 
 namespace xms
 {
@@ -1988,7 +1989,7 @@ void TrTinUnitTests::testSwap()
 //------------------------------------------------------------------------------
 void TrTinTests::testFirstBoundaryPoint ()
 {
-  
+
 
   // Example 1
   {
