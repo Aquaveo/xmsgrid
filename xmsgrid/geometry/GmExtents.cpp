@@ -13,6 +13,7 @@
 #include <xmsgrid/geometry/GmExtents.h>
 
 // 3. Standard Library Headers
+#include <algorithm>
 
 // 4. External Library Headers
 

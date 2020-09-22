@@ -35,13 +35,13 @@ if __name__ == "__main__":
             })
         elif settings['compiler'] == 'apple-clang':
             settings.update({'cppstd': 'gnu17'})
+        elif settings['compiler'] == 'Visual Studio':
+            settings.update({'cppstd': '17'})
 
     pybind_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # pybind option
-        if (not settings['compiler'] == "Visual Studio" \
-                     or int(settings['compiler.version']) > 12) \
-                and settings['arch'] == "x86_64" and settings['build_type'] != 'Debug':
+        if settings['arch'] == "x86_64" and settings['build_type'] != 'Debug':
             pybind_options = dict(options)
             pybind_options.update({'xmsgrid:pybind': True})
             pybind_updated_builds.append([settings, pybind_options, env_vars, build_requires])
@@ -52,9 +52,7 @@ if __name__ == "__main__":
     xms_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # xms option
-        if settings['compiler'] == 'Visual Studio' \
-                and 'MD' in settings['compiler.runtime'] \
-                and int(settings['compiler.version']) < 13:
+        if settings['compiler'] == 'Visual Studio' and 'MD' in settings['compiler.runtime']:
             xms_options = dict(options)
             xms_options.update({'xmsgrid:xms': True})
             xms_updated_builds.append([settings, xms_options, env_vars, build_requires])
