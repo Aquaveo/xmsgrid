@@ -1,12 +1,21 @@
+"""Pure Python wrapper for UGrid."""
 from .._xmsgrid.ugrid import XmUGrid
 
+
 class UGrid(object):
-    """Class for representing unstructured grid geometries"""
+    """Class for representing unstructured grid geometries."""
 
     cell_type_enum = XmUGrid.ugrid_celltype_enum
     face_orientation_enum = XmUGrid.ugrid_faceorientation_enum
 
     def __init__(self, points=None, cellstream=None, **kwargs):
+        """Constructor.
+
+        Args:
+            points (list): The UGrid points as x,y,z tuples
+            cellstream (list): The UGrid cellstream
+            **kwargs (dict): Generic keyword arguments
+        """
         if 'instance' not in kwargs:
             if points is None and cellstream is None:
                 self._instance = XmUGrid()
@@ -23,6 +32,14 @@ class UGrid(object):
             self._instance = kwargs['instance']
 
     def __eq__(self, other):
+        """Equality operator.
+
+        Args:
+            other (UGrid): UGrid to compare
+
+        Returns:
+            bool: True if UGrids are equal
+        """
         other_instance = getattr(other, '_instance', None)
         if not other_instance or not isinstance(other_instance, XmUGrid):
             print("not instance or no value")
@@ -30,71 +47,80 @@ class UGrid(object):
         return other_instance == self._instance
 
     def __ne__(self, other):
+        """Equality operator.
+
+        Args:
+            other (UGrid): UGrid to compare
+
+        Returns:
+            bool: True if UGrids are not equal
+        """
         result = self.__eq__(other)
         return not result
 
     def __repr__(self):
+        """Returns a string representation of the UGrid."""
         return "<UGrid - Number of Locations: {}, Number of Cells: {}, Extents: {}, Modified: {}>".format(
             self.point_count, self.cell_count, str(self.extents), str(self.modified)
         )
 
     def __str__(self):
+        """Returns a string representation of the UGrid."""
         return "<UGrid - Number of Locations: {}, Number of Cells: {}, Extents: {}, Modified: {}>".format(
             self.point_count, self.cell_count, str(self.extents), str(self.modified)
         )
 
     @property
     def modified(self):
-        """Flag if grid is modified"""
+        """Flag if grid is modified."""
         return self._instance.GetModified()
 
     @property
     def point_count(self):
-        """Point count for ugrid"""
+        """Point count for UGrid."""
         return self._instance.GetPointCount()
 
     @property
     def locations(self):
-        """Point locations for ugrid"""
+        """Point locations for UGrid."""
         return self._instance.GetLocations()
 
     @locations.setter
     def locations(self, _locations):
+        """Set the point locations of the UGrid."""
         self._instance.SetLocations(_locations)
 
     @property
     def cellstream(self):
-        """Get cell stream vector for the entire UGrid"""
+        """Get cell stream vector for the entire UGrid."""
         return self._instance.GetCellstream()
 
     @cellstream.setter
     def cellstream(self, _cellstream):
+        """Set cell stream vector for the entire UGrid."""
         self._instance.SetCellstream(_cellstream)
 
     @property
     def extents(self):
-        """Get extents of the entire UGrid"""
+        """Get extents of the entire UGrid."""
         return self._instance.GetExtents()
 
     @property
     def cell_count(self):
-        """Get the number of cells in the UGrid"""
+        """Get the number of cells in the UGrid."""
         return self._instance.GetCellCount()
 
     @property
     def dimension_counts(self):
-        """Count all number of the cells with each dimension (0, 1, 2, 3)"""
+        """Count all number of the cells with each dimension (0, 1, 2, 3)."""
         return self._instance.GetDimensionCounts()
 
     def set_unmodified(self):
-        """
-        Set grid as unmodified
-        """
+        """Set grid as unmodified."""
         self._instance.SetUnmodified()
 
     def use_cache(self, use_cache):
-        """
-        Flag if cache is being used
+        """Flag if cache is being used.
 
         Args:
             use_cache (bool): flag if cache is being used
@@ -102,8 +128,7 @@ class UGrid(object):
         self._instance.SetUseCache(use_cache)
 
     def get_point_location(self, point_idx):
-        """
-        Get location of a single point
+        """Get location of a single point.
 
         Args:
             point_idx (int): The index of the point
@@ -114,8 +139,7 @@ class UGrid(object):
         return self._instance.GetPointLocation(point_idx)
 
     def set_point_location(self, point_idx, location):
-        """
-        Set location of a single point
+        """Set location of a single point.
 
         Args:
             point_idx (int): The index of the point
@@ -127,8 +151,7 @@ class UGrid(object):
         return self._instance.SetPointLocation(point_idx, location)
 
     def get_point_xy0(self, point_idx):
-        """
-        Get x, y location of a single point with z set to 0.0
+        """Get x, y location of a single point with z set to 0.0.
 
         Args:
             point_idx (int): The index of the point
@@ -139,8 +162,7 @@ class UGrid(object):
         return self._instance.GetPointXy0(point_idx)
 
     def get_points_locations(self, point_indices):
-        """
-        Get locations of multiple points
+        """Get locations of multiple points.
 
         Args:
             point_indices: The indices of the points
@@ -151,8 +173,7 @@ class UGrid(object):
         return self._instance.GetPointsLocations(point_indices)
 
     def get_point_adjacent_cells(self, point_idx):
-        """
-        Get cells adjacent to a point
+        """Get cells adjacent to a point.
 
         Args:
             point_idx (int): The index of the point to find adjacent cells of
@@ -163,8 +184,7 @@ class UGrid(object):
         return self._instance.GetPointAdjacentCells(point_idx)
 
     def get_points_adjacent_cells(self, point_indices):
-        """
-        Get adjacent cells common to a set of points
+        """Get adjacent cells common to a set of points.
 
         Args:
             point_indices: The indices of the points to find adjacent cells of
@@ -175,8 +195,7 @@ class UGrid(object):
         return self._instance.GetPointsAdjacentCells(point_indices)
 
     def get_cells_adjacent_to_edge(self, point1, point2):
-        """
-        Get cells adjacent to both points
+        """Get cells adjacent to both points.
 
         Args:
             point1 (int): The index of the edge's first point
@@ -188,8 +207,7 @@ class UGrid(object):
         return self._instance.GetPointsAdjacentCells(point1, point2)
 
     def is_valid_point_change(self, point_idx, new_position):
-        """
-        Determine whether adjacent cells are valid after a point is moved.
+        """Determine whether adjacent cells are valid after a point is moved.
 
         Args:
             point_idx (int): The index of the point to check change
@@ -201,8 +219,7 @@ class UGrid(object):
         return self._instance.IsValidPointChange(point_idx, new_position)
 
     def get_cell_point_count(self, cell_idx):
-        """
-        Get the number of cell points (including polyhedron)
+        """Get the number of cell points (including polyhedron).
 
         Args:
             cell_idx (int): The index of the cell
@@ -213,8 +230,7 @@ class UGrid(object):
         return self._instance.GetCellPointCount(cell_idx)
 
     def get_cell_points(self, cell_idx):
-        """
-        Get the points of a cell (including polyhedron)
+        """Get the points of a cell (including polyhedron).
 
         Args:
             cell_idx (int): The index of the cell
@@ -225,8 +241,7 @@ class UGrid(object):
         return self._instance.GetCellPoints(cell_idx)
 
     def get_cell_locations(self, cell_idx):
-        """
-        Get locations of cell points
+        """Get locations of cell points.
 
         Args:
             cell_idx (int): The index of the cell
@@ -237,8 +252,7 @@ class UGrid(object):
         return self._instance.GetCellLocations(cell_idx)
 
     def get_cell_type(self, cell_idx):
-        """
-        Get a cell's type
+        """Get a cell's type.
 
         Args:
             cell_idx (int): The index of the cell
@@ -249,8 +263,7 @@ class UGrid(object):
         return self._instance.GetCellType(cell_idx)
 
     def get_cell_dimension(self, cell_idx):
-        """
-        Get the dimension of the specified cell
+        """Get the dimension of the specified cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -261,8 +274,7 @@ class UGrid(object):
         return self._instance.GetCellDimension(cell_idx)
 
     def get_cell_extents(self, cell_idx):
-        """
-        Get the extents of the given cell
+        """Get the extents of the given cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -273,8 +285,7 @@ class UGrid(object):
         return self._instance.GetCellExtents(cell_idx)
 
     def get_cell_cellstream(self, cell_idx):
-        """
-        Get cell stream list for a single cell
+        """Get cell stream list for a single cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -285,8 +296,7 @@ class UGrid(object):
         return self._instance.GetCellCellstream(cell_idx)
 
     def get_cell_adjacent_cells(self, cell_idx):
-        """
-        Get the cells neighboring a cell (cells associated with any of it's points)
+        """Get the cells neighboring a cell (cells associated with any of it's points).
 
         Args:
             cell_idx (int): The index of the cell to find neighboring cells of
@@ -297,8 +307,7 @@ class UGrid(object):
         return self._instance.GetCellAdjacentCells(cell_idx)
 
     def get_cell_plan_view_polygon(self, cell_idx):
-        """
-        Get the plan view polygon of a specified cell
+        """Get the plan view polygon of a specified cell.
 
         Args:
             cell_idx (int): The index of the cell to get plan view polygon for
@@ -310,8 +319,7 @@ class UGrid(object):
         return self._instance.GetCellPlanViewPolygon(cell_idx)
 
     def get_cell_centroid(self, cell_idx):
-        """
-        Get the centroid location of a cell
+        """Get the centroid location of a cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -322,8 +330,7 @@ class UGrid(object):
         return self._instance.GetCellCentroid(cell_idx)
 
     def get_cell_edge_count(self, cell_idx):
-        """
-        Get the number of edges for a cell
+        """Get the number of edges for a cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -334,8 +341,7 @@ class UGrid(object):
         return self._instance.GetCellEdgeCount(cell_idx)
 
     def get_cell_edge(self, cell_idx, edge_idx):
-        """
-        Get a specified edge of a cell
+        """Get a specified edge of a cell.
 
         Args:
             cell_idx (int): The index of the cell containing the edge
@@ -347,8 +353,7 @@ class UGrid(object):
         return self._instance.GetCellEdge(cell_idx, edge_idx)
 
     def get_cell_edge_adjacent_cells(self, cell_idx, edge_idx):
-        """
-        Get the indices of the adjacent cells (that shares the same cell edge)
+        """Get the indices of the adjacent cells (that shares the same cell edge).
 
         Args:
             cell_idx (int): The index of the cell containing the edge
@@ -360,8 +365,7 @@ class UGrid(object):
         return self._instance.GetCellEdgeAdjacentCells(cell_idx, edge_idx)
 
     def get_cell_2d_edge_adjacent_cell(self, cell_idx, edge_idx):
-        """
-        Get the index of the adjacent cells (that shares the same cell edge)
+        """Get the index of the adjacent cells (that shares the same cell edge).
 
         Args:
             cell_idx (int): The index of the cell containing the edge
@@ -373,8 +377,7 @@ class UGrid(object):
         return self._instance.GetCell2dEdgeAdjacentCell(cell_idx, edge_idx)
 
     def get_edge_adjacent_cells(self, edge):
-        """
-        Get the indices of the adjacent cells (that shares the same cell edge)
+        """Get the indices of the adjacent cells (that shares the same cell edge).
 
         Args:
             edge: Tuple of two point locations that define an edge
@@ -385,8 +388,7 @@ class UGrid(object):
         return self._instance.GetEdgeAdjacentCells(edge)
 
     def get_cell_edges(self, cell_idx):
-        """
-        Get the edges of a cell
+        """Get the edges of a cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -397,8 +399,7 @@ class UGrid(object):
         return self._instance.GetCellEdges(cell_idx)
 
     def get_point_adjacent_points(self, point_idx):
-        """
-        Given a point gets point indices attached to the point by an edge
+        """Given a point gets point indices attached to the point by an edge.
 
         Args:
             point_idx (int): The index of the point to find adjacent point indices for
@@ -409,8 +410,7 @@ class UGrid(object):
         return self._instance.GetPointAdjacentPoints(point_idx)
 
     def get_point_adjacent_locations(self, point_idx):
-        """
-        Given a point gets point locations attached to the point by an edges
+        """Given a point gets point locations attached to the point by an edges.
 
         Args:
             point_idx (int): The index of the point to find adjacent point locations for
@@ -421,8 +421,7 @@ class UGrid(object):
         return self._instance.GetPointAdjacentLocations(point_idx)
 
     def get_cell_3d_face_count(self, cell_idx):
-        """
-        Get the number of cell faces for given cell
+        """Get the number of cell faces for given cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -433,8 +432,7 @@ class UGrid(object):
         return self._instance.GetCell3dFaceCount(cell_idx)
 
     def get_cell_3d_face_point_count(self, cell_idx, face_idx):
-        """
-        Get the number of face points for a given cell and face
+        """Get the number of face points for a given cell and face.
 
         Args:
             cell_idx (int): The index of the cell containing the face
@@ -446,8 +444,7 @@ class UGrid(object):
         return self._instance.GetCell3dFacePointCount(cell_idx, face_idx)
 
     def get_cell_3d_face_points(self, cell_idx, face_idx):
-        """
-        Get the cell face for given cell and face index
+        """Get the cell face for given cell and face index.
 
         Args:
             cell_idx (int): The index of the cell containing the face
@@ -459,8 +456,7 @@ class UGrid(object):
         return self._instance.GetCell3dFacePoints(cell_idx, face_idx)
 
     def get_cell_3d_faces_points(self, cell_idx):
-        """
-        Get the faces of a cell
+        """Get the faces of a cell.
 
         Args:
             cell_idx (int): The index of the cell
@@ -471,8 +467,7 @@ class UGrid(object):
         return self._instance.GetCell3dFacesPoints(cell_idx)
 
     def get_cell_3d_face_adjacent_cell(self, cell_idx, face_idx):
-        """
-        Get the cell face neighbors for given cell and face index
+        """Get the cell face neighbors for given cell and face index.
 
         Args:
             cell_idx (int): The index of the cell containing the face
@@ -484,8 +479,7 @@ class UGrid(object):
         return self._instance.GetCell3dFaceAdjacentCell(cell_idx, face_idx)
 
     def get_cell_3d_face_orientation(self, cell_idx, face_idx):
-        """
-        Get the orientation of the face of a vertically prismatic cell
+        """Get the orientation of the face of a vertically prismatic cell.
 
         Args:
             cell_idx (int): The index of the cell containing the face
