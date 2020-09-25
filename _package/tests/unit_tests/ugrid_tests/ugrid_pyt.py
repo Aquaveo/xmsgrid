@@ -1,13 +1,15 @@
-"""Test UGrid_py.cpp"""
+"""Test UGrid_py.cpp."""
 import unittest
+
 from xms.grid.ugrid import UGrid
 
 
 class TestUGridPointFunctions(unittest.TestCase):
-    """UGrid Point Functions tests"""
+    """UGrid Point Functions tests."""
 
     @staticmethod
     def get_simple_quad_ugrid():
+        """Returns a simple quad UGrid."""
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                            (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
@@ -17,6 +19,7 @@ class TestUGridPointFunctions(unittest.TestCase):
 
     @staticmethod
     def get_2d_linear_ugrid():
+        """Returns a linear 2D UGrid."""
         points = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (40, 0, 0),
                   (0, 10, 0), (10, 10, 0), (20, 10, 0), (40, 10, 0), (0, 20, 0),
                   (10, 20, 0), (20, 20, 0), (30, 20, 0), (40, 20, 0))
@@ -31,6 +34,7 @@ class TestUGridPointFunctions(unittest.TestCase):
 
     @staticmethod
     def get_3d_linear_ugrid():
+        """Returns a linear 3D UGrid."""
         points = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (40, 0, 0),
                   (0, 10, 0), (10, 10, 0), (20, 10, 0), (30, 10, 0), (40, 10, 0),
                   (0, 20, 0), (10, 20, 0), (20, 20, 0), (30, 20, 0), (40, 20, 0),
@@ -41,12 +45,12 @@ class TestUGridPointFunctions(unittest.TestCase):
                  UGrid.cell_type_enum.VOXEL, 8, 1, 2, 6, 7, 16, 17, 21, 22,
                  UGrid.cell_type_enum.HEXAHEDRON, 8, 2, 3, 8, 7, 17, 18, 23, 22,
                  UGrid.cell_type_enum.POLYHEDRON, 6,
-                 4, 9, 8, 13, 14, # Bottom face with 4 points : 9, 8, 13, 14
-                 4, 8, 9, 24, 23, # Front face with 4 points : 8, 9, 24, 23
-                 4, 9, 14, 29, 24, # Right face with 4 points : 9, 14, 29, 28
-                 4, 14, 13, 28, 29, # Back face with 4 points : 14, 13, 28, 29
-                 4, 8, 13, 28, 23, # Left face with 4 points : 13, 8, 23, 28
-                 4, 23, 24, 29, 28, # Top face with 4 points : 23, 24, 29, 28
+                 4, 9, 8, 13, 14,  # Bottom face with 4 points : 9, 8, 13, 14
+                 4, 8, 9, 24, 23,  # Front face with 4 points : 8, 9, 24, 23
+                 4, 9, 14, 29, 24,  # Right face with 4 points : 9, 14, 29, 28
+                 4, 14, 13, 28, 29,  # Back face with 4 points : 14, 13, 28, 29
+                 4, 8, 13, 28, 23,  # Left face with 4 points : 13, 8, 23, 28
+                 4, 23, 24, 29, 28,  # Top face with 4 points : 23, 24, 29, 28
                  UGrid.cell_type_enum.WEDGE, 6, 3, 4, 18, 8, 9, 23,
                  UGrid.cell_type_enum.PYRAMID, 5, 5, 6, 11, 10, 20)
         xu = UGrid(points, cells)
@@ -54,6 +58,7 @@ class TestUGridPointFunctions(unittest.TestCase):
 
     @staticmethod
     def get_hexahedron_ugrid(rows, cols, lays, origin):
+        """Returns a hexahedron UGrid."""
         points = [None] * rows * cols * lays
         curr_id = 0
         for k in range(0, lays):
@@ -83,17 +88,20 @@ class TestUGridPointFunctions(unittest.TestCase):
         return xu
 
     def test_ugrid_new_default(self):
+        """Test constructing a UGrid with default arguments."""
         # TODO Check for default args
         xu = UGrid()
         self.assertIsInstance(xu, UGrid)
 
     def test_ugrid_new(self):
+        """Test constructing a UGrid."""
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
         self.assertIsInstance(xu, UGrid)
 
     def test_ugrid_new_numpy(self):
+        """Test constructing a UGrid from numpy arrays."""
         import numpy as np
         points = np.array(((0, 0, 0), (20, 0, 0), (0, 20, 0)))
         cells = np.array((5, 3, 0, 1, 2))
@@ -101,6 +109,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertIsInstance(xu, UGrid)
 
     def test_ugrid_point_count(self):
+        """Test getting the number of points in a UGrid."""
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
@@ -108,6 +117,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(num_points_base, xu.point_count)
 
     def test_ugrid_get_locations(self):
+        """Test getting a point locations of a UGrid."""
         import numpy as np
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
@@ -116,6 +126,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(np.array(points), points_out)
 
     def test_ugrid_set_locations(self):
+        """Test setting a point locations of a UGrid."""
         import numpy as np
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         xu = UGrid()
@@ -129,6 +140,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(np.array(points), points_out)
 
     def test_ugrid_get_locations_numpy(self):
+        """Test getting a point locations of a UGrid."""
         import numpy as np
         points = np.array(((0, 0, 0), (20, 0, 0), (0, 20, 0)))
         xu = UGrid()
@@ -139,7 +151,8 @@ class TestUGridPointFunctions(unittest.TestCase):
         points_out = xu.locations
         np.testing.assert_array_equal(np.array(points), points_out)
 
-    def test_ugrid_get_locations(self):
+    def test_ugrid_get_locations2(self):
+        """Test getting a point locations of a UGrid."""
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
@@ -153,6 +166,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual((0, 0, 0), p4)
 
     def test_ugrid_get_point_xy0(self):
+        """Test getting a point location by index."""
         points = ((0, 0, 2), (20, 0, 1), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
@@ -166,6 +180,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual((0, 0, 0), p4)
 
     def test_ugrid_set_point_location(self):
+        """Test setting the location of a point in a UGrid."""
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                   (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0))
         cells = (9, 4, 0, 3, 4, 1, 9, 4, 1, 4, 5, 2, 9, 4, 3, 6, 7, 4, 9, 4, 4, 7, 8, 5)
@@ -180,6 +195,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual((-10, -10, 0), xu.get_point_location(0))
 
     def test_ugrid_set_point_location_numpy(self):
+        """Test setting the point locations of a UGrid with a numpy array."""
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                            (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
@@ -191,6 +207,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual((-10, -10, 0), xu.get_point_location(0))
 
     def test_ugrid_get_points_locations(self):
+        """Test getting the point locations of a UGrid."""
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                            (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
@@ -202,6 +219,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(expected_points, points_from_indxs)
 
     def test_ugrid_get_extents(self):
+        """Test getting the extents of a UGrid."""
         points = ((0, 0, 0), (10, 0, 0), (20, 0, 0), (30, 0, 0), (40, 0, 0),
                   (0, 10, 0), (10, 10, 0), (20, 10, 0), (40, 10, 0), (0, 20, 0),
                   (10, 20, 0), (20, 20, 0), (30, 20, 0), (40, 20, 0))
@@ -219,6 +237,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(exp_max, act_max)
 
     def test_get_point_adjacent_cells(self):
+        """Test getting the cells adjacent to a point."""
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0), (20, 0, 0))
         cellstream = (UGrid.cell_type_enum.QUAD, 4, 0, 3, 4, 1,
                       UGrid.cell_type_enum.QUAD, 4, 1, 4, 5, 2)
@@ -239,12 +258,13 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(cell_empty, xu.get_point_adjacent_cells(6))
 
     def test_get_points_adjacent_cells(self):
+        """Test getting the cells adjacent to points."""
         points = ((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                   (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0))
         cellstream = (UGrid.cell_type_enum.QUAD, 4, 0, 3, 4, 1,
-                       UGrid.cell_type_enum.QUAD, 4, 1, 4, 5, 2,
-                       UGrid.cell_type_enum.QUAD, 4, 3, 6, 7, 4,
-                       UGrid.cell_type_enum.QUAD, 4, 4, 7, 8, 5)
+                      UGrid.cell_type_enum.QUAD, 4, 1, 4, 5, 2,
+                      UGrid.cell_type_enum.QUAD, 4, 3, 6, 7, 4,
+                      UGrid.cell_type_enum.QUAD, 4, 4, 7, 8, 5)
         xu = UGrid(points, cellstream)
         expected_cells = ()
 
@@ -286,6 +306,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(expected_cells, retrieved_cells)
 
     def test_get_cell_count(self):
+        """Test getting the cell count of a UGrid."""
         points = ((0, 0, 0), (20, 0, 0), (0, 20, 0))
         cells = (5, 3, 0, 1, 2)
         xu = UGrid(points, cells)
@@ -293,6 +314,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(num_cells_base, xu.cell_count)
 
     def test_get_cell_points(self):
+        """Test getting the points of a cell."""
         import numpy as np
         xu = self.get_simple_quad_ugrid()
         invalid1 = xu.get_cell_points(-1)
@@ -331,6 +353,7 @@ class TestUGridPointFunctions(unittest.TestCase):
             np.testing.assert_array_equal(expected_cell_points_3d[i], cell_points)
 
     def test_get_cell_type(self):
+        """Test getting the type of a cell."""
         xu2d = self.get_2d_linear_ugrid()
         self.assertEqual(14, xu2d.point_count)
         self.assertEqual(6, xu2d.cell_count)
@@ -356,8 +379,9 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(UGrid.cell_type_enum.PYRAMID, xu3d.get_cell_type(5))
 
     def test_get_dimension_counts(self):
+        """Test getting the dimension counts of various geometries."""
         import numpy as np
-        #test 2D UGrid
+        # test 2D UGrid
         xu2d = self.get_2d_linear_ugrid()
         results_2d = np.array((0, 2, 4, 0))
         np.testing.assert_array_equal(results_2d, xu2d.dimension_counts)
@@ -371,6 +395,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(results_empty, xuempty.dimension_counts)
 
     def test_get_cell_dimension(self):
+        """Test getting the dimension of a cell."""
         xu2d = self.get_2d_linear_ugrid()
         self.assertEqual(2, xu2d.get_cell_dimension(0))
         self.assertEqual(2, xu2d.get_cell_dimension(1))
@@ -390,7 +415,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(3, xu3d.get_cell_dimension(5))
 
     def test_cell_functions(self):
-        """Test various cell functions"""
+        """Test various cell functions."""
         import numpy as np
         ugrid = self.get_simple_quad_ugrid()
 
@@ -428,16 +453,18 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(False, result[0])
 
     def test_cellstream(self):
+        """Test getting the cellstream."""
         import numpy as np
         xu = self.get_simple_quad_ugrid()
         cellstream = xu.cellstream
         expected_cellstream = np.array((UGrid.cell_type_enum.QUAD, 4, 0, 3, 4, 1,
-                                         UGrid.cell_type_enum.QUAD, 4, 1, 4, 5, 2,
-                                         UGrid.cell_type_enum.QUAD, 4, 3, 6, 7, 4,
-                                         UGrid.cell_type_enum.QUAD, 4, 4, 7, 8, 5))
+                                        UGrid.cell_type_enum.QUAD, 4, 1, 4, 5, 2,
+                                        UGrid.cell_type_enum.QUAD, 4, 3, 6, 7, 4,
+                                        UGrid.cell_type_enum.QUAD, 4, 4, 7, 8, 5))
         np.testing.assert_array_equal(expected_cellstream, cellstream)
 
     def test_set_cellstream(self):
+        """Test setting the cellstream."""
         import numpy as np
         points = np.array(((0, 10, 0), (10, 10, 0), (20, 10, 0), (0, 0, 0), (10, 0, 0),
                            (20, 0, 0), (0, -10, 0), (10, -10, 0), (20, -10, 0)))
@@ -450,6 +477,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(expected_cells, cells)
 
     def test_get_cell_cellstream(self):
+        """Test getting the cellstream."""
         import numpy as np
         xu = self.get_simple_quad_ugrid()
         ret, cellstream = xu.get_cell_cellstream(0)
@@ -457,6 +485,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(expected_cellstream, cellstream)
 
     def test_get_cell_adjacent_cells(self):
+        """Test getting cells adjacent to a cell."""
         import numpy as np
         xu = self.get_simple_quad_ugrid()
 
@@ -474,6 +503,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(expected_cells, retrieved_cells)
 
     def test_get_cell_edge_count(self):
+        """Test getting cell edge count."""
         xu2d = self.get_2d_linear_ugrid()
         self.assertEqual(-1, xu2d.get_cell_edge_count(-1))
         self.assertEqual(-1, xu2d.get_cell_edge_count(6))
@@ -495,6 +525,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(8, xu3d.get_cell_edge_count(5))
 
     def test_cell_edge(self):
+        """Test getting cell edges."""
         xu2d = self.get_simple_quad_ugrid()
         edge0 = (0, 3)
         edge1 = (3, 4)
@@ -516,10 +547,10 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(xu2d.get_cell_edge(0, -1), (0, 0))
         self.assertEqual(xu2d.get_cell_edge(0, xu2d.get_cell_edge_count(0)), (0, 0))
 
-        expected_cell_edges = [[edge0, edge1, edge2, edge3]
-            , [edge4, edge5, edge6, edge7]
-            , [edge8, edge9, edge10, edge11]
-            , [edge12, edge13, edge14, edge15]]
+        expected_cell_edges = [[edge0, edge1, edge2, edge3],
+                               [edge4, edge5, edge6, edge7],
+                               [edge8, edge9, edge10, edge11],
+                               [edge12, edge13, edge14, edge15]]
         self.assertEqual(len(expected_cell_edges), xu2d.cell_count)
         for i in range(0, xu2d.cell_count):
             self.assertEqual(len(expected_cell_edges[i]), xu2d.get_cell_edge_count(i))
@@ -562,12 +593,18 @@ class TestUGridPointFunctions(unittest.TestCase):
 
         xu3d = self.get_3d_linear_ugrid()
         expected_cell_edges = [
-          [(0, 1), (1, 5), (5, 0), (0, 15), (1, 15), (5, 15)], # TETRA
-          [(1, 2), (2, 7), (6, 7), (1, 6), (16, 17), (17, 22), (21, 22), (16, 21), (1, 16), (2, 17), (6, 21), (7, 22)], # VOXEL
-          [(2, 3), (3, 8), (7, 8), (2, 7), (17, 18), (18, 23), (22, 23), (17, 22), (2, 17), (3, 18), (7, 22), (8, 23)], # HEXAHEDRON
-          [(8, 9), (8, 13), (8, 23), (9, 14), (9, 24), (13, 14), (13, 28), (14, 29), (23, 24), (23, 28), (24, 29), (28, 29)], # POLYHEDRON
-          [(3, 4), (4, 18), (18, 3), (8, 9), (9, 23), (23, 8), (3, 8), (4, 9), (18, 23)], # WEDGE
-          [(5, 6), (6, 11), (11, 10), (10, 5), (5, 20), (6, 20), (11, 20), (10, 20)] # PYRAMID
+            [(0, 1), (1, 5), (5, 0), (0, 15), (1, 15), (5, 15)],  # TETRA
+            # VOXEL
+            [(1, 2), (2, 7), (6, 7), (1, 6), (16, 17), (17, 22), (21, 22), (16, 21), (1, 16), (2, 17), (6, 21),
+             (7, 22)],
+            # HEXAHEDRON
+            [(2, 3), (3, 8), (7, 8), (2, 7), (17, 18), (18, 23), (22, 23), (17, 22), (2, 17), (3, 18), (7, 22),
+             (8, 23)],
+            # POLYHEDRON
+            [(8, 9), (8, 13), (8, 23), (9, 14), (9, 24), (13, 14), (13, 28), (14, 29), (23, 24), (23, 28), (24, 29),
+             (28, 29)],
+            [(3, 4), (4, 18), (18, 3), (8, 9), (9, 23), (23, 8), (3, 8), (4, 9), (18, 23)],  # WEDGE
+            [(5, 6), (6, 11), (11, 10), (10, 5), (5, 20), (6, 20), (11, 20), (10, 20)]  # PYRAMID
         ]
 
         self.assertEqual(xu3d.cell_count, len(expected_cell_edges))
@@ -577,6 +614,7 @@ class TestUGridPointFunctions(unittest.TestCase):
                 self.assertEqual(xu3d.get_cell_edge(i, j), expected_cell_edges[i][j])
 
     def test_adjacent_cell_functions(self):
+        """Test getting cells adjacent to edges."""
         xuquad = self.get_simple_quad_ugrid()
         expected_cells = [(), (2,), (1,), ()]
         expected_2d_cells = [-1, 2, 1, -1]
@@ -619,12 +657,14 @@ class TestUGridPointFunctions(unittest.TestCase):
         np.testing.assert_array_equal(expected_points, attached_points)
 
     def test_cell_edges(self):
+        """Test getting cell edges."""
         xuquad = self.get_simple_quad_ugrid()
         expected_edges = ((0, 3), (3, 4), (4, 1), (1, 0))
         edges = xuquad.get_cell_edges(0)
         self.assertEqual(expected_edges, edges)
 
     def test_get_cell_3d_face_count(self):
+        """Test getting 3D cell face count."""
         xu2d = self.get_2d_linear_ugrid()
         self.assertEqual(-1, xu2d.get_cell_3d_face_count(-1))
         for i in range(0, xu2d.cell_count):
@@ -658,6 +698,7 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertEqual(4, xu3d.get_cell_3d_face_point_count(3, 2))
 
     def test_get_cell_3d_face_points(self):
+        """Test getting 3D cell face points."""
         xu2d = self.get_2d_linear_ugrid()
         self.assertEqual((), xu2d.get_cell_3d_face_points(-1, 0))
         self.assertEqual((), xu2d.get_cell_3d_face_points(0, -1))
@@ -712,6 +753,7 @@ class TestUGridPointFunctions(unittest.TestCase):
                 curr_id += 1
 
     def test_get_faces_of_cell(self):
+        """Test getting cell faces."""
         xu3d = self.get_3d_linear_ugrid()
         expected_cell_faces = [  # Tetra
             (0, 1, 15),
@@ -759,6 +801,7 @@ class TestUGridPointFunctions(unittest.TestCase):
                 curr_id += 1
 
     def test_get_cell_3d_face_adjacent_cell(self):
+        """Test getting 3D cell face adjacent cells."""
         xuhex = self.get_hexahedron_ugrid(3, 2, 2, (0, 0, 0))
         expected_neighbor = [-1, 1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1]
         self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(-1, 0))
@@ -770,7 +813,7 @@ class TestUGridPointFunctions(unittest.TestCase):
                 self.assertEqual(expected_neighbor[curr_id], neighbor_cell)
                 curr_id += 1
         self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(xuhex.cell_count, 0))
-        self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(0,xuhex.cell_count))
+        self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(0, xuhex.cell_count))
 
         xuhex = self.get_hexahedron_ugrid(3, 3, 3, (0, 0, 0))
         expected_neighbor = [-1, 2, -1, 1, -1, 4, -1, 3, 0, -1, -1, 5, 0, -1, -1, 3, -1, 6, 1, -1, 2, -1,
@@ -784,6 +827,7 @@ class TestUGridPointFunctions(unittest.TestCase):
                 curr_id += 1
 
     def test_is_valid_point_change(self):
+        """Test point change validation."""
         #     0-----1-----2
         #     |  0  |  1  |
         #     3-----4-----5
@@ -811,45 +855,46 @@ class TestUGridPointFunctions(unittest.TestCase):
         self.assertTrue(ugrid3d.set_point_location(21, invalid))
 
     def test_cell_3d_face_functions(self):
+        """Test 3D cell face functions."""
         # 3D Shapes
         ugrid3d = self.get_3d_linear_ugrid()
-        expected_cell_faces = ( (0, 1, 15), # Tetra
-                                (1, 5, 15),
-                                (5, 0, 15),
-                                (0, 5, 1),
-                                # Voxel
-                                (1, 16, 21, 6),
-                                (2, 7, 22, 17),
-                                (1, 2, 17, 16),
-                                (6, 21, 22, 7),
-                                (1, 6, 7, 2),
-                                (16, 17, 22, 21),
-                                # Hexahedron
-                                (2, 17, 22, 7),
-                                (3, 8, 23, 18),
-                                (2, 3, 18, 17),
-                                (7, 22, 23, 8),
-                                (2, 7, 8, 3),
-                                (17, 18, 23, 22),
-                                # Polyhedron
-                                (9, 8, 13, 14),
-                                (8, 9, 24, 23),
-                                (9, 14, 29, 24),
-                                (14, 13, 28, 29),
-                                (8, 13, 28, 23),
-                                (23, 24, 29, 28),
-                                # Wedge
-                                (3, 4, 18),
-                                (8, 23, 9),
-                                (3, 8, 9, 4),
-                                (4, 9, 23, 18),
-                                (18, 23, 8, 3),
-                                # Pyramid
-                                (5, 10, 11, 6),
-                                (5, 6, 20),
-                                (6, 11, 20),
-                                (11, 10, 20),
-                                (10, 5, 20))
+        expected_cell_faces = ((0, 1, 15),  # Tetra
+                               (1, 5, 15),
+                               (5, 0, 15),
+                               (0, 5, 1),
+                               # Voxel
+                               (1, 16, 21, 6),
+                               (2, 7, 22, 17),
+                               (1, 2, 17, 16),
+                               (6, 21, 22, 7),
+                               (1, 6, 7, 2),
+                               (16, 17, 22, 21),
+                               # Hexahedron
+                               (2, 17, 22, 7),
+                               (3, 8, 23, 18),
+                               (2, 3, 18, 17),
+                               (7, 22, 23, 8),
+                               (2, 7, 8, 3),
+                               (17, 18, 23, 22),
+                               # Polyhedron
+                               (9, 8, 13, 14),
+                               (8, 9, 24, 23),
+                               (9, 14, 29, 24),
+                               (14, 13, 28, 29),
+                               (8, 13, 28, 23),
+                               (23, 24, 29, 28),
+                               # Wedge
+                               (3, 4, 18),
+                               (8, 23, 9),
+                               (3, 8, 9, 4),
+                               (4, 9, 23, 18),
+                               (18, 23, 8, 3),
+                               # Pyramid
+                               (5, 10, 11, 6),
+                               (5, 6, 20),
+                               (6, 11, 20),
+                               (11, 10, 20),
+                               (10, 5, 20))
         expected_idx = 0
         for cell_idx in range(0, ugrid3d.cell_count):
             for face_idx in range(0, ugrid3d.get_cell_3d_face_count(cell_idx)):
@@ -870,7 +915,7 @@ class TestUGridPointFunctions(unittest.TestCase):
             for face_idx in range(0, ugrid3d.get_cell_3d_face_count(cell_idx)):
                 orientation.append(ugrid3d.get_cell_3d_face_orientation(cell_idx, face_idx))
 
-        expected_orientation = [UGrid.face_orientation_enum.ORIENTATION_BOTTOM, # Tetra
+        expected_orientation = [UGrid.face_orientation_enum.ORIENTATION_BOTTOM,  # Tetra
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
@@ -906,29 +951,30 @@ class TestUGridPointFunctions(unittest.TestCase):
                                 UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
-                                UGrid.face_orientation_enum.ORIENTATION_SIDE ]
+                                UGrid.face_orientation_enum.ORIENTATION_SIDE]
 
         self.assertEqual(expected_orientation, orientation)
 
     def test_get_cell_3d_face_orientation(self):
+        """Test getting 3D cell face orientation."""
         # vertically prismatic concave cell
-        nodes = ((1620022.8468, 6134363.759, 0),    (1620009.9411, 6134414.9476, 0),
-                (1619994.9996, 6134289.4991, 0),   (1619866.1047, 6134542.8755, 0),
-                (1619745.5374, 6134167.0467, 0),   (1619829.9996, 6134192.9991, 0),
-                (1619773.3077, 6134545.2322, 0),   (1619710.0815, 6134182.8542, 0),
-                (1619693.1618, 6134208.2547, 0),   (1619645.5529, 6134438.0278, 0),
-                (1619774.9993, 6134371.9982, 0),   (1620022.8468, 6134363.759, -10),
-                (1620009.9411, 6134414.9476, -10), (1619994.9996, 6134289.4991, -10),
-                (1619866.1047, 6134542.8755, -10), (1619745.5374, 6134167.0467, -10),
-                (1619829.9996, 6134192.9991, -10), (1619773.3077, 6134545.2322, -10),
-                (1619710.0815, 6134182.8542, -10), (1619693.1618, 6134208.2547, -10),
-                (1619645.5529, 6134438.0278, -10), (1619774.9993, 6134371.9982, -10))
+        nodes = ((1620022.8468, 6134363.759, 0), (1620009.9411, 6134414.9476, 0),
+                 (1619994.9996, 6134289.4991, 0), (1619866.1047, 6134542.8755, 0),
+                 (1619745.5374, 6134167.0467, 0), (1619829.9996, 6134192.9991, 0),
+                 (1619773.3077, 6134545.2322, 0), (1619710.0815, 6134182.8542, 0),
+                 (1619693.1618, 6134208.2547, 0), (1619645.5529, 6134438.0278, 0),
+                 (1619774.9993, 6134371.9982, 0), (1620022.8468, 6134363.759, -10),
+                 (1620009.9411, 6134414.9476, -10), (1619994.9996, 6134289.4991, -10),
+                 (1619866.1047, 6134542.8755, -10), (1619745.5374, 6134167.0467, -10),
+                 (1619829.9996, 6134192.9991, -10), (1619773.3077, 6134545.2322, -10),
+                 (1619710.0815, 6134182.8542, -10), (1619693.1618, 6134208.2547, -10),
+                 (1619645.5529, 6134438.0278, -10), (1619774.9993, 6134371.9982, -10))
         elements = (
             UGrid.cell_type_enum.POLYHEDRON,
-            13, # number of faces
-            11, 5, 10, 2, 0, 1, 3, 6, 9, 8, 7, 4, # top
-            11, 16, 15, 18, 19, 20, 17, 14, 12, 11, 13, 21, # bottom
-            4, 5, 16, 21, 10, # sides
+            13,  # number of faces
+            11, 5, 10, 2, 0, 1, 3, 6, 9, 8, 7, 4,  # top
+            11, 16, 15, 18, 19, 20, 17, 14, 12, 11, 13, 21,  # bottom
+            4, 5, 16, 21, 10,  # sides
             4, 10, 21, 13, 2,
             4, 2, 13, 11, 0,
             4, 0, 11, 12, 1,
@@ -944,26 +990,27 @@ class TestUGridPointFunctions(unittest.TestCase):
         actual = []
         for face_idx in range(0, ugrid.get_cell_3d_face_count(0)):
             actual.append(ugrid.get_cell_3d_face_orientation(0, face_idx))
-        expected = [ UGrid.face_orientation_enum.ORIENTATION_TOP,
-                     UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                     UGrid.face_orientation_enum.ORIENTATION_SIDE ]
+        expected = [UGrid.face_orientation_enum.ORIENTATION_TOP,
+                    UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE,
+                    UGrid.face_orientation_enum.ORIENTATION_SIDE]
         self.assertEqual(expected, actual)
 
     def test_cell_3d_function_caching(self):
+        """Test 3D cell function caching."""
         ugrid = self.get_hexahedron_ugrid(2, 3, 2, (0, 0, 0))
 
-        expected_neighbors = (( -1, -1, -1,  1, -1, -1 ),
-                              ( -1, -1,  0, -1, -1, -1 ))
+        expected_neighbors = ((-1, -1, -1, 1, -1, -1),
+                              (-1, -1, 0, -1, -1, -1))
         expected_orientations = ((UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
@@ -979,7 +1026,7 @@ class TestUGridPointFunctions(unittest.TestCase):
 
         # test four times, to fill the cache, read from the cache, turn off the cache,
         # and turn on the cache
-        use_cache_values = ( True, True, False, True )
+        use_cache_values = (True, True, False, True)
         for i in range(0, 4):
             ugrid.use_cache(use_cache_values[i])
             for cell_idx in range(0, ugrid.cell_count):
@@ -991,9 +1038,9 @@ class TestUGridPointFunctions(unittest.TestCase):
                     self.assertEqual(expected_orientations[cell_idx][face_idx], orientation)
 
         # change to different points and cells and test again
-        expected_neighbors =  (( -1, -1, -1,  1, -1, -1 ),
-                               ( -1, -1,  0,  2, -1, -1 ),
-                               ( -1, -1,  1, -1, -1, -1 ))
+        expected_neighbors = ((-1, -1, -1, 1, -1, -1),
+                              (-1, -1, 0, 2, -1, -1),
+                              (-1, -1, 1, -1, -1, -1))
         expected_orientations = ((UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
@@ -1027,9 +1074,10 @@ class TestUGridPointFunctions(unittest.TestCase):
 
 
 class TestUGridCellTypeEnum(unittest.TestCase):
-    """CellType enum tests"""
+    """CellType enum tests."""
 
     def test_ugrid_celltype_enum(self):
+        """Test the UGrid cell_type_enum enum."""
         from xms.grid.ugrid import UGrid
         self.assertEqual("ugrid_celltype_enum.INVALID_CELL_TYPE",
                          str(UGrid.cell_type_enum.INVALID_CELL_TYPE))
@@ -1122,9 +1170,10 @@ class TestUGridCellTypeEnum(unittest.TestCase):
 
 
 class TestUGridFaceOrientationEnum(unittest.TestCase):
-    """FaceOrientation enum tests"""
+    """FaceOrientation enum tests."""
 
     def test_ugrid_faceorientation_enum(self):
+        """Test the UGrid FaceOrientation enum."""
         from xms.grid.ugrid import UGrid
         self.assertEqual("ugrid_faceorientation_enum.ORIENTATION_UNKNOWN",
                          str(UGrid.face_orientation_enum.ORIENTATION_UNKNOWN))

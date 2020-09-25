@@ -1,15 +1,9 @@
-"""
-********************************************************************************
-* Name: setup.py
-* Author: Gage Larsen, Andrew Clark
-* Created On: April 18th, 2019
-* Copyright: (c)
-* License: BSD 2-Clause
-********************************************************************************
-"""
+"""Install the xmsgrid package."""
 import os
-from xms.grid import __version__
+
 from setuptools import setup
+
+from xms.grid import __version__
 
 
 # allow setup.py to be run from any path
@@ -27,7 +21,7 @@ setup(
     name='xmsgrid',
     version=version,
     packages=['xms.grid', 'xms.grid.geometry', 'xms.grid.triangulate',
-              'xms.grid.ugrid',],
+              'xms.grid.ugrid', ],
     include_package_data=True,
     license='BSD 2-Clause License',
     description='',
