@@ -18,13 +18,14 @@ from unittest.mock import MagicMock
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..', '_package')))
-#sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'build_py', 'install', '_package')))
+# sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'build_py', 'install', '_package')))
 
 
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
         return MagicMock()
+
 
 MOCK_MODULES = ['xms.grid._xmsgrid', 'xms.grid._xmsgrid.geometry', 'xms.grid._xmsgrid.triangulate',
                 'xms.grid._xmsgrid.ugrid']
