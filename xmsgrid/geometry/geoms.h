@@ -259,6 +259,7 @@ bool gmClipMpoint3PolyToRect(Pt3d pts[],
                              double xMin,
                              double yMax,
                              double yMin);
+int gmComputeClipCodes(const Pt4d& node, double BC[6], int* OutC);
 int gmComputeClipCodes2(double x, double y, double minx, double maxx, double miny, double maxy);
 int gmClipLine(double* x1,
                double* y1,
@@ -372,6 +373,14 @@ bool gmLinesCross(const Pt3d& a_segment1Point1,
                   const Pt3d& a_segment2Point1,
                   const Pt3d& a_segment2Point2);
 
+bool gmIntersectLineWithPln(const Pt3d& p0,
+                           const Pt3d& p1,
+                           double a,
+                           double b,
+                           double c,
+                           double d,
+                           Pt3d* point);
+
 int gmIntersectTriangleAndLineSegment(const Pt3d& a_pt1,
                                       const Pt3d& a_pt2,
                                       const Pt3d& a_t0,
@@ -384,6 +393,13 @@ bool gmLineAndTriangleIntersect(const Pt3d& origin,
                                 const Pt3d& v31,
                                 const Pt3d& v32,
                                 Pt3d* theisect = NULL);
+bool gmIntersectLineWithTriangle(const Pt3d& p0,
+                                const Pt3d& p1,
+                                const Pt3d& v0,
+                                const Pt3d& v1,
+                                const Pt3d& v2,
+                                double* dist,
+                                Pt3d* point);
 
 void gmSphereLineIntersection(const Pt3d& a_l1,
                               const Pt3d& a_l2,
@@ -635,8 +651,8 @@ Pt3d gmInterpolateMpoint3(const Pt3d& p1, const Pt3d& p2);
 double* gmDistributeValues(const double* in, int nin, int nout, double bias);
 Pt3d* gmLinearSubdivideLine(const Pt3d& endpt1, const Pt3d& endpt2, int numdiv);
 
-// TODO: No definition?
-// void gmExtrapolatePoints(const Pt3d*, const Pt3d*, Pt3d*, double*, int, int);
+
+void gmExtrapolatePoints(const Pt3d*, const Pt3d*, Pt3d*, double*, int, int);
 void gmExtrapolatePointsWithTol(const Pt3d* col1,
                                 const Pt3d* col2,
                                 Pt3d* newcol,
@@ -795,5 +811,8 @@ void gmGetConvexHull(const VecPt3d& a_pts, VecPt3d& a_hull, bool a_includeOn = f
 
 double gmCalculateCelerity(double period, double depth, double gravity);
 double gmCalculateWavelength(double period, double depth, double gravity);
+
+double gmMetersToDecimalDegrees(const double a_meters, const double a_latitude);
+double gmDecimalDegreesToMeters(const double a_degrees, const double a_latitude);
 
 } // namespace xms
