@@ -127,3 +127,7 @@ class XmsgridConan(ConanFile):
             self.cpp_info.libs = ["xmsgridlib_d"]
         else:
             self.cpp_info.libs = ["xmsgridlib"]
+        if not self.in_local_cache:
+            from os import path
+            root = path.abspath(path.dirname(__file__))
+            self.cpp_info.libdirs = [path.join(root, 'build/lib')]
