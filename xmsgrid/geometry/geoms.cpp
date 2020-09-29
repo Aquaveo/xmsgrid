@@ -1437,8 +1437,8 @@ int gmPointInPolygon3DWithTol(const Pt3d& pt,
   const Pt3d& nrm,
   double tol)
 {
-  register int i, id0, id1;
-  register double diff, val;
+  int i, id0, id1;
+  double diff, val;
   int plndir, divdir, nmcrs1, nmcrs2;
   double p0, p1, p2;
   p0 = fabs(nrm.x);
@@ -2177,7 +2177,7 @@ double gmDistanceFromPointToPlane(const Pt3d& pt1,
 //------------------------------------------------------------------------------
 void gmClipNDCPoly(int* npts, Pt4d* pts)
 {
-  register int i, k, tmpnpts;
+  int i, k, tmpnpts;
   double dx, dy, fracx, fracy;
   double x0, y0, x1, y1;
   Pt4d oldpts[10], *curr, *prev;
@@ -5176,8 +5176,8 @@ void gmExtrapolatePointsWithTol(const Pt3d* col1,
 //------------------------------------------------------------------------------
 void gmNormalizeXYZ(const Pt3d& vect, Pt3d* norm)
 {
-  register double magvec;
-  register double x, y, z;
+  double magvec;
+  double x, y, z;
 
   x = vect.x;
   y = vect.y;
@@ -5201,8 +5201,8 @@ void gmNormalizeXYZ(const Pt3d& vect, Pt3d* norm)
 //------------------------------------------------------------------------------
 void gmNormalizeXYZ(const Pt3f& vect, Pt3f* norm)
 {
-  register float magvec;
-  register float x, y, z;
+  float magvec;
+  float x, y, z;
 
   x = vect.x;
   y = vect.y;
@@ -5227,8 +5227,8 @@ void gmNormalizeXYZ(const Pt3f& vect, Pt3f* norm)
 //------------------------------------------------------------------------------
 double gmNormalizeXYZWithMag(const Pt3d& vect, Pt3d* norm)
 {
-  register double magsq, magvec;
-  register double x, y, z;
+  double magsq, magvec;
+  double x, y, z;
 
   x = vect.x;
   y = vect.y;
@@ -6563,7 +6563,7 @@ void GeomsUnitTest::test_gmExtents2D()
 void GeomsUnitTest::test_gmExtents3D()
 {
   using namespace xms;
-  
+
   const double DELTA = 0.0001;
   Pt3d min, max;
 
