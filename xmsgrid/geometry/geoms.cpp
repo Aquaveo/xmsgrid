@@ -12,8 +12,9 @@
 #include <xmsgrid/geometry/geoms.h>
 
 // 3. Standard library headers
-#include <cfloat>
 #include <algorithm>
+#include <cfloat>
+#include <limits>
 
 // 4. External library headers
 
@@ -38,6 +39,8 @@ namespace xms
 #define RIGHT_MASK 2
 #define BOTTOM_MASK 4
 #define TOP_MASK 8
+
+const double DBL_EPS = std::numeric_limits<double>::epsilon();
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -2489,6 +2492,32 @@ bool gmClipMpoint3PolyToRect(Pt3d pts[],
   return true;
 } // gmClipMpoint3PolyToRect
 //------------------------------------------------------------------------------
+/// \brief Get the Boundary Coordinates and OutCode for a node.
+/// \param node: The node to get information for.
+/// \param BC: Initialized to the boundary coordinates of the node.
+/// \param OutC: Initialized to the OutCode for the node.
+/// \return 1, always.
+//------------------------------------------------------------------------------
+int gmComputeClipCodes(const Pt4d& node, double BC[6], int* OutC)
+{
+  static int MASK[6] = { 1, 2, 4, 8, 16, 32 };
+  int j;
+
+  BC[0] = node.x;
+  BC[1] = 1.0 - node.x;
+  BC[2] = node.y;
+  BC[3] = 1.0 - node.y;
+  BC[4] = node.z;
+  BC[5] = 1.0 - node.z;
+  *OutC = 0;
+  for (j = 3; j >= 0; --j)
+  {
+    if (BC[j] < 0.)
+      *OutC = *OutC | MASK[j];
+  }
+  return 1;
+} // gmComputeClipCodes
+//------------------------------------------------------------------------------
 /// \brief Get the Boundary Coordinates and OutCode for a 2D node.
 /// \author   Mark Belnap, Michael Kennard
 /// \param x: x coordinate of the node.
@@ -3112,6 +3141,49 @@ bool gmLinesCross(const Pt3d& a_segment1Point1,
   return (result1 * result2 < 0 && result3 * result4 < 0);
 } // gmLinesCross
 //------------------------------------------------------------------------------
+/// \brief Find the point where a line intersects a plane.
+/// \param p0: A point on the line.
+/// \param p1: Another point on the line.
+/// \param a: The x coefficient of the plane equation.
+/// \param b: The y coefficient of the plane equation.
+/// \param c: The z coefficient of the plane equation.
+/// \param d: The constant of the plane equation.
+/// \param point: Initialized to the point of intersection, if any.
+/// \return Whether the line intersected the plane.
+//------------------------------------------------------------------------------
+bool gmIntersectLineWithPln(const Pt3d& p0,
+                           const Pt3d& p1,
+                           double a,
+                           double b,
+                           double c,
+                           double d,
+                           Pt3d* point)
+{
+  Pt3d dir;
+  double denom, t;
+
+  /* see if the line and plane are parallel */
+  dir.x = p0.x - p1.x;
+  dir.y = p0.y - p1.y;
+  dir.z = p0.z - p1.z;
+  denom = a * dir.x + b * dir.y + c * dir.z;
+  if (EQ_EPS(denom, 0.0, DBL_EPS))
+    return false;
+  /* calculate t */
+  t = (a * p0.x + b * p0.y + c * p0.z + d) / denom;
+
+  /* see if line intersects plane between endpoints of the line */
+  if (GT_EPS(t, 1.0, DBL_EPS) || LT_EPS(t, 0.0, DBL_EPS))
+    return false;
+
+  /* calculate the coordinates of the point of intersection */
+  point->x = p0.x - t * (p0.x - p1.x);
+  point->y = p0.y - t * (p0.y - p1.y);
+  point->z = p0.z - t * (p0.z - p1.z);
+
+  return true;
+} // gmIntersectLineWithPln
+//------------------------------------------------------------------------------
 /// \brief Determine if a line segment intersects a triangle.
 /// \param[in] a_pt1: First endpoint of the line segment.
 /// \param[in] a_pt2: Second endpoint of the line segment.
@@ -3320,6 +3392,59 @@ bool gmLineAndTriangleIntersect(const Pt3d& origin,
   return (inter);
 
 } // gmLineAndTriangleIntersect
+//------------------------------------------------------------------------------
+/// \brief Find the point where a line intersects a plane.
+/// \param p0: A point on the line.
+/// \param p1: Another point on the line.
+/// \param v0: First point in the plane.
+/// \param v1: Second point in the plane.
+/// \param v2: Third point in the plane.
+/// \param dist: Initialized to the distance between p0 and the point
+///              of intersection.
+/// \param point: Initialized to the point of intersection, if any.
+/// \return Whether the line intersected the plane.
+//------------------------------------------------------------------------------
+bool gmIntersectLineWithTriangle(const Pt3d& p0,
+                                const Pt3d& p1,
+                                const Pt3d& v0,
+                                const Pt3d& v1,
+                                const Pt3d& v2,
+                                double* dist,
+                                Pt3d* point)
+{
+  double a, b, c, d, planeq[4];
+  Pt3d normal, dir, vp[3];
+  int poly[3];
+
+  /* get the equation of the plane */
+  gmCalculatePlaneCoeffs(v0, v1, v2, &planeq[0], &planeq[1], &planeq[2], &planeq[3]);
+  a = planeq[0];
+  b = planeq[1];
+  c = planeq[2];
+  d = planeq[3];
+
+  if (!gmIntersectLineWithPln(p0, p1, a, b, c, d, point))
+    return false;
+
+  *dist = gmXYZDistanceBetweenPoints(p0, *point);
+
+  /* see if the intersection is with in the triangle */
+  normal.x = a;
+  normal.y = b;
+  normal.z = c;
+  poly[0] = 0;
+  poly[1] = 1;
+  poly[2] = 2;
+  vp[0] = v0;
+  vp[1] = v1;
+  vp[2] = v2;
+  if (gmPointInPolygon3DWithTol(*point, 3, vp, poly, normal, XM_ZERO_TOL) < 0)
+  {
+    return false;
+  }
+
+  return true;
+} // gmIntersectLineWithTriangle
 //------------------------------------------------------------------------------
 /// \brief Find the points of intersection of a line segment with a sphere.
 /// \param a_l1: First endpoint of the line segment.
@@ -4955,7 +5080,22 @@ Pt3d* gmLinearSubdivideLine(const Pt3d& endpt1, const Pt3d& endpt2, int numdiv)
   }
   return (middlepts);
 } // gmLinearSubdivideLine
-
+//------------------------------------------------------------------------------
+/// \brief Take all values in col1 and extrapolate them across to col2 to create
+///        newcol.
+/// \note All memory should already have been allocated. The newcol will have
+///       the same number of points as col1 (np1).
+/// \param col1: First column of values.
+/// \param col2: Second column of values.
+/// \param newcol: Column of new values.
+/// \param pcnt: Initialized to the size of newcol.
+/// \param np1: Number of values in col1.
+/// \param np2: Number of values in col2.
+//------------------------------------------------------------------------------
+void gmExtrapolatePoints(Pt3d* col1, Pt3d* col2, Pt3d* newcol, double* pcnt, int np1, int np2)
+{
+  gmExtrapolatePointsWithTol(col1, col2, newcol, pcnt, np1, np2, gmXyTol());
+} // gmExtrapolatePoints
 //------------------------------------------------------------------------------
 /// \brief Take all values in col1 and extrapolate them across to col2 to create
 ///        newcol.
@@ -5845,16 +5985,35 @@ double gmCalculateWavelength(double period, double depth, double gravity)
 
   return (wavelength);
 } // gmCalculateWavelength
-
-
-
+//------------------------------------------------------------------------------
+/// \brief Approximate conversion from meters to decimal degrees.
+/// \param a_meters: Meters.
+/// \param a_latitude: Latitude.
+/// \return Decimal degrees.
+//------------------------------------------------------------------------------
+double gmMetersToDecimalDegrees(const double a_meters, const double a_latitude)
+{
+  // Algorithm from: https://stackoverflow.com/a/25237446/7322870
+  const double metersPerDegree = gmDecimalDegreesToMeters(1.0, a_latitude);
+  if (EQ_TOL(metersPerDegree, 0.0, XM_ZERO_TOL))
+    return 360.0;
+  return a_meters / metersPerDegree;
+} // gmMetersToDecimalDegrees
+//------------------------------------------------------------------------------
+/// \brief Approximate conversion from decimal degrees to meters.
+/// \param a_degrees: Degrees.
+/// \param a_latitude: Latitude.
+/// \return Meters.
+//------------------------------------------------------------------------------
+double gmDecimalDegreesToMeters(const double a_degrees, const double a_latitude)
+{
+  return a_degrees * (111.32 * 1000 * cos(a_latitude * XM_PI / 180.0));
+} // gmDecimalDegreesToMeters
 } // namespace xms
 
 //----- Tests ------------------------------------------------------------------
 
 #ifdef CXX_TEST
-
-//#include <RunTest.h>
 
 #include <boost/timer/timer.hpp>
 
@@ -6813,25 +6972,6 @@ void GeomsUnitTest::test_gmMakePolygonClockwise()
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
-// void GeomsUnitTest::test_gmCounterClockwise ()
-//{
-//  //TS_FAIL("GeomsUnitTest::test_gmCounterClockwise");
-//
-//  //  2
-//  //  | \
-//  //  0---1
-//
-//  Pt3d pt0(0,0,0);
-//  Pt3d pt1(10,0,0);
-//  Pt3d pt2(0,10,0);
-//
-//  TS_ASSERT_EQUALS(gmCounterClockwiseTri(pt0, pt1, pt2), true);
-//  TS_ASSERT_EQUALS(gmCounterClockwiseTri(pt0, pt2, pt1), false);
-//} // GeomsUnitTest::test_gmCounterClockwise
-
-//------------------------------------------------------------------------------
-/// \brief
-//------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmCounterClockwiseQuad()
 {
   using namespace xms;
@@ -6848,25 +6988,6 @@ void GeomsUnitTest::test_gmCounterClockwiseQuad()
   TS_ASSERT_EQUALS(gmCounterClockwiseQuad(pt0, pt1, pt2, pt3), true);
   TS_ASSERT_EQUALS(gmCounterClockwiseQuad(pt0, pt3, pt2, pt1), false);
 } // GeomsUnitTest::test_gmCounterClockwiseQuad
-//------------------------------------------------------------------------------
-///// \brief
-//------------------------------------------------------------------------------
-// void GeomsUnitTest::test_gmQuadToTriAreaCheck ()
-//{
-//  //TS_FAIL("GeomsUnitTest::test_gmQuadToTriAreaCheck");
-//
-//  //  3---2
-//  //  |   |
-//  //  0---1
-//
-//  Pt3d pt0(0,0,0);
-//  Pt3d pt1(10,0,0);
-//  Pt3d pt2(10,10,0);
-//  Pt3d pt3(0,10,0);
-//
-//  TS_ASSERT_EQUALS(gmQuadToTriAreaCheck(pt0, pt1, pt2, pt3), false);
-//  TS_ASSERT_EQUALS(gmQuadToTriAreaCheck(pt0, pt3, pt2, pt1), true);
-//} // GeomsUnitTest::test_gmQuadToTriAreaCheck
 //------------------------------------------------------------------------------
 /// \brief
 //------------------------------------------------------------------------------
@@ -7145,5 +7266,20 @@ void GeomsUnitTest::testGreatCircleDistanceMeters()
   TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 360, 0 }), 1.5604449514735575e-9, kDelta);
   TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 361, 0 }), 111194.92664455590, kDelta);
 } // GeomsUnitTest::testGreatCircleDistanceMeters
+
+//------------------------------------------------------------------------------
+/// \brief Test gmGreatCircleDistanceMeters.
+//------------------------------------------------------------------------------
+void GeomsUnitTest::testMetersToDecimalDegrees()
+{
+  using namespace xms;
+
+  TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 0), 8.9831117499, XM_ZERO_TOL);
+  TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 45), 12.704038469, XM_ZERO_TOL);
+  TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 90), 360.0, XM_ZERO_TOL);
+  TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, -90), 360.0, XM_ZERO_TOL);
+  TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 270), 360.0, XM_ZERO_TOL);
+  TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 180), -8.9831117499, XM_ZERO_TOL);
+} // GeomsUnitTest::testMetersToDecimalDegrees
 
 #endif

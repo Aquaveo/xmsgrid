@@ -98,6 +98,7 @@ public:
   void test_gmIntersectLines();
   void test_gmMiddleThirdWithTol();
   void testGreatCircleDistanceMeters();
+  void testMetersToDecimalDegrees();
 }; // class GeomsUnitTest
 
 #endif
