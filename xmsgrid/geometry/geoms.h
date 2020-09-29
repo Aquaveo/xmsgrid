@@ -10,6 +10,7 @@
 //----- Included files ---------------------------------------------------------
 
 // 3. Standard Library Headers
+#include <cmath>
 #include <vector>
 
 // 4. External Library Headers
@@ -552,7 +553,7 @@ double gmPtDistanceAlongSegment(const T& pt1,
   dy = pt2.y - pt1.y;
 
   if ((tol == NULL && (dx == 0.0 && dy == 0.0)) ||
-      (tol != NULL && (sqrt(dx * dx + dy * dy) <= *tol)))
+      (tol != NULL && (std::sqrt(dx * dx + dy * dy) <= *tol)))
   {
     t = -1.0;
   }
