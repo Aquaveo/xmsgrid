@@ -567,7 +567,7 @@ double gmConvertAngleToBetween0And360(double a_angle, bool a_InDegrees /*= true*
     ang *= (180.0 / XM_PI);
   }
 #if BOOST_OS_WINDOWS
-  while (LT_TOL(ang, 0.0, DBL_EPSILON) && _finite(ang))
+  while (LT_TOL(ang, 0.0, DBL_EPSILON) && finite(ang))
   {
 #else
   while (LT_TOL(ang, 0.0, DBL_EPSILON) && std::isfinite(ang))
@@ -576,7 +576,7 @@ double gmConvertAngleToBetween0And360(double a_angle, bool a_InDegrees /*= true*
     ang += 360.0;
   }
 #if BOOST_OS_WINDOWS
-  while (GTEQ_TOL(ang, 360.0, DBL_EPSILON) && _finite(ang))
+  while (GTEQ_TOL(ang, 360.0, DBL_EPSILON) && finite(ang))
   {
 #else
   while (GTEQ_TOL(ang, 360.0, DBL_EPSILON) && std::isfinite(ang))
@@ -6749,7 +6749,7 @@ void GeomsUnitTest::test_gmIntersectLineSegmentsWithTol()
     &out1.z, &zi2, tol) == true);
   Pt3d outTest(0.0, 0.0, 0.0);
   TS_ASSERT(gmEqualPointsXYZ(outTest, out1, tol));
-  if (!_finite(zi2))
+  if (!finite(zi2))
   {
     TS_FAIL("infinite");
     return;
