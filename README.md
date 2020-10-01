@@ -5,7 +5,7 @@ Grid library for XMS products
 Master Branch Status
 --------------------
 
-![XmsGrid-CI](https://github.com/Aquaveo/xmsgrid/workflows/XmsGrid-CI/badge.svg)
+![XmsGrid-CI](https://github.com/Aquaveo/xmsgrid/workflows/XmsGrid-5.0/badge.svg)
 
 Prerequisites
 --------------
