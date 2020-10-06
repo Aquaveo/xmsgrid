@@ -63,9 +63,11 @@ namespace { // unnamed namespace
 //------------------------------------------------------------------------------
 void GmMultiPolyIntersectionSorterTerse::Sort(
     GmMultiPolyIntersectorData &a_data, std::vector<int> &polyids,
-    std::vector<double> &tvalues, std::vector<Pt3d> &a_pts, double a_tol) {
+    std::vector<double> &tvalues, std::vector<Pt3d> &a_pts, double a_tol)
+{
   m_d = &a_data;
   m_tol = a_tol;
+
   RemoveCornerTouches();
   RemoveDuplicateEdges();
   SwapAdjacents();
@@ -73,14 +75,55 @@ void GmMultiPolyIntersectionSorterTerse::Sort(
   FixArrays(polyids, tvalues, a_pts);
 } // GmMultiPolyIntersectionSorterTerse::Sort
 //------------------------------------------------------------------------------
+/// \brief The t-value at the same point should be the same, but it can be off
+///        in the floating point representation. This makes them the same to prevent
+///        too many points from being removed in RemoveCornerTouches.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectionSorterTerse::FixTValueAtDuplicateXy()
+{
+  XM_ENSURE_TRUE_VOID_NO_ASSERT(m_d->m_ixs.size() > 1);
+
+  // Loop through
+  for (size_t i = 1; i < m_d->m_ixs.size() - 1; ++i)
+  {
+    if (gmEqualPointsXY(m_d->m_ixs[i].m_pt, m_d->m_ixs[i - 1].m_pt, gmXyTol()))
+    {
+      m_d->m_ixs[i].m_t =  m_d->m_ixs[i - 1].m_t;
+    }
+  }
+
+  // Try to get 1.0 t-values as far down as possible.
+  for (size_t i = m_d->m_ixs.size() - 2; i > 0; --i)
+  {
+    if (gmEqualPointsXY(m_d->m_ixs[i].m_pt, m_d->m_ixs[i + 1].m_pt, gmXyTol()))
+    {
+      m_d->m_ixs[i].m_t =  m_d->m_ixs[i + 1].m_t;
+    }
+    else
+    {
+      break;
+    }
+  }
+} // GmMultiPolyIntersectionSorterTerse::FixTValueAtDuplicateXy
+//------------------------------------------------------------------------------
 /// \brief Remove polys that only touch the line at a corner. We try to
 ///        identify these corner polys using the following criteria:
 ///        1. There are > 1 intersection with the same t value.
 ///        2. The corner poly doesn't appear in the previous or next
 ///           group of intersections that have the same t values.
 //------------------------------------------------------------------------------
-void GmMultiPolyIntersectionSorterTerse::RemoveCornerTouches() {
+void GmMultiPolyIntersectionSorterTerse::RemoveCornerTouches()
+{
   XM_ENSURE_TRUE_VOID_NO_ASSERT(m_d->m_ixs.size() > 1);
+
+  // Change the t-values so that duplicate points in XY have the same t-value.
+  VecDbl oldTValues;
+  oldTValues.reserve(m_d->m_ixs.size());
+  for (size_t i = 0; i < m_d->m_ixs.size(); ++i)
+  {
+    oldTValues.push_back(m_d->m_ixs[i].m_t);
+  }
+  FixTValueAtDuplicateXy();
 
   VecInt tChange;
   FindWhereTValuesChange(tChange);
@@ -88,13 +131,16 @@ void GmMultiPolyIntersectionSorterTerse::RemoveCornerTouches() {
   VecInt toRemove;
 
   // Loop through tChanges
-  for (size_t i = 0; i < tChange.size() - 1; ++i) {
-    if (tChange[i + 1] - tChange[i] > 1) {
+  for (size_t i = 0; i < tChange.size() - 1; ++i)
+  {
+    if (tChange[i + 1] - tChange[i] > 1)
+    {
       VecInt inNeither;
       FindPreviousNextNeither(tChange, (int)i, nullptr, nullptr, &inNeither);
 
       if ((i > 0 && i + 2 < tChange.size()) || inNeither.size() > 1 ||
-          (i == 0 && tChange[1] - tChange[0] > 1)) {
+          (i == 0 && tChange[1] - tChange[0] > 1))
+      {
         toRemove.insert(toRemove.end(), inNeither.begin(), inNeither.end());
       }
     }
@@ -102,8 +148,15 @@ void GmMultiPolyIntersectionSorterTerse::RemoveCornerTouches() {
 
   AddMissingEndpointIds(tChange);
 
+  // Reset the t-values
+  for (size_t i = 0; i < m_d->m_ixs.size(); ++i)
+  {
+    m_d->m_ixs[i].m_t = oldTValues[i];
+  }
+
   // Remove them, working backwards
-  for (size_t i = toRemove.size(); i-- > 0;) {
+  for (size_t i = toRemove.size(); i-- > 0;)
+  {
     m_d->m_ixs.erase(m_d->m_ixs.begin() + toRemove[i]);
   }
 } // GmMultiPolyIntersectionSorterTerse::RemoveCornerTouches

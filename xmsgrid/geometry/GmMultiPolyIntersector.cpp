@@ -120,6 +120,7 @@ private:
   RtreeBox* m_rtree;                     ///< Rtree used to find polygons
   GmBstLine3d m_line;                    ///< Current line segment
   double m_buffer;                       ///< Small buffer around each bounding box
+  double m_xyTol;                        ///< XY tolerance for computing t-values
   int m_startingId;                      ///< Offset if polys start at something other than one
   std::vector<GmBstPoly3d> m_boostPolys; ///< Polygons as boost geom polygons
   BSHP<GmMultiPolyIntersectionSorter> m_sorter; ///< Sorter used to process results
@@ -248,6 +249,7 @@ void GmMultiPolyIntersectorImpl::CalculateBuffer()
   // Calculate the buffer as a fraction of the distance between mn and mx
   const double kFraction = 1e-5; // 0.00001
   m_buffer = gmXyDistance(mn, mx) * kFraction;
+  m_xyTol = gmComputeXyTol(mn, mx);
 } // GmMultiPolyIntersectorImpl::CalculateBuffer
 //------------------------------------------------------------------------------
 /// \brief Because the rtree intersection fails in some cases where the line
@@ -617,6 +619,8 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
                                                      VecDbl& a_tValues,
                                                      VecPt3d& a_pts)
 {
+  double oldTolerance = gmXyTol();
+  gmXyTol(true, m_xyTol);
   m_pt1.Set(a_x1, a_y1, 0.0);
   m_pt2.Set(a_x2, a_y2, 0.0);
   GetPolysForPoint(m_pt1, m_d.m_polys1);
@@ -642,6 +646,7 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
   m_d.m_polys1.clear();
   m_d.m_polys2.clear();
   m_line.clear();
+  gmXyTol(true, oldTolerance);
 } // GmMultiPolyIntersectorImpl::TraverseLineSegment
 //-----------------------------------------------------------------------------
 /// \brief Removes duplicate T Values and updates the polygon ID and point vectors
@@ -730,9 +735,15 @@ int GmMultiPolyIntersectorImpl::PolygonFromPoint(const Pt3d& a_pt)
 
 #include <xmsgrid/geometry/GmMultiPolyIntersector.t.h>
 
+#include <fstream>
+
+#include <xmscore/dataio/daStreamIo.h>
 #include <xmscore/testing/TestTools.h>
 #include <xmsgrid/geometry/GmMultiPolyIntersectionSorterTerse.h>
 #include <xmsgrid/triangulate/triangles.h>
+#include <xmsgrid/ugrid/XmEdge.h>
+#include <xmsgrid/ugrid/XmUGrid.h>
+#include <xmsgrid/ugrid/XmUGridUtils.h>
 
 //----- Namespace declaration --------------------------------------------------
 
@@ -2143,6 +2154,63 @@ void GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments()
   }
 #endif
 } // GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments
+
+//------------------------------------------------------------------------------
+/// \brief
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersector2IntermediateTests::testBug12586()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug12586.xmc", std::ios_base::binary);
+  bool binary = daLineBeginsWith(input, "Binary");
+  std::string header = binary ? "Binary " : "ASCII ";
+  header += "UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, binary);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  xms::VecInt2d cellPolys;
+  cellPolys.assign(xmGrid->GetCellCount(), xms::VecInt());
+  for (int cellIdx = 0; cellIdx < xmGrid->GetCellCount(); ++cellIdx)
+  {
+    xms::VecInt& polygon = cellPolys[cellIdx];
+    polygon.reserve(xmGrid->GetCellEdgeCount(cellIdx));
+    for (int edgeIdx = 0; edgeIdx < xmGrid->GetCellEdgeCount(cellIdx); ++edgeIdx)
+    {
+      // int idx1, idx2;
+      xms::XmEdge pairIdx = xmGrid->GetCellEdge(cellIdx, edgeIdx);
+      polygon.push_back(pairIdx.GetFirst());
+    }
+  }
+
+  std::vector<int> expectedIds = {15802, 7949, 15802, 15955, 7949, 7948, 15955, 16108, 7948,
+    7947, 16108, 16261, 7946, 7947, 7946, -1};
+  std::vector<xms::Pt3d> expectedPoints = 
+    {{1538860.1699999999, 7379636.5400000000, 0.00000000000000000},
+    {1538860.1700000018, 7379636.5399999982, 4549.3574218750000},
+    {1538860.6799999995, 7379637.6599999992, 0.00000000000000000},
+    {1538860.6799999995, 7379637.6599999992, 0.00000000000000000},
+    {1538860.6800000020, 7379637.6599999983, 4548.8906250000000},
+    {1538860.6800000020, 7379637.6599999983, 4548.8906250000000},
+    {1538861.1899999988, 7379638.7799999975, 0.00000000000000000},
+    {1538861.1899999988, 7379638.7799999975, 0.00000000000000000},
+    {1538861.1900000013, 7379638.7799999965, 4548.8012695312500},
+    {1538861.1900000013, 7379638.7799999965, 4548.8012695312500},
+    {1538861.6999999990, 7379639.8999999976, 0.00000000000000000},
+    {1538861.6999999990, 7379639.8999999976, 0.00000000000000000},
+    {1538861.7000000027, 7379639.8999999966, 4548.7114257812500},
+    {1538861.7000000027, 7379639.8999999966, 4548.7114257812500},
+    {1538862.2100000030, 7379641.0199999977, 4548.6220703125000},
+    {1538862.2099999995, 7379641.0199999986, 0.00000000000000000}};
+  std::vector<double> expectedTvals = {0.00000000000000000, -1.8755588329223459e-010,
+    0.24999999983166091, 0.24999999983166091, 0.24999999987509086, 0.24999999987509086,
+    0.49999999947153817, 0.49999999947153817, 0.49999999951496815, 0.49999999951496815,
+    0.74999999953418495, 0.74999999953418495, 0.74999999967562048, 0.74999999967562048,
+    0.99999999991044985, 0.99999999978861531};
+  iRunTest(1538860.17, 7379636.54, 1538862.21, 7379641.02,
+    xmGrid->GetLocations(), cellPolys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersector2IntermediateTests::testBug12586
 
 //} // namespace xms
 
