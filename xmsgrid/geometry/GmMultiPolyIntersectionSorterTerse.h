@@ -36,6 +36,7 @@ public:
                     std::vector<Pt3d> &a_pts, double a_tol) override;
 
 private:
+  void FixTValueAtDuplicateXy();
   void RemoveCornerTouches();
   void RemoveDuplicateEdges();
   void SwapAdjacents();

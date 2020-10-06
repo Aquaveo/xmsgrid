@@ -87,6 +87,7 @@ class GmMultiPolyIntersector2IntermediateTests : public CxxTest::TestSuite
 public:
   void testLargeNumPolys();
   void testLargeNumPolysAndSegments();
+  void testBug12586();
 };
 
 //} // namespace xms
