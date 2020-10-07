@@ -2156,7 +2156,7 @@ void GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments()
 } // GmMultiPolyIntersector2IntermediateTests::testLargeNumPolysAndSegments
 
 //------------------------------------------------------------------------------
-/// \brief
+/// \brief Test a case where the line is on the points and edges.
 //------------------------------------------------------------------------------
 void GmMultiPolyIntersector2IntermediateTests::testBug12586()
 {
