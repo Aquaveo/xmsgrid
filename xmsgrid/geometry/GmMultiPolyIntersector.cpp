@@ -2187,9 +2187,12 @@ void GmMultiPolyIntersector2IntermediateTests::testBug12586()
 #ifdef _WIN32
   std::vector<int> expectedIds = {15802, 7949, 15802, 15955, 7949, 7948, 15955, 16108, 7948,
     7947, 16108, 16261, 7946, 7947, 7946, -1};
-#else
+#elif __linux__
   std::vector<int> expectedIds = {15802, 7949, 15802, 15955, 7949, 7948, 15955, 16108, 7947,
     7948, 16108, 16261, 7946, 7947, 7946, -1};
+#else
+  std::vector<int> expectedIds = {15802, 7949, 15802, 15955, 7948, 7949, 15955, 16108, 7947,
+    7948, 16261, 16108, 7946, 7947, 7946, -1};
 #endif
   std::vector<xms::Pt3d> expectedPoints = 
     {{1538860.1699999999, 7379636.5400000000, 0.00000000000000000},
