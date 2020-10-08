@@ -1237,6 +1237,8 @@
     <includes id="_gm_multi_poly_intersector_8t_8h" name="GmMultiPolyIntersector.t.h" local="no" imported="no">xmsgrid/geometry/GmMultiPolyIntersector.t.h</includes>
     <includes id="_gm_multi_poly_intersection_sorter_terse_8h" name="GmMultiPolyIntersectionSorterTerse.h" local="no" imported="no">xmsgrid/geometry/GmMultiPolyIntersectionSorterTerse.h</includes>
     <includes id="triangles_8h" name="triangles.h" local="no" imported="no">xmsgrid/triangulate/triangles.h</includes>
+    <includes id="_xm_u_grid_8h" name="XmUGrid.h" local="no" imported="no">xmsgrid/ugrid/XmUGrid.h</includes>
+    <includes id="_xm_u_grid_utils_8h" name="XmUGridUtils.h" local="no" imported="no">xmsgrid/ugrid/XmUGridUtils.h</includes>
     <class kind="class">xms::GmMultiPolyIntersectorImpl</class>
     <namespace>xms</namespace>
     <member kind="typedef">
@@ -2995,6 +2997,13 @@
     </member>
     <member kind="function" protection="private">
       <type>void</type>
+      <name>FixTValueAtDuplicateXy</name>
+      <anchorfile>classxms_1_1_gm_multi_poly_intersection_sorter_terse.html</anchorfile>
+      <anchor>a5d92c81118ee63059f2e4f782f2ca0a9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
       <name>RemoveCornerTouches</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersection_sorter_terse.html</anchorfile>
       <anchor>ac86036c81726449c8121c1a05fd73db3</anchor>
@@ -3013,6 +3022,13 @@
       <anchorfile>classxms_1_1_gm_multi_poly_intersection_sorter_terse.html</anchorfile>
       <anchor>a230088635ebb08581d8701911068be0a</anchor>
       <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>AddMissingEndpointIds</name>
+      <anchorfile>classxms_1_1_gm_multi_poly_intersection_sorter_terse.html</anchorfile>
+      <anchor>aa3636deebaa7568703f8478c8708d0d4</anchor>
+      <arglist>(const std::vector&lt; int &gt; &amp;a_tChange)</arglist>
     </member>
     <member kind="function" protection="private">
       <type>void</type>
@@ -3111,6 +3127,13 @@
       <name>testLargeNumPolysAndSegments</name>
       <anchorfile>class_gm_multi_poly_intersector2_intermediate_tests.html</anchorfile>
       <anchor>accf890a54adf98d863387d7d6c714109</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>testBug12586</name>
+      <anchorfile>class_gm_multi_poly_intersector2_intermediate_tests.html</anchorfile>
+      <anchor>a9f738ebf5ee19f0030d1222a6b3d2a0e</anchor>
       <arglist>()</arglist>
     </member>
   </compound>
@@ -3344,6 +3367,13 @@
       <name>m_buffer</name>
       <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
       <anchor>aece8a77964a59bb161d95a8d0f36e598</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>double</type>
+      <name>m_xyTol</name>
+      <anchorfile>classxms_1_1_gm_multi_poly_intersector_impl.html</anchorfile>
+      <anchor>ab5134a90b16912567e1597c460a22c85</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">

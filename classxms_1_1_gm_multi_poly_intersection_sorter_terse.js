@@ -1,9 +1,11 @@
 var classxms_1_1_gm_multi_poly_intersection_sorter_terse =
 [
+    [ "AddMissingEndpointIds", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#aa3636deebaa7568703f8478c8708d0d4", null ],
     [ "AddToPolyIdsAndTValues", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a0cb9995b0273c1953428f420f12eaffb", null ],
     [ "FindPreviousNextNeither", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ab8b8a8153fae932c73a83a639f8ac7ad", null ],
     [ "FindWhereTValuesChange", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ab19ab5f34e20a4cce4d5ef18e6e914f3", null ],
     [ "FixArrays", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#af5a86f40ed9c1962c81950074ac9a598", null ],
+    [ "FixTValueAtDuplicateXy", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a5d92c81118ee63059f2e4f782f2ca0a9", null ],
     [ "IntersectionsToPolyIdsAndTValues", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a9cd8f532b56f11e5600f2910051daaff", null ],
     [ "IntersectionsToPolyIdsAndTValuesFor2", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a6b310a7f9545a6629edbc8250eefcb24", null ],
     [ "IntersectionsToPolyIdsAndTValuesFor3OrMore", "classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ae3c73099c3b23d94416fc14601b91ee5", null ],

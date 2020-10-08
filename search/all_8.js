@@ -11,6 +11,7 @@ var searchData=
   ['findwheretvalueschange',['FindWhereTValuesChange',['../classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#ab19ab5f34e20a4cce4d5ef18e6e914f3',1,'xms::GmMultiPolyIntersectionSorterTerse']]],
   ['fix',['Fix',['../classxms_1_1_tr_auto_fix_four_triangle_pts_impl.html#af147444a1e2e287a72e382f30692cf0c',1,'xms::TrAutoFixFourTrianglePtsImpl']]],
   ['fixarrays',['FixArrays',['../classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#af5a86f40ed9c1962c81950074ac9a598',1,'xms::GmMultiPolyIntersectionSorterTerse']]],
+  ['fixtvalueatduplicatexy',['FixTValueAtDuplicateXy',['../classxms_1_1_gm_multi_poly_intersection_sorter_terse.html#a5d92c81118ee63059f2e4f782f2ca0a9',1,'xms::GmMultiPolyIntersectionSorterTerse']]],
   ['flagtrianglesalongpolygon',['FlagTrianglesAlongPolygon',['../classxms_1_1_tr_outer_triangle_deleter_impl.html#af243755c164dc8b6af8504aa6a037b8d',1,'xms::TrOuterTriangleDeleterImpl']]],
   ['fromstring',['FromString',['../classxms_1_1_tr_tin_impl.html#a1b7c1dacb8e701e5f5229f8a9624c47f',1,'xms::TrTinImpl']]],
   ['fsatisfies',['fSatisfies',['../classxms_1_1f_satisfies.html',1,'xms::fSatisfies'],['../classxms_1_1f_satisfies.html#ab363650297804f81ac7f6fa1179b6bc0',1,'xms::fSatisfies::fSatisfies()']]],

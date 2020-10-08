@@ -31,5 +31,6 @@ var classxms_1_1_gm_multi_poly_intersector_impl =
     [ "m_query", "classxms_1_1_gm_multi_poly_intersector_impl.html#ae25a886c347f59cc97cdd4d09d0f2ecf", null ],
     [ "m_rtree", "classxms_1_1_gm_multi_poly_intersector_impl.html#a79c692d08b0a79ba2823a92a98402d04", null ],
     [ "m_sorter", "classxms_1_1_gm_multi_poly_intersector_impl.html#aee888465df13dc924b99fc607071223e", null ],
-    [ "m_startingId", "classxms_1_1_gm_multi_poly_intersector_impl.html#af8d56b114f4feb8359cccfb904429dd8", null ]
+    [ "m_startingId", "classxms_1_1_gm_multi_poly_intersector_impl.html#af8d56b114f4feb8359cccfb904429dd8", null ],
+    [ "m_xyTol", "classxms_1_1_gm_multi_poly_intersector_impl.html#ab5134a90b16912567e1597c460a22c85", null ]
 ];
