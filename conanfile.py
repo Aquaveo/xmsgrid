@@ -93,7 +93,7 @@ class XmsgridConan(ConanFile):
                 self.run('python -m unittest discover -v -p *_pyt.py -s {}/_package/tests'.format(
                     os.path.join(self.build_folder)), cwd=os.path.join(self.package_folder, "_package"))
                 # Create and upload wheel to PyPi if release and windows
-                is_release = self.env.get("RELEASE_PYTHON", 'False')
+                is_release = self.env.get("RELEASE_PYTHON", 'False') == 'True'
                 is_mac_os = self.settings.os == 'Macos'
                 is_gcc_6 = self.settings.os == "Linux" and float(self.settings.compiler.version.value) == 6.0
                 is_windows_md = (self.settings.os == "Windows" and str(self.settings.compiler.runtime) == "MD")
