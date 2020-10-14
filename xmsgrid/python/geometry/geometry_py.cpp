@@ -14,7 +14,7 @@ namespace py = pybind11;
 
 //----- Python Interface -------------------------------------------------------
 
-void initGeometry(py::module &m)
+void initGeometry(py::module &geometry)
 {
     // ---------------------------------------------------------------------------
 	// function: gmPointInPolygon2D
@@ -213,5 +213,5 @@ void initGeometry(py::module &m)
 		xms::Pt3d endpoint2 = xms::Pt3dFromPyIter(a_endpoint2);
 		return xms::gmAngleBetweenEdges(endpoint1, commonPoint, endpoint2);
 	});
-    initGmTriSearch(m);
+    initGmTriSearch(geometry);
 }
