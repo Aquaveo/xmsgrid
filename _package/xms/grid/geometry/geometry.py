@@ -4,8 +4,8 @@ geometry = _xmsgrid.geometry
 
 
 def point_in_polygon_2d(polygon, point):
-    """
-    Check whether a point is inside, outside, or on a polygon.
+    """Check whether a point is inside, outside, or on a polygon.
+
     *DON'T* repeat the first point at the end of the polygon list.
     Points are represented as (x, y, z) triples.
     Args:
@@ -21,8 +21,8 @@ def point_in_polygon_2d(polygon, point):
 
 
 def polygon_area_2d(polygon):
-    """
-    Compute the 2d planview projection of area of polygon.
+    """Compute the 2d planview projection of area of polygon.
+
     The last point should not be repeated.
     Points are represented as (x, y, z) triples.
     Args:
@@ -36,16 +36,16 @@ def polygon_area_2d(polygon):
 
 
 def get_tol_2d():
-    """
-    Get the global tolerance for 2d float operations.
+    """Get the global tolerance for 2d float operations.
+
     Value may not be meaningful if it has not been set yet.
     """
     return geometry.gmGetXyTol()
 
 
 def set_tol_2d(value=1e-9):
-    """
-    Set the global tolerance for 2d float operations.
+    """Set the global tolerance for 2d float operations.
+
     Args:
         value: The value to set the tolerance to.
     """
@@ -53,8 +53,8 @@ def set_tol_2d(value=1e-9):
 
 
 def on_line_2d(p1, p2, pt, tol=None):
-    """
-    Determines whether a point pt is on the line defined by p1 and p2.
+    """Determines whether a point pt is on the line defined by p1 and p2.
+
     If p1 and p2 are equal within tol, this function may fail.
     Points are represented as (x, y, z) triples.
     Args:
@@ -71,8 +71,8 @@ def on_line_2d(p1, p2, pt, tol=None):
 
 
 def inside_or_on_line_2d(p1, p2, reference_point, pt, tol=None):
-    """
-    Tests whether a point is on the same side of a line as a reference point, or on the line itself.
+    """Tests whether a point is on the same side of a line as a reference point, or on the line itself.
+
     Assumes reference_point is not on the line (within tol).
     Points are represented as (x, y, z) triples.
     Args:
@@ -93,8 +93,8 @@ def inside_or_on_line_2d(p1, p2, reference_point, pt, tol=None):
 
 
 def find_closest_pt_on_segment_2d(pt1, pt2, pt, tol=None):
-    """
-    Finds the closest point to another point on a line segment.
+    """Finds the closest point to another point on a line segment.
+
     Points are represented as (x, y, z) triples.
     Args:
         pt1: First point defining the line segment.
@@ -112,8 +112,8 @@ def find_closest_pt_on_segment_2d(pt1, pt2, pt, tol=None):
 
 
 def pt_distance_along_segment_2d(pt1, pt2, pt, tol=None):
-    """
-    Finds the distance along a segment for the location closest to pt.
+    """Finds the distance along a segment for the location closest to pt.
+
     Points are represented as (x, y, z) triples.
     Args:
         pt1: First point defining the line segment.
@@ -129,9 +129,9 @@ def pt_distance_along_segment_2d(pt1, pt2, pt, tol=None):
 
 
 def inside_of_line_2d(pt1, pt2, reference_point, pt, tol=None):
-    """
-   Tests whether a point is on the same side of a line as another point.
-   Assumes reference_point is not on the line (within tol).
+    """Tests whether a point is on the same side of a line as another point.
+
+    Assumes reference_point is not on the line (within tol).
     Points are represented as (x, y, z) triples.
        Args:
            pt1: The first point defining the line.
@@ -148,8 +148,8 @@ def inside_of_line_2d(pt1, pt2, reference_point, pt, tol=None):
 
 
 def lines_intersect_2d(line1_pt1, line1_pt2, line2_pt1, line2_pt2):
-    """
-    Tests whether two line segments intersect.
+    """Tests whether two line segments intersect.
+
     Points are represented as (x, y, z) triples.
     Args:
         line1_pt1: First point defining the first line segment.
@@ -163,8 +163,8 @@ def lines_intersect_2d(line1_pt1, line1_pt2, line2_pt1, line2_pt2):
 
 
 def equal_points_2d(p1, p2, tol=None):
-    """
-    Tests whether two points are equal to within tolerance.
+    """Tests whether two points are equal to within tolerance.
+
     Points are represented as (x, y, z) triples.
     Args:
         p1: The first point.
@@ -179,8 +179,8 @@ def equal_points_2d(p1, p2, tol=None):
 
 
 def on_line_and_between_endpoints_2d(pt1, pt2, pt, tol=None):
-    """
-    Tests whether pt is on the line segment defined by pt1 and pt2.
+    """Tests whether pt is on the line segment defined by pt1 and pt2.
+
     Points are represented as (x, y, z) triples.
     Args:
         pt1: First point defining the line segment.
@@ -196,8 +196,8 @@ def on_line_and_between_endpoints_2d(pt1, pt2, pt, tol=None):
 
 
 def distance_to_line_segment_2d(pt1, pt2, pt, tol=None):
-    """
-    Computes the minimum distance between a point and a line segment.
+    """Computes the minimum distance between a point and a line segment.
+
     The closest point may be an endpoint. Checks to the tolerance passed in.
     Points are represented as (x, y, z) triples.
     Args:
@@ -214,8 +214,8 @@ def distance_to_line_segment_2d(pt1, pt2, pt, tol=None):
 
 
 def cross_2d(origin, a, b):
-    """
-    Computes the cross product of two points.
+    """Computes the cross product of two points.
+
     Points are represented as (x, y, z) triples.
     Args:
         origin: The origin that the points are relative to.
@@ -228,8 +228,8 @@ def cross_2d(origin, a, b):
 
 
 def distance_2d(pt1, pt2):
-    """
-    Compute the 2D distance between two 3D points.
+    """Compute the 2D distance between two 3D points.
+
     Points are represented as (x, y, z) triples.
     Args:
         pt1: The first point.
@@ -241,8 +241,8 @@ def distance_2d(pt1, pt2):
 
 
 def compute_polygon_centroid_2d(polygon):
-    """
-    Computes the plan view centroid of a non-self-intersecting polygon.
+    """Computes the plan view centroid of a non-self-intersecting polygon.
+
     Points are represented as (x, y, z) triples.
     Args:
         polygon: A list of points defining the polygon.
@@ -253,8 +253,8 @@ def compute_polygon_centroid_2d(polygon):
 
 
 def distance_to_line_2d(pt1, pt2, pt, tol=None):
-    """
-    Get the closest distance from pt to the line defined by pt1 and pt2.
+    """Get the closest distance from pt to the line defined by pt1 and pt2.
+
     Unlike distance_to_line_segment_2d, points outside the line segment
     defined by pt1 and pt2 will be considered when finding the closest
     distance to pt.
@@ -273,8 +273,8 @@ def distance_to_line_2d(pt1, pt2, pt, tol=None):
 
 
 def angle_between_edges_2d(endpoint1, common_point, endpoint2):
-    """
-    Compute the CCW angle (0 to 2pi) between two edges which share a point.
+    """Compute the CCW angle (0 to 2pi) between two edges which share a point.
+
     Points are represented as (x, y, z) triples.
     Args:
         endpoint1: The un-shared endpoint of the first edge.
