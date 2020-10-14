@@ -147,15 +147,15 @@ def inside_of_line_2d(pt1, pt2, reference_point, pt, tol=None):
     Points are represented as (x, y, z) triples.
 
     Args:
-       pt1: The first point defining the line.
-       pt2: The second point defining the line.
-       reference_point: A point on one side of the line.
-       pt: Point to test.
-       tol: Tolerance. If omitted, uses global tolerance according to get_tol_2d().
+        pt1: The first point defining the line.
+        pt2: The second point defining the line.
+        reference_point: A point on one side of the line.
+        pt: Point to test.
+        tol: Tolerance. If omitted, uses global tolerance according to get_tol_2d().
 
-   Returns:
-       True if pt is on the same side of the line segment as the reference point, else False.
-   """
+    Returns:
+        True if pt is on the same side of the line segment as the reference point, else False.
+    """
     if tol is None:
         tol = get_tol_2d()
     return geometry.gmInsideOfLineWithTol(pt1, pt2, reference_point, pt, tol)
