@@ -6,7 +6,11 @@
 //------------------------------------------------------------------------------
 
 //----- Included files ---------------------------------------------------------
+#include <iostream>
 #include <pybind11/pybind11.h>
+#include <xmscore/misc/boost_defines.h>
+#include <xmscore/python/misc/PyUtils.h>
+#include <xmsgrid/geometry/geoms.h>
 #include <xmsgrid/python/geometry/geometry_py.h>
 
 //----- Namespace declaration --------------------------------------------------
