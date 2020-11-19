@@ -34,6 +34,9 @@ if(WIN32)
         string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MTd" USES_MT)
     endif()
 
+    message("CONAN_SETTINGS_COMPILER_RUNTIME: ${CONAN_SETTINGS_COMPILER_RUNTIME}")
+    message("USES_MT: ${USES_MT}")
+
     if(USES_MT)
         message("Treating wchar_t as a built-in type.")
         add_definitions(/Zc:wchar_t)  # Treat wchar_t as built-in type
