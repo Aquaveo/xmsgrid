@@ -47,7 +47,7 @@ class XmsgridConan(ConanFile):
 
     def requirements(self):
         """Requirements"""
-        if self.settings.compiler == 'Visual Studio':
+        if self.settings.compiler == 'Visual Studio' and 'MD' in str(self.settings.compiler.runtime):
             self.requires("boost/1.74.0@aquaveo/testing")  # Use legacy wchar_t setting for XMS.
         else:
             self.requires("boost/1.74.0@aquaveo/stable")
