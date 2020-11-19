@@ -1004,32 +1004,6 @@ void gmCross3D(const Pt3d& a_vec1, const Pt3d& a_vec2, Pt3d* a_vec3)
   a_vec3->z = a_vec1.x * a_vec2.y - a_vec1.y * a_vec2.x;
 } // gmCross3D
 //------------------------------------------------------------------------------
-/// \brief Perform a dot product of two vectors.
-/// \note The dot product has the geometric interpretation as the length of the
-///       projection of a_vec1 onto the unit vector a_vec2 when the two vectors
-///       are placed so that their tails coincide.
-/// \param[in] a_vec1: First vector to dot.
-/// \param[in] a_vec2: Second vector to dot.
-/// \return The dot product.
-//------------------------------------------------------------------------------
-inline float gmDot3D(const Pt3f& vec1, const Pt3f& vec2)
-{
-  return (vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z);
-} // gmDot3D
-//------------------------------------------------------------------------------
-/// \brief Compute the dot product of two vectors.
-/// \note The dot product has the geometric interpretation as the length of the
-///       projection of a_vec1 onto the unit vector a_vec2 when the two vectors
-///       are placed so that their tails coincide.
-/// \param[in] a_vec1: First vector to dot.
-/// \param[in] a_vec2: Second vector to dot.
-/// \return The dot product.
-//------------------------------------------------------------------------------
-inline double gmDot3D(const Pt3d& a_vec1, const Pt3d& a_vec2)
-{
-  return (a_vec1.x * a_vec2.x + a_vec1.y * a_vec2.y + a_vec1.z * a_vec2.z);
-} // gmDot3D
-//------------------------------------------------------------------------------
 /// \brief Perform the operation sum = vec1 + scale * vec2
 /// \param scale: Scale value for vec2.
 /// \param vec1: Unscaled vector to add.
