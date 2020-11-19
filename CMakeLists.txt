@@ -28,6 +28,17 @@ set(XMS_VERSION "\"99.99.99\"" CACHE STRING "Library Version")
 
 add_definitions(-DXMS_VERSION=\"${XMS_VERSION}\")
 
+if(IS_CONDA_BUILD)
+  include(${CMAKE_CURRENT_LIST_DIR}/condabuildinfo.cmake)
+else() # If we are not using conda, we are using conan
+  # Conan setup
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  conan_basic_setup(TARGETS)
+  set(EXT_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS})
+  set(EXT_LIB_DIRS ${CONAN_LIB_DIRS})
+  set(EXT_LIBS ${CONAN_LIBS})
+endif(IS_CONDA_BUILD)
+
 if(WIN32)
     string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MT" USES_MT)
     if(NOT USES_MT)
@@ -51,17 +62,6 @@ if(WIN32)
         add_definitions(/D BOOST_ALL_NO_LIB)
     endif()
 endif()
-
-if(IS_CONDA_BUILD)
-  include(${CMAKE_CURRENT_LIST_DIR}/condabuildinfo.cmake)
-else() # If we are not using conda, we are using conan
-  # Conan setup
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(TARGETS)
-  set(EXT_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS})
-  set(EXT_LIB_DIRS ${CONAN_LIB_DIRS})
-  set(EXT_LIBS ${CONAN_LIBS})
-endif(IS_CONDA_BUILD)
 
 if(IS_PYTHON_BUILD)
 
