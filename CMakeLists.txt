@@ -29,7 +29,19 @@ set(XMS_VERSION "\"99.99.99\"" CACHE STRING "Library Version")
 add_definitions(-DXMS_VERSION=\"${XMS_VERSION}\")
 
 if(WIN32)
-    add_definitions(/Zc:wchar_t-)  # Treat wchar_t as typedef
+    string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MT" USES_MT)
+    if(NOT USES_MT)
+        string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MTd" USES_MT)
+    endif()
+
+    if(USES_MT)
+        message("Treating wchar_t as a built-in type.")
+        add_definitions(/Zc:wchar_t)  # Treat wchar_t as built-in type
+    else()
+        message("Treating wchar_t as a typedef.")
+        add_definitions(/Zc:wchar_t-)  # Treat wchar_t as typedef
+    endif()
+
     if(XMS_BUILD)
         add_definitions(/D _WIN32_WINNT=0x0501)  # Windows XP and higher
     else(NOT XMS_BUILD)
