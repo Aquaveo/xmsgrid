@@ -88,6 +88,7 @@ public:
   void testLargeNumPolys();
   void testLargeNumPolysAndSegments();
   void testBug12586();
+  void testBug12728();
 };
 
 //} // namespace xms

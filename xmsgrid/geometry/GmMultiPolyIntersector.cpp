@@ -121,6 +121,7 @@ private:
   GmBstLine3d m_line;                    ///< Current line segment
   double m_buffer;                       ///< Small buffer around each bounding box
   double m_xyTol;                        ///< XY tolerance for computing t-values
+  double m_minWidth;                     ///< Minimum bounds width of any polygon
   int m_startingId;                      ///< Offset if polys start at something other than one
   std::vector<GmBstPoly3d> m_boostPolys; ///< Polygons as boost geom polygons
   BSHP<GmMultiPolyIntersectionSorter> m_sorter; ///< Sorter used to process results
@@ -238,12 +239,18 @@ void GmMultiPolyIntersectorImpl::CalculateBuffer()
 {
   // Get min/max of all polys
   Pt3d mn(XM_DBL_HIGHEST), mx(XM_DBL_LOWEST);
+  m_minWidth = XM_DBL_HIGHEST;
   for (size_t i = 0; i < m_d.m_polys.size(); ++i)
   {
+    Pt3d polyMn(XM_DBL_HIGHEST), polyMx(XM_DBL_LOWEST);
     for (size_t j = 0; j < m_d.m_polys[i].size(); ++j)
     {
-      gmAddToExtents(m_d.m_points[m_d.m_polys[i][j]], mn, mx);
+      gmAddToExtents(m_d.m_points[m_d.m_polys[i][j]], polyMn, polyMx);
     }
+    gmAddToExtents(polyMn, mn, mx);
+    gmAddToExtents(polyMx, mn, mx);
+    m_minWidth = std::min(fabs(polyMx.x - polyMn.x), m_minWidth);
+    m_minWidth = std::min(fabs(polyMx.y - polyMn.y), m_minWidth);
   }
 
   // Calculate the buffer as a fraction of the distance between mn and mx
@@ -636,7 +643,10 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
   }
   else
   {
-    double kTol = 1e-13; // Used to compare t values which are always 0.0 - 1.0
+    double kTol = 1e-5; // Used to compare t values which are always 0.0 - 1.0
+    double segmentDistance = gmXyDistance(a_x1, a_y1, a_x2, a_y2);
+    double minCellFraction = m_minWidth / segmentDistance;
+    kTol = std::min(minCellFraction * kTol, 1e-5);
     m_sorter->Sort(m_d, a_polyIds, a_tValues, a_pts, kTol);
   }
   OffsetPolyIds(a_polyIds);
@@ -2184,41 +2194,59 @@ void GmMultiPolyIntersector2IntermediateTests::testBug12586()
     }
   }
 
-#ifdef _WIN32
-  std::vector<int> expectedIds = {15802, 7949, 15802, 15955, 7949, 7948, 15955, 16108, 7948,
-    7947, 16108, 16261, 7946, 7947, 7946, -1};
-#elif __linux__
-  std::vector<int> expectedIds = {15802, 7949, 15802, 15955, 7949, 7948, 15955, 16108, 7947,
-    7948, 16108, 16261, 7946, 7947, 7946, -1};
-#else
-  std::vector<int> expectedIds = {15802, 7949, 15802, 15955, 7948, 7949, 15955, 16108, 7947,
-    7948, 16261, 16108, 7946, 7947, 7946, -1};
-#endif
-  std::vector<xms::Pt3d> expectedPoints = 
-    {{1538860.1699999999, 7379636.5400000000, 0.00000000000000000},
+  std::vector<int> expectedIds = {7949, 7948, 7947, 7946, -1};
+  std::vector<xms::Pt3d> expectedPoints = {
     {1538860.1700000018, 7379636.5399999982, 4549.3574218750000},
-    {1538860.6799999995, 7379637.6599999992, 0.00000000000000000},
-    {1538860.6799999995, 7379637.6599999992, 0.00000000000000000},
     {1538860.6800000020, 7379637.6599999983, 4548.8906250000000},
-    {1538860.6800000020, 7379637.6599999983, 4548.8906250000000},
-    {1538861.1899999988, 7379638.7799999975, 0.00000000000000000},
-    {1538861.1899999988, 7379638.7799999975, 0.00000000000000000},
     {1538861.1900000013, 7379638.7799999965, 4548.8012695312500},
-    {1538861.1900000013, 7379638.7799999965, 4548.8012695312500},
-    {1538861.6999999990, 7379639.8999999976, 0.00000000000000000},
-    {1538861.6999999990, 7379639.8999999976, 0.00000000000000000},
     {1538861.7000000027, 7379639.8999999966, 4548.7114257812500},
-    {1538861.7000000027, 7379639.8999999966, 4548.7114257812500},
-    {1538862.2100000030, 7379641.0199999977, 4548.6220703125000},
-    {1538862.2099999995, 7379641.0199999986, 0.00000000000000000}};
-  std::vector<double> expectedTvals = {0.00000000000000000, -1.8755588329223459e-010,
-    0.24999999983166091, 0.24999999983166091, 0.24999999987509086, 0.24999999987509086,
-    0.49999999947153817, 0.49999999947153817, 0.49999999951496815, 0.49999999951496815,
-    0.74999999953418495, 0.74999999953418495, 0.74999999967562048, 0.74999999967562048,
-    0.99999999991044985, 0.99999999978861531};
-  iRunTest(1538860.17, 7379636.54, 1538862.21, 7379641.02,
-    xmGrid->GetLocations(), cellPolys, expectedIds, expectedTvals, expectedPoints);
+    {1538862.2100000030, 7379641.0199999977, 4548.6220703125000}};
+  std::vector<double> expectedTvals = {-1.8755588329223459e-010, 0.24999999987509086,
+                                       0.49999999951496815, 0.74999999967562048,
+                                       0.99999999991044985};
+
+  iRunTest(1538860.17, 7379636.54, 1538862.21, 7379641.02, xmGrid->GetLocations(), cellPolys,
+           expectedIds, expectedTvals, expectedPoints);
 } // GmMultiPolyIntersector2IntermediateTests::testBug12586
+
+//------------------------------------------------------------------------------
+/// \brief Test a case where the line is on the points and edges.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersector2IntermediateTests::testBug12728()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug12728.xmc", std::ios_base::binary);
+  bool binary = daLineBeginsWith(input, "Binary");
+  std::string header = binary ? "Binary " : "ASCII ";
+  header += "UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, binary);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  xms::VecInt2d cellPolys;
+  cellPolys.assign(xmGrid->GetCellCount(), xms::VecInt());
+  for (int cellIdx = 0; cellIdx < xmGrid->GetCellCount(); ++cellIdx)
+  {
+    xms::VecInt& polygon = cellPolys[cellIdx];
+    polygon.reserve(xmGrid->GetCellEdgeCount(cellIdx));
+    for (int edgeIdx = 0; edgeIdx < xmGrid->GetCellEdgeCount(cellIdx); ++edgeIdx)
+    {
+      // int idx1, idx2;
+      xms::XmEdge pairIdx = xmGrid->GetCellEdge(cellIdx, edgeIdx);
+      polygon.push_back(pairIdx.GetFirst());
+    }
+  }
+
+  VecDbl expectedTvals = {0.0, 0.090246272342090456, 0.18253212435289559, 0.27690365084791912};
+  std::vector<int> expectedIds = {2, 6, 5, -1};
+  VecPt3d expectedPoints = {{1757154.8029110476, 2309728.6101994626, 0.0},
+                            {1757092.5527856862, 2309718.7989620329, 450.22968595672864},
+                            {1757028.8957978943, 2309708.7659891238, 452.19439765799325},
+                            {1756963.8001523635, 2309698.5062694810, 450.38437020021956}};
+  iRunTest(1757154.8029110476, 2309728.6101994626, 1756465.022339, 2309619.893937,
+           xmGrid->GetLocations(), cellPolys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersector2IntermediateTests::testBug12728
 
 //} // namespace xms
 

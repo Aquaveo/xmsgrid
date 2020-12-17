@@ -71,6 +71,7 @@ void GmMultiPolyIntersectionSorterTerse::Sort(
   RemoveCornerTouches();
   RemoveDuplicateEdges();
   SwapAdjacents();
+  RemoveCornerTouches();
   IntersectionsToPolyIdsAndTValues(polyids, tvalues, a_pts);
   FixArrays(polyids, tvalues, a_pts);
 } // GmMultiPolyIntersectionSorterTerse::Sort
