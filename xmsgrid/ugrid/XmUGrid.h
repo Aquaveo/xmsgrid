@@ -161,6 +161,7 @@ public:
   const VecInt& GetCellstream() const;
   bool SetCellstream(const VecInt& a_cellstream);
   bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
+  int GetCellCellstreamIndex(int a_cellIdx) const;
   VecInt GetCellAdjacentCells(int a_cellIdx) const;
   void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
   bool GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const;
