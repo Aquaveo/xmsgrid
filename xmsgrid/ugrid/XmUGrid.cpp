@@ -107,6 +107,7 @@ public:
   const VecInt& GetCellstream() const;
   bool SetCellstream(const VecInt& a_cellstream);
   bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
+  int GetCellCellstreamIndex(int a_cellIdx) const;
 
   VecInt GetCellAdjacentCells(int a_cellIdx) const;
   void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
@@ -1082,7 +1083,19 @@ bool XmUGrid::Impl::GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const
   a_cellstream.assign(m_cellstream.begin() + startIndex, m_cellstream.begin() + endIndex);
   return true;
 } // XmUGrid::Impl::GetCellCellstream
-
+//------------------------------------------------------------------------------
+/// \brief Get beginning index of cell in cell stream.
+/// \param[in] a_cellIdx the index of the cell
+/// \return The index of the cell in the cell stream.
+//------------------------------------------------------------------------------
+int XmUGrid::Impl::GetCellCellstreamIndex(int a_cellIdx) const
+{
+  if (a_cellIdx < 0 || a_cellIdx >= (int)m_cellIdxToStreamIdx.size())
+  {
+    return -1;
+  }
+  return m_cellIdxToStreamIdx[a_cellIdx];
+} // XmUGrid::GetCellCellstreamIndex
 //------------------------------------------------------------------------------
 /// \brief Get the cells neighboring a cell (cells associated with any of it's points)
 /// \param[in] a_cellIdx the index of the cell
@@ -3370,7 +3383,15 @@ bool XmUGrid::GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const
 {
   return m_impl->GetCellCellstream(a_cellIdx, a_cellstream);
 } // XmUGrid::GetCellCellstream
-
+//------------------------------------------------------------------------------
+/// \brief Get beginning index of cell in cell stream.
+/// \param[in] a_cellIdx the index of the cell
+/// \return The index of the cell in the cell stream.
+//------------------------------------------------------------------------------
+int XmUGrid::GetCellCellstreamIndex(int a_cellIdx) const
+{
+  return m_impl->GetCellCellstreamIndex(a_cellIdx);
+} // XmUGrid::GetCellCellstreamIndex
 //------------------------------------------------------------------------------
 /// \brief Get the cells neighboring a cell (cells associated with any of it's points)
 /// \param[in] a_cellIdx the index of the cell
@@ -4160,17 +4181,27 @@ void XmUGridUnitTests::testGetCellCellstream()
   VecInt cellResult;
 
   TS_ASSERT_EQUALS(false, ugrid->GetCellCellstream(-1, cellResult));
+  TS_ASSERT_EQUALS(-1, ugrid->GetCellCellstreamIndex(-1));
 
   TS_ASSERT_EQUALS(true, ugrid->GetCellCellstream(0, cellResult));
   TS_ASSERT_EQUALS(cell0, cellResult);
+  TS_ASSERT_EQUALS(0, ugrid->GetCellCellstreamIndex(0));
+
   TS_ASSERT_EQUALS(true, ugrid->GetCellCellstream(1, cellResult));
   TS_ASSERT_EQUALS(cell1, cellResult);
+  TS_ASSERT_EQUALS(6, ugrid->GetCellCellstreamIndex(1));
+
   TS_ASSERT_EQUALS(true, ugrid->GetCellCellstream(2, cellResult));
   TS_ASSERT_EQUALS(cell2, cellResult);
+  TS_ASSERT_EQUALS(12, ugrid->GetCellCellstreamIndex(2));
+
   TS_ASSERT_EQUALS(true, ugrid->GetCellCellstream(3, cellResult));
   TS_ASSERT_EQUALS(cell3, cellResult);
+  TS_ASSERT_EQUALS(18, ugrid->GetCellCellstreamIndex(3));
 
-  TS_ASSERT_EQUALS(false, ugrid->GetCellCellstream((int)points.size(), cellResult));
+  TS_ASSERT_EQUALS(false, ugrid->GetCellCellstream(ugrid->GetCellCount(), cellResult));
+  TS_ASSERT_EQUALS(24, ugrid->GetCellCellstreamIndex(ugrid->GetCellCount()));
+  TS_ASSERT_EQUALS(-1, ugrid->GetCellCellstreamIndex(ugrid->GetCellCount() + 1));
 
 } // XmUGridUnitTests::testGetCellCellstream
 //------------------------------------------------------------------------------
