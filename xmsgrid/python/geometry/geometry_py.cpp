@@ -217,5 +217,21 @@ void initGeometry(py::module &geometry)
 		xms::Pt3d endpoint2 = xms::Pt3dFromPyIter(a_endpoint2);
 		return xms::gmAngleBetweenEdges(endpoint1, commonPoint, endpoint2);
 	});
+	// ---------------------------------------------------------------------------
+	// function: gmCalculateCelerity
+	// ---------------------------------------------------------------------------
+	geometry.def("gmCalculateCelerity",
+	   [](double a_period, double a_depth, double a_gravity)-> double
+	{
+	   return xms::gmCalculateCelerity(a_period, a_depth, a_gravity);
+	});
+	// ---------------------------------------------------------------------------
+	// function: gmCalculateWavelength
+	// ---------------------------------------------------------------------------
+	geometry.def("gmCalculateWavelength",
+	   [](double a_period, double a_depth, double a_gravity)-> double
+	{
+	   return xms::gmCalculateWavelength(a_period, a_depth, a_gravity);
+	});
     initGmTriSearch(geometry);
 }
