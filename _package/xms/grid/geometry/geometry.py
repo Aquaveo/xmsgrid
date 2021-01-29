@@ -316,3 +316,29 @@ def angle_between_edges_2d(endpoint1, common_point, endpoint2):
         The angle between the two edges.
     """
     return geometry.gmAngleBetweenEdges(endpoint1, common_point, endpoint2)
+
+def calculate_celerity(period, depth, gravity):
+    """Calculate the celerity at a node.
+
+    Args:
+        period: Period.
+        depth: Depth.
+        gravity: Gravity.
+
+    Returns:
+        The celerity at a node.
+    """
+    return geometry.gmCalculateCelerity(period, depth, gravity)
+
+def calculate_wavelength(period, depth, gravity):
+    """Calculate the wavelength at a node.
+
+    Args:
+        period: Period.
+        depth: Depth.
+        gravity: Gravity.
+
+    Returns:
+        The wavelength at a node.
+    """
+    return geometry.gmCalculateWavelength(period, depth, gravity)
