@@ -179,6 +179,14 @@ class TestGeometry(unittest.TestCase):
 
         self.assertEqual(math.pi / 2, geometry.angle_between_edges_2d(pt1, pt2, pt3))
 
+    def test_calculate_celerity(self):
+        """Test celerity calculation."""
+        self.assertAlmostEqual(3.998971888515353, geometry.calculate_celerity(20, -50, 32), places=6)
+
+    def test_calculate_wavelength(self):
+        """Test celerity calculation."""
+        self.assertAlmostEqual(79.97938716775904, geometry.calculate_wavelength(20, -100, 32), places=6)
+
 
 if __name__ == '__main__':
     unittest.main()
