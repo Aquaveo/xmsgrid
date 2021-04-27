@@ -110,7 +110,7 @@ public:
   virtual void ExportTinFile(std::ostream& a_os) const override;
 
   // Modifiers
-  virtual bool SwapEdge(int a_triA, int a_triB, bool a_checkAngle = true) override;
+  virtual bool SwapEdge(int a_triA, int a_triB, double a_minAngle = 0.0) override;
   virtual void DeleteTriangles(const SetInt& a_trisToDelete) override;
   virtual void DeletePoints(const SetInt& a_points) override;
   virtual bool OptimizeTriangulation() override;
@@ -413,11 +413,10 @@ bool TrTinImpl::VerticesAreAdjacent(int a_pt1, int a_pt2) const
 ///
 /// \param a_triA: First triangle.
 /// \param a_triB: Second triangle.
-/// \param a_checkAngle: If true, won't swap if very thin triangle would be
-///                      created.
+/// \param a_minAngle: If non-zero, it won't swap very thin triangles.
 /// \return true if swap was successful.
 //------------------------------------------------------------------------------
-bool TrTinImpl::SwapEdge(int a_triA, int a_triB, bool a_checkAngle /*true*/)
+bool TrTinImpl::SwapEdge(int a_triA, int a_triB, double a_minAngle /*=0.0*/)
 {
   XM_ENSURE_TRUE_NO_ASSERT(a_triA >= 0 && a_triB >= 0, false);
 
@@ -447,7 +446,7 @@ bool TrTinImpl::SwapEdge(int a_triA, int a_triB, bool a_checkAngle /*true*/)
   if (area1 > 0.0 && area2 > 0.0)
   {
     bool swap = true;
-    if (a_checkAngle)
+    if (a_minAngle > 0.0)
     {
       double ang1 = gmAngleBetweenEdges(rgtpt, btmpt, toppt);
       double ang2 = gmAngleBetweenEdges(btmpt, toppt, rgtpt);
@@ -535,7 +534,7 @@ bool TrTinImpl::CheckAndSwap(int a_triA, int a_triB, bool a_propagate, const Vec
     tri2id0 = trIncrementIndex(tri2id2);
     tri1id2 = LocalIndex(a_triA, GlobalIndex(a_triB, tri2id0));
 
-    SwapEdge(a_triA, a_triB, false);
+    SwapEdge(a_triA, a_triB, 0.0);
     int adjTri = AdjacentTriangle(a_triA, tri1id2);
     if (a_propagate || (!a_propagate && adjTri != XM_NONE && a_flags[adjTri]))
     {
@@ -1804,7 +1803,7 @@ void TrTinUnitTests::test1()
 
   // SwapEdge
 
-  rv = tin->SwapEdge(0, 2);
+  rv = tin->SwapEdge(0, 2, 0.01);
   TS_ASSERT_EQUALS(rv, true);
   TS_ASSERT_EQUALS(tin->Triangles()[0], 3);
   TS_ASSERT_EQUALS(tin->Triangles()[1], 0);
@@ -1965,7 +1964,7 @@ void TrTinUnitTests::testSwap()
   TS_ASSERT_EQUALS(trisAdjToPtsBefore, trisAdjToPts);
 
   // Swap
-  bool rv = tin->SwapEdge(3, 7);
+  bool rv = tin->SwapEdge(3, 7, 0.01);
   TS_ASSERT_EQUALS(rv, true);
 
   // See that things are as expected after the swap
