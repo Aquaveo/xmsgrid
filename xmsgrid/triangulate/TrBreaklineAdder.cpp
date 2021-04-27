@@ -301,9 +301,24 @@ void TrBreaklineAdderImpl::ProcessSegmentBySwapping(int a_blpt1, int a_blpt2)
 
   VecEdge edges;
   GetIntersectingEdges(a_blpt1, a_blpt2, edges);
+  
+  Pt3d blvtx1 = m_tin->Points()[a_blpt1];
+  Pt3d blvtx2 = m_tin->Points()[a_blpt2];
+  double bk_seg_dx = blvtx2.x - blvtx1.x;
+  double bk_seg_dy = blvtx2.y - blvtx1.y;
+  double mag = sqrt(bk_seg_dx*bk_seg_dx + bk_seg_dy*bk_seg_dy);
+  if (mag < XM_ZERO_TOL)
+  {
+    // error - degenerate break line segment - we won't force this segment
+    return;
+  }
+  bk_seg_dx /= mag;
+  bk_seg_dy /= mag;
+
   VecEdge::iterator edge = edges.begin();
 
-  bool good_tris = true;
+  // the goal is to avoid very skinny angles.  Start by limiting to > 15.0 degrees.
+  double minAngle = 15.0;
   bool trisSwappedThisPass = false;
   double x, y, z1, z2;
 
@@ -311,7 +326,70 @@ void TrBreaklineAdderImpl::ProcessSegmentBySwapping(int a_blpt1, int a_blpt2)
   {
     int tri1 = m_tin->TriangleAdjacentToEdge(edge->pt1, edge->pt2);
     int tri2 = m_tin->TriangleAdjacentToEdge(edge->pt2, edge->pt1);
-    if (!m_tin->SwapEdge(tri1, tri2, good_tris))
+
+        // make sure the swapped edge is better than the current edge
+    int a1, a2, a3, b1, b2, b3;
+    int top, btm, lft, rgt;
+    Pt3d toppt, btmpt, lftpt, rgtpt;
+    /*****************************************
+    *                b2 * top               *
+    *                  / \                  *
+    *                 /   \   tri2          *
+    *             b3 / --> \ b1             *
+    *           lft *-------* rgt           *
+    *                \ <-- / a3             *
+    *                 \   /   tri1          *
+    *                  \ /                  *
+    *               btm * a2                *
+    *****************************************/
+    if (tri2 == -1 || tri1 == -1)
+    {
+      // error - invalid triangle in surface (hole?) - we won't force this segment
+      return;
+    }
+    b3 = m_tin->CommonEdgeIndex(tri2, tri1);
+    b2 = trDecrementIndex(b3);
+    b1 = trIncrementIndex(b3);
+    a3 = m_tin->CommonEdgeIndex(tri1, tri2);
+    a1 = trIncrementIndex(a3);
+    a2 = trIncrementIndex(a1);
+    top = m_tin->GlobalIndex(tri2, b2);
+    lft = m_tin->GlobalIndex(tri2, b3);
+    rgt = m_tin->GlobalIndex(tri2, b1);
+    btm = m_tin->GlobalIndex(tri1, a2);
+    toppt = m_tin->Points()[top];
+    lftpt = m_tin->Points()[lft];
+    rgtpt = m_tin->Points()[rgt];
+    btmpt = m_tin->Points()[btm];
+
+    // dot product of the original edge with the bkline seg
+    double edge_dx = rgtpt.x - lftpt.x;
+    double edge_dy = rgtpt.y - lftpt.y;
+    double mag = sqrt(edge_dx*edge_dx + edge_dy*edge_dy);
+    if (mag < XM_ZERO_TOL)
+    {
+      // error - duplicate vertices - we won't force this segment
+      return;
+    }
+    edge_dx /= mag;
+    edge_dy /= mag;
+    double dot_edge = fabs(edge_dx*bk_seg_dx + edge_dy*bk_seg_dy);
+
+    // dot product of the swapped edge with the bkline seg
+    edge_dx = toppt.x - btmpt.x;
+    edge_dy = toppt.y - btmpt.y;
+    mag = sqrt(edge_dx*edge_dx + edge_dy*edge_dy);
+    if (mag < XM_ZERO_TOL)
+    {
+      // error - duplicate vertices - we won't force this segment
+      return;
+    }
+    edge_dx /= mag;
+    edge_dy /= mag;
+    double dot_swap = fabs(edge_dx*bk_seg_dx + edge_dy*bk_seg_dy);
+
+    // if the swap is a bad idea or the edge won't swap, go on to the next edge
+    if (dot_swap < dot_edge || !m_tin->SwapEdge(tri1, tri2, minAngle))
     {
       ++edge;
     }
@@ -343,21 +421,12 @@ void TrBreaklineAdderImpl::ProcessSegmentBySwapping(int a_blpt1, int a_blpt2)
     // if we are still not adjacent
     if (edge == edges.end() && (tri1 != -1 && tri2 != -1))
     {
-      // if we didn't do any swaps continue through list again
+      // if we didn't do any swaps reduce the minimum angle
       if (!trisSwappedThisPass)
       {
-        if (good_tris)
-        {
-          good_tris = false;
-        }
-        else
-        {
-          break;
-        }
+        minAngle /= 2.0;
       }
-      // There is a potential for infinite loop.  This is where we could check for that
-      // We did some swapping or we removed triangle criterion - try starting over with the edge
-      // list
+      // start over with the edge list
       edge = edges.begin();
       trisSwappedThisPass = false;
     }
@@ -873,6 +942,38 @@ void TrBreaklineAdderUnitTests::testCrossingBoundary()
   }
 
 } // TrBreaklineAdderUnitTests::testCrossingBoundary
+//------------------------------------------------------------------------------
+/// \brief Test forcing a breakline with two very skinny triangles.
+//------------------------------------------------------------------------------
+void TrBreaklineAdderUnitTests::testVerySkinnyTris()
+{
+  // Set up the tin
+  BSHP<TrTin> tin = TrTin::New();
+  BSHP<VecPt3d> points(new VecPt3d);
+  *points = {{2260112.1313182, 1425642.6953098, 502.61074829102},
+    {2260112.1083855, 1425642.6889503, 502.6106262207},
+    {2260066.0105718, 1425772.98009, 494.3948059082},
+    {2260063.7238376, 1425771.8543445, 493.07467651367}};
+  tin->SetPoints(points);
+
+  BSHP<VecInt> tris(new VecInt);
+  *tris = {3, 0, 2, 3, 1, 0};
+  tin->SetTriangles(tris);
+
+  tin->BuildTrisAdjToPts();
+
+  // Add breakline
+  BSHP<TrBreaklineAdder> adder = TrBreaklineAdder::New();
+  adder->SetTin(tin);
+  // from top right to lower left.
+  adder->AddBreakline({2, 1});
+
+  // Verify triangles after
+  VecInt newTris = tin->Triangles();
+  VecInt expectedTris = {1, 0, 2, 3, 1, 2};
+  TS_ASSERT_EQUALS(expectedTris, newTris);
+
+} // TrBreaklineAdderUnitTests::testVerySkinnyTris
 
   //} // namespace xms
 
