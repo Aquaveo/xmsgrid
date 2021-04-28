@@ -389,7 +389,7 @@ void TrBreaklineAdderImpl::ProcessSegmentBySwapping(int a_blpt1, int a_blpt2)
     double dot_swap = fabs(edge_dx*bk_seg_dx + edge_dy*bk_seg_dy);
 
     // if the swap is a bad idea or the edge won't swap, go on to the next edge
-    if (dot_swap < dot_edge || !m_tin->SwapEdge(tri1, tri2, minAngle))
+    if (dot_swap < dot_edge || !m_tin->SwapEdgeWithMinAngle(tri1, tri2, minAngle))
     {
       ++edge;
     }
