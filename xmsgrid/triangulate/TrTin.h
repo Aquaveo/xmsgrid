@@ -86,7 +86,8 @@ public:
   virtual void ExportTinFile(std::ostream& a_os) const = 0;
 
   // Modifiers
-  virtual bool SwapEdge(int a_triA, int a_triB, double a_minAngle = 0.0) = 0;
+  virtual bool SwapEdge(int a_triA, int a_triB, bool a_checkAngle = true) = 0;
+  virtual bool SwapEdgeWithMinAngle(int a_triA, int a_triB, double a_minAngle = 0.0) = 0;
   virtual void DeleteTriangles(const SetInt& a_triangles) = 0;
   virtual void DeletePoints(const SetInt& a_points) = 0;
   virtual bool OptimizeTriangulation() = 0;
