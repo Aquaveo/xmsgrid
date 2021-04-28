@@ -110,7 +110,8 @@ public:
   virtual void ExportTinFile(std::ostream& a_os) const override;
 
   // Modifiers
-  virtual bool SwapEdge(int a_triA, int a_triB, double a_minAngle = 0.0) override;
+  virtual bool SwapEdge(int a_triA, int a_triB, bool a_checkAngle = true) override;
+  virtual bool SwapEdgeWithMinAngle(int a_triA, int a_triB, double a_minAngle = 0.0) override;
   virtual void DeleteTriangles(const SetInt& a_trisToDelete) override;
   virtual void DeletePoints(const SetInt& a_points) override;
   virtual bool OptimizeTriangulation() override;
@@ -413,10 +414,37 @@ bool TrTinImpl::VerticesAreAdjacent(int a_pt1, int a_pt2) const
 ///
 /// \param a_triA: First triangle.
 /// \param a_triB: Second triangle.
+/// \param a_checkAngle: If true, won't swap if very thin triangle would be
+///                      created.
+/// \return true if swap was successful.
+//------------------------------------------------------------------------------
+bool TrTinImpl::SwapEdge(int a_triA, int a_triB, bool a_checkAngle /*true*/)
+{
+  bool success = SwapEdgeWithMinAngle(a_triA, a_triB, a_checkAngle ? 0.01 : 0.0);
+  return success;
+} // TrTinImpl::SwapEdge
+//------------------------------------------------------------------------------
+/// \brief Swap edges if triangles combine to form convex quad. Compare to
+///        trSwapEdge.
+///
+/// a_triA and a_triB must be adjacent triangles.
+///
+///                b2 * top
+///                  / \
+///                 /   \   a_triB
+///             b3 / --> \ b1
+///           lft *-------* rgt
+///                \ <-- / a3
+///                 \   /   a_triA
+///                  \ /
+///               btm * a2
+///
+/// \param a_triA: First triangle.
+/// \param a_triB: Second triangle.
 /// \param a_minAngle: If non-zero, it won't swap very thin triangles.
 /// \return true if swap was successful.
 //------------------------------------------------------------------------------
-bool TrTinImpl::SwapEdge(int a_triA, int a_triB, double a_minAngle /*=0.0*/)
+bool TrTinImpl::SwapEdgeWithMinAngle(int a_triA, int a_triB, double a_minAngle /*=0.0*/)
 {
   XM_ENSURE_TRUE_NO_ASSERT(a_triA >= 0 && a_triB >= 0, false);
 
@@ -489,7 +517,7 @@ bool TrTinImpl::SwapEdge(int a_triA, int a_triB, double a_minAngle /*=0.0*/)
     }
   }
   return false;
-} // TrTinImpl::SwapEdge
+} // TrTinImpl::SwapEdgeWithMinAngle
 //------------------------------------------------------------------------------
 /// \brief Swap edges if triangles combine to form convex quad. Compare to
 ///        trCheckAndSwap.
@@ -534,7 +562,7 @@ bool TrTinImpl::CheckAndSwap(int a_triA, int a_triB, bool a_propagate, const Vec
     tri2id0 = trIncrementIndex(tri2id2);
     tri1id2 = LocalIndex(a_triA, GlobalIndex(a_triB, tri2id0));
 
-    SwapEdge(a_triA, a_triB, 0.0);
+    SwapEdge(a_triA, a_triB, false);
     int adjTri = AdjacentTriangle(a_triA, tri1id2);
     if (a_propagate || (!a_propagate && adjTri != XM_NONE && a_flags[adjTri]))
     {
@@ -1803,7 +1831,7 @@ void TrTinUnitTests::test1()
 
   // SwapEdge
 
-  rv = tin->SwapEdge(0, 2, 0.01);
+  rv = tin->SwapEdge(0, 2, true);
   TS_ASSERT_EQUALS(rv, true);
   TS_ASSERT_EQUALS(tin->Triangles()[0], 3);
   TS_ASSERT_EQUALS(tin->Triangles()[1], 0);
@@ -1964,7 +1992,7 @@ void TrTinUnitTests::testSwap()
   TS_ASSERT_EQUALS(trisAdjToPtsBefore, trisAdjToPts);
 
   // Swap
-  bool rv = tin->SwapEdge(3, 7, 0.01);
+  bool rv = tin->SwapEdge(3, 7, true);
   TS_ASSERT_EQUALS(rv, true);
 
   // See that things are as expected after the swap
