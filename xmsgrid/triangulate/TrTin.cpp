@@ -111,7 +111,6 @@ public:
 
   // Modifiers
   virtual bool SwapEdge(int a_triA, int a_triB, bool a_checkAngle = true) override;
-  virtual bool SwapEdgeWithMinAngle(int a_triA, int a_triB, double a_minAngle = 0.0) override;
   virtual void DeleteTriangles(const SetInt& a_trisToDelete) override;
   virtual void DeletePoints(const SetInt& a_points) override;
   virtual bool OptimizeTriangulation() override;
@@ -420,32 +419,6 @@ bool TrTinImpl::VerticesAreAdjacent(int a_pt1, int a_pt2) const
 //------------------------------------------------------------------------------
 bool TrTinImpl::SwapEdge(int a_triA, int a_triB, bool a_checkAngle /*true*/)
 {
-  bool success = SwapEdgeWithMinAngle(a_triA, a_triB, a_checkAngle ? 0.01 : 0.0);
-  return success;
-} // TrTinImpl::SwapEdge
-//------------------------------------------------------------------------------
-/// \brief Swap edges if triangles combine to form convex quad. Compare to
-///        trSwapEdge.
-///
-/// a_triA and a_triB must be adjacent triangles.
-///
-///                b2 * top
-///                  / \
-///                 /   \   a_triB
-///             b3 / --> \ b1
-///           lft *-------* rgt
-///                \ <-- / a3
-///                 \   /   a_triA
-///                  \ /
-///               btm * a2
-///
-/// \param a_triA: First triangle.
-/// \param a_triB: Second triangle.
-/// \param a_minAngle: If non-zero, it won't swap very thin triangles.
-/// \return true if swap was successful.
-//------------------------------------------------------------------------------
-bool TrTinImpl::SwapEdgeWithMinAngle(int a_triA, int a_triB, double a_minAngle /*=0.0*/)
-{
   XM_ENSURE_TRUE_NO_ASSERT(a_triA >= 0 && a_triB >= 0, false);
 
   int a1, a2, a3, b1, b2, b3;
@@ -474,7 +447,7 @@ bool TrTinImpl::SwapEdgeWithMinAngle(int a_triA, int a_triB, double a_minAngle /
   if (area1 > 0.0 && area2 > 0.0)
   {
     bool swap = true;
-    if (a_minAngle > 0.0)
+    if (a_checkAngle)
     {
       double ang1 = gmAngleBetweenEdges(rgtpt, btmpt, toppt);
       double ang2 = gmAngleBetweenEdges(btmpt, toppt, rgtpt);
@@ -517,7 +490,7 @@ bool TrTinImpl::SwapEdgeWithMinAngle(int a_triA, int a_triB, double a_minAngle /
     }
   }
   return false;
-} // TrTinImpl::SwapEdgeWithMinAngle
+} // TrTinImpl::SwapEdge
 //------------------------------------------------------------------------------
 /// \brief Swap edges if triangles combine to form convex quad. Compare to
 ///        trCheckAndSwap.
@@ -1416,6 +1389,79 @@ void trRenumberOnDelete(const SetInt& a_deleting, VecInt& a_vec)
     }
   }
 } // trRenumberOnDelete
+//------------------------------------------------------------------------------
+/// \brief Swap edges if triangles combine to form convex quad. Compare to
+///        trSwapEdge.
+///
+/// a_triA and a_triB must be adjacent triangles.
+///
+///                b2 * top
+///                  / \
+///                 /   \   a_triB
+///             b3 / --> \ b1
+///           lft *-------* rgt
+///                \ <-- / a3
+///                 \   /   a_triA
+///                  \ /
+///               btm * a2
+///
+/// \param a_triA: First triangle.
+/// \param a_triB: Second triangle.
+/// \param a_minAngle: If non-zero, it won't swap very thin triangles.
+/// \return true if swap was successful.
+//------------------------------------------------------------------------------
+bool trSwapEdgeWithMinAngle(TrTin& a_tin, int a_triA, int a_triB, double a_minAngle /*=0.0*/)
+{
+  XM_ENSURE_TRUE_NO_ASSERT(a_triA >= 0 && a_triB >= 0, false);
+
+  int a1, a2, a3, b1, b2, b3;
+  int top, btm, lft, rgt;
+  Pt3d toppt, btmpt, lftpt, rgtpt;
+
+  b3 = a_tin.CommonEdgeIndex(a_triB, a_triA);
+  b2 = trDecrementIndex(b3);
+  b1 = trIncrementIndex(b3);
+  a3 = a_tin.LocalIndex(a_triA, a_tin.GlobalIndex(a_triB, b1));
+  a1 = trIncrementIndex(a3);
+  a2 = trIncrementIndex(a1);
+  top = a_tin.GlobalIndex(a_triB, b2);
+  lft = a_tin.GlobalIndex(a_triB, b3);
+  rgt = a_tin.GlobalIndex(a_triB, b1);
+  btm = a_tin.GlobalIndex(a_triA, a2);
+  BSHP<VecPt3d> pts = a_tin.PointsPtr();
+  toppt = (*pts)[top];
+  lftpt = (*pts)[lft];
+  rgtpt = (*pts)[rgt];
+  btmpt = (*pts)[btm];
+
+  // make sure triangles are good
+  double area1 = trArea(toppt, lftpt, btmpt);
+  double area2 = trArea(btmpt, rgtpt, toppt);
+
+  if (area1 > 0.0 && area2 > 0.0)
+  {
+    bool swap = true;
+    if (a_minAngle > 0.0)
+    {
+      double ang1 = gmAngleBetweenEdges(rgtpt, btmpt, toppt);
+      double ang2 = gmAngleBetweenEdges(btmpt, toppt, rgtpt);
+      double ang3 = gmAngleBetweenEdges(toppt, btmpt, lftpt);
+      double ang4 = gmAngleBetweenEdges(lftpt, toppt, btmpt);
+      const static double min_ang = 0.01 * (XM_PI / 180.0);
+      const static double max_ang = 179.99 * (XM_PI / 180.0);
+      if (ang1 < min_ang || ang1 > max_ang || ang2 < min_ang || ang2 > max_ang || ang3 < min_ang ||
+          ang3 > max_ang || ang4 < min_ang || ang4 > max_ang)
+      {
+        swap = false;
+      }
+    }
+    if (swap)
+    {
+      return a_tin.SwapEdge(a_triA, a_triB, false);
+    }
+  }
+  return false;
+} // trSwapEdgeWithMinAngle
 
 } // namespace xms
 
