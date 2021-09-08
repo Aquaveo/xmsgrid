@@ -54,9 +54,13 @@ class XmsgridConan(ConanFile):
         if self.options.pybind:
             self.requires("pybind11/2.5.0@aquaveo/testing")
         self.requires("xmscore/4.0.2@aquaveo/stable")
-        self.requires('bzip2/1.0.8')
-        if self.settings.os != 'Macos':
+        if self.settings.compiler == 'Visual Studio':
+            self.requires('bzip2/1.0.6@aquaveo/testing')
             self.requires('zlib/1.2.11@aquaveo/testing')
+        if self.settings.os == 'Macos':
+            # Use conan-center-index syntax for Mac
+            self.requires('bzip2/1.0.8')
+            self.requires('zlib/1.2.11')
 
     def build(self):
         cmake = CMake(self)
