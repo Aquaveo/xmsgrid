@@ -406,9 +406,15 @@ void GmMultiPolyIntersectorImpl::IntersectEachPolyWithLine()
   {
     GmBstPoly3d& poly = GetBoostPoly(result[i].second);
     std::deque<Pt3d> output;
-    bg::intersection(poly, m_line, output);
+    // check for edge match first
+    PointsOnSegment(poly, m_line, output);
     if (2 > output.size())
-      PointsOnSegment(poly, m_line, output);
+    {
+      output.clear();
+      bg::intersection(poly, m_line, output);
+      if (2 > output.size())
+        PointsOnSegment(poly, m_line, output);
+    }
     for (size_t j = 0; j < output.size(); ++j)
     {
       ix ixn(output[j], result[i].second + 1, XM_NODATA);
@@ -440,7 +446,7 @@ void GmMultiPolyIntersectorImpl::PointsOnSegment(const GmBstPoly3d& a_poly,
           dup = true;
       }
       if (!dup)
-        a_output.push_back(p);
+        a_output.push_back(Pt3d(p.x, p.y, 0.0));
     }
   }
 } // GmMultiPolyIntersectorImpl::PointsOnSegment
@@ -1630,7 +1636,7 @@ void GmMultiPolyIntersectorUnitTests::testQuadCornersBug12396()
   VecInt2d polys = {{0, 5, 4, 1}, {1, 4, 3, 2}, {4, 7, 8, 3}, {5, 6, 7, 4}};
   VecInt expectedIds{2, -1};
   VecDbl expectedTvals = {0.0, 1};
-  VecPt3d expectedPoints = {{266.571, -360.765, 0.0}, {269.228, -361.033, 46.35}};
+  VecPt3d expectedPoints = {{266.571, -360.765, 0.0}, {269.228, -361.033, 0.0}};
   iRunTest(266.57100000000003, -360.76499999999999, 269.22800000000001, -361.03300000000002, pts,
            polys, expectedIds, expectedTvals, expectedPoints);
 } // GmMultiPolyIntersectorUnitTests::testQuadCornersBug12396
@@ -2196,11 +2202,11 @@ void GmMultiPolyIntersector2IntermediateTests::testBug12586()
 
   std::vector<int> expectedIds = {7949, 7948, 7947, 7946, -1};
   std::vector<xms::Pt3d> expectedPoints = {
-    {1538860.1700000018, 7379636.5399999982, 4549.3574218750000},
-    {1538860.6800000020, 7379637.6599999983, 4548.8906250000000},
-    {1538861.1900000013, 7379638.7799999965, 4548.8012695312500},
-    {1538861.7000000027, 7379639.8999999966, 4548.7114257812500},
-    {1538862.2100000030, 7379641.0199999977, 4548.6220703125000}};
+    {1538860.1700000018, 7379636.5399999982, 0.0},
+    {1538860.6800000020, 7379637.6599999983, 0.0},
+    {1538861.1900000013, 7379638.7799999965, 0.0},
+    {1538861.7000000027, 7379639.8999999966, 0.0},
+    {1538862.2100000030, 7379641.0199999977, 0.0}};
   std::vector<double> expectedTvals = {-1.8755588329223459e-010, 0.24999999987509086,
                                        0.49999999951496815, 0.74999999967562048,
                                        0.99999999991044985};
@@ -2241,12 +2247,53 @@ void GmMultiPolyIntersector2IntermediateTests::testBug12728()
   VecDbl expectedTvals = {0.0, 0.090246272342090456, 0.18253212435289559, 0.27690365084791912};
   std::vector<int> expectedIds = {2, 6, 5, -1};
   VecPt3d expectedPoints = {{1757154.8029110476, 2309728.6101994626, 0.0},
-                            {1757092.5527856862, 2309718.7989620329, 450.22968595672864},
-                            {1757028.8957978943, 2309708.7659891238, 452.19439765799325},
-                            {1756963.8001523635, 2309698.5062694810, 450.38437020021956}};
+                            {1757092.5527856862, 2309718.7989620329, 0.0},
+                            {1757028.8957978943, 2309708.7659891238, 0.0},
+                            {1756963.8001523635, 2309698.5062694810, 0.0}};
   iRunTest(1757154.8029110476, 2309728.6101994626, 1756465.022339, 2309619.893937,
            xmGrid->GetLocations(), cellPolys, expectedIds, expectedTvals, expectedPoints);
 } // GmMultiPolyIntersector2IntermediateTests::testBug12728
+//------------------------------------------------------------------------------
+/// \brief Test a case where the line is on the points and edges.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersector2IntermediateTests::testBug13273()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug13273.xmc", std::ios_base::binary);
+  std::string header = "Binary UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, true);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  xms::VecInt2d cellPolys;
+  cellPolys.assign(xmGrid->GetCellCount(), xms::VecInt());
+  for (int cellIdx = 0; cellIdx < xmGrid->GetCellCount(); ++cellIdx)
+  {
+    xms::VecInt& polygon = cellPolys[cellIdx];
+    polygon.reserve(xmGrid->GetCellEdgeCount(cellIdx));
+    for (int edgeIdx = 0; edgeIdx < xmGrid->GetCellEdgeCount(cellIdx); ++edgeIdx)
+    {
+      // int idx1, idx2;
+      xms::XmEdge pairIdx = xmGrid->GetCellEdge(cellIdx, edgeIdx);
+      polygon.push_back(pairIdx.GetFirst());
+    }
+  }
+
+  VecDbl expectedTvals = {0.0, 0.25, 0.5, 0.75, 1.0};
+  std::vector<int> expectedIds = {7, 9, 13, 17, -1};
+  VecPt3d expectedPoints = {{8494183.8200000003, 822079.22999999998, 0.0},
+                            {8494208.6500000004, 822086.08999999985, 0.0},
+                            {8494233.4800000004, 822092.94999999995, 0.0},
+                            {8494258.3100000005, 822099.81000000006, 0.0},
+                            {8494283.1400000006, 822106.67000000004, 0.0}};
+
+  VecPt3d locs = xmGrid->GetLocations();
+  for (auto& p : locs)
+    p.z = 0.0;
+  iRunTest(8494183.82, 822079.23, 8494283.14, 822106.67,
+           locs, cellPolys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersector2IntermediateTests::testBug13273
 
 //} // namespace xms
 
