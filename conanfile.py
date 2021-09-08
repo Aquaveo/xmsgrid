@@ -57,6 +57,8 @@ class XmsgridConan(ConanFile):
         if self.settings.os == 'Macos':
             # Use conan-center-index syntax for Mac
             self.requires('bzip2/1.0.8')
+        else:
+            self.requires('zlib/1.2.11@aquaveo/stable')
 
     def build(self):
         cmake = CMake(self)
