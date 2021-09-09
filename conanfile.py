@@ -54,6 +54,8 @@ class XmsgridConan(ConanFile):
         if self.options.pybind:
             self.requires("pybind11/2.5.0@aquaveo/testing")
         self.requires("xmscore/4.0.2@aquaveo/stable")
+        # zlib and bzip2 are required by boost. Need to use new conan notation or else we can't find the packages on CI.
+        # We used to use packages on our Aquaveo channel, but something changed and they no longer met the requirements.
         self.requires('zlib/1.2.11')
         self.requires('bzip2/1.0.8')
 
