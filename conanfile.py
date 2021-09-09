@@ -54,10 +54,11 @@ class XmsgridConan(ConanFile):
         if self.options.pybind:
             self.requires("pybind11/2.5.0@aquaveo/testing")
         self.requires("xmscore/4.0.2@aquaveo/stable")
-        if self.settings.os == 'Macos':
-            # Use conan-center-index syntax for Mac
-            self.requires('bzip2/1.0.8')
+        # if self.settings.os == 'Macos':
+        #     # Use conan-center-index syntax for Mac
+        #     self.requires('bzip2/1.0.8')
         self.requires('zlib/1.2.11')
+        self.requires('bzip2/1.0.8')
         #     self.requires('zlib/1.2.11')
         # else:
         #     self.requires('zlib/1.2.11@aquaveo/stable')
