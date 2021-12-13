@@ -97,6 +97,8 @@ public:
   void test_gmBaryPrepare();
   void test_gmIntersectLines();
   void test_gmMiddleThirdWithTol();
+  void test_gmLineSegmentIntersections();
+  void test_gmPolygonSegmentIntersections();
   void testGreatCircleDistanceMeters();
   void testMetersToDecimalDegrees();
 }; // class GeomsUnitTest
