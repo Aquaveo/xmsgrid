@@ -300,10 +300,10 @@ int gmClipLine(double* x1,
 
 
 // Intersection
-bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
-                                    const Pt3d& one2,
-                                    const Pt3d& two1,
-                                    const Pt3d& two2,
+bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
+                                    const Pt3d& a_p2,
+                                    const Pt3d& a_q1,
+                                    const Pt3d& a_q2,
                                     double* xi,
                                     double* yi,
                                     double* zi1,
@@ -318,6 +318,17 @@ bool gmIntersectLineSegmentsNoTol(const Pt3d& one1,
                                   double* zi1,
                                   double* zi2,
                                   double = 0.0);
+void gmLineSegmentIntersections(const Pt3d& a_p1,
+                               const Pt3d& a_p2,
+                               const Pt3d& a_q1,
+                               const Pt3d& a_q2,
+                               VecPt3d& a_intersections,
+                               double a_tol = 0.0);
+void gmPolygonSegmentIntersections(const VecPt3d& a_polygon,
+                                  const Pt3d& a_q1,
+                                  const Pt3d& a_q2,
+                                  VecPt3d& a_intersections,
+                                  double a_tol = 0.0);
 //------------------------------------------------------------------------------
 /// \brief Find the plan projection intersection of two line segments.
 /// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
