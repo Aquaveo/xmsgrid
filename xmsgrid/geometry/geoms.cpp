@@ -2670,10 +2670,10 @@ int gmClipLine(double* x1,
 /// \brief Find the plan projection intersection of two line segments.
 /// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
 ///        segment 2 = two1,two2  = two1 + mu (two2 - two1).
-/// \param one1: First endpoint of segment 1.
-/// \param one2: Second endpoint of segment 1.
-/// \param two1: First endpoint of segment 2.
-/// \param two2: Second endpoint of segment 2.
+/// \param a_p1: First endpoint of segment 1.
+/// \param a_p2: Second endpoint of segment 1.
+/// \param a_q1: First endpoint of segment 2.
+/// \param a_q2: Second endpoint of segment 2.
 /// \param xi: Initialized to the x coord of intersection.
 /// \param yi: Initialized to the y coord of intersection.
 /// \param zi1: Initialized to the z coord of intersection on segment 1.
@@ -2681,10 +2681,10 @@ int gmClipLine(double* x1,
 /// \param tol: Tolerance for geometric comparison.
 /// \return Whether the line segments intersect.
 //------------------------------------------------------------------------------
-bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
-                                    const Pt3d& one2,
-                                    const Pt3d& two1,
-                                    const Pt3d& two2,
+bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
+                                    const Pt3d& a_p2,
+                                    const Pt3d& a_q1,
+                                    const Pt3d& a_q2,
                                     double* xi /*=NULL*/,
                                     double* yi /*=NULL*/,
                                     double* zi1 /*=NULL*/,
@@ -2695,37 +2695,53 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
   double dx1, dy1, dz1, dx2, dy2, dz2, lambda, mu, cross;
   // do a trivial rejection
   // RDJ - 4/20/2004 Do tests one at a time so if we fail on one we stop
-  minx1 = std::min(one1.x, one2.x);
-  maxx2 = std::max(two1.x, two2.x);
+  minx1 = std::min(a_p1.x, a_p2.x);
+  maxx2 = std::max(a_q1.x, a_q2.x);
   if (GT_TOL(minx1, maxx2, tol))
   {
     return false;
   }
-  maxx1 = std::max(one1.x, one2.x);
-  minx2 = std::min(two1.x, two2.x);
+  maxx1 = std::max(a_p1.x, a_p2.x);
+  minx2 = std::min(a_q1.x, a_q2.x);
   if (LT_TOL(maxx1, minx2, tol))
   {
     return false;
   }
-  miny1 = std::min(one1.y, one2.y);
-  maxy2 = std::max(two1.y, two2.y);
+  miny1 = std::min(a_p1.y, a_p2.y);
+  maxy2 = std::max(a_q1.y, a_q2.y);
   if (GT_TOL(miny1, maxy2, tol))
   {
     return false;
   }
-  maxy1 = std::max(one1.y, one2.y);
-  miny2 = std::min(two1.y, two2.y);
+  maxy1 = std::max(a_p1.y, a_p2.y);
+  miny2 = std::min(a_q1.y, a_q2.y);
   if (LT_TOL(maxy1, miny2, tol))
   {
     return false;
   }
+
+  // move points around zero for better accuracy
+  Pt3d min;
+  min = XM_DBL_HIGHEST;
+  Pt3d max;
+  max = XM_DBL_LOWEST;
+  gmAddToExtents(a_p1, min, max);
+  gmAddToExtents(a_p2, min, max);
+  gmAddToExtents(a_q1, min, max);
+  gmAddToExtents(a_q2, min, max);
+  Pt3d mid = (min + max) * 0.5;
+  Pt3d p1 = a_p1 - mid;
+  Pt3d p2 = a_p2 - mid;
+  Pt3d q1 = a_q1 - mid;
+  Pt3d q2 = a_q2 - mid;
+
   // define the vectors
-  dx1 = one2.x - one1.x;
-  dy1 = one2.y - one1.y;
-  dz1 = one2.z - one1.z;
-  dx2 = two2.x - two1.x;
-  dy2 = two2.y - two1.y;
-  dz2 = two2.z - two1.z;
+  dx1 = p2.x - p1.x;
+  dy1 = p2.y - p1.y;
+  dz1 = p2.z - p1.z;
+  dx2 = q2.x - q1.x;
+  dy2 = q2.y - q1.y;
+  dz2 = q2.z - q1.z;
   /* see if lines are parallel */
   cross = (dx1 * dy2) -
           (dy1 * dx2); // dy1/dx1 = dy2/dx2 lines have same slope
@@ -2735,7 +2751,7 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
   if (EQ_TOL(cross, 0.0, tol))
     return false;
   // compute the value of lambda
-  lambda = (dy2 * (two1.x - one1.x) + dx2 * (one1.y - two1.y)) / cross;
+  lambda = (dy2 * (q1.x - p1.x) + dx2 * (p1.y - q1.y)) / cross;
 
   // There is some question as to what effect the tolerance should have on this
   // function. It was decided that in the case where the segments do not
@@ -2761,9 +2777,9 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
   //                    so
   //     mu = (one1 + lambda (one2-one1) - two1)/(two2-two1)
   if (fabs(dx2) > fabs(dy2))
-    mu = (one1.x + lambda * dx1 - two1.x) / dx2;
+    mu = (p1.x + lambda * dx1 - q1.x) / dx2;
   else
-    mu = (one1.y + lambda * dy1 - two1.y) / dy2;
+    mu = (p1.y + lambda * dy1 - q1.y) / dy2;
 
   // If the point of intersection is off the end of the second segment, then
   // set it to be at the end and set the checkDistance flag.
@@ -2779,8 +2795,8 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
   }
   // if checkDistance flag is true check distance between mu/lambda
   // positions (nearest points). If it is not within tolerance, return false.
-  Pt3d lambdapos = one1 + Pt3d(lambda * dx1, lambda * dy1, lambda * dz1);
-  Pt3d mupos = two1 + Pt3d(mu * dx2, mu * dy2, mu * dz2);
+  Pt3d lambdapos = p1 + Pt3d(lambda * dx1, lambda * dy1, lambda * dz1);
+  Pt3d mupos = q1 + Pt3d(mu * dx2, mu * dy2, mu * dz2);
   if (checkDistance)
   {
     if (!gmEqualPointsXY(lambdapos, mupos, tol))
@@ -2789,33 +2805,33 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& one1,
     }
   }
 
-  if (gmColinearWithTol(one1, one2, lambdapos, tol / 2) &&
-      gmColinearWithTol(two1, two2, lambdapos, tol / 2))
+  if (gmColinearWithTol(p1, p2, lambdapos, tol / 2) &&
+      gmColinearWithTol(q1, q2, lambdapos, tol / 2))
   {
     if (xi)
     {
-      *xi = lambdapos.x;
+      *xi = lambdapos.x + mid.x;
     }
     if (yi)
     {
-      *yi = lambdapos.y;
+      *yi = lambdapos.y + mid.y;
     }
   }
   else
   {
     if (xi)
     {
-      *xi = mupos.x;
+      *xi = mupos.x + mid.x;
     }
     if (yi)
     {
-      *yi = mupos.y;
+      *yi = mupos.y + mid.y;
     }
   }
   if (zi2)
-    *zi2 = mupos.z;
+    *zi2 = mupos.z + mid.z;
   if (zi1)
-    *zi1 = lambdapos.z;
+    *zi1 = lambdapos.z + mid.z;
   return true;
 } // gmIntersectLineSegmentsWithTol
 //------------------------------------------------------------------------------
@@ -2845,6 +2861,139 @@ bool gmIntersectLineSegmentsNoTol(const Pt3d& one1,
   return gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, xi, yi, zi1, zi2, 0.0);
 } // gmIntersectLineSegmentsNoTol
 //------------------------------------------------------------------------------
+/// \brief Find the plan projection intersection of two line segments.
+/// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
+///        segment 2 = two1,two2  = two1 + mu (two2 - two1).
+/// \param a_p1: First endpoint of segment 1.
+/// \param a_p2: Second endpoint of segment 1.
+/// \param a_q1: First endpoint of segment 2.
+/// \param a_q2: Second endpoint of segment 2.
+/// \param a_intersections: Storage for intersections.
+/// \param a_tol: Tolerance for geometric comparison.
+/// \return Whether the line segments intersect.
+//------------------------------------------------------------------------------
+void gmLineSegmentIntersections(const Pt3d& a_p1,
+                               const Pt3d& a_p2,
+                               const Pt3d& a_q1,
+                               const Pt3d& a_q2,
+                               VecPt3d& a_intersections,
+                               double a_tol /*=0.0*/)
+{
+  a_intersections.clear();
+
+  double xi, yi;
+  if (gmIntersectLineSegmentsWithTol(a_p1, a_p2, a_q1, a_q2, &xi, &yi, nullptr, nullptr, a_tol))
+  {
+    a_intersections.push_back(Pt3d(xi, yi, 0.0));
+    return;
+  }
+  bool p1Intersection = false;
+  bool p2Intersection = false;
+  bool q1Intersection = false;
+  bool q2Intersection = false;
+  // check if end points are equal
+  // check p1-q1
+  if (gmEqualPointsXY(a_p1, a_q1, a_tol))
+  {
+    p1Intersection = true;
+    q1Intersection = true;
+    a_intersections.emplace_back(a_p1.x, a_p1.y, 0.0);
+  }
+  // check p1-q2
+  if (!p1Intersection && gmEqualPointsXY(a_p1, a_q2, a_tol))
+  {
+    p1Intersection = true;
+    q2Intersection = true;
+    a_intersections.emplace_back(a_p1.x, a_p1.y, 0.0);
+  }
+  // check p2-q2
+  if (!q2Intersection && gmEqualPointsXY(a_p2, a_q2, a_tol))
+  {
+    p2Intersection = true;
+    q2Intersection = true;
+    a_intersections.emplace_back(a_p2.x, a_p2.y, 0.0);
+  }
+  // check p2-q1
+  if (!p2Intersection && !q1Intersection && gmEqualPointsXY(a_p2, a_q1, a_tol))
+  {
+    p2Intersection = true;
+    q1Intersection = true;
+    a_intersections.emplace_back(a_p2.x, a_p2.y, 0.0);
+  }
+  // check if q1 on segment p
+  if (!q1Intersection && gmOnLineAndBetweenEndpointsWithTol(a_p1, a_p2, a_q1.x, a_q1.y, a_tol / 2))
+  {
+    a_intersections.emplace_back(a_q1.x, a_q1.y, 0.0);
+  }
+  // check if q2 on segment p
+  if (!q2Intersection && gmOnLineAndBetweenEndpointsWithTol(a_p1, a_p2, a_q2.x, a_q2.y, a_tol / 2))
+  {
+    a_intersections.emplace_back(a_q2.x, a_q2.y, 0.0);
+  }
+  // check if p1 on segment q
+  if (!p1Intersection && gmOnLineAndBetweenEndpointsWithTol(a_q1, a_q2, a_p1.x, a_p1.y, a_tol / 2))
+  {
+    a_intersections.emplace_back(a_p1.x, a_p1.y, 0.0);
+  }
+  // check if p2 on segment q
+  if (!p2Intersection && gmOnLineAndBetweenEndpointsWithTol(a_q1, a_q2, a_p2.x, a_p2.y, a_tol / 2))
+  {
+    a_intersections.emplace_back(a_p2.x, a_p2.y, 0.0);
+  }
+} // gmIntersectLineSegmentsWithTol
+//------------------------------------------------------------------------------
+/// \brief Get the intersection points for a polygon and a line.
+/// \note: Intersection points that are within the tolerance of a polygon point
+///        return the polygon point rather than the calculated point.
+/// \param a_polygon: The polygon.
+/// \param a_q1: The first segment point.
+/// \param a_q2: The second segment point.
+/// \param a_intersections: The intersection points.
+//------------------------------------------------------------------------------
+void gmPolygonSegmentIntersections(const VecPt3d& a_polygon,
+                                  const Pt3d& a_q1,
+                                  const Pt3d& a_q2,
+                                  VecPt3d& a_intersections,
+                                  double a_tol /* = 0.0 */)
+{
+  a_intersections.clear();
+  VecPt3d segmentIntersections;
+
+  // get intersections for polygon segments
+  auto polygonSize = a_polygon.size();
+  for (size_t i = 0; i < polygonSize; ++i)
+  {
+    const Pt3d& p1 = a_polygon[i];
+    const Pt3d& p2 = a_polygon[(i + 1) % polygonSize];
+    gmLineSegmentIntersections(p1, p2, a_q1, a_q2, segmentIntersections, a_tol);
+
+    // snap intersections very close to polygon point to the polygon point
+    for (auto curr = segmentIntersections.begin(); curr != segmentIntersections.end(); ++curr)
+    {
+      if (gmEqualPointsXY(*curr, p1, a_tol))
+      {
+        *curr = p1;
+      }
+      if (gmEqualPointsXY(*curr, p2, a_tol))
+      {
+        *curr = p2;
+      }
+    }
+
+    if (!segmentIntersections.empty())
+    {
+      a_intersections.insert(a_intersections.end(), segmentIntersections.begin(), segmentIntersections.end());
+    }
+  }
+
+  // remove any duplicates
+  if (!a_intersections.empty())
+  {
+    std::sort(a_intersections.begin(), a_intersections.end());
+    a_intersections.erase( unique(a_intersections.begin(), a_intersections.end()), a_intersections.end());
+  }
+} // gmPolygonSegmentIntersections
+//------------------------------------------------------------------------------
 /// \brief Finds the intersection of a 2d line with a 2d line segment.
 /// \param p1: First point on line segment.
 /// \param p2: Second point on line segment.
@@ -2860,7 +3009,7 @@ bool gmIntersectSegmentWithLine(const Pt2d& p1,
                                 Pt2d* inter)
 {
   return gmIntersectSegmentWithLine(p1, p2, l1, l2, inter, gmXyTol());
-}
+} // gmIntersectSegmentWithLine
 //------------------------------------------------------------------------------
 /// \brief Finds the intersection of a 2d line with a 2d line segment.
 /// \param p1: First point on line segment.
@@ -7215,6 +7364,101 @@ void GeomsUnitTest::test_gmMiddleThirdWithTol()
   TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 6, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), true);
   TS_ASSERT_EQUALS(gmMiddleThirdWithTol({ 0, 7, 0 }, { 0, 0, 0 }, { 0, 9, 0 }, tol), false);
 } // GeomsUnitTest::test_gmMiddleThirdWithTol
+//------------------------------------------------------------------------------
+/// \brief Test test_gmLineSegmentIntersections.
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmLineSegmentIntersections()
+{
+  using namespace xms;
+  VecPt3d intersections;
+  Pt3d p1 = {0.0, 0.0, 0.0};
+  Pt3d p2 = {1.0, 0.0, 0.0};
+  Pt3d q1 = {0.0, 1.0, 0.0};
+  Pt3d q2 = {1.0, 1.0, 0.0};
+  // parallel but above
+  double tol = 1.0e-5;
+  gmLineSegmentIntersections(p1, p2, q1, q2, intersections, tol);
+  TS_ASSERT(intersections.empty());
+
+  // co-linear but doesn't cover
+  gmLineSegmentIntersections(p1, p2, p1 + 1 + tol * 2, p2 + 1, intersections, tol);
+  TS_ASSERT(intersections.empty());
+
+  // co-linear but doesn't cover
+  gmLineSegmentIntersections(p1, p2, p1 + 1 + tol * 2, p2 + 1, intersections, tol);
+  TS_ASSERT(intersections.empty());
+
+  // co-linear, doesn't cover, but endpoints within tolerance
+  gmLineSegmentIntersections(p1, p2, p2 + tol / 2, p2 + 1, intersections, tol);
+  VecPt3d expectedIntersections = {{1.0, 0.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+
+  // co-linear within tolerance above
+  gmLineSegmentIntersections(p1, p2, p1 + tol / 2, p2 + tol / 2, intersections, tol);
+  expectedIntersections = {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+
+  // co-linear partially covering
+  q1 = p1;
+  q1.x += 0.5;
+  q2 = p2;
+  q2.x += 0.5;
+  gmLineSegmentIntersections(p1, p2, q1, q2, intersections, tol);
+  expectedIntersections = {{0.5, 0.0, 0.0}, {1.0, 0.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+  gmLineSegmentIntersections(q1, q2, p1, p2, intersections, tol);
+  expectedIntersections = {{1.0, 0.0, 0.0}, {0.5, 0.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+
+  // co-linear with touching endpoints
+  q1 = p1;
+  q1.x += 1.0;
+  q2 = p2;
+  q2.x += 1.0;
+  expectedIntersections = {{1.0, 0.0, 0.0}};
+  gmLineSegmentIntersections(p1, p2, q1, q2, intersections, tol);
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+  gmLineSegmentIntersections(q1, q2, p1, p2, intersections, tol);
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+  gmLineSegmentIntersections(p2, p1, q2, q1, intersections, tol);
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+  gmLineSegmentIntersections(q2, q1, p2, p1, intersections, tol);
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+} // GeomsUnitTest::test_gmLineSegmentIntersections
+//------------------------------------------------------------------------------
+/// \brief Test gmPolygonSegmentIntersections.
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmPolygonSegmentIntersections()
+{
+  using namespace xms;
+  VecPt3d polygon = {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 0.0}, {0.0, 1.0, 0.0}};
+  const double tol = 1.0e-5;
+  Pt3d p1 = Pt3d(-2.0, -2.0, 0.0);
+  Pt3d p2 = Pt3d(2.0, 2.0, 0.0);
+  VecPt3d intersections;
+
+  gmPolygonSegmentIntersections(polygon, p1, p2, intersections, tol);
+  VecPt3d expectedIntersections = {{0.0, 0.0, 0.0}, {1.0, 1.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+
+  p1 += tol / 2;
+  p2 += tol / 2;
+  gmPolygonSegmentIntersections(polygon, p1, p2, intersections, tol);
+  expectedIntersections = {{0.0, 0.0, 0.0}, {1.0, 1.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+
+  p1 = {0.5, -0.5, 0.0};
+  p2 = {-0.5, 0.5, 0.0};
+  gmPolygonSegmentIntersections(polygon, p1, p2, intersections, tol);
+  expectedIntersections = {{0.0, 0.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+
+  p1 = {0.0, 0.0, 0.0};
+  p2 = {1.0, 0.0, 0.0};
+  gmPolygonSegmentIntersections(polygon, p1, p2, intersections, tol);
+  expectedIntersections = {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}};
+  TS_ASSERT_DELTA_VECPT3D(expectedIntersections, intersections, tol);
+} // GeomsUnitTest::test_gmPolygonSegmentIntersections
 //------------------------------------------------------------------------------
 /// \brief Test gmGreatCircleDistanceMeters.
 //------------------------------------------------------------------------------
