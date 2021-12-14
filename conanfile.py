@@ -94,17 +94,16 @@ class XmsgridConan(ConanFile):
         elif self.options.pybind:
             with tools.pythonpath(self):
                 if not self.settings.os == "Macos":
-                    self.run('pip install --user numpy twine wheel')
+                  self.run('pip install --user numpy twine wheel')
                 else:
-                    self.run('pip install numpy twine wheel')
+                  self.run('pip install numpy twine wheel')
                 self.run('python -m unittest discover -v -p *_pyt.py -s {}/_package/tests'.format(
                     os.path.join(self.build_folder)), cwd=os.path.join(self.package_folder, "_package"))
                 # Create and upload wheel to PyPi if release and windows
-                is_release = self.env.get("RELEASE_PYTHON", 'False') == 'True'
-                is_mac_os = self.settings.os == 'Macos'
-                is_gcc_6 = self.settings.os == "Linux" and float(self.settings.compiler.version.value) == 6.0
-                is_windows_md = (self.settings.os == "Windows" and str(self.settings.compiler.runtime) == "MD")
-                if is_release and (is_mac_os or is_gcc_6 or is_windows_md):
+                is_release = self.env.get("RELEASE_PYTHON", 'False')
+                if is_release == 'True' and ((self.settings.os == "Macos" or self.settings.os == "Linux")
+                                             or (self.settings.os == "Windows" and
+                                             str(self.settings.compiler.runtime) == "MD")):
                     devpi_url = self.env.get("AQUAPI_URL", 'NO_URL')
                     devpi_username = self.env.get("AQUAPI_USERNAME", 'NO_USERNAME')
                     devpi_password = self.env.get("AQUAPI_PASSWORD", 'NO_PASSWORD')
