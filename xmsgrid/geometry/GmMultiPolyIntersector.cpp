@@ -13,7 +13,6 @@
 #include <xmsgrid/geometry/GmMultiPolyIntersector.h>
 
 // 3. Standard library headers
-#include <numeric>
 
 // 4. External library headers
 #pragma warning(push)
@@ -39,9 +38,6 @@
 #include <xmsgrid/geometry/GmMultiPolyIntersectionSorter.h> // GmMultiPolyIntersectionSorter
 #include <xmsgrid/geometry/GmMultiPolyIntersectorData.h>    // GmMultiPolyIntersectorData
 #include <xmsgrid/geometry/geoms.h> // gmPolygonArea, gmAddToExtents, gmXyDistance
-
-#include <xmsgrid/ugrid/XmUGrid.h>
-#include <xmsgrid/ugrid/XmUGridUtils.h>
 
 //----- Forward declarations ---------------------------------------------------
 
