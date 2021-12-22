@@ -91,6 +91,7 @@ public:
   void testBug12728();
   void testBug13273();
   void testPointOnPolygonVertex();
+  void testPointsNearEdgePoints();
 };
 
 //} // namespace xms
