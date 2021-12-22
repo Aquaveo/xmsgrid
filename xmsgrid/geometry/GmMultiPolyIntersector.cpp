@@ -414,7 +414,7 @@ void GmMultiPolyIntersectorImpl::IntersectEachPolyWithLine()
     gmPolygonSegmentIntersections(polygon, m_line[0], m_line[1], intersections, tol);
     for (const auto& point : intersections)
     {
-      ix ixn(point, result[i].second + 1, XM_NODATA);
+      ix ixn(Pt3d(point.x, point.y), result[i].second + 1, XM_NODATA);
       m_d.m_ixs.push_back(ixn);
     }
   }
@@ -451,6 +451,18 @@ void GmMultiPolyIntersectorImpl::SortIntersections()
 {
   XM_ENSURE_TRUE_VOID_NO_ASSERT(m_d.m_ixs.size() > 1);
 
+  for (auto& ix : m_d.m_ixs)
+  {
+    if (ix.m_t < 0.0)
+    {
+      ix.m_t = 0.0;
+    }
+    if (ix.m_t > 1.0)
+    {
+      ix.m_t = 1.0;
+    }
+  }
+
   // Sort intersections by t value
   std::sort(m_d.m_ixs.begin(), m_d.m_ixs.end(),
             [](const ix& a, const ix& b) -> bool { return a.m_t < b.m_t; });
@@ -462,14 +474,18 @@ void GmMultiPolyIntersectorImpl::SortIntersections()
 //------------------------------------------------------------------------------
 void GmMultiPolyIntersectorImpl::EnsureEndPointsRepresented()
 {
+  double tol = gmXyTol();
   // If 1st point was in or on poly, make sure there's an intersection for it
   for (SetInt::iterator it = m_d.m_polys1.begin(); it != m_d.m_polys1.end(); ++it)
   {
     bool found = false;
-    for (size_t i = 0; i < m_d.m_ixs.size() && !found && m_d.m_ixs[i].m_t == 0.0; ++i)
+    for (const auto& ix : m_d.m_ixs)
     {
-      if (m_d.m_ixs[i].m_i == *it)
+      if (ix.m_i == *it && EQ_TOL(ix.m_t, 0.0, tol))
+      {
         found = true;
+        break;
+      }
     }
     if (!found)
       m_d.m_ixs.insert(m_d.m_ixs.begin(), ix(m_pt1, *it, 0.0));
@@ -479,10 +495,13 @@ void GmMultiPolyIntersectorImpl::EnsureEndPointsRepresented()
   for (SetInt::iterator it = m_d.m_polys2.begin(); it != m_d.m_polys2.end(); ++it)
   {
     bool found = false;
-    for (size_t i = m_d.m_ixs.size(); i-- > 0 && !found && m_d.m_ixs[i].m_t == 1.0;)
+    for (const auto& ix : m_d.m_ixs)
     {
-      if (m_d.m_ixs[i].m_i == *it)
+      if (ix.m_i == *it && EQ_TOL(ix.m_t, 1.0, tol))
+      {
         found = true;
+        break;
+      }
     }
     if (!found)
       m_d.m_ixs.push_back(ix(m_pt2, *it, 1.0));
@@ -610,8 +629,8 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
   CreateLine();
   IntersectEachPolyWithLine();
   ComputeTValues();
-  SortIntersections();
   EnsureEndPointsRepresented();
+  SortIntersections();
   if (!m_sorter)
   {
     XM_ASSERT(false);
@@ -2339,21 +2358,21 @@ void GmMultiPolyIntersector2IntermediateTests::testPointOnPolygonVertex()
   };
 
   VecPt3d2d expectedPoints = {
-    {{380,0,10.12}, {361.333,6.66667,10.1387}},
-    {{361.333,6.66667,10.1387}, {342.667,13.3333,10.1573}},
-    {{342.667,13.3333,10.1573}, {324,20,10.176}},
-    {{324,20,10.176}, {305.333,26.6667,10.1947}},
-    {{305.333,26.6667,10.1947}, {286.667,33.3333,10.2133}},
-    {{286.667,33.3333,10.2133}, {268,40,10.232}},
-    {{268,40,10.232}, {249.333,46.6667,10.2507}},
-    {{249.333,46.6667,10.2507}, {230.667,53.3333,10.2693}},
-    {{230.667,53.3333,10.2693}, {212,60,10.288}},
-    {{212,60,10.288}, {193.333,66.6667,10.3067}},
-    {{193.333,66.6667,10.3067}, {174.667,73.3333,10.3253}},
-    {{174.667,73.3333,10.3253}, {156,80,10.344}},
-    {{156,80,10.344}, {137.333,86.6667,10.3627}},
-    {{137.333,86.6667,10.3627}, {118.667,93.3333,0}},
-    {{118.667,93.3333,0}, {117.733,93.6667,0}}
+    {{380, 0.0, 0.0}, {361.333, 6.66667, 0.0}},
+    {{361.333, 6.66667, 0.0}, {342.667, 13.3333, 0.0}},
+    {{342.667, 13.3333, 0.0}, {324, 20, 0.0}},
+    {{324, 20, 0.0}, {305.333, 26.6667, 0.0}},
+    {{305.333, 26.6667, 0.0}, {286.667, 33.3333, 0.0}},
+    {{286.667, 33.3333, 0.0}, {268, 40, 0.0}},
+    {{268, 40, 0.0}, {249.333,46.6667, 0.0}},
+    {{249.333, 46.6667, 0.0}, {230.667, 53.3333, 0.0}},
+    {{230.667, 53.3333, 0.0}, {212, 60, 0.0}},
+    {{212, 60, 0.0}, {193.333, 66.6667, 0.0}},
+    {{193.333, 66.6667, 0.0}, {174.667, 73.3333, 0.0}},
+    {{174.667, 73.3333, 0.0}, {156, 80, 0.0}},
+    {{156, 80, 0.0}, {137.333, 86.6667, 0.0}},
+    {{137.333,86.6667,0.0}, {118.667, 93.3333, 0.0}},
+    {{118.667, 93.3333, 0.0}, {117.733, 93.6667, 0.0}}
   };
 
   VecDbl2d expectedTValues = {};
@@ -2413,20 +2432,20 @@ void GmMultiPolyIntersector2IntermediateTests::testPointOnPolygonVertex()
   };
   expectedPoints = {
     {},
-    {{381.333,6.66667,10.1187}, {362.667,13.3333,10.1373}},
-    {{362.667,13.3333,10.1373}, {344,20,10.156}},
-    {{344,20,10.156}, {325.333,26.6667,10.1747}},
-    {{325.333,26.6667,10.1747}, {306.667,33.3333,10.1933}},
-    {{306.667,33.3333,10.1933}, {288,40,10.212}},
-    {{288,40,10.212}, {269.333,46.6667,10.2307}},
-    {{269.333,46.6667,10.2307}, {250.667,53.3333,10.2493}},
-    {{250.667,53.3333,10.2493}, {232,60,10.268}},
-    {{232,60,10.268}, {213.333,66.6667,10.2867}},
-    {{213.333,66.6667,10.2867}, {194.667,73.3333,10.3053}},
-    {{194.667,73.3333,10.3053}, {176,80,10.324}},
-    {{176,80,10.324}, {157.333,86.6667,10.3427}},
-    {{157.333,86.6667,10.3427}, {138.667,93.3333,10.3613}},
-    {{138.667,93.3333,10.3613}, {120,100,10.38}}
+    {{381.333, 6.66667, 0.0}, {362.667, 13.3333, 0.0}},
+    {{362.667, 13.3333, 0.0}, {344, 20, 0.0}},
+    {{344, 20, 0.0}, {325.333, 26.6667, 0.0}},
+    {{325.333, 26.6667, 0.0}, {306.667, 33.3333, 0.0}},
+    {{306.667, 33.3333, 0.0}, {288, 40, 0.0}},
+    {{288, 40, 0.0}, {269.333, 46.6667, 0.0}},
+    {{269.333, 46.6667, 0.0}, {250.667, 53.3333, 0.0}},
+    {{250.667, 53.3333, 0.0}, {232, 60, 0.0}},
+    {{232, 60, 0.0}, {213.333, 66.6667, 0.0}},
+    {{213.333, 66.6667, 0.0}, {194.667, 73.3333, 0.0}},
+    {{194.667, 73.3333, 0.0}, {176, 80, 0.0}},
+    {{176, 80, 0.0}, {157.333, 86.6667, 0.0}},
+    {{157.333, 86.6667, 0.0}, {138.667, 93.3333, 0.0}},
+    {{138.667, 93.3333, 0.0}, {120, 100, 0.0}}
   };
   expectedTValues.assign(15, {0.0, 1.0});
   expectedTValues[0] = {};
@@ -2441,6 +2460,56 @@ void GmMultiPolyIntersector2IntermediateTests::testPointOnPolygonVertex()
     TS_ASSERT_DELTA_VEC(expectedTValues[i], tValues, 1.0e-5);
   }
 } // GmMultiPolyIntersector2IntermediateTests::testPointOnPolygonVertex
+
+//------------------------------------------------------------------------------
+/// \brief Test a case where the line is on the points and edges.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersector2IntermediateTests::testPointsNearEdgePoints()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::string inFile = testFilesPath + "double_point_in_snap.xmugrid";
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromAsciiFile(inFile);
+  TS_REQUIRE_NOT_NULL(xmGrid);
+
+  xms::VecInt2d cellPolys;
+  cellPolys.assign(xmGrid->GetCellCount(), xms::VecInt());
+  for (int cellIdx = 0; cellIdx < xmGrid->GetCellCount(); ++cellIdx)
+  {
+    xms::VecInt& polygon = cellPolys[cellIdx];
+    polygon.reserve(xmGrid->GetCellEdgeCount(cellIdx));
+    for (int edgeIdx = 0; edgeIdx < xmGrid->GetCellEdgeCount(cellIdx); ++edgeIdx)
+    {
+      // int idx1, idx2;
+      xms::XmEdge pairIdx = xmGrid->GetCellEdge(cellIdx, edgeIdx);
+      polygon.push_back(pairIdx.GetFirst());
+    }
+  }
+
+  VecPt3d segmentPoints = {
+    {958452.39285714, 498553.35714286, 7531.0},
+    {958450.41714286, 498552.80285714, 7531.0}
+  };
+  
+  VecInt expectedPolyIds = {1836, -1};
+
+  VecPt3d expectedPoints = {
+    {958452.39285714, 498553.35714286, 0.0},
+    {958450.41714286, 498552.80285714, 0.0}
+  };
+
+  VecDbl expectedTValues = {0.0, 1.0};
+
+  BSHP<GmMultiPolyIntersectionSorter> sorter =
+    BSHP<GmMultiPolyIntersectionSorter>(new GmMultiPolyIntersectionSorterTerse());
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(xmGrid->GetLocations(), cellPolys, sorter, 0);
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+  mpi->TraverseLineSegment(segmentPoints[0].x, segmentPoints[0].y, segmentPoints[1].x, segmentPoints[1].y, polyIds, tValues, points);
+  TS_ASSERT_EQUALS(expectedPolyIds, polyIds);
+  TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1.0e-3);
+  TS_ASSERT_DELTA_VEC(expectedTValues, tValues, 1.0e-5);
+} // GmMultiPolyIntersector2IntermediateTests::testPointsNearEdgePoints
 
 //} // namespace xms
 
