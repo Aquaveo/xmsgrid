@@ -103,7 +103,7 @@ private:
   void BuildBoostPoly(int a_polyIdx, GmBstPoly3d& a_boostPoly) const;
   void BuildRTree();
   void CreateLine();
-  void GetPolysForPoint(Pt3d pt, SetInt& poly);
+  void GetPolysForPoint(const Pt3d& pt, SetInt& poly);
   void EnsureEndPointsRepresented();
   void IntersectEachPolyWithLine();
   void ComputeTValues();
@@ -359,7 +359,7 @@ void GmMultiPolyIntersectorImpl::SetQuery(GmMultiPolyIntersectorQueryEnum a_quer
 /// \param pt: point loction
 /// \param a_poly: 1-based polygon ID.
 //------------------------------------------------------------------------------
-void GmMultiPolyIntersectorImpl::GetPolysForPoint(Pt3d pt, SetInt& a_poly)
+void GmMultiPolyIntersectorImpl::GetPolysForPoint(const Pt3d& pt, SetInt& a_poly)
 {
   std::vector<ValueBox> result;
   m_rtree->query(bgi::intersects(pt), std::back_inserter(result));
@@ -2489,15 +2489,6 @@ void GmMultiPolyIntersector2IntermediateTests::testPointsNearEdgePoints()
     {958452.39285714, 498553.35714286, 7531.0},
     {958450.41714286, 498552.80285714, 7531.0}
   };
-  
-  VecInt expectedPolyIds = {1836, -1};
-
-  VecPt3d expectedPoints = {
-    {958452.39285714, 498553.35714286, 0.0},
-    {958450.41714286, 498552.80285714, 0.0}
-  };
-
-  VecDbl expectedTValues = {0.0, 1.0};
 
   BSHP<GmMultiPolyIntersectionSorter> sorter =
     BSHP<GmMultiPolyIntersectionSorter>(new GmMultiPolyIntersectionSorterTerse());
@@ -2506,6 +2497,27 @@ void GmMultiPolyIntersector2IntermediateTests::testPointsNearEdgePoints()
   VecDbl tValues;
   VecPt3d points;
   mpi->TraverseLineSegment(segmentPoints[0].x, segmentPoints[0].y, segmentPoints[1].x, segmentPoints[1].y, polyIds, tValues, points);
+  
+  VecInt expectedPolyIds = {1836, -1};
+  VecPt3d expectedPoints = {
+    {958452.39285714, 498553.35714286, 0.0},
+    {958450.41714286, 498552.80285714, 0.0}
+  };
+  VecDbl expectedTValues = {0.0, 1.0};
+  TS_ASSERT_EQUALS(expectedPolyIds, polyIds);
+  TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1.0e-3);
+  TS_ASSERT_DELTA_VEC(expectedTValues, tValues, 1.0e-5);
+
+  segmentPoints = {
+    {958436.79571429, 498597.85, 7531.0},
+    {958434.84428571, 498597.37, 7531.0},
+  };
+  mpi->TraverseLineSegment(segmentPoints[0].x, segmentPoints[0].y, segmentPoints[1].x, segmentPoints[1].y, polyIds, tValues, points);
+  expectedPolyIds = {2387, -1};
+  expectedPoints = {
+    {958436.79571429, 498597.85,0.0},
+    {958434.84428571, 498597.37, 0.0},
+  };
   TS_ASSERT_EQUALS(expectedPolyIds, polyIds);
   TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1.0e-3);
   TS_ASSERT_DELTA_VEC(expectedTValues, tValues, 1.0e-5);
