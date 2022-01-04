@@ -234,7 +234,8 @@ void GmMultiPolyIntersectionSorterTerse::SwapAdjacents() {
   XM_ENSURE_TRUE_VOID_NO_ASSERT(m_d->m_ixs.size() > 1);
 
   // 2 intersections
-  if (m_d->m_ixs.size() == 2) {
+  if (m_d->m_ixs.size() == 2 && EQ_EPS(m_d->m_ixs[0].m_t, m_d->m_ixs[1].m_t, FLT_EPSILON))
+  {
     if ((!m_d->m_polys1.empty() &&
          m_d->m_polys1.find(m_d->m_ixs[0].m_i) == m_d->m_polys1.end()) ||
         (!m_d->m_polys2.empty() &&
