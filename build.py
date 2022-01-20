@@ -57,11 +57,21 @@ if __name__ == "__main__":
     testing_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # testing option
-        if not options.get('xmsgrid:xms', False) and not options.get('xmsgrid:pybind', False):
+        if not options.get('xmsgrid:pybind', False):
             testing_options = dict(options)
             testing_options.update({'xmsgrid:testing': True})
             testing_updated_builds.append([settings, testing_options, env_vars, build_requires])
         testing_updated_builds.append([settings, options, env_vars, build_requires])
     builder.builds = testing_updated_builds
+    
+    wchar_updated_builds = []
+    for settings, options. env_vars, build_requires, reference in builder.items:
+        # wchar_t option
+        if not options.get('xmsgrid:pybind', False):
+            wchar_options = dict(options)
+            wchar_options.update({'xmsgrid:wchar_t': 'typedef'})
+            wchar_updated_builds.append([settings, wchar_options, env_vars, build_requires])
+        wchar_updated_builds.append([settings, options, env_vars, build_requires])
+    builder.builds = wchar_updated_builds
 
     builder.run()
