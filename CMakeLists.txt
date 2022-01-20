@@ -41,18 +41,14 @@ endif(IS_CONDA_BUILD)
 
 if(WIN32)
     if(USE_TYPEDEF_WCHAR_T)
-        message("Treating wchar_t as a built-in type.")
-        add_definitions(/Zc:wchar_t)  # Treat wchar_t as built-in type
-    else()
         message("Treating wchar_t as a typedef.")
-        add_definitions(/Zc:wchar_t-)  # Treat wchar_t as typedef
+        add_definitions(/Zc:wchar_t-)
+    else()
+        message("Treating wchar_t as a built-in type.")
+        add_definitions(/Zc:wchar_t)
     endif()
 
-    if(XMS_BUILD)
-        add_definitions(/D _WIN32_WINNT=0x0501)  # Windows XP and higher
-    else(NOT XMS_BUILD)
-        add_definitions(/D BOOST_ALL_NO_LIB)
-    endif()
+	add_definitions(/D BOOST_ALL_NO_LIB)
 endif()
 
 if(IS_PYTHON_BUILD)
