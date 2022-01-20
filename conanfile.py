@@ -15,11 +15,14 @@ class XmsgridConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "wchar_t": ['builtin', 'typedef'],
-        "xms": [True, False],
         "pybind": [True, False],
         "testing": [True, False],
     }
-    default_options = "xms=False", "pybind=False", "testing=False"
+    default_options = {
+        "wchar_t": False,
+        "pybind": False,
+        "testing": False,
+    }
     generators = "cmake"
     build_requires = "cxxtest/4.4@aquaveo/stable"
     exports = "CMakeLists.txt", "LICENSE", "test_files/*"
@@ -34,7 +37,6 @@ class XmsgridConan(ConanFile):
         s_compiler = self.settings.compiler
         s_compiler_version = self.settings.compiler.version
 
-        self.options['xmscore'].xms = self.options.xms
         self.options['xmscore'].pybind = self.options.pybind
         self.options['xmscore'].testing = self.options.testing
 
@@ -64,9 +66,6 @@ class XmsgridConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-
-        if self.settings.compiler == 'Visual Studio':
-            cmake.definitions["XMS_BUILD"] = self.options.xms
 
         # CXXTest doesn't play nice with PyBind. Also, it would be nice to not
         # have tests in release code. Thus, if we want to run tests, we will
