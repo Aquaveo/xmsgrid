@@ -14,6 +14,7 @@ class XmsgridConan(ConanFile):
     description = "Grid library for XMS products"
     settings = "os", "compiler", "build_type", "arch"
     options = {
+        "wchar_t": ['builtin', 'typedef'],
         "xms": [True, False],
         "pybind": [True, False],
         "testing": [True, False],
@@ -44,20 +45,22 @@ class XmsgridConan(ConanFile):
                 and s_os == 'Macos' \
                 and float(s_compiler_version.value) < 9.0:
             raise ConanException("Clang > 9.0 is required for Mac.")
+        
+        if self.options.wchar_t == 'typedef':
+            if self.settings.compiler != 'Visual Studio':
+                raise ConanException("wchar_t=typedef only supported in Visual Studio")
+            if self.settings.pybind:
+                raise ConanException("wchar_t=typedef not supported with pybind=True")
+
+        self.options['xmscore'].wchar_t = self.options.wchar_t
+        self.options['boost'].wchar_t = self.options.wchar_t
 
     def requirements(self):
         """Requirements"""
-        if self.settings.compiler == 'Visual Studio' and 'MD' in str(self.settings.compiler.runtime):
-            self.requires("boost/1.74.0@aquaveo/testing")  # Use legacy wchar_t setting for XMS.
-        else:
-            self.requires("boost/1.74.0@aquaveo/stable")
+        self.requires("boost/1.74.0.3@aquaveo/stable")
         if self.options.pybind:
             self.requires("pybind11/2.5.0@aquaveo/testing")
         self.requires("xmscore/4.0.2@aquaveo/stable")
-        # zlib and bzip2 are required by boost. They used to get pulled automatically from conan-center, but something
-        # changed and we now need to explicitly list them as requirements using the new style notation.
-        self.requires('zlib/1.2.11')
-        self.requires('bzip2/1.0.8')
 
     def build(self):
         cmake = CMake(self)
@@ -74,6 +77,7 @@ class XmsgridConan(ConanFile):
         cmake.definitions["BUILD_TESTING"] = self.options.testing
         cmake.definitions["XMSGRID_TEST_PATH"] = "test_files"
         cmake.definitions["PYTHON_TARGET_VERSION"] = self.env.get("PYTHON_TARGET_VERSION", "3.6")
+        cmake.definitions["USE_TYPEDEF_WCHAR_T"] = (self.options.wchar_t == 'typedef')
         cmake.configure(source_folder=".")
         cmake.build()
         cmake.install()
