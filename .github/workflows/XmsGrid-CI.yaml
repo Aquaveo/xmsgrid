@@ -1,4 +1,4 @@
-name: XmsGrid-5.0
+name: XmsGrid-6.0
 
 on: [push, pull_request]
 
@@ -54,9 +54,9 @@ jobs:
     env:
       # Library Variables
       LIBRARY_NAME: xmsgrid
-      XMS_VERSION: 5.0.0
+      XMS_VERSION: 6.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsgrid/5.0.0
+      CONAN_REFERENCE: xmsgrid/6.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
@@ -173,9 +173,9 @@ jobs:
     env:
       # Library Variables
       LIBRARY_NAME: xmsgrid
-      XMS_VERSION: 5.0.0
+      XMS_VERSION: 6.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsgrid/5.0.0
+      CONAN_REFERENCE: xmsgrid/6.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
@@ -301,9 +301,9 @@ jobs:
     env:
       # Library Variables
       LIBRARY_NAME: xmsgrid
-      XMS_VERSION: 5.0.0
+      XMS_VERSION: 6.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsgrid/5.0.0
+      CONAN_REFERENCE: xmsgrid/6.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
