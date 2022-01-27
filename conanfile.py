@@ -45,16 +45,17 @@ class XmsgridConan(ConanFile):
                 and float(s_compiler_version.value) < 9.0:
             raise ConanException("Clang > 9.0 is required for Mac.")
         
-        if self.options.wchar_t == 'typedef':
-            if self.settings.compiler != 'Visual Studio':
-                raise ConanException("wchar_t=typedef only supported in Visual Studio")
-            if self.options.pybind:
-                raise ConanException("wchar_t=typedef not supported with pybind=True")
+        if self.options.wchar_t == 'typedef' and self.options.pybind:
+            raise ConanException("wchar_t=typedef not supported with pybind=True")
 
         self.options['xmscore'].pybind = self.options.pybind
         self.options['xmscore'].testing = self.options.testing
         self.options['xmscore'].wchar_t = self.options.wchar_t
         self.options['boost'].wchar_t = self.options.wchar_t
+
+    def config_options(self):
+        if self.settings.compiler != 'Visual Studio':
+            del self.options.wchar_t
 
     def requirements(self):
         """Requirements"""
