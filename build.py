@@ -67,7 +67,7 @@ if __name__ == "__main__":
     wchar_updated_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         # wchar_t option
-        if not settings['compiler'] == 'Visual Studio' and options.get('xmsgrid:pybind', False):
+        if settings['compiler'] == 'Visual Studio' and options.get('xmsgrid:pybind', False):
             wchar_options = dict(options)
             wchar_options.update({'xmsgrid:wchar_t': 'typedef'})
             wchar_updated_builds.append([settings, wchar_options, env_vars, build_requires])
