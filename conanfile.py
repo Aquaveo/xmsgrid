@@ -51,7 +51,7 @@ class XmsgridConan(ConanFile):
         if self.options.wchar_t == 'typedef':
             if self.settings.compiler != 'Visual Studio':
                 raise ConanException("wchar_t=typedef only supported in Visual Studio")
-            if self.settings.pybind:
+            if self.options.pybind:
                 raise ConanException("wchar_t=typedef not supported with pybind=True")
 
         self.options['xmscore'].wchar_t = self.options.wchar_t
