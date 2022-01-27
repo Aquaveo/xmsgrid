@@ -287,7 +287,7 @@ jobs:
 # WINDOWS
 # ----------------------------------------------------------------------------------------------
   windows:
-    name: Visual Studio ${{ matrix.compiler-version }} (${{ matrix.build_type }}, ${{ matrix.python-version }}, ${{ matrix.wchar_t }} wchar_t, Windows)
+    name: Visual Studio ${{ matrix.compiler-version }} (${{ matrix.build_type }}, ${{ matrix.python-version }}, Windows)
     runs-on: ${{ matrix.platform }}
 
     strategy:
@@ -297,10 +297,9 @@ jobs:
         python-version: [3.6.8]
         compiler-version: [16]
         build_type: [Release, Debug]
-        wchar_t: [builtin, typedef]
 
     env:
-      MATRIX_NAME: ${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}-${{ matrix.wchar_t }}
+      MATRIX_NAME: ${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}
       # Library Variables
       LIBRARY_NAME: xmsgrid
       XMS_VERSION: 6.0.0
