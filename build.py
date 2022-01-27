@@ -71,7 +71,13 @@ if __name__ == "__main__":
             wchar_options = dict(options)
             wchar_options.update({'xmsgrid:wchar_t': 'typedef'})
             wchar_updated_builds.append([settings, wchar_options, env_vars, build_requires])
-        wchar_updated_builds.append([settings, options, env_vars, build_requires])
+        elif settings['compiler'] == 'Visual Studio':
+            wchar_options = dict(options)
+            wchar_options.update({'xmsgrid:wchar_t': 'builtin'})
+            wchar_updated_builds.append([settings, wchar_options, env_vars, build_requires])
+        else:
+            wchar_updated_builds.append([settings, options, env_vars, build_requires])
+            
     builder.builds = wchar_updated_builds
 
     builder.run()
