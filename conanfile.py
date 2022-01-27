@@ -37,9 +37,6 @@ class XmsgridConan(ConanFile):
         s_compiler = self.settings.compiler
         s_compiler_version = self.settings.compiler.version
 
-        self.options['xmscore'].pybind = self.options.pybind
-        self.options['xmscore'].testing = self.options.testing
-
         if s_compiler == "apple-clang" and s_os == 'Linux':
             raise ConanException("Clang on Linux is not supported.")
 
@@ -54,6 +51,8 @@ class XmsgridConan(ConanFile):
             if self.options.pybind:
                 raise ConanException("wchar_t=typedef not supported with pybind=True")
 
+        self.options['xmscore'].pybind = self.options.pybind
+        self.options['xmscore'].testing = self.options.testing
         self.options['xmscore'].wchar_t = self.options.wchar_t
         self.options['boost'].wchar_t = self.options.wchar_t
 
