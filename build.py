@@ -65,7 +65,7 @@ if __name__ == "__main__":
     builder.builds = testing_updated_builds
     
     wchar_updated_builds = []
-    for settings, options. env_vars, build_requires, reference in builder.items:
+    for settings, options, env_vars, build_requires, reference in builder.items:
         # wchar_t option
         if not options.get('xmsgrid:pybind', False):
             wchar_options = dict(options)
