@@ -50,8 +50,10 @@ class XmsgridConan(ConanFile):
 
         self.options['xmscore'].pybind = self.options.pybind
         self.options['xmscore'].testing = self.options.testing
-        self.options['xmscore'].wchar_t = self.options.wchar_t
-        self.options['boost'].wchar_t = self.options.wchar_t
+        
+        if s_compiler == 'Visual Studio':
+            self.options['xmscore'].wchar_t = self.options.wchar_t
+            self.options['boost'].wchar_t = self.options.wchar_t
 
     def config_options(self):
         if self.settings.compiler != 'Visual Studio':
