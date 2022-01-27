@@ -19,7 +19,7 @@ class XmsgridConan(ConanFile):
         "testing": [True, False],
     }
     default_options = {
-        "wchar_t": False,
+        "wchar_t": 'builtin',
         "pybind": False,
         "testing": False,
     }
