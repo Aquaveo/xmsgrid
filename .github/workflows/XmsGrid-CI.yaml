@@ -299,7 +299,6 @@ jobs:
         build_type: [Release, Debug]
 
     env:
-      MATRIX_NAME: ${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}
       # Library Variables
       LIBRARY_NAME: xmsgrid
       XMS_VERSION: 6.0.0
@@ -380,12 +379,12 @@ jobs:
       # Zip Packages
       - name: Zip Conan Packages
         run: |
-          tar czf ${{ github.workspace }}/${{ env.MATRIX_NAME }}.tar.gz ${{ env.CONAN_PATH }}/${{ env.LIBRARY_NAME }}/${{ env.XMS_VERSION }}/aquaveo/${{ env.CONAN_CHANNEL}}/package
+          tar czf ${{ github.workspace }}/${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}.tar.gz ${{ env.CONAN_PATH }}/${{ env.LIBRARY_NAME }}/${{ env.XMS_VERSION }}/aquaveo/${{ env.CONAN_CHANNEL}}/package
       - name: Add Artifact
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ env.MATRIX_NAME }}
-          path: ${{ github.workspace }}/${{ env.MATRIX_NAME }}.tar.gz
+          name: ${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}
+          path: ${{ github.workspace }}/${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}.tar.gz
       # Get the Release Data
       - name: Get Release
         id: git_release
@@ -400,7 +399,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.AQUAVEO_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.git_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/${{ env.MATRIX_NAME }}.tar.gz
-          asset_name: ${{ env.MATRIX_NAME }}.tar.gz
+          asset_path: ${{ github.workspace }}/${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}.tar.gz
+          asset_name: ${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}.tar.gz
           asset_content_type: application/zip
         if: startsWith(github.ref, 'refs/tags/')
