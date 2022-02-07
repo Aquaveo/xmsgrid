@@ -1,4 +1,4 @@
-name: XmsGrid-6.0
+name: XmsGrid-7.0
 
 on: [push, pull_request]
 
@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         platform: [macos-10.15]
-        python-version: [3.6]
+        python-version: ['3.10']
 
     steps:
       # Checkout Sources
@@ -48,15 +48,15 @@ jobs:
       fail-fast: false
       matrix:
         platform: [macos-10.15]
-        python-version: [3.6]
+        python-version: ['3.10']
         build_type: [Release, Debug]
 
     env:
       # Library Variables
       LIBRARY_NAME: xmsgrid
-      XMS_VERSION: 6.0.0
+      XMS_VERSION: 7.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsgrid/6.0.0
+      CONAN_REFERENCE: xmsgrid/7.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
@@ -166,16 +166,16 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ubuntu-18.04]
-        python-version: [3.6]
+        python-version: ['3.10']
         compiler-version: [6, 7]
         build_type: [Release, Debug]
 
     env:
       # Library Variables
       LIBRARY_NAME: xmsgrid
-      XMS_VERSION: 6.0.0
+      XMS_VERSION: 7.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsgrid/6.0.0
+      CONAN_REFERENCE: xmsgrid/7.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
@@ -293,17 +293,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest]
-        python-version: [3.6.8]
+        platform: [windows-2019]
+        python-version: ['3.10']
         compiler-version: [16]
         build_type: [Release, Debug]
 
     env:
       # Library Variables
       LIBRARY_NAME: xmsgrid
-      XMS_VERSION: 6.0.0
+      XMS_VERSION: 7.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsgrid/6.0.0
+      CONAN_REFERENCE: xmsgrid/7.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
