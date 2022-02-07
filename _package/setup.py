@@ -11,13 +11,13 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 requires = [
     'numpy',
-    'xmscore>=4.0.1',
+    'xmscore>=6.0.0',
 ]
 
 version = __version__
 
 setup(
-    python_requires='>=3.6',
+    python_requires='>=3.10',
     name='xmsgrid',
     version=version,
     packages=['xms.grid', 'xms.grid.geometry', 'xms.grid.triangulate',

@@ -44,13 +44,13 @@ class XmsgridConan(ConanFile):
                 and s_os == 'Macos' \
                 and float(s_compiler_version.value) < 9.0:
             raise ConanException("Clang > 9.0 is required for Mac.")
-        
+
         if s_compiler == 'Visual Studio' and self.options.wchar_t == 'typedef' and self.options.pybind:
             raise ConanException("wchar_t=typedef not supported with pybind=True")
 
         self.options['xmscore'].pybind = self.options.pybind
         self.options['xmscore'].testing = self.options.testing
-        
+
         if s_compiler == 'Visual Studio':
             self.options['xmscore'].wchar_t = self.options.wchar_t
             self.options['boost'].wchar_t = self.options.wchar_t
@@ -63,8 +63,8 @@ class XmsgridConan(ConanFile):
         """Requirements"""
         self.requires("boost/1.74.0.3@aquaveo/stable")
         if self.options.pybind:
-            self.requires("pybind11/2.5.0@aquaveo/testing")
-        self.requires("xmscore/5.0.1@aquaveo/stable")
+            self.requires("pybind11/2.9.1@aquaveo/stable")
+        self.requires("xmscore/6.0.0@aquaveo/stable")
 
     def build(self):
         cmake = CMake(self)
@@ -77,7 +77,7 @@ class XmsgridConan(ConanFile):
         cmake.definitions["IS_PYTHON_BUILD"] = self.options.pybind
         cmake.definitions["BUILD_TESTING"] = self.options.testing
         cmake.definitions["XMSGRID_TEST_PATH"] = "test_files"
-        cmake.definitions["PYTHON_TARGET_VERSION"] = self.env.get("PYTHON_TARGET_VERSION", "3.6")
+        cmake.definitions["PYTHON_TARGET_VERSION"] = self.env.get("PYTHON_TARGET_VERSION", "3.10")
         if self.settings.compiler == 'Visual Studio':
             cmake.definitions["USE_TYPEDEF_WCHAR_T"] = (self.options.wchar_t == 'typedef')
         cmake.configure(source_folder=".")
