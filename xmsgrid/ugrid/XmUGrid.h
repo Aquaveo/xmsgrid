@@ -129,7 +129,19 @@ public:
   bool GetModified() const;
   void SetUnmodified();
   void SetUseCache(bool a_useCache);
+  [[deprecated(
+      "This overload is only retained for source compatibility with external "
+      "code and may be removed in the next major version of xmsgrid. Its use "
+      "is discouraged due to a harmful and unfixable bug. "
+      "This overload validates the cell stream's structure, but CANNOT fully "
+      "validate the point IDs. It can only ensure they are positive. "
+      "Excessively large point IDs will be assumed valid, even though doing "
+      "so may result in past-the-end access to the points list later. "
+      "To prevent this issue, pass the number of points in the grid as the "
+      "second parameter to use the safer overload that validates point IDs."
+  )]]
   static bool IsValidCellstream(const VecInt& a_cellstream);
+  static bool IsValidCellstream(const VecInt& a_cellstream, int a_points);
 
   // Points
   int GetPointCount() const;

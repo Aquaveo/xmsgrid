@@ -382,12 +382,18 @@ bool iReadCellStreamVersion2(DaStreamReader& a_reader, int a_cellType, VecInt& a
   else
   {
     int numPoints;
-    a_reader.ReadInt(numPoints);
+    if (!a_reader.ReadInt(numPoints))
+    {
+      return false;
+    }
     a_cellstream.push_back(numPoints);
     for (int i = 0; i < numPoints; ++i)
     {
       int ptIdx;
-      a_reader.ReadInt(ptIdx);
+      if (!a_reader.ReadInt(ptIdx))
+      {
+        return false;
+      }
       a_cellstream.push_back(ptIdx);
     }
   }
@@ -1282,5 +1288,40 @@ void XmUGridUtilsTests::testReadReadyAtNextLine()
   TS_ASSERT(daReadLine(input, line));
   TS_ASSERT_EQUALS("LEFT OVER LINE", line);
 } // XmUGridUtilsTests::testReadReadyAtNextLine
+
+//------------------------------------------------------------------------------
+/// \brief Test reading a UGrid with an empty cell at the end with no number
+///        of points in it. Does the reader accidentally read past the end?
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testReadTrailingEmptyCellNoNumber()
+{
+  std::string inputText =
+    "ASCII XmUGrid Version 2\n"
+    "LOCATIONS 1\n"
+    "  POINT 0 0.0 100.0 0.0\n"
+    "CELL_STREAM 2\n"
+    "CELL 0 EMPTY_CELL\n";
+  std::istringstream input;
+  input.str(inputText);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  TS_ASSERT_EQUALS(nullptr, ugrid);
+} // XmUGridUtilsTests::testReadTrailingEmptyCellNoNumber
+
+//------------------------------------------------------------------------------
+/// \brief Test reading a UGrid with an empty cell at the end.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testReadTrailingEmptyCell()
+{
+  std::string inputText =
+    "ASCII XmUGrid Version 2\n"
+    "LOCATIONS 1\n"
+    "  POINT 0 0.0 100.0 0.0\n"
+    "CELL_STREAM 2\n"
+    "CELL 0 EMPTY_CELL 0\n";
+  std::istringstream input;
+  input.str(inputText);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  TS_REQUIRE_NOT_NULL(ugrid);
+} // XmUGridUtilsTests::testReadTrailingEmptyCell
 
 #endif
