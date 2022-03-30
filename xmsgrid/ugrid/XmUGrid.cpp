@@ -240,6 +240,8 @@ const char* POINTS_TO_CELLS_OFFSETS = "POINTS_TO_CELLS_OFFSETS";
 
 typedef std::vector<XmEdge> VecEdge; ///< A Vector of XmEdges.
 
+constexpr int BAD_CELL_STREAM = -1;
+
 //------------------------------------------------------------------------------
 /// \brief Get the offset for each edge for a given cell type.
 /// \param[in] a_cellType The cell type to get the table for.
@@ -600,6 +602,170 @@ void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
     a_polygon.clear();
   }
 } // iMergeSegmentsToPoly
+
+//------------------------------------------------------------------------------
+/// \brief Check if a polygon cell in a stream is valid.
+/// \param a_cellStream: The stream containing the cell.
+/// \param a_points: The number of points in this grid. Used to ensure the cell
+///                  only refers to valid points.
+/// \param a_currIdx: The current index into the stream. Should point at the
+///                   number of points in the polygon.
+/// \param a_expectedPoints: The number of points the cell should have.
+///        If a_isVariableLength is true, this is treated as the minimum number
+///        of points. Otherwise, it is treated as the exact number of points.
+/// \param a_isVariableLength: Whether the cell is variable length.
+/// \returns: If the polygon was valid, the number of elements in the stream
+///           that were part of it. If the polygon was invalid, 0.
+//------------------------------------------------------------------------------
+int iValidatePolygonCell(const VecInt& a_cellStream,
+                         int a_points,
+                         int a_currIdx,
+                         int a_expectedPoints,
+                         bool a_isVariableLength)
+{
+  int oldIdx = a_currIdx - 1; // Caller already took the polygon's type; add it back.
+
+  int numPoints = a_cellStream[a_currIdx++];
+
+  if (a_isVariableLength && numPoints < a_expectedPoints)
+  {
+    return BAD_CELL_STREAM;
+  }
+  if (!a_isVariableLength && numPoints != a_expectedPoints)
+  {
+    return BAD_CELL_STREAM;
+  }
+
+  if (a_currIdx + numPoints > a_cellStream.size())
+  {
+    return BAD_CELL_STREAM;
+  }
+
+  for (int i = 0; i < numPoints; i++)
+  {
+    int point = a_cellStream[a_currIdx++];
+    if (point < 0 || point >= a_points)
+    {
+      return BAD_CELL_STREAM;
+    }
+  }
+
+  return a_currIdx - oldIdx;
+} // iValidatePolygonCell
+
+//------------------------------------------------------------------------------
+/// \brief Check if a polyhedron cell in a stream is valid.
+/// \param a_cellStream: The stream containing the cell.
+/// \param a_points: The number of points in this grid. Used to ensure the cell
+///                  only refers to valid points.
+/// \param a_currIdx: The current index into the stream. Should point at the
+///                   number of faces in the polyhedron.
+/// \returns: If the polyhedron was valid, the number of elements in the stream
+///           that were part of it. If the polyhedron was invalid, BAD_CELL_STREAM.
+//------------------------------------------------------------------------------
+int iValidatePolyhedronCell(const VecInt& a_cellStream, int a_points, int a_currIdx)
+{
+  int oldIdx = a_currIdx - 1; // Caller already took the polyhedron's type; add it back.
+
+  int numFaces = a_cellStream[a_currIdx++];
+
+  if (numFaces < 3)
+  {
+    return BAD_CELL_STREAM;
+  }
+
+  for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
+  {
+    if (a_currIdx >= a_cellStream.size())
+    {
+      return BAD_CELL_STREAM;
+    }
+
+    int numPoints = a_cellStream[a_currIdx++];
+    if (numPoints < 3)
+    {
+      return BAD_CELL_STREAM;
+    }
+
+    if (a_currIdx + numPoints > a_cellStream.size())
+    {
+      return BAD_CELL_STREAM;
+    }
+
+    for (int i = 0; i < numPoints; i++)
+    {
+      int point = a_cellStream[a_currIdx++];
+      if (point < 0 || point >= a_points)
+      {
+        return BAD_CELL_STREAM;
+      }
+    }
+  }
+
+  return a_currIdx - oldIdx;
+} // iValidatePolyhedronCell
+
+//------------------------------------------------------------------------------
+/// \brief Check if a cell in a stream is valid.
+/// \param a_cellStream: The stream containing the cell.
+/// \param a_points: The number of points in this grid. Used to ensure the cell
+///                  only refers to valid points.
+/// \param a_currIdx: The current index into the stream. Should point at the
+///                   polygon's type.
+/// \returns: If the polygon was valid, the number of elements in the stream
+///           that were part of it. If the polygon was invalid, BAD_CELL_STREAM.
+//------------------------------------------------------------------------------
+int iValidateCell(const VecInt& a_cellStream, int a_points, int a_currIdx)
+{
+  int oldIdx = a_currIdx;
+
+  if (a_currIdx + 1 >= a_cellStream.size())
+  {
+    return BAD_CELL_STREAM; // Cell type is present, but number of points missing
+  }
+
+  int cellType = a_cellStream[a_currIdx++];
+
+  switch (cellType)
+  {
+  case XMU_EMPTY_CELL:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 0, false);
+  case XMU_VERTEX:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 1, false);
+  case XMU_LINE:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 2, false);
+  case XMU_TRIANGLE:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 3, false);
+  case XMU_PIXEL:
+  case XMU_QUAD:
+  case XMU_TETRA:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 4, false);
+  case XMU_PYRAMID:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 5, false);
+  case XMU_WEDGE:
+  case XMU_PENTAGONAL_PRISM:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 6, false);
+  case XMU_HEXAGONAL_PRISM:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 7, false);
+  case XMU_VOXEL:
+  case XMU_HEXAHEDRON:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 8, false);
+  case XMU_POLY_VERTEX:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 1, true);
+  case XMU_POLY_LINE:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 2, true);
+  case XMU_TRIANGLE_STRIP:
+  case XMU_POLYGON:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 3, true);
+  case XMU_POLYHEDRON:
+      return iValidatePolyhedronCell(a_cellStream, a_points, a_currIdx);
+  default:
+    return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, a_cellStream[a_currIdx], false);
+  }
+
+  XM_ASSERT(false); // This should be unreachable.
+  return BAD_CELL_STREAM;
+} // iValidateCell
 
 } // namespace
 
@@ -1051,7 +1217,7 @@ const VecInt& XmUGrid::Impl::GetCellstream() const
 //------------------------------------------------------------------------------
 bool XmUGrid::Impl::SetCellstream(const VecInt& a_cellstream)
 {
-  if (IsValidCellstream(a_cellstream))
+  if (IsValidCellstream(a_cellstream, (int)m_locations.size()))
   {
     m_cellstream = a_cellstream;
     UpdateLinks();
@@ -2899,8 +3065,15 @@ std::shared_ptr<XmUGrid> XmUGrid::New(const VecPt3d& a_locations, const VecInt& 
 {
   std::shared_ptr<XmUGrid> ugrid = XmUGrid::New();
   ugrid->SetLocations(a_locations);
-  ugrid->SetCellstream(a_cellstream);
-  return ugrid;
+  bool valid = ugrid->SetCellstream(a_cellstream);
+  if (valid)
+  {
+    return ugrid;
+  }
+  else
+  {
+    return nullptr;
+  }
 } // XmUGrid::New
 //------------------------------------------------------------------------------
 /// \brief Constructor
@@ -2953,121 +3126,47 @@ void XmUGrid::Swap(XmUGrid& a_xmUGrid)
 } // XmUGrid::Swap
 //------------------------------------------------------------------------------
 /// \brief Check a cell stream to make sure it's valid. Compares cell type
-///        against expected number of points.
+///        against expected number of points. Also ensures cells only refer to
+///        valid points.
 /// \param[in] a_cellstream the cell stream to check
-/// \return true if cell stream is valid
+/// \param a_points: The number of points in this grid. Used to ensure the cells
+///                  only refer to valid points.
+/// \return Whether the cell stream is valid.
 //------------------------------------------------------------------------------
-bool XmUGrid::IsValidCellstream(const VecInt& a_cellstream)
+bool XmUGrid::IsValidCellstream(const VecInt& a_cellstream, int a_points)
 {
   if (a_cellstream.empty())
-    return true;
-
-  int numItems = (int)a_cellstream.size();
-  int currIdx = 0;
-  while (currIdx < numItems)
   {
-    // get cell type
-    int cellType = a_cellstream[currIdx++];
-    if (currIdx >= numItems)
-      return false;
+    return true;
+  }
 
-    // get the number of points
-    int numPoints = a_cellstream[currIdx++];
-    if (currIdx >= numItems)
-      return false;
-
-    switch (cellType)
+  int currIdx = 0;
+  while (currIdx < a_cellstream.size())
+  {
+    int step = iValidateCell(a_cellstream, a_points, currIdx);
+    if (step == BAD_CELL_STREAM)
     {
-    case XMU_EMPTY_CELL:
-      if (numPoints != 0)
-        return false;
-      break;
-    case XMU_VERTEX:
-      if (numPoints != 1)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_LINE:
-      if (numPoints != 2)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_TRIANGLE:
-      if (numPoints != 3)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_PIXEL:
-    case XMU_QUAD:
-    case XMU_TETRA:
-      if (numPoints != 4)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_PYRAMID:
-      if (numPoints != 5)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_WEDGE:
-    case XMU_PENTAGONAL_PRISM:
-      if (numPoints != 6)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_HEXAGONAL_PRISM:
-      if (numPoints != 7)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_VOXEL:
-    case XMU_HEXAHEDRON:
-      if (numPoints != 8)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_POLY_VERTEX:
-      if (numPoints < 1)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_POLY_LINE:
-      if (numPoints < 2)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_TRIANGLE_STRIP:
-    case XMU_POLYGON:
-      if (numPoints < 3)
-        return false;
-      currIdx += numPoints;
-      break;
-    case XMU_POLYHEDRON:
-    {
-      int numFaces = numPoints;
-      if (numFaces < 3)
-        return false;
-      for (int faceIdx = 0; faceIdx < numFaces; ++faceIdx)
-      {
-        if (currIdx >= numItems)
-          return false;
-        int numPoints = a_cellstream[currIdx++];
-        if (numPoints < 3)
-          return false;
-        currIdx += numPoints;
-      }
-    }
-    break;
-    default:
-      currIdx += numPoints;
-      break;
-    }
-
-    if (currIdx > numItems)
       return false;
+    }
+    else
+    {
+      currIdx += step;
+    }
   }
 
   return true;
+} // XmUGrid::IsValidCellstream
+
+//------------------------------------------------------------------------------
+/// \brief Check a cell stream to make sure it's valid. Compares cell type
+///        against expected number of points.
+///        ***Does not check if cells refer to valid points.***
+/// \param[in] a_cellstream the cell stream to check
+/// \return Whether the cell stream is valid.
+//------------------------------------------------------------------------------
+bool XmUGrid::IsValidCellstream(const VecInt& a_cellstream)
+{
+  return IsValidCellstream(a_cellstream, std::numeric_limits<int>::max());
 } // XmUGrid::IsValidCellstream
 
 //------------------------------------------------------------------------------
@@ -4067,7 +4166,7 @@ void XmUGridUnitTests::testUGridStreams()
   TS_ASSERT_EQUALS(0, points.size());
 
   VecInt cellstream = emptyUGrid->GetCellstream();
-  TS_ASSERT(XmUGrid::IsValidCellstream(cellstream));
+  TS_ASSERT(XmUGrid::IsValidCellstream(cellstream, (int)points.size()));
   TS_ASSERT_EQUALS(0, cellstream.size());
 
   // test adding points and cell stream
@@ -4098,14 +4197,6 @@ void XmUGridUnitTests::testUGridStreams()
   VecInt cellstreamOut = ugrid->GetCellstream();
   TS_ASSERT_EQUALS(cellstream, cellstreamOut);
   TS_ASSERT(ugrid->GetModified());
-
-  // Test invalid cell streams
-  cellstream = {-1};
-  TS_ASSERT(!XmUGrid::IsValidCellstream(cellstream));
-  cellstream = {9, 4, 0, 3, 4};
-  TS_ASSERT(!XmUGrid::IsValidCellstream(cellstream));
-  cellstream = {9, 3, 0, 3, 4, 1};
-  TS_ASSERT(!XmUGrid::IsValidCellstream(cellstream));
 
   // Test adding cellstream then points (should fail)
   std::shared_ptr<XmUGrid> ugridBadOrder = XmUGrid::New();
@@ -5715,5 +5806,1016 @@ void XmUGridUnitTests::testLargeUGridLinkSpeed()
 
 #endif
 } // XmUGridUnitTests::testLargeUGridLinkSpeed
+
+//------------------------------------------------------------------------------
+/// \brief Test building a UGrid with invalid cells and make sure the invalid
+///        cells result in failure to build.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testUgridWithInvalidCells()
+{
+  VecPt3d points = {{0, 10, 0}};
+
+  // A quad that claims to have 3 points, but actually has 2
+  VecInt cellstream = {XMU_QUAD, 3, 0, 3};
+
+  std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
+  TS_ASSERT_EQUALS(nullptr, ugrid);
+} // XmUGridUnitTests::testUgridWithInvalidCells
+
+//------------------------------------------------------------------------------
+/// \brief Test that a cell stream is invalid for a UGrid with 99 points.
+//------------------------------------------------------------------------------
+void iTestBadCellStream(const VecInt& a_cellStream)
+{
+  bool valid = XmUGrid::IsValidCellstream(a_cellStream, 99);
+  TS_ASSERT(!valid);
+} // iTestBadCellStream
+
+//------------------------------------------------------------------------------
+/// \brief Test that a cell stream is valid for a UGrid with 99 points.
+//------------------------------------------------------------------------------
+void iTestGoodCellStream(const VecInt& a_cellStream)
+{
+  bool valid = XmUGrid::IsValidCellstream(a_cellStream, 99);
+  TS_ASSERT(valid);
+} // iTestGoodCellStream
+
+//------------------------------------------------------------------------------
+/// \brief Test that trailing empty cells are valid.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTrailingEmptyCell()
+{
+  iTestGoodCellStream({XMU_EMPTY_CELL, 0});
+} // CellStreamValidationUnitTests::testTrailingEmptyCell
+
+//------------------------------------------------------------------------------
+/// \brief Test a good unknown cell.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodUnknownCell()
+{
+  iTestGoodCellStream({-1, 2, 1, 2});
+} // CellStreamValidationUnitTests::testGoodUnknownCell
+
+//------------------------------------------------------------------------------
+/// \brief Test a good empty cell.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodEmptyCell()
+{
+  iTestGoodCellStream({XMU_EMPTY_CELL, 0});
+} // CellStreamValidationUnitTests::testGoodEmptyCell
+
+//------------------------------------------------------------------------------
+/// \brief Test a good vertex.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodVertex()
+{
+  iTestGoodCellStream({XMU_VERTEX, 1, 1});
+} // CellStreamValidationUnitTests::testGoodVertex
+
+//------------------------------------------------------------------------------
+/// \brief Test a good line.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodLine()
+{
+  iTestGoodCellStream({XMU_LINE, 2, 1, 2});
+} // CellStreamValidationUnitTests::testGoodLine
+
+//------------------------------------------------------------------------------
+/// \brief Test a good triangle.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodTriangle()
+{
+  iTestGoodCellStream({XMU_TRIANGLE, 3, 1, 2, 3});
+} // CellStreamValidationUnitTests::testGoodTriangle
+
+//------------------------------------------------------------------------------
+/// \brief Test a good pixel.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodPixel()
+{
+  iTestGoodCellStream({XMU_PIXEL, 4, 1, 2, 3, 4});
+} // CellStreamValidationUnitTests::testGoodPixel
+
+//------------------------------------------------------------------------------
+/// \brief Test a good quad.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodQuad()
+{
+  iTestGoodCellStream({XMU_PIXEL, 4, 1, 2, 3, 4});
+} // CellStreamValidationUnitTests::testGoodQuad
+
+//------------------------------------------------------------------------------
+/// \brief Test a good tetrahedron.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodTetra()
+{
+  iTestGoodCellStream({XMU_TETRA, 4, 1, 2, 3, 4});
+} // CellStreamValidationUnitTests::testGoodTetra
+
+//------------------------------------------------------------------------------
+/// \brief Test a good pyramid.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodPyramid()
+{
+  iTestGoodCellStream({XMU_PYRAMID, 5, 1, 2, 3, 4, 5});
+} // CellStreamValidationUnitTests::testGoodPyramid
+
+//------------------------------------------------------------------------------
+/// \brief Test a good wedge.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodWedge()
+{
+  iTestGoodCellStream({XMU_WEDGE, 6, 1, 2, 3, 4, 5, 6});
+} // CellStreamValidationUnitTests::testGoodWedge
+
+//------------------------------------------------------------------------------
+/// \brief Test a good pentagonal prism.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodPentagonalPrism()
+{
+  iTestGoodCellStream({XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6});
+} // CellStreamValidationUnitTests::testGoodPentagonalPrism
+
+//------------------------------------------------------------------------------
+/// \brief Test a good hexagonal prism.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodHexagonalPrism()
+{
+  iTestGoodCellStream({XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, 7});
+} // CellStreamValidationUnitTests::testGoodHexagonalPrism
+
+//------------------------------------------------------------------------------
+/// \brief Test a good voxel.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodVoxel()
+{
+  iTestGoodCellStream({XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 8});
+} // CellStreamValidationUnitTests::testGoodVoxel
+
+//------------------------------------------------------------------------------
+/// \brief Test a good hexahedron.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodHexahedron()
+{
+  iTestGoodCellStream({XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 8});
+} // CellStreamValidationUnitTests::testGoodHexahedron
+
+//------------------------------------------------------------------------------
+/// \brief Test a good polygon vertex.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodPolyVertex()
+{
+  iTestGoodCellStream({XMU_POLY_VERTEX, 1, 1});
+} // CellStreamValidationUnitTests::testGoodPolyVertex
+
+//------------------------------------------------------------------------------
+/// \brief Test a good polygon line.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodPolyLine()
+{
+  iTestGoodCellStream({XMU_POLY_LINE, 2, 1, 2});
+} // CellStreamValidationUnitTests::testGoodPolyLine
+
+//------------------------------------------------------------------------------
+/// \brief Test a good triangle strip.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodTriangleStrip()
+{
+  iTestGoodCellStream({XMU_TRIANGLE_STRIP, 3, 1, 2, 3});
+} // CellStreamValidationUnitTests::testGoodTriangleStrip
+
+//------------------------------------------------------------------------------
+/// \brief Test a good polygon.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodPolygon()
+{
+  iTestGoodCellStream({XMU_POLYGON, 3, 1, 2, 3});
+} // CellStreamValidationUnitTests::testGoodPolygon
+
+//------------------------------------------------------------------------------
+/// \brief Test a good grid, including multiple cells of different types.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodGrid()
+{
+  iTestGoodCellStream({
+      XMU_EMPTY_CELL, 0,
+      XMU_VERTEX, 1, 98, // There are 99 points, so 98 should be okay
+      XMU_LINE, 2, 1, 2,
+      XMU_TRIANGLE, 3, 1, 2, 3,
+      XMU_PIXEL, 4, 1, 2, 3, 4,
+      XMU_QUAD, 4, 1, 2, 3, 4,
+      XMU_TETRA, 4, 1, 2, 3, 4,
+      XMU_PYRAMID, 5, 1, 2, 3, 4, 5,
+      XMU_WEDGE, 6, 1, 2, 3, 4, 5, 6,
+      XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6,
+      XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, 7,
+      XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_POLY_VERTEX, 3, 1, 2, 3,
+      XMU_POLY_LINE, 5, 1, 2, 3, 4, 5,
+      XMU_TRIANGLE_STRIP, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      XMU_POLYGON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      
+      XMU_POLYHEDRON, 5,
+      3, 1, 2, 3,
+      4, 2, 3, 4, 5,
+      5, 3, 4, 5, 6, 7,
+      6, 4, 5, 6, 7, 8, 9,
+      7, 5, 6, 7, 8, 9, 10, 11,
+
+      -1, 4, 1, 2, 3, 4 // unrecognized cells are okay, the number of points is
+                        // just assumed to be correct.
+  });
+} // CellStreamValidationUnitTests::testGoodGrid
+
+//------------------------------------------------------------------------------
+/// \brief Test that unknown cells must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testUnknownCellNoNumberOfPoints()
+{
+  iTestBadCellStream({-1});
+} // CellStreamValidationUnitTests::testUnknownCellNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that empty cells must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testEmptyCellNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_EMPTY_CELL});
+} // CellStreamValidationUnitTests::testEmptyCellNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that vertices must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVertexNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_VERTEX});
+} // CellStreamValidationUnitTests::testVertexNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that lines must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testLineNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_LINE});
+} // CellStreamValidationUnitTests::testLineNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangles must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE});
+} // CellStreamValidationUnitTests::testTriangleNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pixels must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPixelNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_PIXEL});
+} // CellStreamValidationUnitTests::testPixelNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that quads must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testQuadNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_QUAD});
+} // CellStreamValidationUnitTests::testQuadNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that tetrahedrons must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTetraNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_TETRA});
+} // CellStreamValidationUnitTests::testTetraNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pyramids must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPyramidNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_PYRAMID});
+} // CellStreamValidationUnitTests::testPyramidNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that wedges must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testWedgeNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_WEDGE});
+} // CellStreamValidationUnitTests::testWedgeNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pentagonal prisms must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPentagonalPrismNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_PENTAGONAL_PRISM});
+} // CellStreamValidationUnitTests::testPentagonalPrismNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexagonal prisms must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexagonalPrismNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_HEXAGONAL_PRISM});
+} // CellStreamValidationUnitTests::testHexagonalPrismNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that voxels must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVoxelNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_VOXEL});
+} // CellStreamValidationUnitTests::testVoxelNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexahedrons must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexahedronNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_HEXAHEDRON});
+} // CellStreamValidationUnitTests::testHexahedronNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon vertices must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyVertexNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_POLY_VERTEX});
+} // CellStreamValidationUnitTests::testPolyVertexNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon lines must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyLineNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_POLY_LINE});
+} // CellStreamValidationUnitTests::testPolyLineNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangle strips must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleStripNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE_STRIP});
+} // CellStreamValidationUnitTests::testTriangleStripNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygons must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolygonNoNumberOfPoints()
+{
+  iTestBadCellStream({XMU_POLYGON});
+} // CellStreamValidationUnitTests::testPolygonNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that entire grids must have a number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGridNoNumberOfPoints()
+{
+  iTestBadCellStream({
+      XMU_EMPTY_CELL, 0,
+      XMU_VERTEX, 1, 1,
+      XMU_LINE, 2, 1, 2,
+      XMU_TRIANGLE, 3, 1, 2, 3,
+      XMU_PIXEL, 4, 1, 2, 3, 4,
+      XMU_QUAD, 4, 1, 2, 3, 4,
+      XMU_TETRA, 4, 1, 2, 3, 4,
+      XMU_PYRAMID, 5, 1, 2, 3, 4, 5,
+      XMU_WEDGE, 6, 1, 2, 3, 4, 5, 6,
+      XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6,
+      XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, 7,
+      XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_POLY_VERTEX, 3, 1, 2, 3,
+      XMU_POLY_LINE, 5, 1, 2, 3, 4, 5,
+      XMU_TRIANGLE_STRIP, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      XMU_POLYGON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+	  XMU_EMPTY_CELL,
+  });
+} // CellStreamValidationUnitTests::testGridNoNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that empty cells must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testEmptyCellWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_EMPTY_CELL, 5});
+} // CellStreamValidationUnitTests::testEmptyCellWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that vertices must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVertexWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_VERTEX, 5});
+} // CellStreamValidationUnitTests::testVertexWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that lines must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testLineWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_LINE, 5, 1, 2});
+} // CellStreamValidationUnitTests::testLineWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangles must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE, 5, 1, 2, 3});
+} // CellStreamValidationUnitTests::testTriangleWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pixels must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPixelWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_PIXEL, 5, 1, 2, 3, 4});
+} // CellStreamValidationUnitTests::testPixelWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that quads must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testQuadWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_QUAD, 5, 1, 2, 3, 4});
+} // CellStreamValidationUnitTests::testQuadWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that tetrahedrons must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTetraWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_TETRA, 5, 1, 2, 3, 4});
+} // CellStreamValidationUnitTests::testTetraWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pyramids must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPyramidWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_PYRAMID, 3, 1, 2, 3, 4, 5});
+} // CellStreamValidationUnitTests::testPyramidWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that wedges must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testWedgeWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_WEDGE, 3, 1, 2, 3, 4, 5, 6});
+} // CellStreamValidationUnitTests::testWedgeWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pentagonal prisms must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPentagonalPrismWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_PENTAGONAL_PRISM, 3, 1, 2, 3, 4, 5, 6});
+} // CellStreamValidationUnitTests::testPentagonalPrismWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexagonal prisms must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexagonalPrismWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_HEXAGONAL_PRISM, 3, 1, 2, 3, 4, 5, 6, 7});
+} // CellStreamValidationUnitTests::testHexagonalPrismWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that voxels must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVoxelWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_VOXEL, 3, 1, 2, 3, 4, 5, 6, 7, 8});
+} // CellStreamValidationUnitTests::testVoxelWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexahedrons must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexahedronWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_HEXAHEDRON, 3, 1, 2, 3, 4, 5, 6, 7, 8});
+} // CellStreamValidationUnitTests::testHexahedronWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon vertices must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyVertexWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_POLY_VERTEX, 0, 1});
+} // CellStreamValidationUnitTests::testPolyVertexWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon lines must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyLineWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_POLY_LINE, 1, 1, 2});
+} // CellStreamValidationUnitTests::testPolyLineWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangle strips must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleStripWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE_STRIP, 2, 1, 2, 3});
+} // CellStreamValidationUnitTests::testTriangleStripWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygons must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolygonWrongNumberOfPoints()
+{
+  iTestBadCellStream({XMU_POLYGON, 2, 1, 2, 3});
+} // CellStreamValidationUnitTests::testPolygonWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that entire grids must have the right number of points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGridWrongNumberOfPoints()
+{
+  iTestBadCellStream({
+      XMU_EMPTY_CELL, 0,
+      XMU_VERTEX, 1, 1,
+      XMU_LINE, 2, 1, 2,
+      XMU_TRIANGLE, 3, 1, 2, 3,
+      XMU_PIXEL, 4, 1, 2, 3, 4,
+      XMU_QUAD, 4, 1, 2, 3, 4,
+      XMU_TETRA, 4, 1, 2, 3, 4,
+      XMU_PYRAMID, 5, 1, 2, 3, 4, 5,
+      XMU_WEDGE, 6, 1, 2, 3, 4, 5, 6,
+      XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6,
+      XMU_HEXAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6, 7, // Prism should have 7 points, has 6
+      XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_POLY_VERTEX, 3, 1, 2, 3,
+      XMU_POLY_LINE, 5, 1, 2, 3, 4, 5,
+      XMU_TRIANGLE_STRIP, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      XMU_POLYGON, 8, 1, 2, 3, 4, 5, 6, 7, 8
+  });
+} // CellStreamValidationUnitTests::testGridWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that unknown cells must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testUnknownCellMissingPoints()
+{
+  iTestBadCellStream({-1, 3, 1, 2});
+} // CellStreamValidationUnitTests::testUnknownCellMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that vertices must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVertexMissingPoints()
+{
+  iTestBadCellStream({XMU_VERTEX, 1});
+} // CellStreamValidationUnitTests::testVertexMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that lines must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testLineMissingPoints()
+{
+  iTestBadCellStream({XMU_LINE, 2, 1});
+} // CellStreamValidationUnitTests::testLineMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangles must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleMissingPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE, 3, 1, 2});
+} // CellStreamValidationUnitTests::testTriangleMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pixels must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPixelMissingPoints()
+{
+  iTestBadCellStream({XMU_PIXEL, 4, 1, 2, 3});
+} // CellStreamValidationUnitTests::testPixelMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that quads must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testQuadMissingPoints()
+{
+  iTestBadCellStream({XMU_QUAD, 4, 1, 2, 3});
+} // CellStreamValidationUnitTests::testQuadMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that tetrahedrons must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTetraMissingPoints()
+{
+  iTestBadCellStream({XMU_TETRA, 4, 1, 2, 3});
+} // CellStreamValidationUnitTests::testTetraMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pyramids must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPyramidMissingPoints()
+{
+  iTestBadCellStream({XMU_PYRAMID, 5, 1, 2, 3, 4});
+} // CellStreamValidationUnitTests::testPyramidMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that wedges must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testWedgeMissingPoints()
+{
+  iTestBadCellStream({XMU_WEDGE, 6, 1, 2, 3, 4, 5});
+} // CellStreamValidationUnitTests::testWedgeMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pentagonal prisms must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPentagonalPrismMissingPoints()
+{
+  iTestBadCellStream({XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5});
+} // CellStreamValidationUnitTests::testPentagonalPrismMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexagonal prisms must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexagonalPrismMissingPoints()
+{
+  iTestBadCellStream({XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6});
+} // CellStreamValidationUnitTests::testHexagonalPrismMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that voxels must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVoxelMissingPoints()
+{
+  iTestBadCellStream({XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7});
+} // CellStreamValidationUnitTests::testVoxelMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexahedrons must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexahedronMissingPoints()
+{
+  iTestBadCellStream({XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7});
+} // CellStreamValidationUnitTests::testHexahedronMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon vertices must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyVertexMissingPoints()
+{
+  iTestBadCellStream({XMU_POLY_VERTEX, 1});
+} // CellStreamValidationUnitTests::testPolyVertexMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon lines must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyLineMissingPoints()
+{
+  iTestBadCellStream({XMU_POLY_LINE, 2, 1});
+} // CellStreamValidationUnitTests::testPolyLineMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangle strips must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleStripMissingPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE_STRIP, 3, 1, 2});
+} // CellStreamValidationUnitTests::testTriangleStripMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygons must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolygonMissingPoints()
+{
+  iTestBadCellStream({XMU_POLYGON, 3, 1, 2});
+} // CellStreamValidationUnitTests::testPolygonMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test a grid that is missing a point at the end.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGridMissingPoints()
+{
+  iTestBadCellStream({
+      XMU_EMPTY_CELL, 0,
+      XMU_VERTEX, 1, 1,
+      XMU_LINE, 2, 1, 2,
+      XMU_TRIANGLE, 3, 1, 2, 3,
+      XMU_PIXEL, 4, 1, 2, 3, 4,
+      XMU_QUAD, 4, 1, 2, 3, 4,
+      XMU_TETRA, 4, 1, 2, 3, 4,
+      XMU_PYRAMID, 5, 1, 2, 3, 4, 5,
+      XMU_WEDGE, 6, 1, 2, 3, 4, 5, 6,
+      XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6,
+      XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, 7,
+      XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_POLY_VERTEX, 3, 1, 2, 3,
+      XMU_POLY_LINE, 5, 1, 2, 3, 4, 5,
+      XMU_TRIANGLE_STRIP, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      XMU_POLYGON, 8, 1, 2, 3, 4, 5, 6, 7 // Said there were 8, actually 7
+  });
+} // CellStreamValidationUnitTests::testGridMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that vertices must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testUnknownCellBadPoints()
+{
+  iTestBadCellStream({-1, 3, 1, 2, 99});
+  iTestBadCellStream({-1, 3, 1, 2, -1});
+} // CellStreamValidationUnitTests::testUnknownCellBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that vertices must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVertexBadPoints()
+{
+  iTestBadCellStream({XMU_VERTEX, 1, 99});
+  iTestBadCellStream({XMU_VERTEX, 1, -1});
+} // CellStreamValidationUnitTests::testVertexBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that lines must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testLineBadPoints()
+{
+  iTestBadCellStream({XMU_LINE, 2, 1, 99});
+  iTestBadCellStream({XMU_LINE, 2, 1, -1});
+} // CellStreamValidationUnitTests::testLineBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangles must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleBadPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE, 3, 1, 2, 99});
+  iTestBadCellStream({XMU_TRIANGLE, 3, 1, 2, -1});
+} // CellStreamValidationUnitTests::testTriangleBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pixels must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPixelBadPoints()
+{
+  iTestBadCellStream({XMU_PIXEL, 4, 1, 2, 3, 99});
+  iTestBadCellStream({XMU_PIXEL, 4, 1, 2, 3, -1});
+} // CellStreamValidationUnitTests::testPixelBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that quads must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testQuadBadPoints()
+{
+  iTestBadCellStream({XMU_QUAD, 4, 1, 2, 3, 99});
+  iTestBadCellStream({XMU_QUAD, 4, 1, 2, 3, -1});
+} // CellStreamValidationUnitTests::testQuadBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that tetrahedrons must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTetraBadPoints()
+{
+  iTestBadCellStream({XMU_TETRA, 4, 1, 2, 3, 99});
+  iTestBadCellStream({XMU_TETRA, 4, 1, 2, 3, -1});
+} // CellStreamValidationUnitTests::testTetraBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pyramids must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPyramidBadPoints()
+{
+  iTestBadCellStream({XMU_PYRAMID, 5, 1, 2, 3, 4, 99});
+  iTestBadCellStream({XMU_PYRAMID, 5, 1, 2, 3, 4, -1});
+} // CellStreamValidationUnitTests::testPyramidBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that wedges must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testWedgeBadPoints()
+{
+  iTestBadCellStream({XMU_WEDGE, 6, 1, 2, 3, 4, 5, 99});
+  iTestBadCellStream({XMU_WEDGE, 6, 1, 2, 3, 4, 5, -1});
+} // CellStreamValidationUnitTests::testWedgeBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that pentagonal prisms must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPentagonalPrismBadPoints()
+{
+  iTestBadCellStream({XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 99});
+  iTestBadCellStream({XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, -1});
+} // CellStreamValidationUnitTests::testPentagonalPrismBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexagonal prisms must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexagonalPrismBadPoints()
+{
+  iTestBadCellStream({XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, 99});
+  iTestBadCellStream({XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, -1});
+} // CellStreamValidationUnitTests::testHexagonalPrismBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that voxels must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testVoxelBadPoints()
+{
+  iTestBadCellStream({XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 99});
+  iTestBadCellStream({XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, -1});
+} // CellStreamValidationUnitTests::testVoxelBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that hexahedrons must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testHexahedronBadPoints()
+{
+  iTestBadCellStream({XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 99});
+  iTestBadCellStream({XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, -1});
+} // CellStreamValidationUnitTests::testHexahedronBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon vertices must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyVertexBadPoints()
+{
+  iTestBadCellStream({XMU_POLY_VERTEX, 1, 99});
+  iTestBadCellStream({XMU_POLY_VERTEX, 1, -1});
+} // CellStreamValidationUnitTests::testPolyVertexBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygon lines must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyLineBadPoints()
+{
+  iTestBadCellStream({XMU_POLY_LINE, 2, 1, 99});
+  iTestBadCellStream({XMU_POLY_LINE, 2, 1, -1});
+} // CellStreamValidationUnitTests::testPolyLineBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that triangle strips must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testTriangleStripBadPoints()
+{
+  iTestBadCellStream({XMU_TRIANGLE_STRIP, 3, 1, 2, 99});
+  iTestBadCellStream({XMU_TRIANGLE_STRIP, 3, 1, 2, -1});
+} // CellStreamValidationUnitTests::testTriangleStripBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polygons must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolygonBadPoints()
+{
+  iTestBadCellStream({XMU_POLYGON, 3, 1, 2, 99});
+  iTestBadCellStream({XMU_POLYGON, 3, 1, 2, -1});
+} // CellStreamValidationUnitTests::testPolygonBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that entire grids must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGridBadPoints()
+{
+  iTestBadCellStream({
+      XMU_EMPTY_CELL, 0,
+      XMU_VERTEX, 1, 1,
+      XMU_LINE, 2, 1, 2,
+      XMU_TRIANGLE, 3, 1, 2, 3,
+      XMU_PIXEL, 4, 1, 2, 3, 4,
+      XMU_QUAD, 4, 1, 2, 3, 4,
+      XMU_TETRA, 4, 1, 2, 3, 4,
+      XMU_PYRAMID, 5, 1, 2, 3, 4, 5,
+      XMU_WEDGE, 6, 1, 2, 3, 4, 5, 6,
+      XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6,
+      XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, 7,
+      XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_POLY_VERTEX, 3, 1, 2, 99, // Point 99 doesn't exist
+      XMU_POLY_LINE, 5, 1, 2, 3, 4, 5,
+      XMU_TRIANGLE_STRIP, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      XMU_POLYGON, 8, 1, 2, 3, 4, 5, 6, 7, 8
+  });
+  iTestBadCellStream({
+      XMU_EMPTY_CELL, 0,
+      XMU_VERTEX, 1, 1,
+      XMU_LINE, 2, 1, 2,
+      XMU_TRIANGLE, 3, 1, 2, 3,
+      XMU_PIXEL, 4, 1, 2, 3, 4,
+      XMU_QUAD, 4, 1, 2, 3, 4,
+      XMU_TETRA, 4, 1, 2, 3, 4,
+      XMU_PYRAMID, 5, 1, 2, 3, 4, 5,
+      XMU_WEDGE, 6, 1, 2, 3, 4, 5, 6,
+      XMU_PENTAGONAL_PRISM, 6, 1, 2, 3, 4, 5, 6,
+      XMU_HEXAGONAL_PRISM, 7, 1, 2, 3, 4, 5, 6, 7,
+      XMU_VOXEL, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_HEXAHEDRON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
+      XMU_POLY_VERTEX, 3, 1, 2, -1, // Point -1 can't exist
+      XMU_POLY_LINE, 5, 1, 2, 3, 4, 5,
+      XMU_TRIANGLE_STRIP, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      XMU_POLYGON, 8, 1, 2, 3, 4, 5, 6, 7, 8
+  });
+} // CellStreamValidationUnitTests::testGridBadPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test a good polyhedron.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testGoodPolyhedron()
+{
+  iTestGoodCellStream({
+      XMU_POLYHEDRON, 5,
+      3, 1, 2, 3,
+      4, 2, 3, 4, 5,
+      5, 3, 4, 5, 6, 7,
+      6, 4, 5, 6, 7, 8, 9,
+      7, 5, 6, 7, 8, 9, 10, 11
+  });
+} // CellStreamValidationUnitTests::testGoodPolyhedron
+
+//------------------------------------------------------------------------------
+/// \brief Test that polyhedrons must have the right number of faces.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyhedronWrongNumberOfFaces()
+{
+  iTestBadCellStream({
+      XMU_POLYHEDRON, 2, // 2 faces in polyhedron not allowed
+      3, 1, 2, 3,
+      3, 4, 5, 6,
+      3, 7, 8, 9,
+  });
+} // CellStreamValidationUnitTests::testPolyhedronMismatchedFaces
+
+//------------------------------------------------------------------------------
+/// \brief Test that polyhedrons must have the right face count.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyhedronWrongNumberOfPoints()
+{
+  iTestBadCellStream({
+      XMU_POLYHEDRON, 5,
+      3, 1, 2, 3,
+      4, 2, 3, 4, 5,
+      5, 3, 4, 5, 6, 7,
+      2, 4, 5, // 2 points in face not allowed
+      7, 5, 6, 7, 8, 9, 10, 11
+  });
+} // CellStreamValidationUnitTests::testPolyhedronWrongNumberOfPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polyhedrons must have enough faces.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyhedronMissingFaces()
+{
+  iTestBadCellStream({
+      XMU_POLYHEDRON, 6,
+      3, 1, 2, 3,
+      4, 2, 3, 4, 5,
+      5, 3, 4, 5, 6, 7,
+      6, 4, 5, 6, 7, 8, 9,
+      7, 5, 6, 7, 8, 9, 10, 11
+      // Sixth face is missing
+  });
+} // CellStreamValidationUnitTests::testPolyhedronMissingFaces
+
+//------------------------------------------------------------------------------
+/// \brief Test that polyhedrons must have enough points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyhedronMissingPoints()
+{
+  iTestBadCellStream({
+      XMU_POLYHEDRON, 5,
+      3, 1, 2, 3,
+      4, 2, 3, 4, 5,
+      5, 3, 4, 5, 6, 7,
+      6, 4, 5, 6, 7, 8, 9,
+      7, 5, 6, 7, 8, 9, 10 // Seventh point missing
+  });
+} // CellStreamValidationUnitTests::testPolyhedronMissingPoints
+
+//------------------------------------------------------------------------------
+/// \brief Test that polyhedrons must have valid points.
+//------------------------------------------------------------------------------
+void CellStreamValidationUnitTests::testPolyhedronBadPoints()
+{
+  iTestBadCellStream({
+      XMU_POLYHEDRON, 5,
+      3, 1, 2, 3,
+      4, 2, 3, 4, 5,
+      5, 3, 4, 99, 6, 7, // Point 99 doesn't exist
+      6, 4, 5, 6, 7, 8, 9,
+      7, 5, 6, 7, 8, 9, 10, 11
+  });
+  iTestBadCellStream({
+      XMU_POLYHEDRON, 5,
+      3, 1, 2, 3,
+      4, 2, 3, 4, 5,
+      5, 3, 4, -1, 6, 7, // Point -1 can't exist
+      6, 4, 5, 6, 7, 8, 9,
+      7, 5, 6, 7, 8, 9, 10, 11
+  });
+} // CellStreamValidationUnitTests::testPolyhedronBadPoints
 
 #endif

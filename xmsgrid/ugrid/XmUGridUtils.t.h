@@ -39,6 +39,8 @@ public:
   void testCellStringToEnum();
   void testLargeUGridBinarySpeed();
   void testReadReadyAtNextLine();
+  void testReadTrailingEmptyCellNoNumber();
+  void testReadTrailingEmptyCell();
 }; // XmUGridReaderTests
 
 #endif
