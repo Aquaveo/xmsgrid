@@ -14,6 +14,7 @@
 
 // 3. Standard library headers
 #include <fstream>
+#include <numeric>
 
 // 4. External library headers
 #include <boost/bimap.hpp>
@@ -23,6 +24,7 @@
 #include <xmscore/misc/StringUtil.h>
 #include <xmscore/misc/XmError.h>
 #include <xmscore/misc/XmLog.h>
+#include <xmscore/misc/xmstype.h>
 #include <xmscore/stl/vector.h>
 
 // 6. Non-shared code headers
@@ -659,6 +661,216 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
 {
   iWriteUGridToStream(a_ugrid, a_outStream, a_binary);
 } // XmWriteUGridToStream
+
+//------------------------------------------------------------------------------
+/// \brief Fill points and cell stream from ugrid, optionally removing some
+///        points and/or cells.
+/// \note If deleting a point, all adjacent cells must be specified for deletion
+///       as well or the removal will fail.
+/// \param[in] a_ugrid: The XmUGrid.
+/// \param[in] a_removedPointIdxs: The points to remove.
+/// \param[in] a_removedCellIdxs: The cells to remove.
+/// \param[in,out] a_points: The points.
+/// \param[in,out] a_cellStream: The cell stream (\see ugBuildUGridGeometry)
+//------------------------------------------------------------------------------
+void XmRemovePointsAndCells(const XmUGrid& a_ugrid,
+                            const SetInt& a_removedPointIdxs,
+                            const SetInt& a_removedCellIdxs,
+                            VecPt3d& a_points,
+                            VecInt& a_cellStream)
+{
+  // add to point stream and get mapping of old point index to new
+  a_points.clear();
+  int oldNumPoints = a_ugrid.GetPointCount();
+  VecInt newPtIdxs(oldNumPoints, XM_NONE);
+  if (a_removedPointIdxs.empty())
+  {
+    a_points = a_ugrid.GetLocations();
+    std::iota(newPtIdxs.begin(), newPtIdxs.end(), 0);
+  }
+  else
+  {
+    a_points.reserve(oldNumPoints);
+    int currPtIdx = 0;
+    auto nextRemoved = a_removedPointIdxs.begin();
+    for (int ptIdx = 0; ptIdx < oldNumPoints; ++ptIdx)
+    {
+      if (nextRemoved == a_removedPointIdxs.end())
+      {
+        a_points.push_back(a_ugrid.GetPointLocation(ptIdx));
+        newPtIdxs[ptIdx] = currPtIdx++;
+      }
+      else if (*nextRemoved != ptIdx)
+      {
+        a_points.push_back(a_ugrid.GetPointLocation(ptIdx));
+        newPtIdxs[ptIdx] = currPtIdx++;
+      }
+      else
+      {
+        ++nextRemoved;
+      }
+    }
+  }
+
+  // build cell stream
+  a_cellStream.clear();
+  int oldNumCells = a_ugrid.GetCellCount();
+  a_cellStream.reserve(oldNumCells * 4);
+  auto nextRemoved = a_removedCellIdxs.begin();
+  for (int cellIdx = 0; cellIdx < oldNumCells; ++cellIdx)
+  {
+    bool keepCell = false;
+    if (nextRemoved == a_removedCellIdxs.end())
+      keepCell = true;
+    else if (*nextRemoved != cellIdx)
+      keepCell = true;
+    else
+      ++nextRemoved;
+
+    if (keepCell)
+    {
+      VecInt pts;
+      a_ugrid.GetCellCellstream(cellIdx, pts);
+      int cellType = a_ugrid.GetCellType(cellIdx);
+      a_cellStream.push_back(cellType);
+      VecInt::iterator ptsIterator = pts.begin();
+      ++ptsIterator; // Skip past type
+
+      if (cellType == XMU_POLYHEDRON)
+      {
+        int numFaces = a_ugrid.GetCell3dFaceCount(cellIdx);
+        a_cellStream.push_back(numFaces);
+        ++ptsIterator; // Skip past number of faces.
+        for (int facePtIdx = 0; facePtIdx < numFaces; ++facePtIdx)
+        {
+          int numPts = *ptsIterator;
+          ptsIterator++;
+          a_cellStream.push_back(numPts);
+          for (int ptIdx = 0; ptIdx < numPts; ++ptIdx)
+          {
+            auto oldPtIdx = *ptsIterator;
+            ptsIterator++;
+            XM_ASSERT(a_removedPointIdxs.find(oldPtIdx) == a_removedPointIdxs.end());
+            auto newPtIdx = newPtIdxs[oldPtIdx];
+            a_cellStream.push_back(newPtIdx);
+          }
+        }
+      }
+      else
+      {
+        int numPoints = a_ugrid.GetCellPointCount(cellIdx);
+        a_cellStream.push_back(numPoints);
+        ++ptsIterator; // Skip past number of points
+        for (int ptIdx = 0; ptIdx < numPoints; ++ptIdx)
+        {
+          auto oldPtIdx = *ptsIterator;
+          ptsIterator++;
+          XM_ASSERT(a_removedPointIdxs.find(oldPtIdx) == a_removedPointIdxs.end());
+          auto newPtIdx = newPtIdxs[oldPtIdx];
+          a_cellStream.push_back(newPtIdx);
+        }
+      }
+    }
+  }
+} // XmRemovePointsAndCells
+
+//------------------------------------------------------------------------------
+/// \brief Remove chosen points from a UGrid.
+/// \param a_ugrid: Grid to remove points from.
+/// \param a_ids: IDs of points to remove.
+/// \returns A new UGrid with chosen points removed.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds)
+{
+  SetInt cellIds;
+  return XmRemovePoints(a_ugrid, a_pointIds, cellIds);
+} // XmRemovePoints
+
+//------------------------------------------------------------------------------
+/// \brief Remove chosen points from a UGrid.
+/// \param a_ugrid: Grid to remove points from.
+/// \param a_pointIds: IDs of points to remove.
+/// \param a_cellIds: Initialized to IDs of cells removed.
+/// \returns A new UGrid with chosen points removed.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds, SetInt& a_cellIds)
+{
+  VecInt adjacentCells;
+  for (auto pointIdx : a_pointIds)
+  {
+    a_ugrid.GetPointAdjacentCells(pointIdx, adjacentCells);
+    a_cellIds.insert(adjacentCells.begin(), adjacentCells.end());
+  }
+  VecPt3d points;
+  VecInt cells;
+  XmRemovePointsAndCells(a_ugrid, a_pointIds, a_cellIds, points, cells);
+  return XmUGrid::New(points, cells);
+} // XmRemovePoints
+
+//------------------------------------------------------------------------------
+/// \brief Delete chosen cells from a UGrid.
+/// \param a_ugrid: UGrid to delete cells from.
+/// a_cellIds: IDs of cells to delete.
+/// a_deleteOrphanedPoints: Whether to delete points that are no longer part of
+///                         a cell as a result of deletion.
+/// \returns: A new UGrid with cells (and, optionally, points) deleted.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
+                                       const SetInt& a_cellIds,
+                                       bool a_deleteOrphanedPoints /*=false*/)
+{
+  SetInt pointIds;
+  return XmRemoveCells(a_ugrid, a_cellIds, pointIds, a_deleteOrphanedPoints);
+} // XmRemoveCells
+
+//------------------------------------------------------------------------------
+/// \brief Delete chosen cells from a UGrid.
+/// \param a_ugrid: UGrid to delete cells from.
+/// a_cellIds: IDs of cells to delete.
+/// a_cellIds: Initialized to IDs of orphaned points that were deleted.
+/// a_deleteOrphanedPoints: Whether to delete points that are no longer part of
+///                         a cell as a result of deletion.
+/// \returns: A new UGrid with cells (and, optionally, points) deleted.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
+                                       const SetInt& a_cellIds,
+                                       SetInt& a_pointIds,
+                                       bool a_deleteOrphanedPoints /*=false*/)
+{
+  a_pointIds.clear();
+  if (a_deleteOrphanedPoints)
+  {
+    // get all points associated with removed cells
+    SetInt cellPoints;
+    for (auto cellIdx : a_cellIds)
+    {
+      VecInt cellPointIdxs;
+      a_ugrid.GetCellPoints(cellIdx, cellPointIdxs);
+      cellPoints.insert(cellPointIdxs.begin(), cellPointIdxs.end());
+    }
+
+    // get points only associated with removed cells
+    for (auto pointIdx : cellPoints)
+    {
+      VecInt pointCells;
+      a_ugrid.GetPointAdjacentCells(pointIdx, pointCells);
+      bool allRemoved = true; // all assigned cells removed from this point
+      for (auto pointCellIdx : pointCells)
+      {
+        if (a_cellIds.find(pointCellIdx) == a_cellIds.end())
+          allRemoved = false;
+      }
+
+      if (allRemoved)
+        a_pointIds.insert(pointIdx);
+    }
+  }
+
+  VecPt3d points;
+  VecInt cells;
+  XmRemovePointsAndCells(a_ugrid, a_pointIds, a_cellIds, points, cells);
+  return XmUGrid::New(points, cells);
+} // XmRemoveCells
 
 } // namespace xms
 
@@ -1323,5 +1535,112 @@ void XmUGridUtilsTests::testReadTrailingEmptyCell()
   std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugrid);
 } // XmUGridUtilsTests::testReadTrailingEmptyCell
+
+//------------------------------------------------------------------------------
+/// \brief Test removing a point.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemovePoint()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-point-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-point-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = XmRemovePoints(*inGrid, {18});
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemovePoint
+
+//------------------------------------------------------------------------------
+/// \brief Test removing multiple points.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemovePoints()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-points-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-points-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = XmRemovePoints(*inGrid, {18, 21});
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemovePoints
+
+//------------------------------------------------------------------------------
+/// \brief Test removing a cell.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemoveCell()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-cell-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-cell-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = XmRemoveCells(*inGrid, {28});
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemoveCell
+
+//------------------------------------------------------------------------------
+/// \brief Test removing multiple cells.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemoveCells()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-cells-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-cells-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = XmRemoveCells(*inGrid, {2, 28});  
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemoveCells
+
+//------------------------------------------------------------------------------
+/// \brief Test ugRemovePointsAndCells.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemovePointsAndCells()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-points-and-cells-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-points-and-cells-base.xmugrid";
+  
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  XmRemovePointsAndCells(*inGrid, {21}, {2, 3, 4, 7, 12, 15}, newPoints, newCells);
+
+  auto outGrid = XmUGrid::New(newPoints, newCells);
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemovePointsAndCells
 
 #endif
