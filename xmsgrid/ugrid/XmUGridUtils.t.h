@@ -41,6 +41,7 @@ public:
   void testReadReadyAtNextLine();
   void testReadTrailingEmptyCellNoNumber();
   void testReadTrailingEmptyCell();
+  void testRemovePointsAndCells();
 }; // XmUGridReaderTests
 
 #endif

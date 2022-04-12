@@ -665,6 +665,8 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
 //------------------------------------------------------------------------------
 /// \brief Fill points and cell stream from ugrid, optionally removing some
 ///        points and/or cells.
+/// \note If deleting a point, all adjacent cells must be specified for deletion
+///       as well or the removal will fail.
 /// \param[in] a_ugrid: The XmUGrid.
 /// \param[in] a_removedPointIdxs: The points to remove.
 /// \param[in] a_removedCellIdxs: The cells to remove.
@@ -719,17 +721,11 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
   {
     bool keepCell = false;
     if (nextRemoved == a_removedCellIdxs.end())
-    {
       keepCell = true;
-    }
     else if (*nextRemoved != cellIdx)
-    {
       keepCell = true;
-    }
     else
-    {
       ++nextRemoved;
-    }
 
     if (keepCell)
     {
@@ -1441,5 +1437,28 @@ void XmUGridUtilsTests::testReadTrailingEmptyCell()
   std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
   TS_REQUIRE_NOT_NULL(ugrid);
 } // XmUGridUtilsTests::testReadTrailingEmptyCell
+
+//------------------------------------------------------------------------------
+/// \brief Test ugRemovePointsAndCells.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemovePointsAndCells()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-points-and-cells-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-points-and-cells-base.xmugrid";
+  
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  ugRemovePointsAndCells(*inGrid, {21}, {2, 3, 4, 7, 12, 15}, newPoints, newCells);
+
+  auto outGrid = XmUGrid::New(newPoints, newCells);
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemovePointsAndCells
 
 #endif
