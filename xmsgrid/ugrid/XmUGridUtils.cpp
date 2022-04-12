@@ -673,7 +673,7 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
 /// \param[in,out] a_points: The points.
 /// \param[in,out] a_cellStream: The cell stream (\see ugBuildUGridGeometry)
 //------------------------------------------------------------------------------
-void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
+void ugRemovePointsAndCells(std::shared_ptr<XmUGrid> a_ugrid,
                             const SetInt& a_removedPointIdxs,
                             const SetInt& a_removedCellIdxs,
                             VecPt3d& a_points,
@@ -681,11 +681,11 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
 {
   // add to point stream and get mapping of old point index to new
   a_points.clear();
-  int oldNumPoints = a_ugrid.GetPointCount();
+  int oldNumPoints = a_ugrid->GetPointCount();
   VecInt newPtIdxs(oldNumPoints, XM_NONE);
   if (a_removedPointIdxs.empty())
   {
-    a_points = a_ugrid.GetLocations();
+    a_points = a_ugrid->GetLocations();
     std::iota(newPtIdxs.begin(), newPtIdxs.end(), 0);
   }
   else
@@ -697,12 +697,12 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
     {
       if (nextRemoved == a_removedPointIdxs.end())
       {
-        a_points.push_back(a_ugrid.GetPointLocation(ptIdx));
+        a_points.push_back(a_ugrid->GetPointLocation(ptIdx));
         newPtIdxs[ptIdx] = currPtIdx++;
       }
       else if (*nextRemoved != ptIdx)
       {
-        a_points.push_back(a_ugrid.GetPointLocation(ptIdx));
+        a_points.push_back(a_ugrid->GetPointLocation(ptIdx));
         newPtIdxs[ptIdx] = currPtIdx++;
       }
       else
@@ -714,7 +714,7 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
 
   // build cell stream
   a_cellStream.clear();
-  int oldNumCells = a_ugrid.GetCellCount();
+  int oldNumCells = a_ugrid->GetCellCount();
   a_cellStream.reserve(oldNumCells * 4);
   auto nextRemoved = a_removedCellIdxs.begin();
   for (int cellIdx = 0; cellIdx < oldNumCells; ++cellIdx)
@@ -730,15 +730,15 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
     if (keepCell)
     {
       VecInt pts;
-      a_ugrid.GetCellCellstream(cellIdx, pts);
-      int cellType = a_ugrid.GetCellType(cellIdx);
+      a_ugrid->GetCellCellstream(cellIdx, pts);
+      int cellType = a_ugrid->GetCellType(cellIdx);
       a_cellStream.push_back(cellType);
       VecInt::iterator ptsIterator = pts.begin();
       ++ptsIterator; // Skip past type
 
       if (cellType == XMU_POLYHEDRON)
       {
-        int numFaces = a_ugrid.GetCell3dFaceCount(cellIdx);
+        int numFaces = a_ugrid->GetCell3dFaceCount(cellIdx);
         a_cellStream.push_back(numFaces);
         ++ptsIterator; // Skip past number of faces.
         for (int facePtIdx = 0; facePtIdx < numFaces; ++facePtIdx)
@@ -758,7 +758,7 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
       }
       else
       {
-        int numPoints = a_ugrid.GetCellPointCount(cellIdx);
+        int numPoints = a_ugrid->GetCellPointCount(cellIdx);
         a_cellStream.push_back(numPoints);
         ++ptsIterator; // Skip past number of points
         for (int ptIdx = 0; ptIdx < numPoints; ++ptIdx)
@@ -780,7 +780,7 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
 /// \param a_ids: IDs of points to remove.
 /// \returns A new UGrid with chosen points removed.
 //------------------------------------------------------------------------------
-std::shared_ptr<XmUGrid> ugDeletePoints(BSHP<XmUGrid> a_ugrid, const SetInt& a_ids)
+std::shared_ptr<XmUGrid> ugDeletePoints(std::shared_ptr<XmUGrid> a_ugrid, const SetInt& a_ids)
 {
   SetInt removedCellIdxs;
   VecInt adjacentCells;
@@ -791,7 +791,7 @@ std::shared_ptr<XmUGrid> ugDeletePoints(BSHP<XmUGrid> a_ugrid, const SetInt& a_i
   }
   VecPt3d points;
   VecInt cells;
-  ugRemovePointsAndCells(*a_ugrid, a_ids, removedCellIdxs, points, cells);
+  ugRemovePointsAndCells(a_ugrid, a_ids, removedCellIdxs, points, cells);
   return XmUGrid::New(points, cells);
 } // ugDeleteSelectedPoints
 
@@ -803,7 +803,7 @@ std::shared_ptr<XmUGrid> ugDeletePoints(BSHP<XmUGrid> a_ugrid, const SetInt& a_i
 ///                         a cell as a result of deletion.
 /// \returns: A new UGrid with cells (and, optionally, points) deleted.
 //------------------------------------------------------------------------------
-std::shared_ptr<XmUGrid> ugDeleteCells(const XmUGrid& a_ugrid,
+std::shared_ptr<XmUGrid> ugDeleteCells(std::shared_ptr<XmUGrid> a_ugrid,
                                        const SetInt& a_ids,
                                        bool a_deleteOrphanedPoints /*=false*/)
 {
@@ -815,7 +815,7 @@ std::shared_ptr<XmUGrid> ugDeleteCells(const XmUGrid& a_ugrid,
     for (auto cellIdx : a_ids)
     {
       VecInt cellPointIdxs;
-      a_ugrid.GetCellPoints(cellIdx, cellPointIdxs);
+      a_ugrid->GetCellPoints(cellIdx, cellPointIdxs);
       cellPoints.insert(cellPointIdxs.begin(), cellPointIdxs.end());
     }
 
@@ -823,7 +823,7 @@ std::shared_ptr<XmUGrid> ugDeleteCells(const XmUGrid& a_ugrid,
     for (auto pointIdx : cellPoints)
     {
       VecInt pointCells;
-      a_ugrid.GetPointAdjacentCells(pointIdx, pointCells);
+      a_ugrid->GetPointAdjacentCells(pointIdx, pointCells);
       bool allRemoved = true; // all assigned cells removed from this point
       for (auto pointCellIdx : pointCells)
       {
@@ -1520,7 +1520,7 @@ void XmUGridUtilsTests::testRemovePointsAndCells()
 
   auto inGrid = XmReadUGridFromAsciiFile(inPath);
   TS_REQUIRE_NOT_NULL(inGrid);
-  ugRemovePointsAndCells(*inGrid, {21}, {2, 3, 4, 7, 12, 15}, newPoints, newCells);
+  ugRemovePointsAndCells(inGrid, {21}, {2, 3, 4, 7, 12, 15}, newPoints, newCells);
 
   auto outGrid = XmUGrid::New(newPoints, newCells);
   TS_REQUIRE_NOT_NULL(outGrid);

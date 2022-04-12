@@ -42,11 +42,13 @@ void XmWriteUGridToStream(std::shared_ptr<XmUGrid> a_ugrid, std::ostream& a_outS
 void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream, bool a_binary = false);
 
 // Modification
-void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
+void ugRemovePointsAndCells(std::shared_ptr<XmUGrid> a_ugrid,
                             const SetInt& a_removedPointIdxs,
                             const SetInt& a_removedCellIdxs,
                             VecPt3d& points,
                             VecInt& a_cellStream);
-std::shared_ptr<XmUGrid> ugDeletePoints(BSHP<XmUGrid> a_ugrid, const SetInt& a_ids);
-std::shared_ptr<XmUGrid> ugDeleteCells(const XmUGrid& a_ugrid, const SetInt& a_ids, bool a_deleteOrphanedPoints = false);
+std::shared_ptr<XmUGrid> ugDeletePoints(std::shared_ptr<XmUGrid> a_ugrid, const SetInt& a_ids);
+std::shared_ptr<XmUGrid> ugDeleteCells(std::shared_ptr<XmUGrid> a_ugrid,
+                                       const SetInt& a_ids,
+                                       bool a_deleteOrphanedPoints = false);
 } // namespace xms
