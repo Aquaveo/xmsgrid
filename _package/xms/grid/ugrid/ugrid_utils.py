@@ -63,7 +63,8 @@ def remove_cells(ugrid, cell_ids, remove_orphaned_points=False):
     Returns:
         A new UGrid with specified cells/points removed.
     """
-    return ugu.remove_cells(ugrid._instance, cell_ids, remove_orphaned_points)
+    new_ugrid = ugu.remove_cells(ugrid._instance, cell_ids, remove_orphaned_points)
+    return UGrid(instance=new_ugrid)
 
 
 def remove_points_and_cells(ugrid, point_ids, cell_ids):
@@ -79,4 +80,5 @@ def remove_points_and_cells(ugrid, point_ids, cell_ids):
     Returns:
         A new UGrid with specified cells/points removed.
     """
-    return ugu.remove_points_and_cells(ugrid._instance, point_ids, cell_ids)
+    new_ugrid = ugu.remove_points_and_cells(ugrid._instance, point_ids, cell_ids)
+    return UGrid(instance=new_ugrid)
