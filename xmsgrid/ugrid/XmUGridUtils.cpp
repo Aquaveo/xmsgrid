@@ -774,6 +774,27 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
   }
 } // ugRemovePointsAndCells
 
+//------------------------------------------------------------------------------
+/// \brief Remove chosen points from a UGrid.
+/// \param a_ugrid: Grid to remove points from.
+/// \param a_ids: IDs of points to remove.
+/// \returns A new UGrid with chosen points removed.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> ugDeletePoints(BSHP<XmUGrid> a_ugrid, const SetInt& a_ids)
+{
+  SetInt removedCellIdxs;
+  VecInt adjacentCells;
+  for (auto pointIdx : a_ids)
+  {
+    a_ugrid->GetPointAdjacentCells(pointIdx, adjacentCells);
+    removedCellIdxs.insert(adjacentCells.begin(), adjacentCells.end());
+  }
+  VecPt3d points;
+  VecInt cells;
+  ugRemovePointsAndCells(*a_ugrid, a_ids, removedCellIdxs, points, cells);
+  return XmUGrid::New(points, cells);
+} // ugDeleteSelectedPoints
+
 } // namespace xms
 
 #ifdef CXX_TEST
