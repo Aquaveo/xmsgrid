@@ -1507,6 +1507,90 @@ void XmUGridUtilsTests::testReadTrailingEmptyCell()
 } // XmUGridUtilsTests::testReadTrailingEmptyCell
 
 //------------------------------------------------------------------------------
+/// \brief Test removing a point.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemovePoint()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-point-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-point-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = ugDeletePoints(inGrid, {18});
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemovePoint
+
+//------------------------------------------------------------------------------
+/// \brief Test removing multiple points.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemovePoints()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-points-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-points-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = ugDeletePoints(inGrid, {18, 21});
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemovePoints
+
+//------------------------------------------------------------------------------
+/// \brief Test removing a cell.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemoveCell()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-cell-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-cell-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = ugDeleteCells(inGrid, {28});
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemoveCell
+
+//------------------------------------------------------------------------------
+/// \brief Test removing multiple cells.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testRemoveCells()
+{
+  std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
+  std::string outPath = TestFilesPath() + "remove-cells-out.xmugrid";
+  std::string basePath = TestFilesPath() + "remove-cells-base.xmugrid";
+
+  VecPt3d newPoints;
+  VecInt newCells;
+
+  auto inGrid = XmReadUGridFromAsciiFile(inPath);
+  TS_REQUIRE_NOT_NULL(inGrid);
+  auto outGrid = ugDeleteCells(inGrid, {2, 28});  
+  TS_REQUIRE_NOT_NULL(outGrid);
+  XmWriteUGridToAsciiFile(outGrid, outPath);
+
+  TS_ASSERT_TXT_FILES_EQUAL(basePath, outPath);
+} // XmUGridUtilsTests::testRemoveCells
+
+//------------------------------------------------------------------------------
 /// \brief Test ugRemovePointsAndCells.
 //------------------------------------------------------------------------------
 void XmUGridUtilsTests::testRemovePointsAndCells()

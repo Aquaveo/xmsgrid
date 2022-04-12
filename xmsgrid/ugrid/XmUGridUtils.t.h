@@ -41,6 +41,11 @@ public:
   void testReadReadyAtNextLine();
   void testReadTrailingEmptyCellNoNumber();
   void testReadTrailingEmptyCell();
+  
+  void testRemovePoint();
+  void testRemovePoints();
+  void testRemoveCell();
+  void testRemoveCells();
   void testRemovePointsAndCells();
 }; // XmUGridReaderTests
 
