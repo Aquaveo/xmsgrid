@@ -15,6 +15,7 @@
 
 // 5. Shared code headers
 #include <xmscore/misc/boost_defines.h>
+#include <xmscore/stl/set.h>
 #include <xmscore/stl/vector.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -39,5 +40,11 @@ std::shared_ptr<XmUGrid> XmReadUGridFromStream(std::istream& a_istream);
 void XmWriteUGridToAsciiFile(std::shared_ptr<XmUGrid> a_ugrid, const std::string& a_filePath);
 void XmWriteUGridToStream(std::shared_ptr<XmUGrid> a_ugrid, std::ostream& a_outStream);
 void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream, bool a_binary = false);
+
+void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
+                            const SetInt& a_removedPointIdxs,
+                            const SetInt& a_removedCellIdxs,
+                            VecPt3d& points,
+                            VecInt& a_cellStream);
 
 } // namespace xms

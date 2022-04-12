@@ -14,6 +14,7 @@
 
 // 3. Standard library headers
 #include <fstream>
+#include <numeric>
 
 // 4. External library headers
 #include <boost/bimap.hpp>
@@ -23,6 +24,7 @@
 #include <xmscore/misc/StringUtil.h>
 #include <xmscore/misc/XmError.h>
 #include <xmscore/misc/XmLog.h>
+#include <xmscore/misc/xmstype.h>
 #include <xmscore/stl/vector.h>
 
 // 6. Non-shared code headers
@@ -659,6 +661,122 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
 {
   iWriteUGridToStream(a_ugrid, a_outStream, a_binary);
 } // XmWriteUGridToStream
+
+//------------------------------------------------------------------------------
+/// \brief Fill points and cell stream from ugrid, optionally removing some
+///        points and/or cells.
+/// \param[in] a_ugrid: The XmUGrid.
+/// \param[in] a_removedPointIdxs: The points to remove.
+/// \param[in] a_removedCellIdxs: The cells to remove.
+/// \param[in,out] a_points: The points.
+/// \param[in,out] a_cellStream: The cell stream (\see ugBuildUGridGeometry)
+//------------------------------------------------------------------------------
+void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
+                            const SetInt& a_removedPointIdxs,
+                            const SetInt& a_removedCellIdxs,
+                            VecPt3d& a_points,
+                            VecInt& a_cellStream)
+{
+  // add to point stream and get mapping of old point index to new
+  a_points.clear();
+  int oldNumPoints = a_ugrid.GetPointCount();
+  VecInt newPtIdxs(oldNumPoints, XM_NONE);
+  if (a_removedPointIdxs.empty())
+  {
+    a_points = a_ugrid.GetLocations();
+    std::iota(newPtIdxs.begin(), newPtIdxs.end(), 0);
+  }
+  else
+  {
+    a_points.reserve(oldNumPoints);
+    int currPtIdx = 0;
+    auto nextRemoved = a_removedPointIdxs.begin();
+    for (int ptIdx = 0; ptIdx < oldNumPoints; ++ptIdx)
+    {
+      if (nextRemoved == a_removedPointIdxs.end())
+      {
+        a_points.push_back(a_ugrid.GetPointLocation(ptIdx));
+        newPtIdxs[ptIdx] = currPtIdx++;
+      }
+      else if (*nextRemoved != ptIdx)
+      {
+        a_points.push_back(a_ugrid.GetPointLocation(ptIdx));
+        newPtIdxs[ptIdx] = currPtIdx++;
+      }
+      else
+      {
+        ++nextRemoved;
+      }
+    }
+  }
+
+  // build cell stream
+  a_cellStream.clear();
+  int oldNumCells = a_ugrid.GetCellCount();
+  a_cellStream.reserve(oldNumCells * 4);
+  auto nextRemoved = a_removedCellIdxs.begin();
+  for (int cellIdx = 0; cellIdx < oldNumCells; ++cellIdx)
+  {
+    bool keepCell = false;
+    if (nextRemoved == a_removedCellIdxs.end())
+    {
+      keepCell = true;
+    }
+    else if (*nextRemoved != cellIdx)
+    {
+      keepCell = true;
+    }
+    else
+    {
+      ++nextRemoved;
+    }
+
+    if (keepCell)
+    {
+      VecInt pts;
+      a_ugrid.GetCellCellstream(cellIdx, pts);
+      int cellType = a_ugrid.GetCellType(cellIdx);
+      a_cellStream.push_back(cellType);
+      VecInt::iterator ptsIterator = pts.begin();
+      ++ptsIterator; // Skip past type
+
+      if (cellType == XMU_POLYHEDRON)
+      {
+        int numFaces = a_ugrid.GetCell3dFaceCount(cellIdx);
+        a_cellStream.push_back(numFaces);
+        ++ptsIterator; // Skip past number of faces.
+        for (int facePtIdx = 0; facePtIdx < numFaces; ++facePtIdx)
+        {
+          int numPts = *ptsIterator;
+          ptsIterator++;
+          a_cellStream.push_back(numPts);
+          for (int ptIdx = 0; ptIdx < numPts; ++ptIdx)
+          {
+            auto oldPtIdx = *ptsIterator;
+            ptsIterator++;
+            XM_ASSERT(a_removedPointIdxs.find(oldPtIdx) == a_removedPointIdxs.end());
+            auto newPtIdx = newPtIdxs[oldPtIdx];
+            a_cellStream.push_back(newPtIdx);
+          }
+        }
+      }
+      else
+      {
+        int numPoints = a_ugrid.GetCellPointCount(cellIdx);
+        a_cellStream.push_back(numPoints);
+        ++ptsIterator; // Skip past number of points
+        for (int ptIdx = 0; ptIdx < numPoints; ++ptIdx)
+        {
+          auto oldPtIdx = *ptsIterator;
+          ptsIterator++;
+          XM_ASSERT(a_removedPointIdxs.find(oldPtIdx) == a_removedPointIdxs.end());
+          auto newPtIdx = newPtIdxs[oldPtIdx];
+          a_cellStream.push_back(newPtIdx);
+        }
+      }
+    }
+  }
+} // ugRemovePointsAndCells
 
 } // namespace xms
 
