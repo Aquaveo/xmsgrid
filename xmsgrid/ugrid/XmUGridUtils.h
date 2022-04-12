@@ -15,6 +15,7 @@
 
 // 5. Shared code headers
 #include <xmscore/misc/boost_defines.h>
+#include <xmscore/stl/set.h>
 #include <xmscore/stl/vector.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -40,4 +41,19 @@ void XmWriteUGridToAsciiFile(std::shared_ptr<XmUGrid> a_ugrid, const std::string
 void XmWriteUGridToStream(std::shared_ptr<XmUGrid> a_ugrid, std::ostream& a_outStream);
 void XmWriteUGridToStream(const XmUGrid& a_ugrid, std::ostream& a_outStream, bool a_binary = false);
 
+// Modification
+void XmRemovePointsAndCells(const XmUGrid& a_ugrid,
+                            const SetInt& a_removedPointIdxs,
+                            const SetInt& a_removedCellIdxs,
+                            VecPt3d& points,
+                            VecInt& a_cellStream);
+std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds);
+std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds, SetInt& a_cellIds);
+std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
+                                       const SetInt& a_pointIds,
+                                       bool a_deleteOrphanedPoints = false);
+std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
+                                       const SetInt& a_pointIds,
+                                       SetInt& a_cellIds,
+                                       bool a_deleteOrphanedPoints = false);
 } // namespace xms
