@@ -673,7 +673,7 @@ void XmWriteUGridToStream(const XmUGrid& a_ugrid,
 /// \param[in,out] a_points: The points.
 /// \param[in,out] a_cellStream: The cell stream (\see ugBuildUGridGeometry)
 //------------------------------------------------------------------------------
-void ugRemovePointsAndCells(std::shared_ptr<XmUGrid> a_ugrid,
+void XmRemovePointsAndCells(std::shared_ptr<XmUGrid> a_ugrid,
                             const SetInt& a_removedPointIdxs,
                             const SetInt& a_removedCellIdxs,
                             VecPt3d& a_points,
@@ -772,7 +772,7 @@ void ugRemovePointsAndCells(std::shared_ptr<XmUGrid> a_ugrid,
       }
     }
   }
-} // ugRemovePointsAndCells
+} // XmRemovePointsAndCells
 
 //------------------------------------------------------------------------------
 /// \brief Remove chosen points from a UGrid.
@@ -780,7 +780,7 @@ void ugRemovePointsAndCells(std::shared_ptr<XmUGrid> a_ugrid,
 /// \param a_ids: IDs of points to remove.
 /// \returns A new UGrid with chosen points removed.
 //------------------------------------------------------------------------------
-std::shared_ptr<XmUGrid> ugDeletePoints(std::shared_ptr<XmUGrid> a_ugrid, const SetInt& a_ids)
+std::shared_ptr<XmUGrid> XmRemovePoints(std::shared_ptr<XmUGrid> a_ugrid, const SetInt& a_ids)
 {
   SetInt removedCellIdxs;
   VecInt adjacentCells;
@@ -791,9 +791,9 @@ std::shared_ptr<XmUGrid> ugDeletePoints(std::shared_ptr<XmUGrid> a_ugrid, const 
   }
   VecPt3d points;
   VecInt cells;
-  ugRemovePointsAndCells(a_ugrid, a_ids, removedCellIdxs, points, cells);
+  XmRemovePointsAndCells(a_ugrid, a_ids, removedCellIdxs, points, cells);
   return XmUGrid::New(points, cells);
-} // ugDeleteSelectedPoints
+} // XmRemovePoints
 
 //------------------------------------------------------------------------------
 /// \brief Delete chosen cells from a UGrid.
@@ -803,7 +803,7 @@ std::shared_ptr<XmUGrid> ugDeletePoints(std::shared_ptr<XmUGrid> a_ugrid, const 
 ///                         a cell as a result of deletion.
 /// \returns: A new UGrid with cells (and, optionally, points) deleted.
 //------------------------------------------------------------------------------
-std::shared_ptr<XmUGrid> ugDeleteCells(std::shared_ptr<XmUGrid> a_ugrid,
+std::shared_ptr<XmUGrid> XmRemoveCells(std::shared_ptr<XmUGrid> a_ugrid,
                                        const SetInt& a_ids,
                                        bool a_deleteOrphanedPoints /*=false*/)
 {
@@ -838,9 +838,9 @@ std::shared_ptr<XmUGrid> ugDeleteCells(std::shared_ptr<XmUGrid> a_ugrid,
 
   VecPt3d points;
   VecInt cells;
-  ugRemovePointsAndCells(a_ugrid, removedPointIdxs, a_ids, points, cells);
+  XmRemovePointsAndCells(a_ugrid, removedPointIdxs, a_ids, points, cells);
   return XmUGrid::New(points, cells);
-} // ugDeleteCells
+} // XmRemoveCells
 
 } // namespace xms
 
@@ -1520,7 +1520,7 @@ void XmUGridUtilsTests::testRemovePoint()
 
   auto inGrid = XmReadUGridFromAsciiFile(inPath);
   TS_REQUIRE_NOT_NULL(inGrid);
-  auto outGrid = ugDeletePoints(inGrid, {18});
+  auto outGrid = XmRemovePoints(inGrid, {18});
   TS_REQUIRE_NOT_NULL(outGrid);
   XmWriteUGridToAsciiFile(outGrid, outPath);
 
@@ -1541,7 +1541,7 @@ void XmUGridUtilsTests::testRemovePoints()
 
   auto inGrid = XmReadUGridFromAsciiFile(inPath);
   TS_REQUIRE_NOT_NULL(inGrid);
-  auto outGrid = ugDeletePoints(inGrid, {18, 21});
+  auto outGrid = XmRemovePoints(inGrid, {18, 21});
   TS_REQUIRE_NOT_NULL(outGrid);
   XmWriteUGridToAsciiFile(outGrid, outPath);
 
@@ -1562,7 +1562,7 @@ void XmUGridUtilsTests::testRemoveCell()
 
   auto inGrid = XmReadUGridFromAsciiFile(inPath);
   TS_REQUIRE_NOT_NULL(inGrid);
-  auto outGrid = ugDeleteCells(inGrid, {28});
+  auto outGrid = XmRemoveCells(inGrid, {28});
   TS_REQUIRE_NOT_NULL(outGrid);
   XmWriteUGridToAsciiFile(outGrid, outPath);
 
@@ -1583,7 +1583,7 @@ void XmUGridUtilsTests::testRemoveCells()
 
   auto inGrid = XmReadUGridFromAsciiFile(inPath);
   TS_REQUIRE_NOT_NULL(inGrid);
-  auto outGrid = ugDeleteCells(inGrid, {2, 28});  
+  auto outGrid = XmRemoveCells(inGrid, {2, 28});  
   TS_REQUIRE_NOT_NULL(outGrid);
   XmWriteUGridToAsciiFile(outGrid, outPath);
 
@@ -1604,7 +1604,7 @@ void XmUGridUtilsTests::testRemovePointsAndCells()
 
   auto inGrid = XmReadUGridFromAsciiFile(inPath);
   TS_REQUIRE_NOT_NULL(inGrid);
-  ugRemovePointsAndCells(inGrid, {21}, {2, 3, 4, 7, 12, 15}, newPoints, newCells);
+  XmRemovePointsAndCells(inGrid, {21}, {2, 3, 4, 7, 12, 15}, newPoints, newCells);
 
   auto outGrid = XmUGrid::New(newPoints, newCells);
   TS_REQUIRE_NOT_NULL(outGrid);
