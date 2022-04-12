@@ -795,6 +795,53 @@ std::shared_ptr<XmUGrid> ugDeletePoints(BSHP<XmUGrid> a_ugrid, const SetInt& a_i
   return XmUGrid::New(points, cells);
 } // ugDeleteSelectedPoints
 
+//------------------------------------------------------------------------------
+/// \brief Delete chosen cells from a UGrid.
+/// \param a_ugrid: UGrid to delete cells from.
+/// a_ids: IDs of cells to delete.
+/// a_deleteOrphanedPoints: Whether to delete points that are no longer part of
+///                         a cell as a result of deletion.
+/// \returns: A new UGrid with cells (and, optionally, points) deleted.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> ugDeleteCells(const XmUGrid& a_ugrid,
+                                       const SetInt& a_ids,
+                                       bool a_deleteOrphanedPoints /*=false*/)
+{
+  SetInt removedPointIdxs;
+  if (a_deleteOrphanedPoints)
+  {
+    // get all points associated with removed cells
+    SetInt cellPoints;
+    for (auto cellIdx : a_ids)
+    {
+      VecInt cellPointIdxs;
+      a_ugrid.GetCellPoints(cellIdx, cellPointIdxs);
+      cellPoints.insert(cellPointIdxs.begin(), cellPointIdxs.end());
+    }
+
+    // get points only associated with removed cells
+    for (auto pointIdx : cellPoints)
+    {
+      VecInt pointCells;
+      a_ugrid.GetPointAdjacentCells(pointIdx, pointCells);
+      bool allRemoved = true; // all assigned cells removed from this point
+      for (auto pointCellIdx : pointCells)
+      {
+        if (a_ids.find(pointCellIdx) == a_ids.end())
+          allRemoved = false;
+      }
+
+      if (allRemoved)
+        removedPointIdxs.insert(pointIdx);
+    }
+  }
+
+  VecPt3d points;
+  VecInt cells;
+  ugRemovePointsAndCells(a_ugrid, removedPointIdxs, a_ids, points, cells);
+  return XmUGrid::New(points, cells);
+} // ugDeleteCells
+
 } // namespace xms
 
 #ifdef CXX_TEST

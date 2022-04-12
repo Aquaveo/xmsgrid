@@ -48,4 +48,5 @@ void ugRemovePointsAndCells(const XmUGrid& a_ugrid,
                             VecPt3d& points,
                             VecInt& a_cellStream);
 std::shared_ptr<XmUGrid> ugDeletePoints(BSHP<XmUGrid> a_ugrid, const SetInt& a_ids);
+std::shared_ptr<XmUGrid> ugDeleteCells(const XmUGrid& a_ugrid, const SetInt& a_ids, bool a_deleteOrphanedPoints = false);
 } // namespace xms
