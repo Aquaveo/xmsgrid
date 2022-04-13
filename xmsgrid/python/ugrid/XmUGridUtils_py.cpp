@@ -86,9 +86,9 @@ void initXmUGridUtils(py::module& m)
   // ---------------------------------------------------------------------------
   modXmUGridUtils.def(
     "remove_points",
-    [](std::shared_ptr<xms::XmUGrid> a_ugrid, py::iterable a_ids) -> std::shared_ptr<xms::XmUGrid> {
-      xms::SetInt ids = XmSetIntFromPyIter(a_ids);
-      return XmRemovePoints(a_ugrid, ids);
+    [](std::shared_ptr<xms::XmUGrid> a_ugrid, py::iterable a_pointIds) -> std::shared_ptr<xms::XmUGrid> {
+      xms::SetInt pointIds = XmSetIntFromPyIter(a_pointIds);
+      return XmRemovePoints(a_ugrid, pointIds);
     },
     py::arg("ugrid"), py::arg("ids"));
 
@@ -97,12 +97,12 @@ void initXmUGridUtils(py::module& m)
   // ---------------------------------------------------------------------------
   modXmUGridUtils.def(
     "remove_cells",
-    [](std::shared_ptr<xms::XmUGrid> a_ugrid, py::iterable a_ids,
+    [](std::shared_ptr<xms::XmUGrid> a_ugrid, py::iterable a_cellIds,
        bool a_deleteOrphanedPoints) -> std::shared_ptr<xms::XmUGrid> {
-      xms::SetInt ids = XmSetIntFromPyIter(a_ids);
-      return XmRemoveCells(a_ugrid, ids, a_deleteOrphanedPoints);
+      xms::SetInt cellIds = XmSetIntFromPyIter(a_cellIds);
+      return XmRemoveCells(a_ugrid, cellIds, a_deleteOrphanedPoints);
     },
-    py::arg("ugrid"), py::arg("ids"), py::arg("delete_orphaned_points") = false);
+    py::arg("ugrid"), py::arg("ids"), py::arg("remove_orphaned_points") = false);
 
   // ---------------------------------------------------------------------------
   // function: remove_points_and_cells
