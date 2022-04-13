@@ -774,24 +774,38 @@ void XmRemovePointsAndCells(const XmUGrid& a_ugrid,
   }
 } // XmRemovePointsAndCells
 
+
+
 //------------------------------------------------------------------------------
 /// \brief Remove chosen points from a UGrid.
 /// \param a_ugrid: Grid to remove points from.
 /// \param a_ids: IDs of points to remove.
 /// \returns A new UGrid with chosen points removed.
 //------------------------------------------------------------------------------
-std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_ids)
+std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds)
 {
-  SetInt removedCellIdxs;
+  SetInt cellIds;
+  return XmRemovePoints(a_ugrid, a_pointIds, cellIds);
+} // XmRemovePoints
+
+//------------------------------------------------------------------------------
+/// \brief Remove chosen points from a UGrid.
+/// \param a_ugrid: Grid to remove points from.
+/// \param a_pointIds: IDs of points to remove.
+/// \param a_cellIds: Initialized to IDs of cells removed.
+/// \returns A new UGrid with chosen points removed.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds, SetInt& a_cellIds)
+{
   VecInt adjacentCells;
-  for (auto pointIdx : a_ids)
+  for (auto pointIdx : a_pointIds)
   {
     a_ugrid.GetPointAdjacentCells(pointIdx, adjacentCells);
-    removedCellIdxs.insert(adjacentCells.begin(), adjacentCells.end());
+    a_cellIds.insert(adjacentCells.begin(), adjacentCells.end());
   }
   VecPt3d points;
   VecInt cells;
-  XmRemovePointsAndCells(a_ugrid, a_ids, removedCellIdxs, points, cells);
+  XmRemovePointsAndCells(a_ugrid, a_pointIds, a_cellIds, points, cells);
   return XmUGrid::New(points, cells);
 } // XmRemovePoints
 
