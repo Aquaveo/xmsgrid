@@ -47,8 +47,12 @@ void XmRemovePointsAndCells(const XmUGrid& a_ugrid,
                             const SetInt& a_removedCellIdxs,
                             VecPt3d& points,
                             VecInt& a_cellStream);
-std::shared_ptr<XmUGrid> XmRemovePoints(std::shared_ptr<XmUGrid> a_ugrid, const SetInt& a_ids);
-std::shared_ptr<XmUGrid> XmRemoveCells(std::shared_ptr<XmUGrid> a_ugrid,
-                                       const SetInt& a_ids,
+std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_ids);
+std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
+                                       const SetInt& a_pointIds,
+                                       bool a_deleteOrphanedPoints = false);
+std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
+                                       const SetInt& a_pointIds,
+                                       SetInt& a_cellIds,
                                        bool a_deleteOrphanedPoints = false);
 } // namespace xms
