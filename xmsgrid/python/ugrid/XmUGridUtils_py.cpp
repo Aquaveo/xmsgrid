@@ -116,7 +116,7 @@ void initXmUGridUtils(py::module& m)
       xms::VecPt3d newPoints;
       xms::VecInt newCells;
 
-      XmRemovePointsAndCells(a_ugrid, pointIds, cellIds, newPoints, newCells);
+      XmRemovePointsAndCells(*a_ugrid, pointIds, cellIds, newPoints, newCells);
       return xms::XmUGrid::New(newPoints, newCells);
     },
     py::arg("ugrid"), py::arg("point_ids"), py::arg("cell_ids"));
