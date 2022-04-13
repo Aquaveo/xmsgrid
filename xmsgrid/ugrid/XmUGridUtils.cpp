@@ -774,8 +774,6 @@ void XmRemovePointsAndCells(const XmUGrid& a_ugrid,
   }
 } // XmRemovePointsAndCells
 
-
-
 //------------------------------------------------------------------------------
 /// \brief Remove chosen points from a UGrid.
 /// \param a_ugrid: Grid to remove points from.
