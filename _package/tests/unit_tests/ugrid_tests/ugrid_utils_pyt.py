@@ -8,6 +8,14 @@ from xms.grid.ugrid import ugrid_utils
 
 
 def _get_test_ugrid():
+    """
+    Get a UGrid for testing.
+
+    This grid is shaped like an octagon, with a square in the middle. All cells are triangulated.
+
+    Returns:
+        A UGrid for testing.
+    """
     points = [
         (9.18, 59.48), (32.48, 46.66), (6.29, 27.33), (66.44, 15.05), (66.08, 39.79), (34.83, 53.34),
         (76.19, 62.19), (33.38, 73.03), (27.96, 52.98), (46.75, 27.15), (11.53, 34.74), (-4.91, 36.36),
@@ -234,3 +242,42 @@ class TestUGridUtilFunctions(unittest.TestCase):
 
         self.assertTrue(np.array_equal(expected_points, actual_points))
         self.assertTrue(np.array_equal(expected_cells, actual_cellstream))
+
+    def test_clip_ugrid(self):
+        """Test clipping a UGrid."""
+        unclipped_points = [
+            (0.0, 90.0, 0.0), (0.0, 40.0, 0.0), (40.0, 0.0, 0.0), (90.0, 0.0, 0.0),
+            (130.0, 40.0, 0.0), (130.0, 90.0, 0.0), (90.0, 130.0, 0.0), (40.0, 130.0, 0.0),
+            (40.0, 90.0, 0.0), (40.0, 40.0, 0.0), (90.0, 40.0, 0.0), (90.0, 90.0, 0.0),
+            (65.0, 65.0, 0.0)
+        ]
+        unclipped_cellstream = [
+            5, 3, 1, 2, 9, 5, 3, 9, 2, 3, 5, 3, 1, 9, 8, 5, 3, 0, 8, 7,
+            5, 3, 8, 0, 1, 5, 3, 7, 8, 11, 5, 3, 9, 12, 8, 5, 3, 3, 4, 10,
+            5, 3, 10, 4, 5, 5, 3, 10, 12, 9, 5, 3, 11, 6, 7, 5, 3, 12, 10, 11,
+            5, 3, 5, 6, 11, 5, 3, 10, 5, 11, 5, 3, 11, 8, 12, 5, 3, 10, 9, 3
+        ]
+
+        expected_points = [
+            (0.0, 90.0, 0.0), (0.0, 40.0, 0.0), (40.0, 0.0, 0.0), (90.0, 0.0, 0.0),
+            (130.0, 40.0, 0.0), (130.0, 90.0, 0.0), (40.0, 90.0, 0.0), (40.0, 40.0, 0.0),
+            (90.0, 40.0, 0.0), (90.0, 90.0, 0.0), (65.0, 65.0, 0.0)
+        ]
+
+        expected_cellstream = [
+            5, 3, 1, 2, 7, 5, 3, 7, 2, 3, 5, 3, 6, 0, 1, 5, 3, 3, 4, 8,
+            5, 3, 8, 4, 5, 5, 3, 8, 10, 7, 5, 3, 10, 8, 9, 5, 3, 8, 5, 9,
+            5, 3, 9, 6, 10, 5, 3, 8, 7, 3
+        ]
+
+        unclipped_ugrid = UGrid(points=unclipped_points, cellstream=unclipped_cellstream)
+
+        loops = [[8, 1, 9, 12], [0, 8, 11, 5, 4, 3, 2, 1, 1]]
+
+        clipped_ugrid = ugrid_utils.clip_ugrid(unclipped_ugrid, loops)
+
+        clipped_points = clipped_ugrid.locations
+        clipped_cellstream = clipped_ugrid.cellstream
+
+        self.assertTrue(np.array_equal(expected_points, clipped_points))
+        self.assertTrue(np.array_equal(expected_cellstream, clipped_cellstream))
