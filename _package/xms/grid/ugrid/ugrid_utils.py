@@ -82,3 +82,18 @@ def remove_points_and_cells(ugrid, point_ids, cell_ids):
     """
     new_ugrid = ugu.remove_points_and_cells(ugrid._instance, point_ids, cell_ids)
     return UGrid(instance=new_ugrid)
+
+
+def clip_ugrid(ugrid, loops):
+    """Get a new UGrid with cells on the wrong side of loops removed.
+
+    Args:
+        ugrid: The UGrid to clip.
+        loops: List of lists of loop IDs to clip to. Boundary loops should be in clockwise order, while holes should
+               be in counterclockwise order.
+
+    Returns:
+        A new UGrid clipped to the loops.
+    """
+    new_ugrid = ugu.clip_ugrid(ugrid._instance, loops)
+    return UGrid(instance=new_ugrid)

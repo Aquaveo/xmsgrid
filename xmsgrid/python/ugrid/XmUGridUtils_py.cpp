@@ -120,4 +120,15 @@ void initXmUGridUtils(py::module& m)
       return xms::XmUGrid::New(newPoints, newCells);
     },
     py::arg("ugrid"), py::arg("point_ids"), py::arg("cell_ids"));
+
+  // ---------------------------------------------------------------------------
+  // function: clip_ugrid
+  // ---------------------------------------------------------------------------
+  modXmUGridUtils.def(
+      "clip_ugrid",
+      [](std::shared_ptr<xms::XmUGrid> a_ugrid, py::iterable a_loops)
+      -> std::shared_ptr<xms::XmUGrid> {
+        auto loops = xms::VecInt2dFromPyIter(a_loops);
+        return xms::XmClipUGrid(a_ugrid, *loops);
+      }, py::arg("ugrid"), py::arg("loops"));
 }

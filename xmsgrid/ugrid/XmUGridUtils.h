@@ -18,6 +18,8 @@
 #include <xmscore/stl/set.h>
 #include <xmscore/stl/vector.h>
 
+#include <xmsgrid/ugrid/detail/UGridClipper.h>
+
 //----- Forward declarations ---------------------------------------------------
 
 //----- Namespace declaration --------------------------------------------------
@@ -50,7 +52,7 @@ void XmRemovePointsAndCells(const XmUGrid& a_ugrid,
 std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds);
 std::shared_ptr<XmUGrid> XmRemovePoints(const XmUGrid& a_ugrid, const SetInt& a_pointIds, SetInt& a_cellIds);
 std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
-                                       const SetInt& a_pointIds,
+                                       const SetInt& a_cellIds,
                                        bool a_deleteOrphanedPoints = false);
 std::shared_ptr<XmUGrid> XmRemoveCells(const XmUGrid& a_ugrid,
                                        const SetInt& a_pointIds,

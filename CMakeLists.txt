@@ -115,10 +115,11 @@ set(xmsgrid_sources
   xmsgrid/triangulate/detail/triangulate.cpp
   xmsgrid/triangulate/detail/TrOuterTriangleDeleter.cpp
   # UGrid
+  xmsgrid/ugrid/detail/UGridClipper.cpp
+  xmsgrid/ugrid/detail/XmGeometry.cpp
   xmsgrid/ugrid/XmEdge.cpp
   xmsgrid/ugrid/XmUGrid.cpp
   xmsgrid/ugrid/XmUGridUtils.cpp
-  xmsgrid/ugrid/detail/XmGeometry.cpp
 )
 
 set(xmsgrid_headers
@@ -146,10 +147,11 @@ set(xmsgrid_headers
   xmsgrid/triangulate/detail/triangulate.h
   xmsgrid/triangulate/detail/TrOuterTriangleDeleter.h
   # Ugrid
+  xmsgrid/ugrid/detail/UGridClipper.h
+  xmsgrid/ugrid/detail/XmGeometry.h
   xmsgrid/ugrid/XmEdge.h
   xmsgrid/ugrid/XmUGrid.h
   xmsgrid/ugrid/XmUGridUtils.h
-  xmsgrid/ugrid/detail/XmGeometry.h
 )
 
 # Pybind11 sources
@@ -196,6 +198,7 @@ if (BUILD_TESTING)
    xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.t.h
    xmsgrid/triangulate/detail/TrOuterTriangleDeleter.t.h
    # UGrid
+   xmsgrid/ugrid/detail/UGridClipper.t.h
    xmsgrid/ugrid/XmEdge.t.h
    xmsgrid/ugrid/XmUGrid.t.h
    xmsgrid/ugrid/XmUGridUtils.t.h
