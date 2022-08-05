@@ -62,6 +62,10 @@ public:
   void testCell3dFaceFunctions();
   void testGetCell3dFaceOrientationHexahedrons();
   void testGetCell3dFaceOrientationConcaveCell();
+  void testGetCellNumberingOneCell();
+  void testCalculateCellNumberingIncreasingDown();
+  void testCalculateCellNumberingIncreasingUp();
+  void testCalculateCellNumberingMixed();
   void testCell3dFunctionCaching();
   void testLargeUGridLinkSpeed();
   void testUgridWithInvalidCells();
