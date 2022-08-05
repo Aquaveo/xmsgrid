@@ -100,6 +100,13 @@ enum XmUGridCellType {
 
 };
 
+/// Order of cells in a UGrid
+enum XmUGridCellOrdering {
+  XMU_CELL_ORDER_UNKNOWN = -1,
+  XMU_CELL_ORDER_INCREASING_DOWN = 0,
+  XMU_CELL_ORDER_INCREASING_UP = 1
+};
+
 /// The orientation of a 3D face must be one of these.
 enum XmUGridFaceOrientation {
   XMU_ORIENTATION_UNKNOWN = -1,
@@ -159,6 +166,8 @@ public:
   void GetPointsAdjacentCells(const VecInt& a_pointIdxs, VecInt& a_adjacentCellIdxs) const;
   void GetPointsAdjacentCells(int a_pointIdx1, int a_pointIdx2, VecInt& a_adjacentCellIdxs) const;
   bool IsValidPointChange(int a_changedPtIdx, const Pt3d& a_newPosition) const;
+  void GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const;
+  void GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const;
 
   // Cells
   int GetCellCount() const;
@@ -174,6 +183,9 @@ public:
   bool SetCellstream(const VecInt& a_cellstream);
   bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
   int GetCellCellstreamIndex(int a_cellIdx) const;
+  XmUGridCellOrdering GetCellOrdering() const;
+  void SetCellOrdering(XmUGridCellOrdering a_cellOrdering);
+  XmUGridCellOrdering CalculateCellOrdering() const;
   VecInt GetCellAdjacentCells(int a_cellIdx) const;
   void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
   bool GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const;
@@ -187,8 +199,6 @@ public:
   VecInt GetEdgeAdjacentCells(const XmEdge& a_edge) const;
   std::vector<XmEdge> GetCellEdges(int a_cellIdx) const;
   void GetCellEdges(int a_cellIdx, std::vector<XmEdge>& a_edges) const;
-  void GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const;
-  void GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const;
 
   // Faces
   int GetCell3dFaceCount(int a_cellIdx) const;

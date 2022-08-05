@@ -27,7 +27,6 @@
 
 // 6. Non-shared code headers
 #include <xmsgrid/geometry/geoms.h>
-#include <xmsgrid/ugrid/detail/XmGeometry.h>
 #include <xmsgrid/ugrid/XmEdge.h>
 
 //----- Forward declarations ---------------------------------------------------
@@ -87,9 +86,11 @@ public:
   void GetPointsAdjacentCells(const int* a_pointIdxs,
                               int a_numpointIdxs,
                               VecInt& a_commonCellIdxs) const;
-  void GetPointsAdjacentCells(const VecInt& a_pointIdxs, VecInt& a_commonCellIdxs) const;
+  void GetPointsAdjacentCells(const VecInt& a_pointIdxs, VecInt& a_adjacentCellIdxs) const;
   void GetPointsAdjacentCells(int a_pointIdx1, int a_pointIdx2, VecInt& a_adjacentCellIdxs) const;
   bool IsValidPointChange(int a_changedPtIdx, const Pt3d& a_newPosition) const;
+  void GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const;
+  void GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const;
 
   // Cells
   int GetCellCount() const;
@@ -109,6 +110,10 @@ public:
   bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
   int GetCellCellstreamIndex(int a_cellIdx) const;
 
+  XmUGridCellOrdering GetCellOrdering() const;
+  void SetCellOrdering(XmUGridCellOrdering a_cellOrdering);
+  XmUGridCellOrdering CalculateCellOrdering() const;
+
   VecInt GetCellAdjacentCells(int a_cellIdx) const;
   void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
   bool GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const;
@@ -126,8 +131,6 @@ public:
 
   std::vector<XmEdge> GetCellEdges(int a_cellIdx) const;
   void GetCellEdges(int a_cellIdx, std::vector<XmEdge>& a_edges) const;
-  void GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const;
-  void GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const;
 
   // Faces
   int GetCell3dFaceCount(int a_cellIdx) const;
@@ -228,7 +231,9 @@ private:
   mutable VecInt m_cellFaceOffset;  ///< Cache for offset to m_faceOrientation and m_faceNeighbor
   mutable VecInt m_faceOrientation; ///< For vertically prismatic cell is face top, side, bottom
   mutable VecInt m_faceNeighbor;    ///< Cache for Face neighbor
-  mutable VecInt m_cellDimensionCounts; ///< Cache for cell dimension counts
+  mutable VecInt m_cellDimensionCounts;                        ///< Cache for cell dimension counts
+  XmUGridCellOrdering m_cellOrdering = XMU_CELL_ORDER_UNKNOWN; ///< Cell ordering. When known speeds
+                                                               ///< up face orientation calculation.
 };
 
 //----- Internal functions -----------------------------------------------------
@@ -274,8 +279,6 @@ const VecEdge& iGetEdgeOffsetTable(int a_cellType)
   {
   // invalid
   case XMU_INVALID_CELL_TYPE:
-    return fg_empty;
-
   // 0D
   case XMU_EMPTY_CELL:
   case XMU_VERTEX:
@@ -296,11 +299,8 @@ const VecEdge& iGetEdgeOffsetTable(int a_cellType)
   case XMU_QUAD:
     return fg_quad;
 
+  // should be using cell stream
   case XMU_POLYGON:
-    // should be using cell stream
-    XM_ASSERT(0);
-    return fg_empty;
-
   // 2D Not yet supported
   case XMU_QUADRATIC_EDGE:
   case XMU_PARAMETRIC_CURVE:
@@ -333,11 +333,9 @@ const VecEdge& iGetEdgeOffsetTable(int a_cellType)
     return fg_pentagonalPrism;
   case XMU_HEXAGONAL_PRISM:
     return fg_hexagonalPrism;
-  case XMU_POLYHEDRON:
-    // should be using cell stream
-    XM_ASSERT(0);
-    return fg_empty;
 
+  // should be using cell stream
+  case XMU_POLYHEDRON:
   // 3D Not yet supported
   case XMU_QUADRATIC_TETRA:
   case XMU_HIGHER_ORDER_TETRAHEDRON:
@@ -353,8 +351,6 @@ const VecEdge& iGetEdgeOffsetTable(int a_cellType)
   case XMU_HIGHER_ORDER_PYRAMID:
   case XMU_PARAMETRIC_TETRA_REGION:
   case XMU_PARAMETRIC_HEX_REGION:
-    XM_ASSERT(0);
-    return fg_empty;
   default:
     XM_ASSERT(0);
     return fg_empty;
@@ -432,11 +428,9 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
     return fg_pentagonalPrism;
   case XMU_HEXAGONAL_PRISM:
     return fg_hexagonalPrism;
-  case XMU_POLYHEDRON:
-    // should be using cell stream
-    XM_ASSERT(0);
-    return fg_empty;
 
+  // should be using cell stream
+  case XMU_POLYHEDRON:
   // 3D Not yet supported
   case XMU_QUADRATIC_TETRA:
   case XMU_HIGHER_ORDER_TETRAHEDRON:
@@ -452,8 +446,6 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
   case XMU_HIGHER_ORDER_PYRAMID:
   case XMU_PARAMETRIC_TETRA_REGION:
   case XMU_PARAMETRIC_HEX_REGION:
-    XM_ASSERT(0);
-    return fg_empty;
   default:
     XM_ASSERT(0);
     return fg_empty;
@@ -758,7 +750,7 @@ int iValidateCell(const VecInt& a_cellStream, int a_points, int a_currIdx)
   case XMU_POLYGON:
     return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, 3, true);
   case XMU_POLYHEDRON:
-      return iValidatePolyhedronCell(a_cellStream, a_points, a_currIdx);
+    return iValidatePolyhedronCell(a_cellStream, a_points, a_currIdx);
   default:
     return iValidatePolygonCell(a_cellStream, a_points, a_currIdx, a_cellStream[a_currIdx], false);
   }
@@ -840,7 +832,7 @@ Pt3d XmUGrid::Impl::GetPointLocation(int a_pointIdx) const
 {
   if (a_pointIdx >= 0 && a_pointIdx < m_locations.size())
     return m_locations[a_pointIdx];
-  return Pt3d();
+  return {};
 } // XmUGrid::Impl::GetPointLocation
 //------------------------------------------------------------------------------
 /// \brief Set the point
@@ -1011,6 +1003,26 @@ void XmUGrid::Impl::GetPointsAdjacentCells(int a_pointIdx1,
   int points[] = {a_pointIdx1, a_pointIdx2};
   GetPointsAdjacentCells(points, 2, a_adjacentCellIdxs);
 } // XmUGrid::Impl::GetPointsAdjacentCells
+
+//------------------------------------------------------------------------------
+/// \brief Given a point gets point indices attached to the point by an edge.
+/// \param[in] a_pointIdx The point to get adjacent points from.
+/// \param[out] a_edgePoints The indices of the adjacent points.
+//------------------------------------------------------------------------------
+void XmUGrid::GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const
+{
+  m_impl->GetPointAdjacentPoints(a_pointIdx, a_edgePoints);
+} // XmUGrid::GetPointAdjacentPoints
+
+//------------------------------------------------------------------------------
+/// \brief Given a point gets point locations attached to the point by an edge.
+/// \param[in] a_pointIdx The point to get attached point from.
+/// \param[out] a_edgePoints A vector of points attached across edges.
+//------------------------------------------------------------------------------
+void XmUGrid::GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const
+{
+  m_impl->GetPointAdjacentLocations(a_pointIdx, a_edgePoints);
+} // XmUGrid::GetPointAdjacentLocations
 // Cells
 //------------------------------------------------------------------------------
 /// \brief Get the number of cells.
@@ -1380,12 +1392,12 @@ bool XmUGrid::Impl::IsCellValidWithPointChange(int a_cellIdx,
     //  Go through the affected faces and if they are not a side face
     // check if the edges cross each other
     VecInt2d faces = GetCell3dFacesPoints(a_cellIdx);
-    for (int faceIdx = 0; faceIdx < faces.size(); faceIdx++)
+    for (auto& face : faces)
     {
       bool faceIsAffected = false;
-      for (int ptIdx = 0; ptIdx < faces[faceIdx].size(); ptIdx++)
+      for (int ptIdx : face)
       {
-        if (faces[faceIdx][ptIdx] == a_changedPtIdx)
+        if (ptIdx == a_changedPtIdx)
         {
           faceIsAffected = true;
         }
@@ -1393,7 +1405,7 @@ bool XmUGrid::Impl::IsCellValidWithPointChange(int a_cellIdx,
       if (faceIsAffected)
       {
         std::vector<XmEdge> edges;
-        GetEdgesOfFace(faces[faceIdx], edges);
+        GetEdgesOfFace(face, edges);
         if (DoEdgesCrossWithPointChange(a_changedPtIdx, a_newPosition, edges))
           return false;
       }
@@ -2613,8 +2625,7 @@ bool XmUGrid::Impl::GetCellXySegments(int a_cellIdx, VecPt3d& a_segments) const
 } // XmUGrid::Impl::GetCellXySegments
 
 //------------------------------------------------------------------------------
-/// \brief Function to get the extents from a list of points. Will be removed after geometry library
-/// is built.
+/// \brief Function to get the extents from a list of points.
 /// \param[in] a_locations The point locations to get the extents of.
 /// \param[out] a_min Minimum point location.
 /// \param[out] a_max Maximum point location.
@@ -2700,21 +2711,13 @@ int XmUGrid::Impl::GetCell3dFaceCountNoCache(int a_cellIdx) const
     return -1;
 
   int cellType(GetCellType(a_cellIdx));
-  switch (cellType)
+  if (cellType == XMU_POLYHEDRON)
   {
-  case XMU_POLYHEDRON:
     return GetNumberOfItemsForCell(a_cellIdx);
-    break;
-
-  default:
-  {
-    const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
-    return (int)faceTable.size();
-    break;
-  }
   }
 
-  return 0;
+  const VecInt2d& faceTable = iGetFaceOffsetTable(cellType);
+  return (int)faceTable.size();
 } // XmUGrid::Impl::GetCell3dFaceCountNoCache
 //------------------------------------------------------------------------------
 /// \brief Get the cell face neighbors for given cell and face index.
@@ -2842,7 +2845,7 @@ void XmUGrid::Impl::GetFacePointSegments(const VecInt& a_facePts,
     a_segments.push_back(p);
     if (i != a_columnBegin)
       a_segments.push_back(p);
-    i = (i + 1) % a_facePts.size();
+    i = (i + 1) % (int)a_facePts.size();
   }
   a_segments.push_back(GetPointXy0(a_facePts[i]));
 } // XmUGrid::Impl::GetFacePointSegments
@@ -2925,12 +2928,12 @@ bool XmUGrid::Impl::IsSideFace(int a_cellIdx, int a_faceIdx) const
   VecInt facePts;
   GetCell3dFacePoints(a_cellIdx, a_faceIdx, facePts);
 
-  // if any face point has same x and y as any other face point then
+  // if any two successive face points have same x and y then
   // the face is a side face
   if (!facePts.empty())
   {
-    Pt3d ptLast = GetPointXy0(facePts[0]);
-    for (size_t facePtIdx = 1; facePtIdx < facePts.size(); ++facePtIdx)
+    Pt3d ptLast = GetPointXy0(facePts.back());
+    for (size_t facePtIdx = 0; facePtIdx < facePts.size(); ++facePtIdx)
     {
       Pt3d ptCurr = GetPointXy0(facePts[facePtIdx]);
       if (ptLast == ptCurr)
@@ -2951,11 +2954,24 @@ bool XmUGrid::Impl::IsSideFace(int a_cellIdx, int a_faceIdx) const
 //------------------------------------------------------------------------------
 XmUGridFaceOrientation XmUGrid::Impl::ConnectedTopOrBottom(int a_cellIdx, int a_faceIdx) const
 {
+  if (m_cellOrdering == XMU_CELL_ORDER_UNKNOWN)
+    return XMU_ORIENTATION_UNKNOWN;
+
   int adjacentCellIdx = GetCell3dFaceAdjacentCell(a_cellIdx, a_faceIdx);
   if (adjacentCellIdx != XM_NONE && adjacentCellIdx < a_cellIdx)
-    return XMU_ORIENTATION_TOP;
+  {
+    if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_DOWN)
+      return XMU_ORIENTATION_TOP;
+    else if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_UP)
+      return XMU_ORIENTATION_BOTTOM;
+  }
   else if (adjacentCellIdx != XM_NONE && adjacentCellIdx > a_cellIdx)
-    return XMU_ORIENTATION_BOTTOM;
+  {
+    if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_DOWN)
+      return XMU_ORIENTATION_BOTTOM;
+    else if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_UP)
+      return XMU_ORIENTATION_TOP;
+  }
   return XMU_ORIENTATION_UNKNOWN;
 } // ConnectedTopOrBottom
 //------------------------------------------------------------------------------
@@ -2980,6 +2996,88 @@ XmUGridFaceOrientation XmUGrid::Impl::GetOrientationFromArea(int a_cellIdx, int 
     return XMU_ORIENTATION_BOTTOM;
   return XMU_ORIENTATION_UNKNOWN;
 } // XmUGrid::Impl::GetOrientationFromArea
+//------------------------------------------------------------------------------
+/// \brief Returns the cell ordering of the UGrid.
+/// \return The ordering of the UGrid.
+//------------------------------------------------------------------------------
+XmUGridCellOrdering XmUGrid::Impl::GetCellOrdering() const
+{
+  return m_cellOrdering;
+} // XmUGrid::Impl::GetCellOrdering
+//------------------------------------------------------------------------------
+/// \brief Set the cell ordering for the grid.
+/// \param a_cellOrdering[in] The cell ordering.
+//------------------------------------------------------------------------------
+void XmUGrid::Impl::SetCellOrdering(XmUGridCellOrdering a_cellOrdering)
+{
+  m_cellOrdering = a_cellOrdering;
+  if (m_useCache)
+  {
+    m_faceOrientation.assign(m_faceNeighbor.size(), NEEDS_CALCULATION);
+  }
+} // XmUGrid::Impl::SetCellOrdering
+//------------------------------------------------------------------------------
+/// \brief Calculate the cell ordering of the UGrid.
+/// \return The cell ordering if able to find the ordering.
+//------------------------------------------------------------------------------
+XmUGridCellOrdering XmUGrid::Impl::CalculateCellOrdering() const
+{
+  int cellCount = GetCellCount();
+  XmUGridCellOrdering ordering = XMU_CELL_ORDER_UNKNOWN;
+  struct CellOrderingTable
+  {
+    XmUGridFaceOrientation orientation;
+    int direction;
+    XmUGridCellOrdering goodOrdering;
+  };
+  enum { LESS = -1, EQUAL = 0, GREATER = 1 };
+  std::vector<CellOrderingTable> orderingTable = {
+    {XMU_ORIENTATION_TOP, LESS, XMU_CELL_ORDER_INCREASING_DOWN},
+    {XMU_ORIENTATION_TOP, GREATER, XMU_CELL_ORDER_INCREASING_UP},
+    {XMU_ORIENTATION_BOTTOM, GREATER, XMU_CELL_ORDER_INCREASING_DOWN},
+    {XMU_ORIENTATION_BOTTOM, LESS, XMU_CELL_ORDER_INCREASING_UP}};
+  for (int cellIdx = 0; cellIdx < cellCount; ++cellIdx)
+  {
+    int faceCount = GetCell3dFaceCount(cellIdx);
+    for (int faceIdx = 0; faceIdx < faceCount; ++faceIdx)
+    {
+      XmUGridFaceOrientation orientation = GetCell3dFaceOrientation(cellIdx, faceIdx);
+      if (orientation == XMU_ORIENTATION_TOP || orientation == XMU_ORIENTATION_BOTTOM)
+      {
+        int adjacentCellIdx = GetCell3dFaceAdjacentCell(cellIdx, faceIdx);
+        if (adjacentCellIdx >= 0)
+        {
+          int direction = adjacentCellIdx - cellIdx;
+          if (direction < 0)
+            direction = LESS;
+          else if (direction > 0)
+            direction = GREATER;
+
+          for (const auto& orderingItem : orderingTable)
+          {
+            if (orientation == orderingItem.orientation)
+            {
+              if (direction == orderingItem.direction)
+              {
+                if (ordering == XMU_CELL_ORDER_UNKNOWN)
+                {
+                  // set ordering on first found top/bottom direction
+                  ordering = orderingItem.goodOrdering;
+                  break;
+                }
+                else if (ordering != orderingItem.goodOrdering)
+                {
+                  return XMU_CELL_ORDER_UNKNOWN;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return ordering;
+} // XmUGrid::Impl::CalculateCellOrdering
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
@@ -3631,26 +3729,6 @@ void XmUGrid::GetCellEdges(int a_cellIdx, std::vector<XmEdge>& a_edges) const
   m_impl->GetCellEdges(a_cellIdx, a_edges);
 } // XmUGrid::GetCellEdges
 
-//------------------------------------------------------------------------------
-/// \brief Given a point gets point indices attached to the point by an edge.
-/// \param[in] a_pointIdx The point to get adjacent points from.
-/// \param[out] a_edgePoints The indices of the adjacent points.
-//------------------------------------------------------------------------------
-void XmUGrid::GetPointAdjacentPoints(int a_pointIdx, VecInt& a_edgePoints) const
-{
-  m_impl->GetPointAdjacentPoints(a_pointIdx, a_edgePoints);
-} // XmUGrid::GetPointAdjacentPoints
-
-//------------------------------------------------------------------------------
-/// \brief Given a point gets point locations attached to the point by an edge.
-/// \param[in] a_pointIdx The point to get attached point from.
-/// \param[out] a_edgePoints A vector of points attached across edges.
-//------------------------------------------------------------------------------
-void XmUGrid::GetPointAdjacentLocations(int a_pointIdx, VecPt3d& a_edgePoints) const
-{
-  m_impl->GetPointAdjacentLocations(a_pointIdx, a_edgePoints);
-} // XmUGrid::GetPointAdjacentLocations
-
 // Faces
 
 //------------------------------------------------------------------------------
@@ -3744,7 +3822,18 @@ XmUGridFaceOrientation XmUGrid::GetCell3dFaceOrientation(int a_cellIdx, int a_fa
 {
   return m_impl->GetCell3dFaceOrientation(a_cellIdx, a_faceIdx);
 } // XmUGrid::GetCell3dFaceOrientation
-
+XmUGridCellOrdering XmUGrid::GetCellOrdering() const
+{
+  return m_impl->GetCellOrdering();
+} // XmUGrid::GetCellOrdering
+void XmUGrid::SetCellOrdering(XmUGridCellOrdering a_cellOrdering)
+{
+  m_impl->SetCellOrdering(a_cellOrdering);
+} // XmUGrid::SetCellOrdering
+XmUGridCellOrdering XmUGrid::CalculateCellOrdering() const
+{
+  return m_impl->CalculateCellOrdering();
+} // XmUGrid::CalculateCellOrdering
 //------------------------------------------------------------------------------
 /// \brief Builds a 1 cell (left 90 degree triangle) 2D XmUGrid for testing.
 /// \code
@@ -3892,7 +3981,7 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols)
   return TEST_XmUBuildQuadUGrid(a_rows, a_cols, origin);
 } // TEST_XmUBuildQuadUGrid
 //------------------------------------------------------------------------------
-/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \brief Builds a UGrid of square quads with points at 1 spacing.
 /// \param[in] a_rows number of rows in UGrid
 /// \param[in] a_cols number of columns in UGrid
 /// \param[in] a_origin location where the UGrid begins (min x, min y, min z)
@@ -3928,7 +4017,7 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, con
   return XmUGrid::New(points, cells);
 } // TEST_XmUBuildQuadUGrid
 //------------------------------------------------------------------------------
-/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \brief Builds a UGrid of square hexahedrons with points at 1 spacing.
 /// \param[in] a_rows number of rows in UGrid
 /// \param[in] a_cols number of columns in UGrid
 /// \param[in] a_lays number of layers in UGrid
@@ -3940,6 +4029,84 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_col
   return TEST_XmUBuildHexahedronUgrid(a_rows, a_cols, a_lays, origin);
 } // TEST_XmUBuildHexahedronUgrid
 //------------------------------------------------------------------------------
+/// \brief Builds a UGrid of square hexahedrons with points at 1 spacing.
+/// \param[in] a_pointRows Number of point rows in UGrid.
+/// \param[in] a_pointColumns Number of point columns in UGrid.
+/// \param[in] a_pointLayers Number of point layers in UGrid
+/// \param[in] a_origin Location of minimum point (min x, min y, min z).
+/// \param[in] a_increasingDown Cells start at the top layer and go down.
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildDirectedHexahedronUgrid(int a_pointRows,
+                                                                   int a_pointColumns,
+                                                                   int a_pointLayers,
+                                                                   const xms::Pt3d& a_origin,
+                                                                   bool a_increasingDown)
+{
+  VecPt3d points;
+  points.reserve(a_pointRows * a_pointColumns);
+  for (int k = 0; k < a_pointLayers; ++k)
+  {
+    for (int i = 0; i < a_pointRows; ++i)
+    {
+      for (int j = 0; j < a_pointColumns; ++j)
+      {
+        double x = j + a_origin.x;
+        double y = a_pointRows - i - 1 + a_origin.y;
+        double z;
+        if (a_increasingDown)
+          z = a_pointLayers - k - 1 + a_origin.z;
+        else
+          z = k + a_origin.z;
+        points.push_back(Pt3d(x, y, z));
+      }
+    }
+  }
+
+  VecInt cells;
+  cells.reserve((a_pointRows - 1) * (a_pointColumns - 1) * (a_pointLayers - 1) * 10);
+  int numInLayer = a_pointRows * a_pointColumns;
+  for (int k = 0; k < a_pointLayers - 1; ++k)
+  {
+    int layOffset = numInLayer * k;
+    for (int i = 0; i < a_pointRows - 1; ++i)
+    {
+      for (int j = 0; j < a_pointColumns - 1; ++j)
+      {
+        cells.push_back(XMU_HEXAHEDRON);
+        cells.push_back(8);
+        if (a_increasingDown)
+        {
+          // top face counterclockwise looking down
+          cells.push_back(j + a_pointColumns * i + layOffset);
+          cells.push_back(j + 1 + a_pointColumns * i + layOffset);
+          cells.push_back(j + 1 + a_pointColumns * (i + 1) + layOffset);
+          cells.push_back(j + a_pointColumns * (i + 1) + layOffset);
+          // bottom face counterclockwise looking down
+          cells.push_back(j + a_pointColumns * i + layOffset + numInLayer);
+          cells.push_back(j + 1 + a_pointColumns * i + layOffset + numInLayer);
+          cells.push_back(j + 1 + a_pointColumns * (i + 1) + layOffset + numInLayer);
+          cells.push_back(j + a_pointColumns * (i + 1) + layOffset + numInLayer);
+        }
+        else
+        {
+          // top face counterclockwise looking down
+          cells.push_back(j + a_pointColumns * i + layOffset + numInLayer);
+          cells.push_back(j + 1 + a_pointColumns * i + layOffset + numInLayer);
+          cells.push_back(j + 1 + a_pointColumns * (i + 1) + layOffset + numInLayer);
+          cells.push_back(j + a_pointColumns * (i + 1) + layOffset + numInLayer);
+          // bottom face counterclockwise looking down
+          cells.push_back(j + a_pointColumns * i + layOffset);
+          cells.push_back(j + 1 + a_pointColumns * i + layOffset);
+          cells.push_back(j + 1 + a_pointColumns * (i + 1) + layOffset);
+          cells.push_back(j + a_pointColumns * (i + 1) + layOffset);
+        }
+      }
+    }
+  }
+  return XmUGrid::New(points, cells);
+} // TEST_XmUBuildHexahedronUgrid
+//------------------------------------------------------------------------------
 /// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
 /// \param[in] a_rows number of rows in UGrid
 /// \param[in] a_cols number of columns in UGrid
@@ -3948,51 +4115,27 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_col
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
 std::shared_ptr<xms::XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
-                                                int a_cols,
-                                                int a_lays,
-                                                const xms::Pt3d& a_origin)
+                                                           int a_cols,
+                                                           int a_lays,
+                                                           const xms::Pt3d& a_origin)
 {
-  VecPt3d points;
-  points.reserve(a_rows * a_cols);
-  for (int k = 0; k < a_lays; ++k)
-  {
-    for (int i = 0; i < a_rows; ++i)
-    {
-      for (int j = 0; j < a_cols; ++j)
-      {
-        points.push_back(
-          Pt3d(j + a_origin.x, a_rows - i - 1 + a_origin.y, a_lays - k - 1 + a_origin.z));
-      }
-    }
-  }
-
-  VecInt cells;
-  cells.reserve((a_rows - 1) * (a_cols - 1) * (a_lays - 1) * 10);
-  int numInLayer = a_rows * a_cols;
-  for (int k = 0; k < a_lays - 1; ++k)
-  {
-    int layOffset = numInLayer * k;
-    for (int i = 0; i < a_rows - 1; ++i)
-    {
-      for (int j = 0; j < a_cols - 1; ++j)
-      {
-        cells.push_back(XMU_HEXAHEDRON);
-        cells.push_back(8);
-
-        cells.push_back(j + a_cols * i + layOffset);
-        cells.push_back(j + 1 + a_cols * i + layOffset);
-        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset);
-        cells.push_back(j + a_cols * (i + 1) + layOffset);
-
-        cells.push_back(j + a_cols * i + layOffset + numInLayer);
-        cells.push_back(j + 1 + a_cols * i + layOffset + numInLayer);
-        cells.push_back(j + 1 + a_cols * (i + 1) + layOffset + numInLayer);
-        cells.push_back(j + a_cols * (i + 1) + layOffset + numInLayer);
-      }
-    }
-  }
-  return XmUGrid::New(points, cells);
+  return TEST_XmUBuildDirectedHexahedronUgrid(a_rows, a_cols, a_lays, a_origin, true);
 } // TEST_XmUBuildHexahedronUgrid
+//------------------------------------------------------------------------------
+/// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
+/// \param[in] a_rows number of rows in UGrid
+/// \param[in] a_cols number of columns in UGrid
+/// \param[in] a_lays number of layers in UGrid
+/// \param[in] a_origin locatGetPointLocation UGrid begins (min x, min y, min z)
+/// \return Returns the UGrid.
+//------------------------------------------------------------------------------
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildIncreasingUpHexahedronUgrid(int a_rows,
+                                                                       int a_cols,
+                                                                       int a_lays,
+                                                                       const xms::Pt3d& a_origin)
+{
+  return TEST_XmUBuildDirectedHexahedronUgrid(a_rows, a_cols, a_lays, a_origin, false);
+} // TEST_XmUBuildIncreasingUpHexahedronUgrid
 //------------------------------------------------------------------------------
 /// \brief Builds a UGrid of Quads at 1 spacing for rows & cols specified
 /// \param[in] a_rows number of rows in UGrid
@@ -4014,9 +4157,9 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_col
 /// \return Returns the UGrid.
 //------------------------------------------------------------------------------
 std::shared_ptr<xms::XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
-                                                int a_cols,
-                                                int a_lays,
-                                                const xms::Pt3d& a_origin)
+                                                           int a_cols,
+                                                           int a_lays,
+                                                           const xms::Pt3d& a_origin)
 {
   VecPt3d points;
   points.reserve(a_rows * a_cols);
@@ -4123,6 +4266,7 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
 //------------------------------------------------------------------------------
 #include <xmsgrid/ugrid/XmUGrid.t.h>
 
+#include <numeric>
 #include <xmscore/testing/TestTools.h>
 
 using namespace xms;
@@ -5627,7 +5771,7 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
 
   VecInt expectedFaceOrientations = {
     // Tetra
-    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM,
+    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM,
     // Voxel
     XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
@@ -5638,10 +5782,10 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
     XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP,
     // Wedge
-    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
+    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
     XMU_ORIENTATION_SIDE,
     // Pyramid
-    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP, XMU_ORIENTATION_TOP,
+    XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_TOP,
     XMU_ORIENTATION_SIDE};
 
   TS_ASSERT_EQUALS(expectedFaceOrientations, faceOrientations);
@@ -5652,20 +5796,38 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()
 {
-  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 2, 2, Pt3d());
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 0));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 3));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 4));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
-  xmUGrid = TEST_XmUBuildPolyhedronUgrid(2, 2, 2, Pt3d());
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 0));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 3));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 4));
-  TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
+  std::vector<std::shared_ptr<XmUGrid>> grids;
+
+  // hexahedron grid with unknown (actually down) cell ordering
+  std::shared_ptr<XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(4, 4, 4, Pt3d());
+  grids.push_back(grid);
+
+  // hexahedron grid with unknown (actually up) cell ordering
+  grid = TEST_XmUBuildIncreasingUpHexahedronUgrid(4, 4, 4, Pt3d());
+  grids.push_back(grid);
+
+  // hexahedron grid with increasing down cell ordering
+  grid = TEST_XmUBuildHexahedronUgrid(4, 4, 4, Pt3d());
+  grid->SetCellOrdering(xms::XMU_CELL_ORDER_INCREASING_DOWN);
+  grids.push_back(grid);
+
+  // hexahedron grid with increasing up cell ordering
+  grid = TEST_XmUBuildIncreasingUpHexahedronUgrid(4, 4, 4, Pt3d());
+  grid->SetCellOrdering(xms::XMU_CELL_ORDER_INCREASING_UP);
+  grids.push_back(grid);
+
+  for (auto xmUGrid : grids)
+  {
+    for (int cellIdx = 0; cellIdx < xmUGrid->GetCellCount(); ++cellIdx)
+    {
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 0));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 3));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 4));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
+    }
+  }
 } // XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons
 //------------------------------------------------------------------------------
 /// \brief Test face orientation for concave cell where a triangle from the
@@ -5720,6 +5882,56 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationConcaveCell()
                      XMU_ORIENTATION_SIDE};
   TS_ASSERT_EQUALS(expected, actual);
 } // XmUGridUnitTests::testFaceOrientationConcaveCell
+//------------------------------------------------------------------------------
+/// \brief Test calculate cell numbering for an increasing up grid.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCellNumberingOneCell()
+{
+  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 2, 2, Pt3d());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrdering())
+} // XmUGridUnitTests::testGetCellNumberingOneCell
+//------------------------------------------------------------------------------
+/// \brief Test calculate cell numbering for an increasing down grid.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testCalculateCellNumberingIncreasingDown()
+{
+  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(3, 2, 3, Pt3d());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->CalculateCellOrdering())
+} // XmUGridUnitTests::testCalculateCellNumberingIncreasingDown
+//------------------------------------------------------------------------------
+/// \brief Test calculate cell numbering for an increasing up grid.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testCalculateCellNumberingIncreasingUp()
+{
+  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildIncreasingUpHexahedronUgrid(3, 2, 3, Pt3d());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_UP, xmUGrid->CalculateCellOrdering())
+} // XmUGridUnitTests::testCalculateCellNumberingIncreasingUp
+//------------------------------------------------------------------------------
+/// \brief Test calculate cell numbering for an increasing up grid.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testCalculateCellNumberingMixed()
+{
+  std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildIncreasingUpHexahedronUgrid(4, 2, 3, Pt3d());
+  // make a UGrid with first and last cells exchanged
+  VecInt cellOrder(xmUGrid->GetCellCount(), 0);
+  std::iota(cellOrder.begin(), cellOrder.end(), 0);
+  cellOrder.front() = cellOrder.back();
+  cellOrder.back() = 0;
+  VecPt3d locations = xmUGrid->GetLocations();
+  VecInt cellstream;
+  for (int cellIdx = 0; cellIdx < xmUGrid->GetCellCount(); ++cellIdx)
+  {
+    VecInt cellCellstream;
+    xmUGrid->GetCellCellstream(cellOrder[cellIdx], cellCellstream);
+    cellstream.insert(cellstream.begin(), cellCellstream.begin(), cellCellstream.end());
+  }
+  xmUGrid = XmUGrid::New(locations, cellstream);
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrdering());
+} // XmUGridUnitTests::testCalculateCellNumberingMixed
 //------------------------------------------------------------------------------
 /// \brief Test caching to speed up a few 3D cell getters.
 //------------------------------------------------------------------------------
@@ -5783,7 +5995,7 @@ void XmUGridUnitTests::testCell3dFunctionCaching()
 //------------------------------------------------------------------------------
 /// \brief Tests creating a large UGrid and checks the time spent.
 //------------------------------------------------------------------------------
-//#define SPEEDTEST
+// #define SPEEDTEST
 #ifdef SPEEDTEST
 #include <boost/timer/timer.hpp>
 #endif
