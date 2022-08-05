@@ -229,6 +229,18 @@ void initXmUGrid(py::module &m) {
             bool ret_val = self.GetCellCellstream(cell_idx, cellstream);
             return py::make_tuple(ret_val, xms::PyIterFromVecInt(cellstream));
         }, py::arg("cell_idx"));
+    // ---------------------------------------------------------------------------
+    // function: GetCellOrdering
+    // ---------------------------------------------------------------------------
+    xmUg.def("GetCellOrdering", &xms::XmUGrid::GetCellOrdering);
+    // ---------------------------------------------------------------------------
+    // function: SetCellOrdering
+    // ---------------------------------------------------------------------------
+    xmUg.def("SetCellOrdering", &xms::XmUGrid::SetCellOrdering);
+    // ---------------------------------------------------------------------------
+    // function: CalculateCellOrdering
+    // ---------------------------------------------------------------------------
+    xmUg.def("CalculateCellOrdering", &xms::XmUGrid::CalculateCellOrdering);
   // ---------------------------------------------------------------------------
   // function: GetCellAdjacentCells
   // ---------------------------------------------------------------------------
@@ -425,6 +437,17 @@ void initXmUGrid(py::module &m) {
         .value("NUMBER_OF_CELL_TYPES",
             xms::XmUGridCellType::XMU_NUMBER_OF_CELL_TYPES)
         .export_values();
+
+    // UGrid CellOrdering
+    py::enum_<xms::XmUGridCellOrdering>(xmUg, "ugrid_cell_ordering_enum",
+                                        "ugrid_cell_ordering_enum for XmUGrid class")
+      .value("CELL_ORDER_UNKNOWN",
+             xms::XmUGridCellOrdering::XMU_CELL_ORDER_UNKNOWN)
+      .value("CELL_ORDER_INCREASING_DOWN",
+             xms::XmUGridCellOrdering::XMU_CELL_ORDER_INCREASING_DOWN)
+      .value("CELL_ORDER_INCREASING_UP",
+             xms::XmUGridCellOrdering::XMU_CELL_ORDER_INCREASING_UP)
+      .export_values();
 
     // UGrid FaceOrientation
     py::enum_<xms::XmUGridFaceOrientation>(xmUg, "ugrid_faceorientation_enum",

@@ -12,7 +12,7 @@ set(PYTHON_TARGET_VERSION 3.10 CACHE STRING "Version of python to link to for py
 set(CONDA_PREFIX "" CACHE PATH "Path to the conda environment used to build.")
 set(IS_PYTHON_BUILD NO CACHE BOOL "Set this if you want to build the python bindings.")
 set(XMS_TEST_PATH ${PROJECT_SOURCE_DIR}/test_files/ CACHE PATH "Path to test files for testing")
-set(XMS_VERSION "\"99.99.99\"" CACHE STRING "Library Version")
+set(XMS_VERSION "99.99.99" CACHE STRING "Library Version")
 
 if (APPLE OR WIN32 OR IS_EMSCRIPTEN_BUILD)
     # Target C++17 on MacOS and Windows. If building with version of Visual Studio without

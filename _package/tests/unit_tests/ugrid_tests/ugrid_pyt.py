@@ -4,8 +4,8 @@ import unittest
 from xms.grid.ugrid import UGrid
 
 
-class TestUGridPointFunctions(unittest.TestCase):
-    """UGrid Point Functions tests."""
+class TestUGrid(unittest.TestCase):
+    """UGrid tests."""
 
     @staticmethod
     def get_simple_quad_ugrid():
@@ -76,13 +76,13 @@ class TestUGridPointFunctions(unittest.TestCase):
                     cells[curr_id] = UGrid.cell_type_enum.HEXAHEDRON
                     cells[curr_id + 1] = 8
                     cells[curr_id + 2] = j + cols * i + lay_offset
-                    cells[curr_id + 3] = j + cols * (i + 1) + lay_offset
+                    cells[curr_id + 3] = j + 1 + cols * i + lay_offset
                     cells[curr_id + 4] = j + 1 + cols * (i + 1) + lay_offset
-                    cells[curr_id + 5] = j + 1 + cols * i + lay_offset
+                    cells[curr_id + 5] = j + cols * (i + 1) + lay_offset
                     cells[curr_id + 6] = j + cols * i + lay_offset + num_in_layer
-                    cells[curr_id + 7] = j + cols * (i + 1) + lay_offset + num_in_layer
+                    cells[curr_id + 7] = j + 1 + cols * i + lay_offset + num_in_layer
                     cells[curr_id + 8] = j + 1 + cols * (i + 1) + lay_offset + num_in_layer
-                    cells[curr_id + 9] = j + 1 + cols * i + lay_offset + num_in_layer
+                    cells[curr_id + 9] = j + cols * (i + 1) + lay_offset + num_in_layer
                     curr_id += 10
         xu = UGrid(points, cells)
         return xu
@@ -803,28 +803,25 @@ class TestUGridPointFunctions(unittest.TestCase):
     def test_get_cell_3d_face_adjacent_cell(self):
         """Test getting 3D cell face adjacent cells."""
         xuhex = self.get_hexahedron_ugrid(3, 2, 2, (0, 0, 0))
-        expected_neighbor = [-1, 1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1]
+        expected_neighbor = [-1, -1, -1, 1, -1, -1, -1, -1, 0, -1, -1, -1]
         self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(-1, 0))
         self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(0, -1))
-        curr_id = 0
+        neighbor = []
         for i in range(0, xuhex.cell_count):
             for j in range(0, xuhex.get_cell_3d_face_count(i)):
-                neighbor_cell = xuhex.get_cell_3d_face_adjacent_cell(i, j)
-                self.assertEqual(expected_neighbor[curr_id], neighbor_cell)
-                curr_id += 1
+                neighbor.append(xuhex.get_cell_3d_face_adjacent_cell(i, j))
+        self.assertEqual(expected_neighbor, neighbor)
         self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(xuhex.cell_count, 0))
         self.assertEqual(-1, xuhex.get_cell_3d_face_adjacent_cell(0, xuhex.cell_count))
 
         xuhex = self.get_hexahedron_ugrid(3, 3, 3, (0, 0, 0))
-        expected_neighbor = [-1, 2, -1, 1, -1, 4, -1, 3, 0, -1, -1, 5, 0, -1, -1, 3, -1, 6, 1, -1, 2, -1,
-                             -1, 7, -1, 6, -1, 5, 0, -1, -1, 7, 4, -1, 1, -1, 4, -1, -1, 7, 2, -1, 5, -1,
-                             6, -1, 3, -1]
-        curr_id = 0
+        expected_neighbor = [-1, 1, -1, 2, -1, 4, 0, -1, -1, 3, -1, 5, -1, 3, 0, -1, -1, 6, 2, -1, 1, -1, -1, 7, -1, 5,
+                             -1, 6, 0, -1, 4, -1, -1, 7, 1, -1, -1, 7, 4, -1, 2, -1, 6, -1, 5, -1, 3, -1]
+        neighbor = []
         for i in range(0, xuhex.cell_count):
             for j in range(0, xuhex.get_cell_3d_face_count(i)):
-                neighbor_cell = xuhex.get_cell_3d_face_adjacent_cell(i, j)
-                self.assertEqual(expected_neighbor[curr_id], neighbor_cell)
-                curr_id += 1
+                neighbor.append(xuhex.get_cell_3d_face_adjacent_cell(i, j))
+        self.assertEqual(expected_neighbor, neighbor)
 
     def test_is_valid_point_change(self):
         """Test point change validation."""
@@ -915,7 +912,7 @@ class TestUGridPointFunctions(unittest.TestCase):
             for face_idx in range(0, ugrid3d.get_cell_3d_face_count(cell_idx)):
                 orientation.append(ugrid3d.get_cell_3d_face_orientation(cell_idx, face_idx))
 
-        expected_orientation = [UGrid.face_orientation_enum.ORIENTATION_BOTTOM,  # Tetra
+        expected_orientation = [UGrid.face_orientation_enum.ORIENTATION_SIDE,  # Tetra
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
@@ -941,14 +938,14 @@ class TestUGridPointFunctions(unittest.TestCase):
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
                                 # Wedge
-                                UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 # Pyramid
                                 UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
-                                UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
+                                UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE]
@@ -1009,68 +1006,82 @@ class TestUGridPointFunctions(unittest.TestCase):
         """Test 3D cell function caching."""
         ugrid = self.get_hexahedron_ugrid(2, 3, 2, (0, 0, 0))
 
-        expected_neighbors = ((-1, -1, -1, 1, -1, -1),
-                              (-1, -1, 0, -1, -1, -1))
+        expected_neighbors = [[-1, 1, -1, -1, -1, -1],
+                              [0, -1, -1, -1, -1, -1]]
         expected_orientations = ((UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
-                                  UGrid.face_orientation_enum.ORIENTATION_TOP),
+                                  UGrid.face_orientation_enum.ORIENTATION_TOP,
+                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM),
                                  (UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
-                                  UGrid.face_orientation_enum.ORIENTATION_TOP))
+                                  UGrid.face_orientation_enum.ORIENTATION_TOP,
+                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM))
 
         # test four times, to fill the cache, read from the cache, turn off the cache,
         # and turn on the cache
         use_cache_values = (True, True, False, True)
         for i in range(0, 4):
             ugrid.use_cache(use_cache_values[i])
+            neighbors = []
             for cell_idx in range(0, ugrid.cell_count):
                 self.assertEqual(6, ugrid.get_cell_3d_face_count(cell_idx))
+                cell_neighbors = []
                 for face_idx in range(0, ugrid.get_cell_3d_face_count(cell_idx)):
-                    neighbor = ugrid.get_cell_3d_face_adjacent_cell(cell_idx, face_idx)
-                    self.assertEqual(expected_neighbors[cell_idx][face_idx], neighbor)
+                    cell_neighbors.append(ugrid.get_cell_3d_face_adjacent_cell(cell_idx, face_idx))
                     orientation = ugrid.get_cell_3d_face_orientation(cell_idx, face_idx)
                     self.assertEqual(expected_orientations[cell_idx][face_idx], orientation)
+                neighbors.append(cell_neighbors)
+            self.assertEqual(expected_neighbors, neighbors)
 
         # change to different points and cells and test again
-        expected_neighbors = ((-1, -1, -1, 1, -1, -1),
-                              (-1, -1, 0, 2, -1, -1),
-                              (-1, -1, 1, -1, -1, -1))
+        expected_neighbors = [[-1, 1, -1, -1, -1, -1],
+                              [0, 2, -1, -1, -1, -1],
+                              [1, -1, -1, -1, -1, -1]]
         expected_orientations = ((UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
-                                  UGrid.face_orientation_enum.ORIENTATION_TOP),
+                                  UGrid.face_orientation_enum.ORIENTATION_TOP,
+                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM),
                                  (UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
-                                  UGrid.face_orientation_enum.ORIENTATION_TOP),
+                                  UGrid.face_orientation_enum.ORIENTATION_TOP,
+                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM),
                                  (UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                   UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
-                                  UGrid.face_orientation_enum.ORIENTATION_TOP))
+                                  UGrid.face_orientation_enum.ORIENTATION_TOP,
+                                  UGrid.face_orientation_enum.ORIENTATION_BOTTOM))
         new_ugrid = self.get_hexahedron_ugrid(2, 4, 2, (0, 0, 0))
         ugrid.locations = new_ugrid.locations
         ugrid.cellstream = new_ugrid.cellstream
         for i in range(0, 4):
             ugrid.use_cache(use_cache_values[i])
+            neighbors = []
             for cell_idx in range(0, ugrid.cell_count):
                 self.assertEqual(6, ugrid.get_cell_3d_face_count(cell_idx))
+                cell_neighbors = []
                 for face_idx in range(0, ugrid.get_cell_3d_face_count(cell_idx)):
-                    neighbor = ugrid.get_cell_3d_face_adjacent_cell(cell_idx, face_idx)
-                    self.assertEqual(expected_neighbors[cell_idx][face_idx], neighbor)
+                    cell_neighbors.append(ugrid.get_cell_3d_face_adjacent_cell(cell_idx, face_idx))
                     orientation = ugrid.get_cell_3d_face_orientation(cell_idx, face_idx)
                     self.assertEqual(expected_orientations[cell_idx][face_idx], orientation)
+                neighbors.append(cell_neighbors)
+            self.assertEqual(expected_neighbors, neighbors)
+
+    def test_cell_ordering(self):
+        """Test cell ordering bindings."""
+        ugrid = self.get_hexahedron_ugrid(4, 3, 3, (0, 0, 0))
+        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_UNKNOWN, ugrid.get_cell_ordering())
+        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_DOWN, ugrid.calculate_cell_ordering())
+        ugrid.set_cell_ordering(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP)
+        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP, ugrid.get_cell_ordering())
 
 
 class TestUGridCellTypeEnum(unittest.TestCase):
@@ -1167,6 +1178,20 @@ class TestUGridCellTypeEnum(unittest.TestCase):
         self.assertEqual("ugrid_celltype_enum.NUMBER_OF_CELL_TYPES",
                          str(UGrid.cell_type_enum.NUMBER_OF_CELL_TYPES))
         self.assertEqual(51, len(UGrid.cell_type_enum.__members__))
+
+
+class TestUGridCellOrderingEnum(unittest.TestCase):
+    """CellOrdering enum tests."""
+
+    def test_ugrid_cell_ordering_enum(self):
+        """Test the UGrid CellOrdering enum."""
+        from xms.grid.ugrid import UGrid
+        self.assertEqual("ugrid_cell_ordering_enum.CELL_ORDER_UNKNOWN",
+                         str(UGrid.cell_ordering_enum.CELL_ORDER_UNKNOWN))
+        self.assertEqual("ugrid_cell_ordering_enum.CELL_ORDER_INCREASING_DOWN",
+                         str(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_DOWN))
+        self.assertEqual("ugrid_cell_ordering_enum.CELL_ORDER_INCREASING_UP",
+                         str(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP))
 
 
 class TestUGridFaceOrientationEnum(unittest.TestCase):
