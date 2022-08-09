@@ -231,9 +231,9 @@ private:
   mutable VecInt m_cellFaceOffset;  ///< Cache for offset to m_faceOrientation and m_faceNeighbor
   mutable VecInt m_faceOrientation; ///< For vertically prismatic cell is face top, side, bottom
   mutable VecInt m_faceNeighbor;    ///< Cache for Face neighbor
-  mutable VecInt m_cellDimensionCounts;                        ///< Cache for cell dimension counts
-  XmUGridCellOrdering m_cellOrdering = XMU_CELL_ORDER_UNKNOWN; ///< Cell ordering. When known speeds
-                                                               ///< up face orientation calculation.
+  mutable VecInt m_cellDimensionCounts; ///< Cache for cell dimension counts
+  XmUGridCellOrdering m_cellOrdering = XMU_CELL_ORDER_INCREASING_DOWN; ///< Cell ordering. When known speeds
+                                                                       ///< up face orientation calculation.
 };
 
 //----- Internal functions -----------------------------------------------------
@@ -5802,10 +5802,6 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()
   std::shared_ptr<XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(4, 4, 4, Pt3d());
   grids.push_back(grid);
 
-  // hexahedron grid with unknown (actually up) cell ordering
-  grid = TEST_XmUBuildIncreasingUpHexahedronUgrid(4, 4, 4, Pt3d());
-  grids.push_back(grid);
-
   // hexahedron grid with increasing down cell ordering
   grid = TEST_XmUBuildHexahedronUgrid(4, 4, 4, Pt3d());
   grid->SetCellOrdering(xms::XMU_CELL_ORDER_INCREASING_DOWN);
@@ -5820,12 +5816,12 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()
   {
     for (int cellIdx = 0; cellIdx < xmUGrid->GetCellCount(); ++cellIdx)
     {
-      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 0));
-      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 1));
-      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 2));
-      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(0, 3));
-      TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(0, 4));
-      TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(0, 5));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(cellIdx, 0));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(cellIdx, 1));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(cellIdx, 2));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_SIDE, xmUGrid->GetCell3dFaceOrientation(cellIdx, 3));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_TOP, xmUGrid->GetCell3dFaceOrientation(cellIdx, 4));
+      TS_ASSERT_EQUALS(XMU_ORIENTATION_BOTTOM, xmUGrid->GetCell3dFaceOrientation(cellIdx, 5));
     }
   }
 } // XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons
@@ -5888,7 +5884,7 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationConcaveCell()
 void XmUGridUnitTests::testGetCellNumberingOneCell()
 {
   std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 2, 2, Pt3d());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
   TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrdering())
 } // XmUGridUnitTests::testGetCellNumberingOneCell
 //------------------------------------------------------------------------------
@@ -5897,7 +5893,7 @@ void XmUGridUnitTests::testGetCellNumberingOneCell()
 void XmUGridUnitTests::testCalculateCellNumberingIncreasingDown()
 {
   std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(3, 2, 3, Pt3d());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
   TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->CalculateCellOrdering())
 } // XmUGridUnitTests::testCalculateCellNumberingIncreasingDown
 //------------------------------------------------------------------------------
@@ -5906,7 +5902,8 @@ void XmUGridUnitTests::testCalculateCellNumberingIncreasingDown()
 void XmUGridUnitTests::testCalculateCellNumberingIncreasingUp()
 {
   std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildIncreasingUpHexahedronUgrid(3, 2, 3, Pt3d());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
+  xmUGrid->SetCellOrdering(xms::XMU_CELL_ORDER_UNKNOWN);
   TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_UP, xmUGrid->CalculateCellOrdering())
 } // XmUGridUnitTests::testCalculateCellNumberingIncreasingUp
 //------------------------------------------------------------------------------
@@ -5929,7 +5926,8 @@ void XmUGridUnitTests::testCalculateCellNumberingMixed()
     cellstream.insert(cellstream.begin(), cellCellstream.begin(), cellCellstream.end());
   }
   xmUGrid = XmUGrid::New(locations, cellstream);
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
+  xmUGrid->SetCellOrdering(xms::XMU_CELL_ORDER_UNKNOWN);
   TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrdering());
 } // XmUGridUnitTests::testCalculateCellNumberingMixed
 //------------------------------------------------------------------------------
