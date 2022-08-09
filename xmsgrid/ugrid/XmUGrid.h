@@ -228,14 +228,18 @@ std::shared_ptr<XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols);
 std::shared_ptr<XmUGrid> TEST_XmUBuildQuadUGrid(int a_rows, int a_cols, const xms::Pt3d& a_origin);
 std::shared_ptr<XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows, int a_cols, int a_lays);
 std::shared_ptr<XmUGrid> TEST_XmUBuildHexahedronUgrid(int a_rows,
-                                                int a_cols,
-                                                int a_lays,
-                                                const xms::Pt3d& a_origin);
+                                                      int a_cols,
+                                                      int a_lays,
+                                                      const xms::Pt3d& a_origin);
+std::shared_ptr<xms::XmUGrid> TEST_XmUBuildIncreasingUpHexahedronUgrid(int a_rows,
+                                                                       int a_cols,
+                                                                       int a_lays,
+                                                                       const xms::Pt3d& a_origin);
 std::shared_ptr<XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows, int a_cols, int a_lays);
 std::shared_ptr<XmUGrid> TEST_XmUBuildPolyhedronUgrid(int a_rows,
-                                                int a_cols,
-                                                int a_lays,
-                                                const xms::Pt3d& a_origin);
+                                                      int a_cols,
+                                                      int a_lays,
+                                                      const xms::Pt3d& a_origin);
 std::shared_ptr<XmUGrid> TEST_XmUBuild3DChevronUgrid();
 
 } // namespace xms

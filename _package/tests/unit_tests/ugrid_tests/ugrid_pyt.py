@@ -1078,7 +1078,8 @@ class TestUGrid(unittest.TestCase):
     def test_cell_ordering(self):
         """Test cell ordering bindings."""
         ugrid = self.get_hexahedron_ugrid(4, 3, 3, (0, 0, 0))
-        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_UNKNOWN, ugrid.get_cell_ordering())
+        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_DOWN, ugrid.get_cell_ordering())
+        ugrid.set_cell_ordering(UGrid.cell_ordering_enum.CELL_ORDER_UNKNOWN)
         self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_DOWN, ugrid.calculate_cell_ordering())
         ugrid.set_cell_ordering(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP)
         self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP, ugrid.get_cell_ordering())
