@@ -100,7 +100,7 @@ enum XmUGridCellType {
 
 };
 
-/// Order of cells in a UGrid
+/// Order of cells in a layered 3D UGrid
 enum XmUGridCellOrdering {
   XMU_CELL_ORDER_UNKNOWN = -1,
   XMU_CELL_ORDER_INCREASING_DOWN = 0,
