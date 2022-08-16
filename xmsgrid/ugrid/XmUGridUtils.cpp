@@ -441,18 +441,18 @@ bool iReadCellsVersion1(DaStreamReader& a_reader, VecInt& cellstream)
 //------------------------------------------------------------------------------
 /// \brief Read the cells for a version 1 XmUGrid file.
 /// \param a_reader The stream reader.
-/// \param cellstream The resulting cell stream.
+/// \param a_cellstream The resulting cell stream.
 /// \return True on success.
 //------------------------------------------------------------------------------
-bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& cellstream)
+bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& a_cellstream)
 {
   int cellStreamSize;
   if (!iReadCellStreamSizeVersion2(a_reader, cellStreamSize))
     return false;
 
-  cellstream.reserve(cellStreamSize);
+  a_cellstream.reserve(cellStreamSize);
   int cellIdx = 0;
-  while ((int)cellstream.size() < cellStreamSize)
+  while ((int)a_cellstream.size() < cellStreamSize)
   {
     std::string cardName;
     a_reader.ReadString(cardName);
@@ -466,7 +466,7 @@ bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& cellstream)
     if (!iReadCellLineVersion2(a_reader, cellIdx, cellType))
       return false;
 
-    if (!iReadCellStreamVersion2(a_reader, cellType, cellstream))
+    if (!iReadCellStreamVersion2(a_reader, cellType, a_cellstream))
       return false;
 
     a_reader.NextLine();
@@ -475,6 +475,29 @@ bool iReadCellsVersion2(DaStreamReader& a_reader, VecInt& cellstream)
 
   return true;
 } // iReadCellsVersion2
+
+//------------------------------------------------------------------------------
+/// \brief Read the cell order for a version 3 XmUGrid file.
+/// \param a_reader The stream reader.
+/// \param a_cellOrder The resulting cell order.
+/// \return True on success.
+//------------------------------------------------------------------------------
+bool iReadCellOrderVersion3(DaStreamReader& a_reader, XmUGridCellOrder& a_cellOrder)
+{
+  a_cellOrder = XMU_CELL_ORDER_UNKNOWN;
+  if (a_reader.LineBeginsWith("CELL_ORDER"))
+  {
+    std::string cellOrder;
+    a_reader.ReadStringLine("CELL_ORDER", cellOrder);
+    if (cellOrder == "INCREASING_DOWN")
+      a_cellOrder = XMU_CELL_ORDER_INCREASING_DOWN;
+    else if (cellOrder == "INCREASING_UP")
+      a_cellOrder = XMU_CELL_ORDER_INCREASING_UP;
+    else
+      return false;
+  }
+  return true;
+} // iReadCellOrderVersion3
 //------------------------------------------------------------------------------
 /// \brief Write XmUGrid cell stream as text.
 /// \param a_writer The stream writer.
@@ -536,6 +559,22 @@ void iWriteCellStream(DaStreamWriter& a_writer, const VecInt& a_cellstream)
   }
 } // iWriteCellStream
 //------------------------------------------------------------------------------
+/// \brief Write XmUGrid cell cell order.
+/// \param a_writer The stream writer.
+/// \param a_cellOrder The cell order.
+//------------------------------------------------------------------------------
+void iWriteCellOrder(DaStreamWriter& a_writer, XmUGridCellOrder a_cellOrder)
+{
+  if (a_cellOrder == XMU_CELL_ORDER_INCREASING_DOWN)
+  {
+    a_writer.WriteStringLine("CELL_ORDER", "INCREASING_DOWN");
+  }
+  else if (a_cellOrder == XMU_CELL_ORDER_INCREASING_UP)
+  {
+    a_writer.WriteStringLine("CELL_ORDER", "INCREASING_UP");
+  }
+} // iWriteCellOrder
+//------------------------------------------------------------------------------
 /// \brief Save an XmUGrid ASCII text to output stream.
 /// \param[in] a_ugrid the UGrid to save
 /// \param[in] a_outStream the stream to write
@@ -548,9 +587,9 @@ void iWriteUGridToStream(const XmUGrid& a_ugrid,
                          int a_blockSize = 32 * 1024)
 {
   if (a_binary)
-    a_outStream << "Binary XmUGrid Version 2\n";
+    a_outStream << "Binary XmUGrid Version 3\n";
   else
-    a_outStream << "ASCII XmUGrid Version 2\n";
+    a_outStream << "ASCII XmUGrid Version 3\n";
   DaStreamWriter writer(a_outStream, a_binary);
   writer.SetBinaryBlockSize(a_blockSize);
   writer.WriteVecPt3d("LOCATIONS", a_ugrid.GetLocations());
@@ -558,6 +597,7 @@ void iWriteUGridToStream(const XmUGrid& a_ugrid,
     writer.WriteVecInt("CELL_STREAM", a_ugrid.GetCellstream());
   else
     iWriteCellStream(writer, a_ugrid.GetCellstream());
+  iWriteCellOrder(writer, a_ugrid.GetCellOrder());
 } // iWriteUGridToStream
 
 } // namespace
@@ -601,14 +641,37 @@ std::shared_ptr<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
     VecInt cellstream;
     success = success && iReadCellsVersion1(reader, cellstream);
     if (success)
-      return XmUGrid::New(locations, cellstream);
+    {
+      std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(locations, cellstream);
+      VecInt dimensionCounts = ugrid->GetDimensionCounts();
+      if (dimensionCounts[3] > 0)
+        ugrid->SetCellOrder(XMU_CELL_ORDER_INCREASING_DOWN);
+      return ugrid;
+    }
   }
 
   bool binary;
+  int version = -1;
   if (versionString == "ASCII XmUGrid Version 2")
+  {
     binary = false;
+    version = 2;
+  }
   else if (versionString == "Binary XmUGrid Version 2")
+  {
     binary = true;
+    version = 2;
+  }
+  else if (versionString == "ASCII XmUGrid Version 3")
+  {
+    binary = false;
+    version = 3;
+  }
+  else if (versionString == "Binary XmUGrid Version 3")
+  {
+    binary = true;
+    version = 3;
+  }
   else
   {
     XM_LOG(xmlog::error, "Unsupported file version or file type.");
@@ -623,9 +686,18 @@ std::shared_ptr<XmUGrid> XmReadUGridFromStream(std::istream& a_inStream)
     success = success && reader.ReadVecInt("CELL_STREAM", cellstream);
   else
     success = success && iReadCellsVersion2(reader, cellstream);
+  XmUGridCellOrder cellOrder = XMU_CELL_ORDER_UNKNOWN;
+  if (version >= 3)
+  {
+    success = success && iReadCellOrderVersion3(reader, cellOrder);
+  }
 
   if (success)
-    return XmUGrid::New(locations, cellstream);
+  {
+    auto ugrid = XmUGrid::New(locations, cellstream);
+    ugrid->SetCellOrder(cellOrder);
+    return ugrid;
+  }
 
   return nullptr;
 } // XmReadUGridFromStream
@@ -911,7 +983,7 @@ void XmUGridUtilsTests::testWriteEmptyUGrid()
   XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
-    "ASCII XmUGrid Version 2\n"
+    "ASCII XmUGrid Version 3\n"
     "LOCATIONS 0\n"
     "CELL_STREAM 0\n";
   TS_ASSERT_EQUALS(outputBase, output.str());
@@ -926,7 +998,7 @@ void XmUGridUtilsTests::testWriteBasicUGrid()
   XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
-    "ASCII XmUGrid Version 2\n"
+    "ASCII XmUGrid Version 3\n"
     "LOCATIONS 3\n"
     "  POINT 0 0.0 0.0 0.0\n"
     "  POINT 1 20.0 0.0 0.0\n"
@@ -941,11 +1013,12 @@ void XmUGridUtilsTests::testWriteBasicUGrid()
 void XmUGridUtilsTests::testWritePolyhedronUGrid()
 {
   std::shared_ptr<XmUGrid> ugrid = TEST_XmUGridHexagonalPolyhedron();
+  ugrid->SetCellOrder(xms::XMU_CELL_ORDER_INCREASING_DOWN);
   std::ostringstream output;
   XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
-    "ASCII XmUGrid Version 2\n"
+    "ASCII XmUGrid Version 3\n"
     "LOCATIONS 8\n"
     "  POINT 0 0.0 0.0 10.0\n"
     "  POINT 1 10.0 0.0 10.0\n"
@@ -962,7 +1035,8 @@ void XmUGridUtilsTests::testWritePolyhedronUGrid()
     "    FACE 2 4 5 6 2 1\n"
     "    FACE 3 4 6 7 3 2\n"
     "    FACE 4 4 7 4 0 3\n"
-    "    FACE 5 4 4 7 6 5\n";
+    "    FACE 5 4 4 7 6 5\n"
+    "CELL_ORDER INCREASING_DOWN\n";
   TS_ASSERT_EQUALS(outputBase, output.str());
 } // XmUGridUtilsTests::testWritePolyhedronUGrid
 //------------------------------------------------------------------------------
@@ -976,7 +1050,7 @@ void XmUGridUtilsTests::testWriteLinear2dCells()
   XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
-    "ASCII XmUGrid Version 2\n"
+    "ASCII XmUGrid Version 3\n"
     "LOCATIONS 14\n"
     "  POINT 0 0.0 0.0 0.0\n"
     "  POINT 1 10.0 0.0 0.0\n"
@@ -1012,7 +1086,7 @@ void XmUGridUtilsTests::testWriteLinear3dCells()
   XmWriteUGridToStream(ugrid, output);
 
   std::string outputBase =
-    "ASCII XmUGrid Version 2\n"
+    "ASCII XmUGrid Version 3\n"
     "LOCATIONS 30\n"
     "  POINT 0 0.0 0.0 0.0\n"
     "  POINT 1 10.0 0.0 0.0\n"
@@ -1107,7 +1181,7 @@ void XmUGridUtilsTests::testReadBasicUGrid()
 void XmUGridUtilsTests::testReadPolyhedronUGrid()
 {
   std::string inputText =
-    "ASCII XmUGrid Version 2\n"
+    "ASCII XmUGrid Version 3\n"
     "LOCATIONS 8\n"
     "  POINT 0 0.0 0.0 10.0\n"
     "  POINT 1 10.0 0.0 10.0\n"
@@ -1124,7 +1198,8 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
     "    FACE 2 4 5 6 2 1\n"
     "    FACE 3 4 6 7 3 2\n"
     "    FACE 4 4 7 4 0 3\n"
-    "    FACE 5 4 4 7 6 5\n";
+    "    FACE 5 4 4 7 6 5\n"
+    "CELL_ORDER INCREASING_UP\n";
   std::istringstream input;
   input.str(inputText);
   std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
@@ -1133,6 +1208,7 @@ void XmUGridUtilsTests::testReadPolyhedronUGrid()
   std::shared_ptr<XmUGrid> ugridBase = TEST_XmUGridHexagonalPolyhedron();
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugrid->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugrid->GetCellstream());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_UP, ugrid->GetCellOrder());
 } // XmUGridUtilsTests::testReadPolyhedronUGrid
 //------------------------------------------------------------------------------
 /// \brief Test reading an ASCII file for a single triangle UGrid.
@@ -1149,7 +1225,7 @@ void XmUGridUtilsTests::testLinear2dWriteThenRead()
   std::istringstream input;
   input.str(output.str());
   std::shared_ptr<XmUGrid> ugridOut = XmReadUGridFromStream(input);
-
+  TS_REQUIRE_NOT_NULL(ugridOut);
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
 } // XmUGridUtilsTests::testLinear2dWriteThenRead
@@ -1172,6 +1248,28 @@ void XmUGridUtilsTests::testLinear3dWriteThenRead()
   TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
   TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
 } // XmUGridUtilsTests::testLinear3dWriteThenRead
+//------------------------------------------------------------------------------
+/// \brief Test reading an ASCII file for a single triangle UGrid.
+//------------------------------------------------------------------------------
+void XmUGridUtilsTests::testCellOrderWriteThenRead()
+{
+  std::shared_ptr<XmUGrid> ugridBase = TEST_XmUBuildHexahedronUgrid(3, 4, 5);
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, ugridBase->CalculateCellOrder());
+  ugridBase->SetCellOrder(XMU_CELL_ORDER_INCREASING_DOWN);
+
+  // write
+  std::ostringstream output;
+  XmWriteUGridToStream(ugridBase, output);
+
+  // read
+  std::istringstream input;
+  input.str(output.str());
+  std::shared_ptr<XmUGrid> ugridOut = XmReadUGridFromStream(input);
+
+  TS_ASSERT_EQUALS(ugridBase->GetLocations(), ugridOut->GetLocations());
+  TS_ASSERT_EQUALS(ugridBase->GetCellstream(), ugridOut->GetCellstream());
+  TS_ASSERT_EQUALS(ugridBase->GetCellOrder(), ugridOut->GetCellOrder());
+} // XmUGridUtilsTests::testCellOrderWriteThenRead
 //------------------------------------------------------------------------------
 /// \brief Test reading from file.
 //------------------------------------------------------------------------------
@@ -1285,7 +1383,7 @@ void XmUGridUtilsTests::testWriteThenReadUGridBinary()
   iWriteUGridToStream(*ugridOut, output, binary, 120);
 
   std::string outputBase =
-    "Binary XmUGrid Version 2\n"
+    "Binary XmUGrid Version 3\n"
     "LOCATIONS 30\n"
     "BINARY_BLOCK 34 120\n"
     "eAFjYMAHVBywy5rgELfDIe6CIQ4AXnwB2w\n"

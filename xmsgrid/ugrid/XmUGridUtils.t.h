@@ -32,6 +32,7 @@ public:
   void testReadPolyhedronUGrid();
   void testLinear2dWriteThenRead();
   void testLinear3dWriteThenRead();
+  void testCellOrderWriteThenRead();
   void testWriteThenReadUGridFile();
   void testWriteThenReadUGridFileToAscii();
   void testReadVersion1Dot0File();
