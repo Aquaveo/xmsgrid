@@ -239,12 +239,7 @@ private:
 //----- Internal functions -----------------------------------------------------
 namespace
 {
-const char* CELLSTREAM_OFFSETS = "CELLSTREAM_OFFSETS";
-const char* POINTS_TO_CELLS = "POINTS_TO_CELLS";
-const char* POINTS_TO_CELLS_OFFSETS = "POINTS_TO_CELLS_OFFSETS";
-
 typedef std::vector<XmEdge> VecEdge; ///< A Vector of XmEdges.
-
 constexpr int BAD_CELL_STREAM = -1;
 
 //------------------------------------------------------------------------------
