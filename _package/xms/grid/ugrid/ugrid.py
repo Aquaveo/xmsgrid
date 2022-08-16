@@ -6,7 +6,7 @@ class UGrid(object):
     """Class for representing unstructured grid geometries."""
 
     cell_type_enum = XmUGrid.ugrid_celltype_enum
-    cell_ordering_enum = XmUGrid.ugrid_cell_ordering_enum
+    cell_order_enum = XmUGrid.ugrid_cell_order_enum
     face_orientation_enum = XmUGrid.ugrid_faceorientation_enum
 
     def __init__(self, points=None, cellstream=None, **kwargs):
@@ -296,29 +296,29 @@ class UGrid(object):
         """
         return self._instance.GetCellCellstream(cell_idx)
 
-    def get_cell_ordering(self):
-        """Get UGrid cell ordering.
+    def get_cell_order(self):
+        """Get UGrid cell order.
 
         Returns:
-            The cell ordering enum value
+            The cell order enum value
         """
-        return self._instance.GetCellOrdering()
+        return self._instance.GetCellOrder()
 
-    def set_cell_ordering(self, ordering):
-        """Set UGrid cell ordering.
+    def set_cell_order(self, order):
+        """Set UGrid cell order.
 
         Args:
-            ordering: The ordering enum value
+            order: The order enum value
         """
-        return self._instance.SetCellOrdering(ordering)
+        return self._instance.SetCellOrder(order)
 
-    def calculate_cell_ordering(self):
-        """Calculate the UGrid cell ordering.
+    def calculate_cell_order(self):
+        """Calculate the UGrid cell order.
 
         Returns:
-            The cell ordering enum value
+            The cell order enum value
         """
-        return self._instance.CalculateCellOrdering()
+        return self._instance.CalculateCellOrder()
 
     def get_cell_adjacent_cells(self, cell_idx):
         """Get the cells neighboring a cell (cells associated with any of it's points).

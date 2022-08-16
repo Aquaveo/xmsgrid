@@ -100,8 +100,8 @@ enum XmUGridCellType {
 
 };
 
-/// Order of cells in a UGrid
-enum XmUGridCellOrdering {
+/// Order of cells in a layered 3D UGrid
+enum XmUGridCellOrder {
   XMU_CELL_ORDER_UNKNOWN = -1,
   XMU_CELL_ORDER_INCREASING_DOWN = 0,
   XMU_CELL_ORDER_INCREASING_UP = 1
@@ -183,9 +183,9 @@ public:
   bool SetCellstream(const VecInt& a_cellstream);
   bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
   int GetCellCellstreamIndex(int a_cellIdx) const;
-  XmUGridCellOrdering GetCellOrdering() const;
-  void SetCellOrdering(XmUGridCellOrdering a_cellOrdering);
-  XmUGridCellOrdering CalculateCellOrdering() const;
+  XmUGridCellOrder GetCellOrder() const;
+  void SetCellOrder(XmUGridCellOrder a_cellOrder);
+  XmUGridCellOrder CalculateCellOrder() const;
   VecInt GetCellAdjacentCells(int a_cellIdx) const;
   void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
   bool GetCellPlanViewPolygon(int a_cellIdx, VecPt3d& a_polygon) const;
