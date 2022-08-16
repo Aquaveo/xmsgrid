@@ -230,17 +230,17 @@ void initXmUGrid(py::module &m) {
             return py::make_tuple(ret_val, xms::PyIterFromVecInt(cellstream));
         }, py::arg("cell_idx"));
     // ---------------------------------------------------------------------------
-    // function: GetCellOrdering
+    // function: GetCellOrder
     // ---------------------------------------------------------------------------
-    xmUg.def("GetCellOrdering", &xms::XmUGrid::GetCellOrdering);
+    xmUg.def("GetCellOrder", &xms::XmUGrid::GetCellOrder);
     // ---------------------------------------------------------------------------
-    // function: SetCellOrdering
+    // function: SetCellOrder
     // ---------------------------------------------------------------------------
-    xmUg.def("SetCellOrdering", &xms::XmUGrid::SetCellOrdering);
+    xmUg.def("SetCellOrder", &xms::XmUGrid::SetCellOrder);
     // ---------------------------------------------------------------------------
-    // function: CalculateCellOrdering
+    // function: CalculateCellOrder
     // ---------------------------------------------------------------------------
-    xmUg.def("CalculateCellOrdering", &xms::XmUGrid::CalculateCellOrdering);
+    xmUg.def("CalculateCellOrder", &xms::XmUGrid::CalculateCellOrder);
   // ---------------------------------------------------------------------------
   // function: GetCellAdjacentCells
   // ---------------------------------------------------------------------------
@@ -438,15 +438,15 @@ void initXmUGrid(py::module &m) {
             xms::XmUGridCellType::XMU_NUMBER_OF_CELL_TYPES)
         .export_values();
 
-    // UGrid CellOrdering
-    py::enum_<xms::XmUGridCellOrdering>(xmUg, "ugrid_cell_ordering_enum",
-                                        "ugrid_cell_ordering_enum for XmUGrid class")
+    // UGrid CellOrder
+    py::enum_<xms::XmUGridCellOrder>(xmUg, "ugrid_cell_order_enum",
+                                        "ugrid_cell_order_enum for XmUGrid class")
       .value("CELL_ORDER_UNKNOWN",
-             xms::XmUGridCellOrdering::XMU_CELL_ORDER_UNKNOWN)
+             xms::XmUGridCellOrder::XMU_CELL_ORDER_UNKNOWN)
       .value("CELL_ORDER_INCREASING_DOWN",
-             xms::XmUGridCellOrdering::XMU_CELL_ORDER_INCREASING_DOWN)
+             xms::XmUGridCellOrder::XMU_CELL_ORDER_INCREASING_DOWN)
       .value("CELL_ORDER_INCREASING_UP",
-             xms::XmUGridCellOrdering::XMU_CELL_ORDER_INCREASING_UP)
+             xms::XmUGridCellOrder::XMU_CELL_ORDER_INCREASING_UP)
       .export_values();
 
     // UGrid FaceOrientation
