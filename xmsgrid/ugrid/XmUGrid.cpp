@@ -2932,13 +2932,20 @@ bool XmUGrid::Impl::IsSideFace(int a_cellIdx, int a_faceIdx) const
   // the face is a side face
   if (!facePts.empty())
   {
-    Pt3d ptLast = GetPointXy0(facePts.back());
+    int ptIdxLast = facePts.back();
+    Pt3d ptLast = GetPointXy0(ptIdxLast);
     for (size_t facePtIdx = 0; facePtIdx < facePts.size(); ++facePtIdx)
     {
-      Pt3d ptCurr = GetPointXy0(facePts[facePtIdx]);
-      if (ptLast == ptCurr)
+      int ptIdxCurr = facePts[facePtIdx];
+      Pt3d ptCurr = GetPointXy0(ptIdxCurr);
+      // need to check for face that incorrectly has same point at beginning and ending
+      // because some exist from old MODFLOW 6 models built from DISV package
+      if (ptIdxLast != ptIdxCurr && ptLast == ptCurr)
+      {
         return true;
+      }
 
+      ptIdxLast = ptIdxCurr;
       ptLast = ptCurr;
     }
   }
