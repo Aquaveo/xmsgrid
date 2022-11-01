@@ -41,6 +41,19 @@ namespace xms
 
 //----- Class / Function definitions -------------------------------------------
 
+//------------------------------------------------------------------------------
+/// \brief Gets xy distance squared
+/// \param a_p0: first point
+/// \param a_p1: second point
+/// \returns xy distance squared
+//------------------------------------------------------------------------------
+double iXyDistSq(const Pt3d& p0, const Pt3d& p1)
+{
+  double dx = p0.x - p1.x;
+  double dy = p0.y - p1.y;
+  return (dx * dx) + (dy * dy);
+} // iXyDistSq
+
 ////////////////////////////////////////////////////////////////////////////////
 /// \class TrTriangulatorPoints
 /// \brief Class to triangulate simple points.
@@ -170,12 +183,17 @@ void TrTriangulatorPoints::FinalizeTriangulation()
 //------------------------------------------------------------------------------
 void TrTriangulatorPoints::ReceiveTriangle(int a_id1, int a_id2, int a_id3)
 {
+  const Pt3d &p0(m_pts[a_id1 - 1]), &p1(m_pts[a_id2 - 1]), &p2(m_pts[a_id3 - 1]);
+  double d1 = iXyDistSq(p0, p1);
+  double d2 = iXyDistSq(p1, p2);
+  double d3 = iXyDistSq(p2, p0);
+  double maxDistSq = std::max(d1, std::max(d2, d3));
   // make sure the triangle has positive area
-  double area = trArea(m_pts[a_id1 - 1], m_pts[a_id2 - 1], m_pts[a_id3 - 1]);
-  if (area < m_areaTol)
+  double area = trArea(p0, p1, p2);
+  double factor = 10000 * (2 * area) * (2 * area);
+  if (maxDistSq > factor)
   {
-    if (gmColinearWithTol(m_pts[a_id1 - 1], m_pts[a_id2 - 1], m_pts[a_id3 - 1],
-                          m_areaTol))
+    if (gmColinearWithTol(p0, p1, p2, m_areaTol))
     {
       return;
     }

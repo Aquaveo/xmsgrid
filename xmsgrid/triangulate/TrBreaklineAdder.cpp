@@ -362,34 +362,38 @@ void TrBreaklineAdderImpl::ProcessSegmentBySwapping(int a_blpt1, int a_blpt2)
     rgtpt = m_tin->Points()[rgt];
     btmpt = m_tin->Points()[btm];
 
-    // dot product of the original edge with the bkline seg
-    double edge_dx = rgtpt.x - lftpt.x;
-    double edge_dy = rgtpt.y - lftpt.y;
-    double mag = sqrt(edge_dx*edge_dx + edge_dy*edge_dy);
-    if (mag < XM_ZERO_TOL)
-    {
-      // error - duplicate vertices - we won't force this segment
-      return;
-    }
-    edge_dx /= mag;
-    edge_dy /= mag;
-    double dot_edge = fabs(edge_dx*bk_seg_dx + edge_dy*bk_seg_dy);
+    // this code tries to prevent bad triangles but we can't do that if 
+    // we are FORCING a breakline
 
-    // dot product of the swapped edge with the bkline seg
-    edge_dx = toppt.x - btmpt.x;
-    edge_dy = toppt.y - btmpt.y;
-    mag = sqrt(edge_dx*edge_dx + edge_dy*edge_dy);
-    if (mag < XM_ZERO_TOL)
-    {
-      // error - duplicate vertices - we won't force this segment
-      return;
-    }
-    edge_dx /= mag;
-    edge_dy /= mag;
-    double dot_swap = fabs(edge_dx*bk_seg_dx + edge_dy*bk_seg_dy);
+    //// dot product of the original edge with the bkline seg
+    //double edge_dx = rgtpt.x - lftpt.x;
+    //double edge_dy = rgtpt.y - lftpt.y;
+    //double mag = sqrt(edge_dx*edge_dx + edge_dy*edge_dy);
+    //if (mag < XM_ZERO_TOL)
+    //{
+    //  // error - duplicate vertices - we won't force this segment
+    //  return;
+    //}
+    //edge_dx /= mag;
+    //edge_dy /= mag;
+    //double dot_edge = fabs(edge_dx*bk_seg_dx + edge_dy*bk_seg_dy);
+
+    //// dot product of the swapped edge with the bkline seg
+    //edge_dx = toppt.x - btmpt.x;
+    //edge_dy = toppt.y - btmpt.y;
+    //mag = sqrt(edge_dx*edge_dx + edge_dy*edge_dy);
+    //if (mag < XM_ZERO_TOL)
+    //{
+    //  // error - duplicate vertices - we won't force this segment
+    //  return;
+    //}
+    //edge_dx /= mag;
+    //edge_dy /= mag;
+    //double dot_swap = fabs(edge_dx*bk_seg_dx + edge_dy*bk_seg_dy);
 
     // if the swap is a bad idea or the edge won't swap, go on to the next edge
-    if (dot_swap < dot_edge || !trSwapEdgeWithMinAngle(*m_tin, tri1, tri2, minAngle))
+    //if (dot_swap < dot_edge || !trSwapEdgeWithMinAngle(*m_tin, tri1, tri2, minAngle))
+    if (!trSwapEdgeWithMinAngle(*m_tin, tri1, tri2, minAngle))
     {
       ++edge;
     }
@@ -974,6 +978,60 @@ void TrBreaklineAdderUnitTests::testVerySkinnyTris()
   TS_ASSERT_EQUALS(expectedTris, newTris);
 
 } // TrBreaklineAdderUnitTests::testVerySkinnyTris
+//------------------------------------------------------------------------------
+/// \brief Test forcing a breakline with two very skinny triangles.
+//------------------------------------------------------------------------------
+void TrBreaklineAdderUnitTests::testForceBreaklineBug13951()
+{
+  BSHP<TrTin> tin = TrTin::New();
+  tin->Points() = {
+    {240.66, 1510.06, 0.0}, {329.41, 1509.95, 0.0}, {330.75, 1511.59, 0.0}, {332.43, 1510.88, 0.0},
+    {333.08, 1510.67, 0.0}, {336.35, 1509.93, 0.0}, {347.06, 1510.59, 0.0}, {395.04, 1513.55, 0.0},
+    {330.90, 1509.41, 0.0}, {369.92, 1451.04, 0.0}, {423.10, 1458.44, 0.0}, {399.21, 1455.09, 0.0},
+    {369.47, 1450.71, 0.0}, {283.29, 1457.97, 0.0}, {346.22, 1474.37, 0.0}, {336.10, 1498.59, 0.0},
+    {336.88, 1498.90, 0.0}
+  };
+  TrTriangulatorPoints client(tin->Points(), tin->Triangles(), &tin->TrisAdjToPts());
+  bool rv = client.Triangulate();
+
+  // Add breakline
+  BSHP<TrBreaklineAdder> adder = TrBreaklineAdder::New();
+  adder->SetTin(tin);
+  VecInt breakLine = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 0};
+  adder->AddBreakline(breakLine);
+  VecInt baseTris = {13, 1,  0,  1,  13, 15, 4,  8,  5, 15, 8,  1,  13, 14, 15, 1,  8,
+                     2,  0,  2,  7,  0,  1,  2,  3,  4, 2,  2,  8,  3,  8,  4,  3,  2,
+                     4,  5,  8,  6,  5,  12, 9,  14, 9, 12, 11, 9,  10, 7,  10, 11, 12,
+                     9,  11, 10, 15, 16, 8,  6,  8,  7, 9,  8,  16, 16, 14, 9,  7,  2,
+                     6,  7,  8,  9,  16, 15, 14, 6,  2, 5,  12, 14, 13};
+  TS_ASSERT_EQUALS(baseTris, tin->Triangles());
+} // TrBreaklineAdderUnitTests::testForceBreaklineBug13951
+//------------------------------------------------------------------------------
+/// \brief Test forcing a breakline with two very skinny triangles.
+//------------------------------------------------------------------------------
+void TrBreaklineAdderUnitTests::testForceBreaklineBug14095()
+{
+  BSHP<TrTin> tin = TrTin::New();
+  tin->Points() = {
+    {368631.60307407, 4054926.1087416, 0.0}, {368641.14, 4055088.48, 0.0},
+    {368788.05741829, 4055093.8780732, 0.0}, {368801.93750472, 4055031.4021071, 0.0},
+    {368700.9467262, 4055005.8666216, 0.0},  {368722.26076012, 4054908.6649129, 0.0},
+    {368677.64946168, 4054917.2487615, 0.0}, {368654.48, 4054950.97, 0.0},
+    {368672.77161426, 4054918.1873287, 0.0}, {368659.25312515, 4055005.1071713, 0.0},
+    {368689.76987238, 4054961.9504233, 0.0}, {368664.47053169, 4054981.7580834, 0.0}
+  };
+  TrTriangulatorPoints client(tin->Points(), tin->Triangles(), &tin->TrisAdjToPts());
+  bool rv = client.Triangulate();
+
+  // Add breakline
+  BSHP<TrBreaklineAdder> adder = TrBreaklineAdder::New();
+  adder->SetTin(tin);
+  VecInt breakLine = {0, 1, 2, 3, 4, 5, 6, 7, 8, 0};
+  adder->AddBreakline(breakLine);
+  VecInt baseTris = {0,  8, 7, 11, 7,  10, 0, 7,  9, 4,  1, 9, 9, 1, 0, 11, 9, 7, 4, 9, 11, 7, 6,
+                     10, 6, 5, 10, 10, 5,  4, 10, 4, 11, 4, 3, 2, 3, 4, 5,  4, 2, 1, 7, 8,  6};
+  TS_ASSERT_EQUALS(baseTris, tin->Triangles());
+} // TrBreaklineAdderUnitTests::testForceBreaklineBug13951
 
   //} // namespace xms
 

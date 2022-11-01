@@ -32,6 +32,8 @@ public:
   void test2();
   void testCrossingBoundary();
   void testVerySkinnyTris();
+  void testForceBreaklineBug13951();
+  void testForceBreaklineBug14095();
 };
 //----- Function prototypes ----------------------------------------------------
 
