@@ -99,6 +99,7 @@ public:
   void test_gmMiddleThirdWithTol();
   void test_gmLineSegmentIntersections();
   void test_gmPolygonSegmentIntersections();
+  void test_gmIntersectLineSegments_noDist();
   void testGreatCircleDistanceMeters();
   void testMetersToDecimalDegrees();
 }; // class GeomsUnitTest
