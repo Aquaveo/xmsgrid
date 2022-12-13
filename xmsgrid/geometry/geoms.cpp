@@ -6147,7 +6147,7 @@ double gmDecimalDegreesToMeters(const double a_degrees, const double a_latitude)
 
 //----- Namespace declaration --------------------------------------------------
 
-// namespace xms {
+using namespace xms;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class GmPointInPolyUnitTests
@@ -6384,7 +6384,6 @@ void GeomsXmsngUnitTests::test_gmPointInPolygon2D_Speed()
 //------------------------------------------------------------------------------
 void GeomsXmsngUnitTests::testConvexHull()
 {
-  using namespace xms;
   VecPt3d inputPoints;
   VecPt3d expectedHull;
   VecPt3d hull;
@@ -6412,7 +6411,6 @@ void GeomsXmsngUnitTests::testConvexHull()
 //------------------------------------------------------------------------------
 void GeomsXmsngUnitTests::testDoLineSegmentsCross()
 {
-  using namespace xms;
   // Test 1 Segments do not intersect
   {
     Pt3d point1(1, 2);
@@ -6543,8 +6541,6 @@ void GeomsUnitTest::test_gmCounterClockwise()
   //  | \
     //  0---1
 
-  using namespace xms;
-
   Pt3d pt0(0, 0, 0);
   Pt3d pt1(10, 0, 0);
   Pt3d pt2(0, 10, 0);
@@ -6563,8 +6559,6 @@ void GeomsUnitTest::test_gmQuadToTriAreaCheck()
   //  |   |
   //  0---1
 
-  using namespace xms;
-
   Pt3d pt0(0, 0, 0);
   Pt3d pt1(10, 0, 0);
   Pt3d pt2(10, 10, 0);
@@ -6579,8 +6573,6 @@ void GeomsUnitTest::test_gmQuadToTriAreaCheck()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmConvertAngleBetweenXAndNorth()
 {
-  using namespace xms;
-
   double angle;
   const double DELTA = 0.01;
 
@@ -6634,8 +6626,6 @@ void GeomsUnitTest::test_gmConvertAngleBetweenXAndNorth()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmAddToExtents()
 {
-  using namespace xms;
-
   Pt3d min;
   min = XM_DBL_HIGHEST;
   Pt3d max;
@@ -6664,8 +6654,6 @@ void GeomsUnitTest::test_gmAddToExtents()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmExtents2D()
 {
-  using namespace xms;
-
   const double DELTA = 0.0001;
   Pt2d mn, mx;
   Pt3d mn3, mx3;
@@ -6685,8 +6673,6 @@ void GeomsUnitTest::test_gmExtents2D()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmExtents3D()
 {
-  using namespace xms;
-
   const double DELTA = 0.0001;
   Pt3d min, max;
 
@@ -6701,8 +6687,6 @@ void GeomsUnitTest::test_gmExtents3D()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmEqualPoints()
 {
-  using namespace xms;
-
   double old_g_xytol = gmXyTol();
   gmXyTol(true, 0.00001);
 
@@ -6728,8 +6712,6 @@ void GeomsUnitTest::test_gmEqualPoints()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmPolygonArea()
 {
-  using namespace xms;
-
   const double DELTA = 1e-5;
 
   // CCW (positive)
@@ -6749,8 +6731,6 @@ void GeomsUnitTest::test_gmPolygonArea()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmPointInPolygon3DWithTol()
 {
-  using namespace xms;
-
   // Vertical triangle looking down (you only see the edge)
   //
   //       y
@@ -6853,8 +6833,6 @@ void GeomsUnitTest::test_gmPointInPolygon3DWithTol()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmIntersectLineSegmentsWithTol()
 {
-  using namespace xms;
-
   Pt3d one1, one2;
   Pt3d two1, two2;
   Pt3d out1;
@@ -6952,8 +6930,6 @@ void GeomsUnitTest::test_gmIntersectLineSegmentsWithTol()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmIntersectLineSegmentsWithTol2()
 {
-  using namespace xms;
-
   // This situation was causing problems because it should be within tolerance
   Pt3d one1, one2;
   Pt3d two1, two2;
@@ -7033,8 +7009,6 @@ void GeomsUnitTest::test_gmIntersectLineSegmentsWithTol2()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmMakePolygonClockwise()
 {
-  using namespace xms;
-
   //   10-  3--2                         10-  0--1
   //        |  |           ==>                |  |
   //    0-  0--1                          0-  3--2
@@ -7097,8 +7071,6 @@ void GeomsUnitTest::test_gmMakePolygonClockwise()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmCounterClockwiseQuad()
 {
-  using namespace xms;
-
   //  3---2
   //  |   |
   //  0---1
@@ -7116,8 +7088,6 @@ void GeomsUnitTest::test_gmCounterClockwiseQuad()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmAngleBetween2DVectors()
 {
-  using namespace xms;
-
   const double DELTA = 1e-4;
   double a;
 
@@ -7134,8 +7104,6 @@ void GeomsUnitTest::test_gmAngleBetween2DVectors()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmAngleBetweenEdges()
 {
-  using namespace xms;
-
   const double DELTA = 1e-4;
   const double TO_DEG = RADIANS_TO_DEGREES;
   double a, am, b, bm, c, cm;
@@ -7190,8 +7158,6 @@ void GeomsUnitTest::test_gmAngleBetweenEdges()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmBaryPrepare()
 {
-  using namespace xms;
-
   // 20 2
   //    | \
     //    |  \
@@ -7255,8 +7221,6 @@ void GeomsUnitTest::test_gmBaryPrepare()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmIntersectLines()
 {
-  using namespace xms;
-
   using xms::Pt3d;
   using xms::gmIntersectLines;
 
@@ -7344,8 +7308,6 @@ void GeomsUnitTest::test_gmIntersectLines()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmMiddleThirdWithTol()
 {
-  using namespace xms;
-
   const double tol = 1e-5;
 
   // Test horizontally
@@ -7369,7 +7331,6 @@ void GeomsUnitTest::test_gmMiddleThirdWithTol()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmLineSegmentIntersections()
 {
-  using namespace xms;
   VecPt3d intersections;
   Pt3d p1 = {0.0, 0.0, 0.0};
   Pt3d p2 = {1.0, 0.0, 0.0};
@@ -7430,7 +7391,6 @@ void GeomsUnitTest::test_gmLineSegmentIntersections()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmPolygonSegmentIntersections()
 {
-  using namespace xms;
   VecPt3d polygon = {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 0.0}, {0.0, 1.0, 0.0}};
   const double tol = 1.0e-5;
   Pt3d p1 = Pt3d(-2.0, -2.0, 0.0);
@@ -7464,8 +7424,6 @@ void GeomsUnitTest::test_gmPolygonSegmentIntersections()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::testGreatCircleDistanceMeters()
 {
-  using namespace xms;
-
   const double kDelta = 1e-5;
   TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 1, 0 }), 111194.92664455874, kDelta);
   TS_ASSERT_DELTA(gmGreatCircleDistanceMeters({ 0, 0 }, { 0, 1 }), 111194.92664455874, kDelta);
@@ -7490,8 +7448,6 @@ void GeomsUnitTest::testGreatCircleDistanceMeters()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::testMetersToDecimalDegrees()
 {
-  using namespace xms;
-
   TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 0), 8.9831117499, XM_ZERO_TOL);
   TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 45), 12.704038469, XM_ZERO_TOL);
   TS_ASSERT_DELTA(gmMetersToDecimalDegrees(1000000, 90), 360.0, XM_ZERO_TOL);
