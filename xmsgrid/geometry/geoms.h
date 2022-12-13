@@ -309,6 +309,12 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
                                     double* zi1,
                                     double* zi2,
                                     double tol);
+bool gmIntersectLineSegments(Pt3d a_p1,
+                             Pt3d a_p2,
+                             Pt3d a_q1,
+                             Pt3d a_q2,
+                             Pt3d& a_pIntersection,
+                             Pt3d& a_qIntersection);
 bool gmIntersectLineSegmentsNoTol(const Pt3d& one1,
                                   const Pt3d& one2,
                                   const Pt3d& two1,
