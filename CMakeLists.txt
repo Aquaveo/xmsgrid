@@ -25,6 +25,7 @@ set(CONDA_PREFIX "" CACHE PATH "Path to the conda environment used to build.")
 set(IS_PYTHON_BUILD NO CACHE BOOL "Set this if you want to build the python bindings.")
 set(XMS_TEST_PATH ${PROJECT_SOURCE_DIR}/test_files/ CACHE PATH "Path to test files for testing")
 set(XMS_VERSION "99.99.99" CACHE STRING "Library Version")
+set(USE_TYPEDEF_WCHAR_T NO CACHE BOOL "Define wchar_t as a typedef")
 
 add_definitions(-DXMS_VERSION=\"${XMS_VERSION}\")
 
