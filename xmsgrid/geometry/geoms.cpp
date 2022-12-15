@@ -66,8 +66,14 @@ bool gmiSegmentsMightPassWithinDist(const Pt3d& a_p1, const Pt3d& a_p2, const Pt
 {
   Pt3d p1(std::min(a_p1.x, a_p2.x), std::min(a_p1.y, a_p2.y));
   Pt3d p2(std::max(a_p1.x, a_p2.x), std::max(a_p1.y, a_p2.y));
+  p1.x -= a_dist;
+  p1.y -= a_dist;
+
   Pt3d q1(std::min(a_q1.x, a_q2.x), std::min(a_q1.y, a_q2.y));
   Pt3d q2(std::max(a_q1.x, a_q2.x), std::max(a_q1.y, a_q2.y));
+  p2.x += a_dist;
+  p2.y += a_dist;
+
   return gmBoxesOverlap2d(p1, p2, q1, q2);
 } // gmiSegmentsMightPassWithinDist
 
@@ -123,9 +129,58 @@ bool gmiIntersectLineSegments(const Pt3d& a_p1,
   return true;
 } // gmiIntersectLineSegments
 
+//------------------------------------------------------------------------------
+/// \brief Check if the endpoints on two line segments are within a distance.
+/// \param a_p1: First point defining P.
+/// \param a_p2: Second point defining P.
+/// \param a_q1: First point defining Q.
+/// \param a_q2: Second point defining Q.
+/// \param a_dist: Distance to search.
+/// \param a_p: Point on P that is near Q.
+/// \param a_q: Point on Q that is near P.
+/// \return Whether the segments' endpoints were nearby.
+//------------------------------------------------------------------------------
+bool gmiSegmentEndpointsWithinDist(const Pt3d& a_p1,
+                                   const Pt3d& a_p2,
+                                   const Pt3d& a_q1,
+                                   const Pt3d& a_q2,
+                                   double a_dist,
+    Pt3d& a_p, Pt3d& a_q)
+{
+    if (gmEqualPointsXY(a_p1, a_q1, a_dist))
+  {
+      a_p = a_p1;
+      a_q = a_q1;
+      return true;
+  }
+  
+  if (gmEqualPointsXY(a_p1, a_q2, a_dist))
+  {
+    a_p = a_p1;
+    a_q = a_q2;
+    return true;
+  }
+
+  if (gmEqualPointsXY(a_p2, a_q1, a_dist))
+  {
+    a_p = a_p2;
+    a_q = a_q1;
+    return true;
+  }
+
+  if (gmEqualPointsXY(a_p2, a_q2, a_dist))
+  {
+    a_p = a_p2;
+    a_q = a_q2;
+    return true;
+  }
+
+  return false;
+} // gmiSegmentEndpointsWithinDist
 
 //------------------------------------------------------------------------------
-/// \brief Translate a pair of line segments to be near the origin.
+/// \brief Translate a pair of line segments to be near the origin to improve
+///        precision of geometric operations.
 /// \param a_p1: First point defining P.
 /// \param a_p2: Second point defining P.
 /// \param a_q1: First point defining Q.
@@ -150,6 +205,119 @@ Pt3d gmiTranslateSegmentsToOrigin(Pt3d& a_p1, Pt3d& a_p2, Pt3d& a_q1, Pt3d& a_q2
 
   return mid;
 } // gmiTranslateSegmentsToOrigin
+
+//------------------------------------------------------------------------------
+/// \brief Undo the effects of gmiTranslateSegmentsToOrigin. Attempts to restore
+///        intersection points to their original values exactly where possible.
+/// \param a_translation: Returned by gmiTranslateSegmentsToOrigin.
+/// \param a_original*: Original points defining P and Q, as passed to
+///        gmiTranslateSegmentsToOrigin.
+/// \param a_translated*: The translated points returned by
+///        gmiTranslateSegmentsToOrigin.
+/// \param a_current*: The points of intersection to be untranslated.
+//------------------------------------------------------------------------------
+void gmiTranslateIntersectionFromOrigin(const Pt3d& a_translation,
+                                    const Pt3d& a_originalP1,
+                                    const Pt3d& a_originalP2,
+                                    const Pt3d& a_originalQ1,
+                                    const Pt3d& a_originalQ2,
+                                    const Pt3d& a_translatedP1,
+                                    const Pt3d& a_translatedP2,
+                                    const Pt3d& a_translatedQ1,
+                                    const Pt3d& a_translatedQ2,
+                                    Pt3d& a_currentP,
+                                    Pt3d& a_currentQ)
+{
+  if (a_currentP == a_translatedP1)
+  {
+    a_currentP = a_originalP1;
+  }
+  else if (a_currentP == a_translatedP2)
+  {
+    a_currentP = a_originalP2;
+  }
+  else
+  {
+    a_currentP += a_translation;
+  }
+
+  if (a_currentQ == a_translatedQ1)
+  {
+    a_currentQ = a_originalQ1;
+  }
+  else if (a_currentQ == a_translatedQ2)
+  {
+    a_currentQ = a_originalQ2;
+  }
+  else
+  {
+    a_currentQ += a_translation;
+  }
+}
+
+//------------------------------------------------------------------------------
+/// \brief Check if the endpoints on two line segments are within a distance
+///        of the other segment.
+/// \param a_p1: First point defining P.
+/// \param a_p2: Second point defining P.
+/// \param a_q1: First point defining Q.
+/// \param a_q2: Second point defining Q.
+/// \param a_dist: Distance to search.
+/// \param a_p: Point on P that is near Q.
+/// \param a_q: Point on Q that is near P.
+/// \return Whether the segments' endpoints were nearby.
+//------------------------------------------------------------------------------
+bool gmiEndpointNearSegment(const Pt3d& a_p1,
+                            const Pt3d& a_p2,
+                            const Pt3d& a_q1,
+                            const Pt3d& a_q2,
+                            double a_dist,
+                            Pt3d& a_p,
+                            Pt3d& a_q)
+{
+  a_dist = a_dist * a_dist;
+  double shortestDist = XM_FLT_HIGHEST;
+  bool found = false;
+  Pt3d pt;
+  
+  double dist = gmNearestPointOnLineSegment2D(a_p1, a_p2, a_q1, &pt);
+  if (dist < a_dist && dist < shortestDist)
+  {
+    a_p = pt;
+    a_q = a_q1;
+    found = true;
+    shortestDist = dist;
+  }
+
+  dist = gmNearestPointOnLineSegment2D(a_p1, a_p2, a_q2, &pt);
+  if (dist < a_dist && dist < shortestDist)
+  {
+    a_p = pt;
+    a_q = a_q2;
+    found = true;
+    shortestDist = dist;
+  }
+
+  dist = gmNearestPointOnLineSegment2D(a_q1, a_q2, a_p1, &pt);
+  if (dist < a_dist && dist < shortestDist)
+  {
+    a_p = a_p1;
+    a_q = pt;
+    found = true;
+    shortestDist = dist;
+  }
+
+  dist = gmNearestPointOnLineSegment2D(a_q1, a_q2, a_p2, &pt);
+  if (dist < a_dist && dist < shortestDist)
+  {
+    a_p = a_p2;
+    a_q = pt;
+    found = true;
+    shortestDist = dist;
+  }
+
+  return found;
+} // gmiEndpointNearSegment
 
 //------------------------------------------------------------------------------
 /// \brief Compute the cross product of two 2d vectors.
@@ -2768,18 +2936,30 @@ int gmClipLine(double* x1,
   return XM_SUCCESS;
 } // gmClipLine
 //------------------------------------------------------------------------------
-/// \brief Find the plan projection intersection of two line segments.
-/// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
-///        segment 2 = two1,two2  = two1 + mu (two2 - two1).
-/// \param a_p1: First endpoint of segment 1.
-/// \param a_p2: Second endpoint of segment 1.
-/// \param a_q1: First endpoint of segment 2.
-/// \param a_q2: Second endpoint of segment 2.
-/// \param xi: Initialized to the x coord of intersection.
-/// \param yi: Initialized to the y coord of intersection.
-/// \param zi1: Initialized to the z coord of intersection on segment 1.
-/// \param zi2: Initialized to the z coord of intersection on segemnt 2.
-/// \param tol: Tolerance for geometric comparison.
+/// \brief Find the plan projection intersection of two line segments, P and Q.
+///        (i.e. intersect them while ignoring their Z values).
+/// 
+/// \note This function may be removed in a later release due to flaws in the
+///       way it works. Prefer gmIntersectLineSegments instead.
+/// 
+///       This function fails to find the closest points on P and Q in some
+///       cases. If this happens, it may fail to intersect two segments that
+///       should have been intersected.
+/// 
+///       tol is also used to both find distances and compare angles, which is
+///       likely not appropriate.
+/// 
+/// \param a_p1: First endpoint of segment P.
+/// \param a_p2: Second endpoint of segment P.
+/// \param a_q1: First endpoint of segment Q.
+/// \param a_q2: Second endpoint of segment Q.
+/// \param a_dist: The maximum distance the two segments can be from each other
+///                and still be considered to intersect. If the closest points
+///                are within this distance, the segments are considered to have
+///                intersected, even if they never truly met.
+/// \param a_p: Initialized to the point on P which is closest to Q.
+/// \param a_q: Initialized to the point on Q which is closest to P.
+/// \param a_tol: Tolerance for geometric comparison.
 /// \return Whether the line segments intersect.
 //------------------------------------------------------------------------------
 bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
@@ -2984,6 +3164,133 @@ bool gmIntersectLineSegments(Pt3d a_p1,
   return intersect;
 } // gmIntersectLineSegments
 
+//------------------------------------------------------------------------------
+/// \brief Find the plan projection intersection of two line segments, P and Q.
+/// 
+///        Equivalent to intersecting the segments in 2D, ignoring their Z's.
+///        The resulting points will still have their Z values set, however.
+///        If an intersection point is an endpoint, its Z value will exactly
+///        match the endpoint. Otherwise, it will be interpolated 
+/// 
+/// \note This overload will consider approximate intersections. 
+/// \param a_p1: First point defining P.
+/// \param a_p2: Second point defining P.
+/// \param a_q1: First point defining Q.
+/// \param a_q2: Second point defining Q.
+/// \param a_dist: If the segments pass within this distance of each other,
+///        they will be considered to have intersected, even if they don't
+///        intersect cleanly (or ever, in the case of parallel ones).
+/// \param a_pIntersection: Initialized to a closest point on P to Q.
+/// \param a_qIntersection: Initialized to a closest point on Q to P.
+/// \return What type of intersection was found.
+///         MidToMid:
+///           The segments share a point. This is the only case in which the
+///           intersection points are guaranteed to have the same X and Y
+///           values.
+///         EndToEnd:
+///           An endpoint on one segment was close to an endpoint on the other
+///           segment. Both intersection points are endpoints on their
+///           respective segments.
+///         EndToMid:
+///           An endpoint on P was close to an interior point on Q.
+///           a_pIntersection is an endpoint on P, and a_qIntersection is an
+///           interior point on Q.
+///         MidToEnd:
+///           An endpoint on Q was close to an interior point on P.
+///           a_qIntersection is an endpoint on Q, and a_pIntersection is an
+///           interior point on P.
+///         None:
+///           The segments did not pass within a_dist of each other. The
+///           intersection points are uninitialized.
+/// 
+/// \note Non-parallel segments always have exactly one closest point on each
+///       segment, though it may not be within the requested distance. Parallel
+///       segments, however, may have an infinite number of closest points in
+///       some cases.
+/// 
+///       Example 1: One segment on top of the other.
+///       ----------
+///           ----------
+/// 
+///       Example 2: Segments are collinear and overlap.
+///       --------------
+///       ^       ^           P endpoints
+///           ^        ^      Q endpoints
+/// 
+///       Example 3: Any rotation of the above two cases.
+///       \                             \      < P starts
+///        \   \                         \     < Q starts
+///         \   \                         \    < P ends
+///              \                         \   < Q ends
+/// 
+///       These cases are reported as MidToEnd or EndToMid, with one point
+///       being an endpoint and the other being the matching closest interior
+///       point.
+//------------------------------------------------------------------------------
+gmIntersectionType gmIntersectLineSegments(const Pt3d& a_p1,
+                                           const Pt3d& a_p2,
+                                           const Pt3d& a_q1,
+                                           const Pt3d& a_q2,
+                                           double a_dist,
+                                           Pt3d& a_pIntersection,
+                                           Pt3d& a_qIntersection)
+{
+  if (!gmiSegmentsMightPassWithinDist(a_p1, a_p2, a_q1, a_q2, a_dist))
+  {
+    return gmIntersectionType::None;
+  }
+
+  Pt3d p1 = a_p1, p2 = a_p2, q1 = a_q1, q2 = a_q2;
+  Pt3d translation = gmiTranslateSegmentsToOrigin(p1, p2, q1, q2);
+
+  if (gmiIntersectLineSegments(p1, p2, q1, q2, a_pIntersection, a_qIntersection))
+  { 
+    gmiTranslateIntersectionFromOrigin(translation, a_p1, a_p2, a_q1, a_q2, p1, p2, q1, q2,
+                                       a_pIntersection, a_qIntersection);
+
+    if ((a_pIntersection == a_p1 || a_pIntersection == a_p2) &&
+        (a_qIntersection == a_q1 || a_qIntersection == a_q2))
+    {
+      return gmIntersectionType::EndToEnd;
+    }
+    else if (a_pIntersection == a_p1 || a_pIntersection == a_p2)
+    {
+      return gmIntersectionType::EndToMid;
+    }
+    else if (a_qIntersection == a_q1 || a_qIntersection == a_q2)
+    {
+      return gmIntersectionType::MidToEnd;
+    }
+    else
+    {
+      return gmIntersectionType::MidToMid;
+    }
+  }
+
+  if (gmiSegmentEndpointsWithinDist(p1, p2, q1, q2, a_dist, a_pIntersection,
+                                    a_qIntersection))
+  {
+    gmiTranslateIntersectionFromOrigin(translation, a_p1, a_p2, a_q1, a_q2, p1, p2, q1, q2,
+                                       a_pIntersection, a_qIntersection);
+    return gmIntersectionType::EndToEnd;
+  }
+
+  if (gmiEndpointNearSegment(p1, p2, q1, q2, a_dist, a_pIntersection, a_qIntersection))
+  {
+    gmiTranslateIntersectionFromOrigin(translation, a_p1, a_p2, a_q1, a_q2, p1, p2, q1, q2,
+                                       a_pIntersection, a_qIntersection);
+    if (a_pIntersection == a_p1 || a_pIntersection == a_p2)
+    {
+      return gmIntersectionType::EndToMid;
+    }
+    else
+    {
+      return gmIntersectionType::MidToEnd;
+    }
+  }
+
+  return gmIntersectionType::None;
+} // gmIntersectLineSegments
 
 //------------------------------------------------------------------------------
 /// \brief Find the plan projection intersection of two line segments.
@@ -3011,17 +3318,18 @@ bool gmIntersectLineSegmentsNoTol(const Pt3d& one1,
 {
   return gmIntersectLineSegmentsWithTol(one1, one2, two1, two2, xi, yi, zi1, zi2, 0.0);
 } // gmIntersectLineSegmentsNoTol
-//------------------------------------------------------------------------------
-/// \brief Find the plan projection intersection of two line segments.
-/// \note: segment 1 = one1,one2  = one1 + lambda(one2 - one1).
-///        segment 2 = two1,two2  = two1 + mu (two2 - two1).
-/// \param a_p1: First endpoint of segment 1.
-/// \param a_p2: Second endpoint of segment 1.
-/// \param a_q1: First endpoint of segment 2.
-/// \param a_q2: Second endpoint of segment 2.
+
+  //------------------------------------------------------------------------------
+/// \brief Find the plan projection intersection of two line segments, P and Q.
+/// 
+/// \note Intersection points are all assigned Z values of 0.
+/// 
+/// \param a_p1: First endpoint defining P.
+/// \param a_p2: Second endpoint defining P.
+/// \param a_q1: First endpoint defining Q.
+/// \param a_q2: Second endpoint defining Q.
 /// \param a_intersections: Storage for intersections.
 /// \param a_tol: Tolerance for geometric comparison.
-/// \return Whether the line segments intersect.
 //------------------------------------------------------------------------------
 void gmLineSegmentIntersections(const Pt3d& a_p1,
                                const Pt3d& a_p2,
@@ -6319,13 +6627,34 @@ void iTestCleanIntersection(const Pt3d& a_p1,
 
   if (a_intersect)
   {
-    if (a_pIntersection != p || a_qIntersection != q)
-    {
       TS_ASSERT_EQUALS(a_pIntersection, p);
       TS_ASSERT_EQUALS(a_qIntersection, q);
-    }
   }
 } // itestCleanIntersection
+
+//------------------------------------------------------------------------------
+/// \brief test gmIntersectLineSegments overload that does has a dist
+///        parameter.
+//------------------------------------------------------------------------------
+void iTestFuzzyIntersection(const Pt3d& a_p1,
+                            const Pt3d& a_p2,
+                            const Pt3d& a_q1,
+                            const Pt3d& a_q2,
+                            const Pt3d& a_pIntersection,
+                            const Pt3d& a_qIntersection,
+                            gmIntersectionType a_type)
+{
+  Pt3d p, q;
+  gmIntersectionType type = gmIntersectLineSegments(a_p1, a_p2, a_q1, a_q2, 0.2, p, q);
+
+  TS_ASSERT_EQUALS(a_type, type);
+
+  if (type != gmIntersectionType::None && (a_pIntersection != p || a_qIntersection != q))
+  {
+    TS_ASSERT_EQUALS(a_pIntersection, p);
+    TS_ASSERT_EQUALS(a_qIntersection, q);
+  }
+} // iTestFuzzyIntersection
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class GmPointInPolyUnitTests
@@ -7603,7 +7932,9 @@ void GeomsUnitTest::test_gmPolygonSegmentIntersections()
 //------------------------------------------------------------------------------
 void GeomsUnitTest::test_gmIntersectLineSegments_noDist()
 {
+  //
   // Basic intersections
+  //
 
   // A + shape
   iTestCleanIntersection({1, 0, 1}, {1, 2, 2}, {0, 1, 3}, {2, 1, 4}, {1, 1, 1.5}, {1, 1, 3.5}, true);
@@ -7618,10 +7949,12 @@ void GeomsUnitTest::test_gmIntersectLineSegments_noDist()
   iTestCleanIntersection({2, 2, 1}, {0, 0, 2}, {2, 0, 3}, {0, 2, 4}, {1, 1, 1.5}, {1, 1, 3.5}, true);
 
   // A squashed X
-  iTestCleanIntersection({0, 0, 1}, {2, 1, 2}, {0, 1, 3}, {2, 0, 4}, {1, 0.5, 1.5}, {1, 0.5, 3.5},
+  iTestCleanIntersection({0, 0, 1}, {1, 0.01, 2}, {0, 0.01, 3}, {1, 0, 4}, {0.5, 0.005, 1.5}, {0.5, 0.005, 3.5},
                          true);
 
+  //
   // point-to-point intersections
+  //
 
   // p1 == q1
   iTestCleanIntersection({0, 0, 1}, {2, 0, 2}, {0, 0, 3}, {2, 2, 4}, {0, 0, 1}, {0, 0, 3}, true);
@@ -7635,7 +7968,9 @@ void GeomsUnitTest::test_gmIntersectLineSegments_noDist()
   // p2 == q2
   iTestCleanIntersection({0, 0, 1}, {2, 0, 2}, {0, 2, 3}, {2, 0, 4}, {2, 0, 2}, {2, 0, 4}, true);
 
+  //
   // point-to-line intersections
+  //
 
   // p1 on Q
   iTestCleanIntersection({1, 1, 1}, {2, 2, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 1}, {1, 1, 3.5}, true);
@@ -7649,7 +7984,9 @@ void GeomsUnitTest::test_gmIntersectLineSegments_noDist()
   // q2 on P
   iTestCleanIntersection({0, 0, 1}, {2, 2, 2}, {0, 2, 3}, {1, 1, 4}, {1, 1, 1.5}, {1, 1, 4}, true);
 
+  //
   // non-intersections
+  //
 
   // Horizontal parallel
   iTestCleanIntersection({0, 0, 1}, {2, 0, 2}, {0, 2, 3}, {2, 2, 4}, {0, 0, 0}, {0, 0, 0}, false);
@@ -7694,6 +8031,152 @@ void GeomsUnitTest::test_gmIntersectLineSegments_noDist()
   iTestCleanIntersection({1, 1, 1}, {0, 0, 2}, {3, 0, 3}, {2, 1, 4}, {0, 0, 0}, {0, 0, 0},
                          false);
 } // GeomsUnitTest::test_gmIntersectLineSegments_noDist
+
+//------------------------------------------------------------------------------
+/// \brief Test gmIntersectLineSegments overload for approximate intersections.
+//------------------------------------------------------------------------------
+void GeomsUnitTest::test_gmIntersectLineSegments_dist()
+{
+  //
+  // Basic clean intersections
+  //
+
+  // A + shape
+  iTestFuzzyIntersection({1, 0, 1}, {1, 2, 2}, {0, 1, 3}, {2, 1, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
+
+  // An X shape
+  iTestFuzzyIntersection({0, 0, 1}, {2, 2, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
+
+  // An X shape with one of the segments reversed.
+  iTestFuzzyIntersection({2, 2, 1}, {0, 0, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
+
+  // An X shape with both segments reversed
+  iTestFuzzyIntersection({2, 2, 1}, {0, 0, 2}, {2, 0, 3}, {0, 2, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
+
+  // A squashed X
+  iTestFuzzyIntersection({0, 0, 1}, {2, 1, 2}, {0, 1, 3}, {2, 0, 4}, {1, 0.5, 1.5}, {1, 0.5, 3.5},
+                         gmIntersectionType::MidToMid);
+
+  //
+  // point-to-point clean intersections
+  //
+
+  // p1 == q1
+  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {0, 0, 3}, {2, 2, 4}, {0, 0, 1}, {0, 0, 3}, gmIntersectionType::EndToEnd);
+
+  // p1 == q2
+  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {0, 2, 3}, {0, 0, 4}, {0, 0, 1}, {0, 0, 4}, gmIntersectionType::EndToEnd);
+
+  // p2 == q1
+  iTestFuzzyIntersection({0, 0, 1}, {0, 2, 2}, {0, 2, 3}, {2, 2, 4}, {0, 2, 2}, {0, 2, 3}, gmIntersectionType::EndToEnd);
+
+  // p2 == q2
+  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {0, 2, 3}, {2, 0, 4}, {2, 0, 2}, {2, 0, 4}, gmIntersectionType::EndToEnd);
+
+  //
+  // point-to-line clean intersections
+  //
+
+  // p1 on Q
+  iTestFuzzyIntersection({1, 1, 1}, {2, 2, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 1}, {1, 1, 3.5}, gmIntersectionType::EndToMid);
+
+  // p2 on Q
+  iTestFuzzyIntersection({0, 0, 1}, {1, 1, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 2}, {1, 1, 3.5}, gmIntersectionType::EndToMid);
+
+  // q1 on P
+  iTestFuzzyIntersection({0, 0, 1}, {2, 2, 2}, {1, 1, 3}, {2, 0, 4}, {1, 1, 1.5}, {1, 1, 3}, gmIntersectionType::MidToEnd);
+
+  // q2 on P
+  iTestFuzzyIntersection({0, 0, 1}, {2, 2, 2}, {0, 2, 3}, {1, 1, 4}, {1, 1, 1.5}, {1, 1, 4}, gmIntersectionType::MidToEnd);
+
+  //
+  // Fuzzy intersections
+  //
+
+  // A T shape, where the vertical part doesn't quite meet the horizontal one. Horizontal segment first.
+  iTestFuzzyIntersection({-2, 2, 1}, {2, 2, 2}, {0, 0, 3}, {0, 1.9, 4}, {0, 2, 1.5}, {0, 1.9, 4},
+                         gmIntersectionType::MidToEnd);
+  // Vertical segment first.
+  iTestFuzzyIntersection({0, 0, 3}, {0, 1.9, 4}, {-2, 2, 1}, {2, 2, 2}, {0, 1.9, 4},{0, 2, 1.5}, 
+                         gmIntersectionType::EndToMid);
+
+  // An L shape, with the corner at the origin. Both segments have been slightly shortened so they
+  // don't quite reach that intersection. Horizontal first.
+  iTestFuzzyIntersection({0.1, 0, 1}, {2, 0, 2}, {0, 0.1, 3}, {0, 2, 4}, {0.1, 0, 1}, {0, 0.1, 3},
+                         gmIntersectionType::EndToEnd);
+  // Vertical segment first
+  iTestFuzzyIntersection({0, 0.1, 3}, {0, 2, 4}, {0.1, 0, 1}, {2, 0, 2}, {0, 0.1, 3},{0.1, 0, 1},
+                         gmIntersectionType::EndToEnd);
+  
+  // Two horizontal segments with the ends nearly touching. Left first.
+  iTestFuzzyIntersection({-5, 0, 1}, {0, 0, 2}, {0.1, 0, 3}, {5, 0, 4}, {0, 0, 2}, {0.1, 0, 3},
+                         gmIntersectionType::EndToEnd);
+  // Right first.
+  iTestFuzzyIntersection({0.1, 0, 3}, {5, 0, 4}, {-5, 0, 1}, {0, 0, 2}, {0.1, 0, 3}, {0, 0, 2},
+                         gmIntersectionType::EndToEnd);
+
+  // Two horizontal segments with the ends touching in X, but slightly offset in Y.
+  // Left first.
+  iTestFuzzyIntersection({-5, 0, 1}, {0, 0, 2}, {0, 0.1, 3}, {5, 0.1, 4}, {0, 0, 2}, {0, 0.1, 3},
+                         gmIntersectionType::EndToEnd);
+  // Right first.
+  iTestFuzzyIntersection({0, 0.1, 3}, {5, 0.1, 4}, {-5, 0, 1}, {0, 0, 2}, {0, 0.1, 3}, {0, 0, 2},
+                         gmIntersectionType::EndToEnd);
+
+  // Two identical segments.
+  iTestFuzzyIntersection({-5, 0, 1}, {5, 0, 2}, {-5, 0, 3}, {5, 0, 4}, {-5, 0, 1}, {-5, 0, 3},
+                         gmIntersectionType::EndToEnd);
+  // One of them reversed. Note the intersection changes.
+  iTestFuzzyIntersection({5, 0, 2}, {-5, 0, 1}, {-5, 0, 3}, {5, 0, 4}, {5, 0, 2}, {5, 0, 4},
+                         gmIntersectionType::EndToEnd);
+
+  // Two horizontal segments that are identical, except one is slightly above the other.
+  iTestFuzzyIntersection({-5, -0.1, 1}, {5, -0.1, 2}, {-5, 0, 3}, {5, 0, 4}, {-5, -0.1, 1}, {-5, 0, 3},
+                         gmIntersectionType::EndToEnd);
+  // Swap the segment order.
+  iTestFuzzyIntersection({-5, 0, 3}, {5, 0, 4}, {-5, -0.1, 1}, {5, -0.1, 2}, {-5, 0, 3}, {-5, -0.1, 1},
+                         gmIntersectionType::EndToEnd);
+  // Reverse one of the segments.
+  iTestFuzzyIntersection({5, -0.1, 2}, {-5, -0.1, 1}, {-5, 0, 3}, {5, 0, 4}, {5, -0.1, 2}, {5, 0, 4},
+                         gmIntersectionType::EndToEnd);
+
+  // Two horizontal segments that partially overlap.
+  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {1, 0, 3}, {3, 0, 4}, {1, 0, 1.5}, {1, 0, 3},
+                         gmIntersectionType::MidToEnd);
+  // Swap the segment order.
+  iTestFuzzyIntersection({1, 0, 3}, {3, 0, 4}, {0, 0, 1}, {2, 0, 2}, {2, 0, 3.5}, {2, 0, 2},
+                         gmIntersectionType::MidToEnd);
+  // Reverse a segment
+  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {3, 0, 4}, {1, 0, 3}, {1, 0, 1.5}, {1, 0, 3},
+                         gmIntersectionType::MidToEnd);
+
+  // Two horizontal segments that partially overlap in X, but are offset in Y.
+  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {1, 0.1, 3}, {3, 0.1, 4}, {1, 0, 1.5}, {1, 0.1, 3},
+                         gmIntersectionType::MidToEnd);
+  // Swap the segment order
+  iTestFuzzyIntersection({1, 0.1, 3}, {3, 0.1, 4}, {0, 0, 1}, {2, 0, 2}, {2, 0.1, 3.5}, {2, 0, 2},
+                         gmIntersectionType::MidToEnd);
+  // Reverse a segment
+  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {3, 0.1, 4}, {1, 0.1, 3}, {1, 0, 1.5}, {1, 0.1, 3},
+                         gmIntersectionType::MidToEnd);
+
+  // Two horizontal segments that overlap in X and Y. One is a sub-segment of the other.
+  // Supersegment first.
+  iTestFuzzyIntersection({0, 0, 1}, {3, 0, 4}, {1, 0, 8}, {2, 0, 9}, {1, 0, 2}, {1, 0, 8},
+                         gmIntersectionType::MidToEnd);
+  // Subsegment first.
+  iTestFuzzyIntersection({1, 0, 8}, {2, 0, 9}, {0, 0, 1}, {3, 0, 4}, {1, 0, 8}, {1, 0, 2},
+                         gmIntersectionType::EndToMid);
+
+  // Two horizontal segments that overlap in X but not in Y. One is a sub-segment of the other.
+  // Supersegment first.
+  iTestFuzzyIntersection({0, 0, 1}, {3, 0, 4}, {1, 0.1, 8}, {2, 0.1, 9}, {1, 0, 2}, {1, 0.1, 8},
+                         gmIntersectionType::MidToEnd);
+  // Subsegment first.
+  iTestFuzzyIntersection({1, 0.1, 8}, {2, 0.1, 9}, {0, 0, 1}, {3, 0, 4}, {1, 0.1, 8}, {1, 0, 2},
+                         gmIntersectionType::EndToMid);
+
+} // GeomsUnitTest::test_gmIntersectLineSegments_dist
 
 //------------------------------------------------------------------------------
 /// \brief Test gmGreatCircleDistanceMeters.
