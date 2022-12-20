@@ -17,7 +17,7 @@ class TestTrTin(unittest.TestCase):
         self.tris = (3, 0, 1, 1, 2, 4, 1, 4, 3)
         self.tris_np = np.array([3, 0, 1, 1, 2, 4, 1, 4, 3])
         self.tris_adj = ((0,), (0, 1, 2), (1,), (0, 2), (1, 2))
-        self.tris_adj_np = np.array([[0], [0, 1, 2], [1], [0, 2], [1, 2]])
+        self.tris_adj_np = np.array([[0], [0, 1, 2], [1], [0, 2], [1, 2]], dtype=object)
         self.Tin = xt.Tin(self.pts, self.tris)
 
     def test_set_pts(self):
