@@ -32,4 +32,5 @@ setup(
     dependency_links=[
         'https://public.aquapi.aquaveo.com/aquaveo/stable'
     ],
+    has_ext_modules=lambda: True,
 )
