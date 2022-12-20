@@ -54,14 +54,18 @@ class TestTrTin(unittest.TestCase):
         trtin = xt.Tin(self.pts)
         tris_adj = self.tris_adj
         trtin.triangles_adjacent_to_points = tris_adj
-        np.testing.assert_array_equal(tris_adj, trtin.triangles_adjacent_to_points)
+        expected = np.array(tris_adj, dtype=object)
+        actual = np.array(trtin.triangles_adjacent_to_points, dtype=object)
+        np.testing.assert_array_equal(expected, actual)
 
     def test_set_tris_adj_numpy(self):
         """Test setting the triangles adjacent to points of a tin using numpy arrays."""
         trtin = xt.Tin(self.pts)
         tris_adj = self.tris_adj_np
         trtin.triangles_adjacent_to_points = tris_adj
-        np.testing.assert_array_equal(self.tris_adj, trtin.triangles_adjacent_to_points)
+        expected = tris_adj
+        actual = np.array(trtin.triangles_adjacent_to_points, dtype=object)
+        np.testing.assert_array_equal(expected, actual)
 
     def test_set_geometry(self):
         """Test setting the geometry of a tin."""
@@ -73,7 +77,9 @@ class TestTrTin(unittest.TestCase):
 
         np.testing.assert_array_equal(pts, trtin.points)
         np.testing.assert_array_equal(tris, trtin.triangles)
-        np.testing.assert_array_equal(tris_adj, trtin.triangles_adjacent_to_points)
+        expected = tris_adj
+        actual = np.array(trtin.triangles_adjacent_to_points, dtype=object)
+        np.testing.assert_array_equal(expected, actual)
 
     def test_set_geometry_numpy(self):
         """Test setting the geometry of a tin using numpy arrays."""
@@ -85,7 +91,9 @@ class TestTrTin(unittest.TestCase):
 
         np.testing.assert_array_equal(pts, trtin.points)
         np.testing.assert_array_equal(tris, trtin.triangles)
-        np.testing.assert_array_equal(self.tris_adj, trtin.triangles_adjacent_to_points)
+        expected = tris_adj
+        actual = np.array(trtin.triangles_adjacent_to_points, dtype=object)
+        np.testing.assert_array_equal(expected, actual)
 
     def test_get_pts(self):
         """Test getting the points of a tin."""
@@ -106,7 +114,9 @@ class TestTrTin(unittest.TestCase):
         trtin = xt.Tin(self.pts)
         tris_adj = self.tris_adj
         trtin.triangles_adjacent_to_points = tris_adj
-        self.assertEqual(tris_adj, trtin.triangles_adjacent_to_points)
+        expected = np.array(tris_adj, dtype=object)
+        actual = np.array(trtin.triangles_adjacent_to_points, dtype=object)
+        np.testing.assert_array_equal(expected, actual)
 
     def test_num_points(self):
         """Test getting the number of points in a tin."""
