@@ -364,18 +364,18 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
 {
   static const VecInt2d fg_empty;
   static const VecInt2d fg_tetra = {{0, 1, 3}, {1, 2, 3}, {2, 0, 3}, {0, 2, 1}};
-  static const VecInt2d fg_wedge = {{0, 1, 2}, {3, 5, 4}, {0, 3, 4, 1}, {1, 4, 5, 2}, {2, 5, 3, 0}};
+  static const VecInt2d fg_wedge = {{0, 2, 1}, {3, 4, 5}, {0, 1, 4, 3}, {1, 2, 5, 4}, {0, 3, 5, 2}};
   static const VecInt2d fg_voxel = {{0, 4, 6, 2}, {1, 3, 7, 5}, {0, 1, 5, 4},
-                                    {2, 6, 7, 3}, {0, 2, 3, 1}, {4, 5, 7, 6}};
+                                        {2, 6, 7, 3}, {0, 2, 3, 1}, {4, 5, 7, 6}};
   static const VecInt2d fg_hexahedron = {{0, 4, 7, 3}, {1, 2, 6, 5}, {0, 1, 5, 4},
-                                         {3, 7, 6, 2}, {0, 3, 2, 1}, {4, 5, 6, 7}};
+                                             {3, 7, 6, 2}, {0, 3, 2, 1}, {4, 5, 6, 7}};
   static const VecInt2d fg_pyramid = {{0, 3, 2, 1}, {0, 1, 4}, {1, 2, 4}, {2, 3, 4}, {3, 0, 4}};
-  static const VecInt2d fg_pentagonalPrism = {{0, 4, 3, 2, 1}, {5, 6, 7, 8, 9}, {0, 1, 6, 5},
-                                              {1, 2, 7, 6},    {2, 3, 8, 7},    {3, 4, 9, 8},
-                                              {4, 0, 5, 9}};
+  static const VecInt2d fg_pentagonalPrism = {{0, 1, 2, 3, 4}, {5, 9, 8, 7, 6}, {0, 5, 6, 1},
+                                              {1, 6, 7, 2},    {2, 7, 8, 3},    {3, 8, 9, 4},
+                                              {0, 4, 9, 5}};
   static const VecInt2d fg_hexagonalPrism = {
-    {0, 5, 4, 3, 2, 1}, {6, 7, 8, 9, 10, 11}, {0, 1, 7, 6},   {1, 2, 8, 7},
-    {2, 3, 9, 8},       {3, 4, 10, 9},        {4, 5, 11, 10}, {5, 0, 6, 11}};
+    {0, 1, 2, 3, 4, 5}, {6, 11, 10, 9, 8, 7}, {0, 6, 7, 1},   {1, 7, 8, 2},
+    {2, 8, 9, 3},       {3, 9, 10, 4},        {4, 10, 11, 5}, {0, 5, 11, 6}};
 
   switch (a_cellType)
   {
@@ -4249,7 +4249,7 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
                          {20.0, 50.0, 0.0}, {0.0, 0.0, 10.0},  {20.0, 10.0, 10.0},
                          {40.0, 0.0, 10.0}, {20.0, 50.0, 10.0}};
   // clang-format off
-  VecInt ugridCell = { (int)XMU_POLYHEDRON, 6, 
+  VecInt ugridCell = { (int)XMU_POLYHEDRON, 6,
                       4, 0, 3, 2, 1,
                       4, 4, 5, 6, 7,
                       4, 0, 1, 5, 4,
@@ -5216,11 +5216,11 @@ void XmUGridUnitTests::testGetCell3dFacePoints()
                        {8, 13, 28, 23},
                        {23, 24, 29, 28},
                        // Wedge
-                       {3, 4, 18},
-                       {8, 23, 9},
-                       {3, 8, 9, 4},
-                       {4, 9, 23, 18},
-                       {18, 23, 8, 3},
+                       {3, 18, 4},
+                       {8, 9, 23},
+                       {3, 4, 9, 8},
+                       {4, 18, 23, 9},
+                       {3, 8, 23, 18},
                        // Pyramid
                        {5, 10, 11, 6},
                        {5, 6, 20},
@@ -5460,7 +5460,7 @@ void XmUGridUnitTests::testGetCellPlanViewPolygonMultiSideFace()
     6, 2, 12, 15, 10, 7, 5, // hex right
     5, 0, 11, 12, 2, 1,     // hex bottom
     5, 11, 13, 14, 15, 12,  // hex back
-    XMU_TETRA, 4, 2, 16, 12, 17 // tetrahedron with 
+    XMU_TETRA, 4, 2, 16, 12, 17 // tetrahedron with
   };
   // clang-format on
   std::shared_ptr<XmUGrid> ugrid3d = XmUGrid::New(points, cells);
@@ -5730,11 +5730,11 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
                                 {8, 13, 28, 23},
                                 {23, 24, 29, 28},
                                 // Wedge
-                                {3, 4, 18},
-                                {8, 23, 9},
-                                {3, 8, 9, 4},
-                                {4, 9, 23, 18},
-                                {18, 23, 8, 3},
+                                {3, 18, 4},
+                                {8, 9, 23},
+                                {3, 4, 9, 8},
+                                {4, 18, 23, 9},
+                                {3, 8, 23, 18},
                                 // Pyramid
                                 {5, 10, 11, 6},
                                 {5, 6, 20},
@@ -5785,7 +5785,7 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
     XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP,
     // Wedge
-    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
+    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM,
     XMU_ORIENTATION_SIDE,
     // Pyramid
     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_TOP,
@@ -6228,7 +6228,7 @@ void CellStreamValidationUnitTests::testGoodGrid()
       XMU_POLY_LINE, 5, 1, 2, 3, 4, 5,
       XMU_TRIANGLE_STRIP, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9,
       XMU_POLYGON, 8, 1, 2, 3, 4, 5, 6, 7, 8,
-      
+
       XMU_POLYHEDRON, 5,
       3, 1, 2, 3,
       4, 2, 3, 4, 5,
