@@ -735,11 +735,11 @@ class TestUGrid(unittest.TestCase):
             (8, 13, 28, 23),
             (23, 24, 29, 28),
             # Wedge
-            (3, 4, 18),
-            (8, 23, 9),
-            (3, 8, 9, 4),
-            (4, 9, 23, 18),
-            (18, 23, 8, 3),
+            (3, 18, 4),
+            (8, 9, 23),
+            (3, 4, 9, 8),
+            (4, 18, 23, 9),
+            (3, 8, 23, 18),
             # Pyramid
             (5, 10, 11, 6),
             (5, 6, 20),
@@ -782,11 +782,11 @@ class TestUGrid(unittest.TestCase):
             (8, 13, 28, 23),
             (23, 24, 29, 28),
             # Wedge
-            (3, 4, 18),
-            (8, 23, 9),
-            (3, 8, 9, 4),
-            (4, 9, 23, 18),
-            (18, 23, 8, 3),
+            (3, 18, 4),
+            (8, 9, 23),
+            (3, 4, 9, 8),
+            (4, 18, 23, 9),
+            (3, 8, 23, 18),
             # Pyramid
             (5, 10, 11, 6),
             (5, 6, 20),
@@ -881,11 +881,11 @@ class TestUGrid(unittest.TestCase):
                                (8, 13, 28, 23),
                                (23, 24, 29, 28),
                                # Wedge
-                               (3, 4, 18),
-                               (8, 23, 9),
-                               (3, 8, 9, 4),
-                               (4, 9, 23, 18),
-                               (18, 23, 8, 3),
+                               (3, 18, 4),
+                               (8, 9, 23),
+                               (3, 4, 9, 8),
+                               (4, 18, 23, 9),
+                               (3, 8, 23, 18),
                                # Pyramid
                                (5, 10, 11, 6),
                                (5, 6, 20),
@@ -940,8 +940,8 @@ class TestUGrid(unittest.TestCase):
                                 # Wedge
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
-                                UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
                                 UGrid.face_orientation_enum.ORIENTATION_TOP,
+                                UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
                                 UGrid.face_orientation_enum.ORIENTATION_SIDE,
                                 # Pyramid
                                 UGrid.face_orientation_enum.ORIENTATION_BOTTOM,
