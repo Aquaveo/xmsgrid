@@ -110,9 +110,9 @@ public:
   bool GetCellCellstream(int a_cellIdx, VecInt& a_cellstream) const;
   int GetCellCellstreamIndex(int a_cellIdx) const;
 
-  XmUGridCellOrder GetCellOrder() const;
-  void SetCellOrder(XmUGridCellOrder a_cellOrder);
-  XmUGridCellOrder CalculateCellOrder() const;
+  XmUGridCellOrdering GetCellOrdering() const;
+  void SetCellOrdering(XmUGridCellOrdering a_cellOrdering);
+  XmUGridCellOrdering CalculateCellOrdering() const;
 
   VecInt GetCellAdjacentCells(int a_cellIdx) const;
   void GetCellAdjacentCells(int a_cellIdx, VecInt& a_cellNeighbors) const;
@@ -232,15 +232,14 @@ private:
   mutable VecInt m_faceOrientation; ///< For vertically prismatic cell is face top, side, bottom
   mutable VecInt m_faceNeighbor;    ///< Cache for Face neighbor
   mutable VecInt m_cellDimensionCounts; ///< Cache for cell dimension counts
-  XmUGridCellOrder m_cellOrder = XMU_CELL_ORDER_UNKNOWN; ///< Cell order. When known speeds
-                                                         ///< up face orientation calculation.
+  XmUGridCellOrdering m_cellOrdering = XMU_CELL_ORDER_INCREASING_DOWN; ///< Cell ordering. When known speeds
+                                                                       ///< up face orientation calculation.
 };
 
 //----- Internal functions -----------------------------------------------------
 namespace
 {
 typedef std::vector<XmEdge> VecEdge; ///< A Vector of XmEdges.
-
 constexpr int BAD_CELL_STREAM = -1;
 
 //------------------------------------------------------------------------------
@@ -2957,22 +2956,22 @@ bool XmUGrid::Impl::IsSideFace(int a_cellIdx, int a_faceIdx) const
 //------------------------------------------------------------------------------
 XmUGridFaceOrientation XmUGrid::Impl::ConnectedTopOrBottom(int a_cellIdx, int a_faceIdx) const
 {
-  if (m_cellOrder == XMU_CELL_ORDER_UNKNOWN)
+  if (m_cellOrdering == XMU_CELL_ORDER_UNKNOWN)
     return XMU_ORIENTATION_UNKNOWN;
 
   int adjacentCellIdx = GetCell3dFaceAdjacentCell(a_cellIdx, a_faceIdx);
   if (adjacentCellIdx != XM_NONE && adjacentCellIdx < a_cellIdx)
   {
-    if (m_cellOrder == XMU_CELL_ORDER_INCREASING_DOWN)
+    if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_DOWN)
       return XMU_ORIENTATION_TOP;
-    else if (m_cellOrder == XMU_CELL_ORDER_INCREASING_UP)
+    else if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_UP)
       return XMU_ORIENTATION_BOTTOM;
   }
   else if (adjacentCellIdx != XM_NONE && adjacentCellIdx > a_cellIdx)
   {
-    if (m_cellOrder == XMU_CELL_ORDER_INCREASING_DOWN)
+    if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_DOWN)
       return XMU_ORIENTATION_BOTTOM;
-    else if (m_cellOrder == XMU_CELL_ORDER_INCREASING_UP)
+    else if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_UP)
       return XMU_ORIENTATION_TOP;
   }
   return XMU_ORIENTATION_UNKNOWN;
@@ -3000,41 +2999,41 @@ XmUGridFaceOrientation XmUGrid::Impl::GetOrientationFromArea(int a_cellIdx, int 
   return XMU_ORIENTATION_UNKNOWN;
 } // XmUGrid::Impl::GetOrientationFromArea
 //------------------------------------------------------------------------------
-/// \brief Returns the cell order of the UGrid.
-/// \return The order of the UGrid.
+/// \brief Returns the cell ordering of the UGrid.
+/// \return The ordering of the UGrid.
 //------------------------------------------------------------------------------
-XmUGridCellOrder XmUGrid::Impl::GetCellOrder() const
+XmUGridCellOrdering XmUGrid::Impl::GetCellOrdering() const
 {
-  return m_cellOrder;
-} // XmUGrid::Impl::GetCellOrder
+  return m_cellOrdering;
+} // XmUGrid::Impl::GetCellOrdering
 //------------------------------------------------------------------------------
-/// \brief Set the cell order for the grid.
-/// \param a_cellOrder[in] The cell order.
+/// \brief Set the cell ordering for the grid.
+/// \param a_cellOrdering[in] The cell ordering.
 //------------------------------------------------------------------------------
-void XmUGrid::Impl::SetCellOrder(XmUGridCellOrder a_cellOrder)
+void XmUGrid::Impl::SetCellOrdering(XmUGridCellOrdering a_cellOrdering)
 {
-  m_cellOrder = a_cellOrder;
+  m_cellOrdering = a_cellOrdering;
   if (m_useCache)
   {
     m_faceOrientation.assign(m_faceNeighbor.size(), NEEDS_CALCULATION);
   }
-} // XmUGrid::Impl::SetCellOrder
+} // XmUGrid::Impl::SetCellOrdering
 //------------------------------------------------------------------------------
-/// \brief Calculate the cell order of the UGrid.
-/// \return The cell order if able to find the order.
+/// \brief Calculate the cell ordering of the UGrid.
+/// \return The cell ordering if able to find the ordering.
 //------------------------------------------------------------------------------
-XmUGridCellOrder XmUGrid::Impl::CalculateCellOrder() const
+XmUGridCellOrdering XmUGrid::Impl::CalculateCellOrdering() const
 {
   int cellCount = GetCellCount();
-  XmUGridCellOrder order = XMU_CELL_ORDER_UNKNOWN;
-  struct CellOrderTable
+  XmUGridCellOrdering ordering = XMU_CELL_ORDER_UNKNOWN;
+  struct CellOrderingTable
   {
     XmUGridFaceOrientation orientation;
     int direction;
-    XmUGridCellOrder goodOrder;
+    XmUGridCellOrdering goodOrdering;
   };
   enum { LESS = -1, EQUAL = 0, GREATER = 1 };
-  std::vector<CellOrderTable> orderTable = {
+  std::vector<CellOrderingTable> orderingTable = {
     {XMU_ORIENTATION_TOP, LESS, XMU_CELL_ORDER_INCREASING_DOWN},
     {XMU_ORIENTATION_TOP, GREATER, XMU_CELL_ORDER_INCREASING_UP},
     {XMU_ORIENTATION_BOTTOM, GREATER, XMU_CELL_ORDER_INCREASING_DOWN},
@@ -3056,19 +3055,19 @@ XmUGridCellOrder XmUGrid::Impl::CalculateCellOrder() const
           else if (direction > 0)
             direction = GREATER;
 
-          for (const auto& orderItem : orderTable)
+          for (const auto& orderingItem : orderingTable)
           {
-            if (orientation == orderItem.orientation)
+            if (orientation == orderingItem.orientation)
             {
-              if (direction == orderItem.direction)
+              if (direction == orderingItem.direction)
               {
-                if (order == XMU_CELL_ORDER_UNKNOWN)
+                if (ordering == XMU_CELL_ORDER_UNKNOWN)
                 {
-                  // set order on first found top/bottom direction
-                  order = orderItem.goodOrder;
+                  // set ordering on first found top/bottom direction
+                  ordering = orderingItem.goodOrdering;
                   break;
                 }
-                else if (order != orderItem.goodOrder)
+                else if (ordering != orderingItem.goodOrdering)
                 {
                   return XMU_CELL_ORDER_UNKNOWN;
                 }
@@ -3079,8 +3078,8 @@ XmUGridCellOrder XmUGrid::Impl::CalculateCellOrder() const
       }
     }
   }
-  return order;
-} // XmUGrid::Impl::CalculateCellOrder
+  return ordering;
+} // XmUGrid::Impl::CalculateCellOrdering
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
@@ -3825,18 +3824,18 @@ XmUGridFaceOrientation XmUGrid::GetCell3dFaceOrientation(int a_cellIdx, int a_fa
 {
   return m_impl->GetCell3dFaceOrientation(a_cellIdx, a_faceIdx);
 } // XmUGrid::GetCell3dFaceOrientation
-XmUGridCellOrder XmUGrid::GetCellOrder() const
+XmUGridCellOrdering XmUGrid::GetCellOrdering() const
 {
-  return m_impl->GetCellOrder();
-} // XmUGrid::GetCellOrder
-void XmUGrid::SetCellOrder(XmUGridCellOrder a_cellOrder)
+  return m_impl->GetCellOrdering();
+} // XmUGrid::GetCellOrdering
+void XmUGrid::SetCellOrdering(XmUGridCellOrdering a_cellOrdering)
 {
-  m_impl->SetCellOrder(a_cellOrder);
-} // XmUGrid::SetCellOrder
-XmUGridCellOrder XmUGrid::CalculateCellOrder() const
+  m_impl->SetCellOrdering(a_cellOrdering);
+} // XmUGrid::SetCellOrdering
+XmUGridCellOrdering XmUGrid::CalculateCellOrdering() const
 {
-  return m_impl->CalculateCellOrder();
-} // XmUGrid::CalculateCellOrder
+  return m_impl->CalculateCellOrdering();
+} // XmUGrid::CalculateCellOrdering
 //------------------------------------------------------------------------------
 /// \brief Builds a 1 cell (left 90 degree triangle) 2D XmUGrid for testing.
 /// \code
@@ -5801,18 +5800,18 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationHexahedrons()
 {
   std::vector<std::shared_ptr<XmUGrid>> grids;
 
-  // hexahedron grid with unknown (actually down) cell order
+  // hexahedron grid with unknown (actually down) cell ordering
   std::shared_ptr<XmUGrid> grid = TEST_XmUBuildHexahedronUgrid(4, 4, 4, Pt3d());
   grids.push_back(grid);
 
-  // hexahedron grid with increasing down cell order
+  // hexahedron grid with increasing down cell ordering
   grid = TEST_XmUBuildHexahedronUgrid(4, 4, 4, Pt3d());
-  grid->SetCellOrder(xms::XMU_CELL_ORDER_INCREASING_DOWN);
+  grid->SetCellOrdering(xms::XMU_CELL_ORDER_INCREASING_DOWN);
   grids.push_back(grid);
 
-  // hexahedron grid with increasing up cell order
+  // hexahedron grid with increasing up cell ordering
   grid = TEST_XmUBuildIncreasingUpHexahedronUgrid(4, 4, 4, Pt3d());
-  grid->SetCellOrder(xms::XMU_CELL_ORDER_INCREASING_UP);
+  grid->SetCellOrdering(xms::XMU_CELL_ORDER_INCREASING_UP);
   grids.push_back(grid);
 
   for (auto xmUGrid : grids)
@@ -5887,8 +5886,8 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationConcaveCell()
 void XmUGridUnitTests::testGetCellNumberingOneCell()
 {
   std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(2, 2, 2, Pt3d());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrder());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrder())
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrdering())
 } // XmUGridUnitTests::testGetCellNumberingOneCell
 //------------------------------------------------------------------------------
 /// \brief Test calculate cell numbering for an increasing down grid.
@@ -5896,8 +5895,8 @@ void XmUGridUnitTests::testGetCellNumberingOneCell()
 void XmUGridUnitTests::testCalculateCellNumberingIncreasingDown()
 {
   std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildHexahedronUgrid(3, 2, 3, Pt3d());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrder());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->CalculateCellOrder())
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->CalculateCellOrdering())
 } // XmUGridUnitTests::testCalculateCellNumberingIncreasingDown
 //------------------------------------------------------------------------------
 /// \brief Test calculate cell numbering for an increasing up grid.
@@ -5905,9 +5904,9 @@ void XmUGridUnitTests::testCalculateCellNumberingIncreasingDown()
 void XmUGridUnitTests::testCalculateCellNumberingIncreasingUp()
 {
   std::shared_ptr<XmUGrid> xmUGrid = TEST_XmUBuildIncreasingUpHexahedronUgrid(3, 2, 3, Pt3d());
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrder());
-  xmUGrid->SetCellOrder(xms::XMU_CELL_ORDER_UNKNOWN);
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_UP, xmUGrid->CalculateCellOrder())
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
+  xmUGrid->SetCellOrdering(xms::XMU_CELL_ORDER_UNKNOWN);
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_UP, xmUGrid->CalculateCellOrdering())
 } // XmUGridUnitTests::testCalculateCellNumberingIncreasingUp
 //------------------------------------------------------------------------------
 /// \brief Test calculate cell numbering for an increasing up grid.
@@ -5929,9 +5928,9 @@ void XmUGridUnitTests::testCalculateCellNumberingMixed()
     cellstream.insert(cellstream.begin(), cellCellstream.begin(), cellCellstream.end());
   }
   xmUGrid = XmUGrid::New(locations, cellstream);
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->GetCellOrder());
-  xmUGrid->SetCellOrder(xms::XMU_CELL_ORDER_UNKNOWN);
-  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrder());
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_INCREASING_DOWN, xmUGrid->GetCellOrdering());
+  xmUGrid->SetCellOrdering(xms::XMU_CELL_ORDER_UNKNOWN);
+  TS_ASSERT_EQUALS(XMU_CELL_ORDER_UNKNOWN, xmUGrid->CalculateCellOrdering());
 } // XmUGridUnitTests::testCalculateCellNumberingMixed
 //------------------------------------------------------------------------------
 /// \brief Test caching to speed up a few 3D cell getters.
