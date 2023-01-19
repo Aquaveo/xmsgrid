@@ -1075,13 +1075,14 @@ class TestUGrid(unittest.TestCase):
                 neighbors.append(cell_neighbors)
             self.assertEqual(expected_neighbors, neighbors)
 
-    def test_cell_order(self):
-        """Test cell order bindings."""
+    def test_cell_ordering(self):
+        """Test cell ordering bindings."""
         ugrid = self.get_hexahedron_ugrid(4, 3, 3, (0, 0, 0))
-        self.assertEqual(UGrid.cell_order_enum.CELL_ORDER_UNKNOWN, ugrid.get_cell_order())
-        self.assertEqual(UGrid.cell_order_enum.CELL_ORDER_INCREASING_DOWN, ugrid.calculate_cell_order())
-        ugrid.set_cell_order(UGrid.cell_order_enum.CELL_ORDER_INCREASING_UP)
-        self.assertEqual(UGrid.cell_order_enum.CELL_ORDER_INCREASING_UP, ugrid.get_cell_order())
+        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_DOWN, ugrid.get_cell_ordering())
+        ugrid.set_cell_ordering(UGrid.cell_ordering_enum.CELL_ORDER_UNKNOWN)
+        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_DOWN, ugrid.calculate_cell_ordering())
+        ugrid.set_cell_ordering(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP)
+        self.assertEqual(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP, ugrid.get_cell_ordering())
 
 
 class TestUGridCellTypeEnum(unittest.TestCase):
@@ -1180,18 +1181,18 @@ class TestUGridCellTypeEnum(unittest.TestCase):
         self.assertEqual(51, len(UGrid.cell_type_enum.__members__))
 
 
-class TestUGridCellOrderEnum(unittest.TestCase):
-    """CellOrder enum tests."""
+class TestUGridCellOrderingEnum(unittest.TestCase):
+    """CellOrdering enum tests."""
 
-    def test_ugrid_cell_order_enum(self):
-        """Test the UGrid CellOrder enum."""
+    def test_ugrid_cell_ordering_enum(self):
+        """Test the UGrid CellOrdering enum."""
         from xms.grid.ugrid import UGrid
-        self.assertEqual("ugrid_cell_order_enum.CELL_ORDER_UNKNOWN",
-                         str(UGrid.cell_order_enum.CELL_ORDER_UNKNOWN))
-        self.assertEqual("ugrid_cell_order_enum.CELL_ORDER_INCREASING_DOWN",
-                         str(UGrid.cell_order_enum.CELL_ORDER_INCREASING_DOWN))
-        self.assertEqual("ugrid_cell_order_enum.CELL_ORDER_INCREASING_UP",
-                         str(UGrid.cell_order_enum.CELL_ORDER_INCREASING_UP))
+        self.assertEqual("ugrid_cell_ordering_enum.CELL_ORDER_UNKNOWN",
+                         str(UGrid.cell_ordering_enum.CELL_ORDER_UNKNOWN))
+        self.assertEqual("ugrid_cell_ordering_enum.CELL_ORDER_INCREASING_DOWN",
+                         str(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_DOWN))
+        self.assertEqual("ugrid_cell_ordering_enum.CELL_ORDER_INCREASING_UP",
+                         str(UGrid.cell_ordering_enum.CELL_ORDER_INCREASING_UP))
 
 
 class TestUGridFaceOrientationEnum(unittest.TestCase):
