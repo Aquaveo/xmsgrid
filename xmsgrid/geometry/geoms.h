@@ -300,7 +300,6 @@ int gmClipLine(double* x1,
 
 
 // Intersection
-enum class gmIntersectionType { MidToMid, EndToEnd, EndToMid, MidToEnd, None };
 
 bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
                                     const Pt3d& a_p2,
@@ -317,13 +316,6 @@ bool gmIntersectLineSegments(const Pt3d& a_p1,
                              const Pt3d& a_q2,
                              Pt3d& a_pIntersection,
                              Pt3d& a_qIntersection);
-gmIntersectionType gmIntersectLineSegments(const Pt3d& a_p1,
-                                           const Pt3d& a_p2,
-                                           const Pt3d& a_q1,
-                                           const Pt3d& a_q2,
-                                           double a_dist,
-                                           Pt3d& a_pIntersection,
-                                           Pt3d& a_qIntersection);
 bool gmIntersectLineSegmentsNoTol(const Pt3d& one1,
                                   const Pt3d& one2,
                                   const Pt3d& two1,
