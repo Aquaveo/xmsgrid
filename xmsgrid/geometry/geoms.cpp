@@ -6541,30 +6541,6 @@ void iTestCleanIntersection(const Pt3d& a_p1,
   }
 } // itestCleanIntersection
 
-//------------------------------------------------------------------------------
-/// \brief test gmIntersectLineSegments overload that does has a dist
-///        parameter.
-//------------------------------------------------------------------------------
-void iTestFuzzyIntersection(const Pt3d& a_p1,
-                            const Pt3d& a_p2,
-                            const Pt3d& a_q1,
-                            const Pt3d& a_q2,
-                            const Pt3d& a_pIntersection,
-                            const Pt3d& a_qIntersection,
-                            gmIntersectionType a_type)
-{
-  Pt3d p, q;
-  gmIntersectionType type = gmIntersectLineSegments(a_p1, a_p2, a_q1, a_q2, 0.2, p, q);
-
-  TS_ASSERT_EQUALS(a_type, type);
-
-  if (type != gmIntersectionType::None && (a_pIntersection != p || a_qIntersection != q))
-  {
-    TS_ASSERT_EQUALS(a_pIntersection, p);
-    TS_ASSERT_EQUALS(a_qIntersection, q);
-  }
-} // iTestFuzzyIntersection
-
 ////////////////////////////////////////////////////////////////////////////////
 /// \class GmPointInPolyUnitTests
 /// \brief Used for speed tests of various point in poly functions / classes.
@@ -7839,7 +7815,7 @@ void GeomsUnitTest::test_gmPolygonSegmentIntersections()
 //------------------------------------------------------------------------------
 /// \brief Test gmIntersectLineSegments overload for clean intersections.
 //------------------------------------------------------------------------------
-void GeomsUnitTest::test_gmIntersectLineSegments_noDist()
+void GeomsUnitTest::test_gmIntersectLineSegments()
 {
   //
   // Basic intersections
@@ -7939,153 +7915,7 @@ void GeomsUnitTest::test_gmIntersectLineSegments_noDist()
   // P negative, Q positive
   iTestCleanIntersection({1, 1, 1}, {0, 0, 2}, {3, 0, 3}, {2, 1, 4}, {0, 0, 0}, {0, 0, 0},
                          false);
-} // GeomsUnitTest::test_gmIntersectLineSegments_noDist
-
-//------------------------------------------------------------------------------
-/// \brief Test gmIntersectLineSegments overload for approximate intersections.
-//------------------------------------------------------------------------------
-void GeomsUnitTest::test_gmIntersectLineSegments_dist()
-{
-  //
-  // Basic clean intersections
-  //
-
-  // A + shape
-  iTestFuzzyIntersection({1, 0, 1}, {1, 2, 2}, {0, 1, 3}, {2, 1, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
-
-  // An X shape
-  iTestFuzzyIntersection({0, 0, 1}, {2, 2, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
-
-  // An X shape with one of the segments reversed.
-  iTestFuzzyIntersection({2, 2, 1}, {0, 0, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
-
-  // An X shape with both segments reversed
-  iTestFuzzyIntersection({2, 2, 1}, {0, 0, 2}, {2, 0, 3}, {0, 2, 4}, {1, 1, 1.5}, {1, 1, 3.5}, gmIntersectionType::MidToMid);
-
-  // A squashed X
-  iTestFuzzyIntersection({0, 0, 1}, {2, 1, 2}, {0, 1, 3}, {2, 0, 4}, {1, 0.5, 1.5}, {1, 0.5, 3.5},
-                         gmIntersectionType::MidToMid);
-
-  //
-  // point-to-point clean intersections
-  //
-
-  // p1 == q1
-  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {0, 0, 3}, {2, 2, 4}, {0, 0, 1}, {0, 0, 3}, gmIntersectionType::EndToEnd);
-
-  // p1 == q2
-  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {0, 2, 3}, {0, 0, 4}, {0, 0, 1}, {0, 0, 4}, gmIntersectionType::EndToEnd);
-
-  // p2 == q1
-  iTestFuzzyIntersection({0, 0, 1}, {0, 2, 2}, {0, 2, 3}, {2, 2, 4}, {0, 2, 2}, {0, 2, 3}, gmIntersectionType::EndToEnd);
-
-  // p2 == q2
-  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {0, 2, 3}, {2, 0, 4}, {2, 0, 2}, {2, 0, 4}, gmIntersectionType::EndToEnd);
-
-  //
-  // point-to-line clean intersections
-  //
-
-  // p1 on Q
-  iTestFuzzyIntersection({1, 1, 1}, {2, 2, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 1}, {1, 1, 3.5}, gmIntersectionType::EndToMid);
-
-  // p2 on Q
-  iTestFuzzyIntersection({0, 0, 1}, {1, 1, 2}, {0, 2, 3}, {2, 0, 4}, {1, 1, 2}, {1, 1, 3.5}, gmIntersectionType::EndToMid);
-
-  // q1 on P
-  iTestFuzzyIntersection({0, 0, 1}, {2, 2, 2}, {1, 1, 3}, {2, 0, 4}, {1, 1, 1.5}, {1, 1, 3}, gmIntersectionType::MidToEnd);
-
-  // q2 on P
-  iTestFuzzyIntersection({0, 0, 1}, {2, 2, 2}, {0, 2, 3}, {1, 1, 4}, {1, 1, 1.5}, {1, 1, 4}, gmIntersectionType::MidToEnd);
-
-  //
-  // Fuzzy intersections
-  //
-
-  // A T shape, where the vertical part doesn't quite meet the horizontal one. Horizontal segment first.
-  iTestFuzzyIntersection({-2, 2, 1}, {2, 2, 2}, {0, 0, 3}, {0, 1.9, 4}, {0, 2, 1.5}, {0, 1.9, 4},
-                         gmIntersectionType::MidToEnd);
-  // Vertical segment first.
-  iTestFuzzyIntersection({0, 0, 3}, {0, 1.9, 4}, {-2, 2, 1}, {2, 2, 2}, {0, 1.9, 4},{0, 2, 1.5}, 
-                         gmIntersectionType::EndToMid);
-
-  // An L shape, with the corner at the origin. Both segments have been slightly shortened so they
-  // don't quite reach that intersection. Horizontal first.
-  iTestFuzzyIntersection({0.1, 0, 1}, {2, 0, 2}, {0, 0.1, 3}, {0, 2, 4}, {0.1, 0, 1}, {0, 0.1, 3},
-                         gmIntersectionType::EndToEnd);
-  // Vertical segment first
-  iTestFuzzyIntersection({0, 0.1, 3}, {0, 2, 4}, {0.1, 0, 1}, {2, 0, 2}, {0, 0.1, 3},{0.1, 0, 1},
-                         gmIntersectionType::EndToEnd);
-  
-  // Two horizontal segments with the ends nearly touching. Left first.
-  iTestFuzzyIntersection({-5, 0, 1}, {0, 0, 2}, {0.1, 0, 3}, {5, 0, 4}, {0, 0, 2}, {0.1, 0, 3},
-                         gmIntersectionType::EndToEnd);
-  // Right first.
-  iTestFuzzyIntersection({0.1, 0, 3}, {5, 0, 4}, {-5, 0, 1}, {0, 0, 2}, {0.1, 0, 3}, {0, 0, 2},
-                         gmIntersectionType::EndToEnd);
-
-  // Two horizontal segments with the ends touching in X, but slightly offset in Y.
-  // Left first.
-  iTestFuzzyIntersection({-5, 0, 1}, {0, 0, 2}, {0, 0.1, 3}, {5, 0.1, 4}, {0, 0, 2}, {0, 0.1, 3},
-                         gmIntersectionType::EndToEnd);
-  // Right first.
-  iTestFuzzyIntersection({0, 0.1, 3}, {5, 0.1, 4}, {-5, 0, 1}, {0, 0, 2}, {0, 0.1, 3}, {0, 0, 2},
-                         gmIntersectionType::EndToEnd);
-
-  // Two identical segments.
-  iTestFuzzyIntersection({-5, 0, 1}, {5, 0, 2}, {-5, 0, 3}, {5, 0, 4}, {-5, 0, 1}, {-5, 0, 3},
-                         gmIntersectionType::EndToEnd);
-  // One of them reversed. Note the intersection changes.
-  iTestFuzzyIntersection({5, 0, 2}, {-5, 0, 1}, {-5, 0, 3}, {5, 0, 4}, {5, 0, 2}, {5, 0, 4},
-                         gmIntersectionType::EndToEnd);
-
-  // Two horizontal segments that are identical, except one is slightly above the other.
-  iTestFuzzyIntersection({-5, -0.1, 1}, {5, -0.1, 2}, {-5, 0, 3}, {5, 0, 4}, {-5, -0.1, 1}, {-5, 0, 3},
-                         gmIntersectionType::EndToEnd);
-  // Swap the segment order.
-  iTestFuzzyIntersection({-5, 0, 3}, {5, 0, 4}, {-5, -0.1, 1}, {5, -0.1, 2}, {-5, 0, 3}, {-5, -0.1, 1},
-                         gmIntersectionType::EndToEnd);
-  // Reverse one of the segments.
-  iTestFuzzyIntersection({5, -0.1, 2}, {-5, -0.1, 1}, {-5, 0, 3}, {5, 0, 4}, {5, -0.1, 2}, {5, 0, 4},
-                         gmIntersectionType::EndToEnd);
-
-  // Two horizontal segments that partially overlap.
-  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {1, 0, 3}, {3, 0, 4}, {1, 0, 1.5}, {1, 0, 3},
-                         gmIntersectionType::MidToEnd);
-  // Swap the segment order.
-  iTestFuzzyIntersection({1, 0, 3}, {3, 0, 4}, {0, 0, 1}, {2, 0, 2}, {2, 0, 3.5}, {2, 0, 2},
-                         gmIntersectionType::MidToEnd);
-  // Reverse a segment
-  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {3, 0, 4}, {1, 0, 3}, {1, 0, 1.5}, {1, 0, 3},
-                         gmIntersectionType::MidToEnd);
-
-  // Two horizontal segments that partially overlap in X, but are offset in Y.
-  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {1, 0.1, 3}, {3, 0.1, 4}, {1, 0, 1.5}, {1, 0.1, 3},
-                         gmIntersectionType::MidToEnd);
-  // Swap the segment order
-  iTestFuzzyIntersection({1, 0.1, 3}, {3, 0.1, 4}, {0, 0, 1}, {2, 0, 2}, {2, 0.1, 3.5}, {2, 0, 2},
-                         gmIntersectionType::MidToEnd);
-  // Reverse a segment
-  iTestFuzzyIntersection({0, 0, 1}, {2, 0, 2}, {3, 0.1, 4}, {1, 0.1, 3}, {1, 0, 1.5}, {1, 0.1, 3},
-                         gmIntersectionType::MidToEnd);
-
-  // Two horizontal segments that overlap in X and Y. One is a sub-segment of the other.
-  // Supersegment first.
-  iTestFuzzyIntersection({0, 0, 1}, {3, 0, 4}, {1, 0, 8}, {2, 0, 9}, {1, 0, 2}, {1, 0, 8},
-                         gmIntersectionType::MidToEnd);
-  // Subsegment first.
-  iTestFuzzyIntersection({1, 0, 8}, {2, 0, 9}, {0, 0, 1}, {3, 0, 4}, {1, 0, 8}, {1, 0, 2},
-                         gmIntersectionType::EndToMid);
-
-  // Two horizontal segments that overlap in X but not in Y. One is a sub-segment of the other.
-  // Supersegment first.
-  iTestFuzzyIntersection({0, 0, 1}, {3, 0, 4}, {1, 0.1, 8}, {2, 0.1, 9}, {1, 0, 2}, {1, 0.1, 8},
-                         gmIntersectionType::MidToEnd);
-  // Subsegment first.
-  iTestFuzzyIntersection({1, 0.1, 8}, {2, 0.1, 9}, {0, 0, 1}, {3, 0, 4}, {1, 0.1, 8}, {1, 0, 2},
-                         gmIntersectionType::EndToMid);
-
-} // GeomsUnitTest::test_gmIntersectLineSegments_dist
+} // GeomsUnitTest::test_gmIntersectLineSegments
 
 //------------------------------------------------------------------------------
 /// \brief Test gmGreatCircleDistanceMeters.
