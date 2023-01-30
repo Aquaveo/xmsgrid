@@ -130,55 +130,6 @@ bool gmiIntersectLineSegments(const Pt3d& a_p1,
 } // gmiIntersectLineSegments
 
 //------------------------------------------------------------------------------
-/// \brief Check if the endpoints on two line segments are within a distance.
-/// \param a_p1: First point defining P.
-/// \param a_p2: Second point defining P.
-/// \param a_q1: First point defining Q.
-/// \param a_q2: Second point defining Q.
-/// \param a_dist: Distance to search.
-/// \param a_p: Point on P that is near Q.
-/// \param a_q: Point on Q that is near P.
-/// \return Whether the segments' endpoints were nearby.
-//------------------------------------------------------------------------------
-bool gmiSegmentEndpointsWithinDist(const Pt3d& a_p1,
-                                   const Pt3d& a_p2,
-                                   const Pt3d& a_q1,
-                                   const Pt3d& a_q2,
-                                   double a_dist,
-    Pt3d& a_p, Pt3d& a_q)
-{
-    if (gmEqualPointsXY(a_p1, a_q1, a_dist))
-  {
-      a_p = a_p1;
-      a_q = a_q1;
-      return true;
-  }
-  
-  if (gmEqualPointsXY(a_p1, a_q2, a_dist))
-  {
-    a_p = a_p1;
-    a_q = a_q2;
-    return true;
-  }
-
-  if (gmEqualPointsXY(a_p2, a_q1, a_dist))
-  {
-    a_p = a_p2;
-    a_q = a_q1;
-    return true;
-  }
-
-  if (gmEqualPointsXY(a_p2, a_q2, a_dist))
-  {
-    a_p = a_p2;
-    a_q = a_q2;
-    return true;
-  }
-
-  return false;
-} // gmiSegmentEndpointsWithinDist
-
-//------------------------------------------------------------------------------
 /// \brief Translate a pair of line segments to be near the origin to improve
 ///        precision of geometric operations.
 /// \param a_p1: First point defining P.
@@ -254,70 +205,6 @@ void gmiTranslateIntersectionFromOrigin(const Pt3d& a_translation,
     a_currentQ += a_translation;
   }
 }
-
-//------------------------------------------------------------------------------
-/// \brief Check if the endpoints on two line segments are within a distance
-///        of the other segment.
-/// \param a_p1: First point defining P.
-/// \param a_p2: Second point defining P.
-/// \param a_q1: First point defining Q.
-/// \param a_q2: Second point defining Q.
-/// \param a_dist: Distance to search.
-/// \param a_p: Point on P that is near Q.
-/// \param a_q: Point on Q that is near P.
-/// \return Whether the segments' endpoints were nearby.
-//------------------------------------------------------------------------------
-bool gmiEndpointNearSegment(const Pt3d& a_p1,
-                            const Pt3d& a_p2,
-                            const Pt3d& a_q1,
-                            const Pt3d& a_q2,
-                            double a_dist,
-                            Pt3d& a_p,
-                            Pt3d& a_q)
-{
-  a_dist = a_dist * a_dist;
-  double shortestDist = XM_FLT_HIGHEST;
-  bool found = false;
-  Pt3d pt;
-  
-  double dist = gmNearestPointOnLineSegment2D(a_p1, a_p2, a_q1, &pt);
-  if (dist < a_dist && dist < shortestDist)
-  {
-    a_p = pt;
-    a_q = a_q1;
-    found = true;
-    shortestDist = dist;
-  }
-
-  dist = gmNearestPointOnLineSegment2D(a_p1, a_p2, a_q2, &pt);
-  if (dist < a_dist && dist < shortestDist)
-  {
-    a_p = pt;
-    a_q = a_q2;
-    found = true;
-    shortestDist = dist;
-  }
-
-  dist = gmNearestPointOnLineSegment2D(a_q1, a_q2, a_p1, &pt);
-  if (dist < a_dist && dist < shortestDist)
-  {
-    a_p = a_p1;
-    a_q = pt;
-    found = true;
-    shortestDist = dist;
-  }
-
-  dist = gmNearestPointOnLineSegment2D(a_q1, a_q2, a_p2, &pt);
-  if (dist < a_dist && dist < shortestDist)
-  {
-    a_p = a_p2;
-    a_q = pt;
-    found = true;
-    shortestDist = dist;
-  }
-
-  return found;
-} // gmiEndpointNearSegment
 
 //------------------------------------------------------------------------------
 /// \brief Compute the cross product of two 2d vectors.
