@@ -3118,8 +3118,25 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
 
 //------------------------------------------------------------------------------
 /// \brief Find the plan projection intersection of two line segments, P and Q.
-/// \note This overload only handles clean intersections. For approximate ones,
-///       see the overload with an extra distance parameter.
+///
+/// \note The point of intersection may be an endpoint on either segment, or
+///       a shared endpoint if both segments meet at a single point (but see
+///       the note on parallel segments below).
+///
+///       Parallel segments are always reported as not intersecting. This may
+///       be surprising in some cases. If the segments happen to be collinear
+///       and overlap, they technically have infinite points in common, but
+///       will be reported as having zero. If they are collinear and meet at a
+///       single point (which will be an endpoint on both segments), they will
+///       be reported as not intersecting, even though there is technically a
+///       single point of intersection between them.
+/// 
+///       a_pIntersection and a_qIntersection will always have the same X and Y
+///       coordinates if the segments intersect. The Z coordinates will be set
+///       such that each point falls on its respective segment. If the segments
+///       don't intersect, the values of a_pIntersection and a_qIntersection
+///       are unspecified and should not be used.
+/// 
 /// \param a_p1: First point defining P.
 /// \param a_p2: Second point defining P.
 /// \param a_q1: First point defining Q.
@@ -3128,18 +3145,11 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
 /// \param a_qIntersection: Initialized to the point of intersection on Q.
 /// \return Whether the line segments intersect.
 /// 
-/// \note a_pIntersection and a_qIntersection will always have the same X and Y
-///       coordinates if the segments intersect, but may differ in Z
-///       coordinates. The Z coordinates will be set such that each point falls
-///       on its respective line.
-/// 
-///       Parallel segments are reported as not intersecting, even if they
-///       overlap.
 //------------------------------------------------------------------------------
-bool gmIntersectLineSegments(Pt3d a_p1,
-                             Pt3d a_p2,
-                             Pt3d a_q1,
-                             Pt3d a_q2,
+bool gmIntersectLineSegments(const Pt3d& a_p1,
+                             const Pt3d& a_p2,
+                             const Pt3d& a_q1,
+                             const Pt3d& a_q2,
                              Pt3d& a_pIntersection,
                              Pt3d& a_qIntersection)
 {
@@ -3148,20 +3158,47 @@ bool gmIntersectLineSegments(Pt3d a_p1,
     return false;
   }
 
-  Pt3d translation = gmiTranslateSegmentsToOrigin(a_p1, a_p2, a_q1, a_q2);
+  Pt3d p1 = a_p1, p2 = a_p2, q1 = a_q1, q2 = a_q2;
+
+  Pt3d translation = gmiTranslateSegmentsToOrigin(p1, p2, q1, q2);
 
   bool intersect =
-    gmiIntersectLineSegments(a_p1, a_p2, a_q1, a_q2, a_pIntersection, a_qIntersection);
+    gmiIntersectLineSegments(p1, p2, q1, q2, a_pIntersection, a_qIntersection);
 
-  if (intersect)
+  if (!intersect)
   {
-    // The segments were translated to be near the origin above, so their
-    // intersections were translated too. Reverse the translation.
+    return false;
+  }
+
+  // translating back can introduce roundoff errors, which can be important if
+  // the intersection is close to an endpoint. Try to restore the exact value.
+  if (a_pIntersection == p1)
+  {
+    a_pIntersection = a_p1;
+  }
+  else if (a_pIntersection == p2)
+  {
+    a_pIntersection = a_p2;
+  }
+  else
+  {
     a_pIntersection += translation;
+  }
+
+  if (a_qIntersection == q1)
+  {
+    a_qIntersection = a_q1;
+  }
+  else if (a_qIntersection == q2)
+  {
+    a_qIntersection = a_q2;
+  }
+  else
+  {
     a_qIntersection += translation;
   }
 
-  return intersect;
+  return true;
 } // gmIntersectLineSegments
 
 //------------------------------------------------------------------------------
