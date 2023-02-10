@@ -3010,13 +3010,8 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
 ///       a shared endpoint if both segments meet at a single point (but see
 ///       the note on parallel segments below).
 ///
-///       Parallel segments are always reported as not intersecting. This may
-///       be surprising in some cases. If the segments happen to be collinear
-///       and overlap, they technically have infinite points in common, but
-///       will be reported as having zero. If they are collinear and meet at a
-///       single point (which will be an endpoint on both segments), they will
-///       be reported as not intersecting, even though there is technically a
-///       single point of intersection between them.
+///       Parallel segments are reported as not intersecting if they overlap.
+///       Technically, they have infinite points of intersection.
 /// 
 ///       a_pIntersection and a_qIntersection will always have the same X and Y
 ///       coordinates if the segments intersect. The Z coordinates will be set
@@ -3031,7 +3026,6 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
 /// \param a_pIntersection: Initialized to the point of intersection on P.
 /// \param a_qIntersection: Initialized to the point of intersection on Q.
 /// \return Whether the line segments intersect.
-/// 
 //------------------------------------------------------------------------------
 bool gmIntersectLineSegments(const Pt3d& a_p1,
                              const Pt3d& a_p2,
@@ -3047,6 +3041,35 @@ bool gmIntersectLineSegments(const Pt3d& a_p1,
 
   Pt3d p1 = a_p1, p2 = a_p2, q1 = a_q1, q2 = a_q2;
 
+  // We translate the segments below, but this can introduce roundoff errors.
+  // If the segments share an endpoint, it can result in the returned points
+  // not actually being the shared endpoint. We'll do an exact check for
+  // endpoint sharing before translating to avoid the problem.
+  if (p1 == q1)
+  {
+    a_pIntersection = p1;
+    a_qIntersection = q1;
+    return true;
+  }
+  if (p1 == q2)
+  {
+    a_pIntersection = p1;
+    a_qIntersection = q2;
+    return true;
+  }
+  if (p2 == q1)
+  {
+    a_pIntersection = p2;
+    a_qIntersection = q1;
+    return true;
+  }
+  if (p2 == q2)
+  {
+    a_pIntersection = p2;
+    a_qIntersection = q2;
+    return true;
+  }
+
   Pt3d translation = gmiTranslateSegmentsToOrigin(p1, p2, q1, q2);
 
   bool intersect =
@@ -3057,33 +3080,8 @@ bool gmIntersectLineSegments(const Pt3d& a_p1,
     return false;
   }
 
-  // translating back can introduce roundoff errors, which can be important if
-  // the intersection is close to an endpoint. Try to restore the exact value.
-  if (a_pIntersection == p1)
-  {
-    a_pIntersection = a_p1;
-  }
-  else if (a_pIntersection == p2)
-  {
-    a_pIntersection = a_p2;
-  }
-  else
-  {
-    a_pIntersection += translation;
-  }
-
-  if (a_qIntersection == q1)
-  {
-    a_qIntersection = a_q1;
-  }
-  else if (a_qIntersection == q2)
-  {
-    a_qIntersection = a_q2;
-  }
-  else
-  {
-    a_qIntersection += translation;
-  }
+  a_pIntersection += translation;
+  a_qIntersection += translation;
 
   return true;
 } // gmIntersectLineSegments
