@@ -96,12 +96,25 @@ bool gmiIntersectLineSegments(const Pt3d& a_p1,
   double dy2 = a_q2.y - a_q1.y;
   double dz2 = a_q2.z - a_q1.z;
 
-  // If the cross product is 0, then the lines are parallel.
-  // If the lines are parallel, then there are either 0 or infinite
-  // intersections. We'll report no intersections.
+  
   double cross = gmCross2D(dx1, dy1, dx2, dy2);
-  if (EQ_TOL(cross, 0.0, XM_ZERO_TOL))
+  // The cross product is magnitude(p)*magnitude(q)*sin(angleBetween),
+  // so a tiny cross product means either the angle is small or the magnitudes
+  // are. That in turn means it's hard to pick a single tolerance that works
+  // for every problem. So rather than try to separate them and check the
+  // angle, we'll just check for exactly zero. Anything nonzero will eventually
+  // intersect at exactly one point, which is what the code that follows is
+  // meant to handle, so it shouldn't mind that we didn't use a tolerance.
+  if (cross == 0.0)
   {
+    // If the cross product is exactly 0, then either
+    // - the lines are exactly parallel and don't overlap
+    //   -> there is no intersection
+    // - the lines are parallel and overlap at least partially
+    //   -> there is no single intersection
+    // - one or both of the segments is actually a point
+    //   -> the function's preconditions were violated and result is undefined
+    // Either way, we'll report no intersection.
     return false;
   }
 
@@ -124,7 +137,12 @@ bool gmiIntersectLineSegments(const Pt3d& a_p1,
   // Now that we know how far along the segments the intersection points are,
   // we can find the actual positions of them.
   a_pIntersection = a_p1 + Pt3d(lambda * dx1, lambda * dy1, lambda * dz1);
-  a_qIntersection = a_q1 + Pt3d(mu * dx2, mu * dy2, mu * dz2);
+  a_qIntersection = a_q1 + Pt3d(a_pIntersection.x, a_pIntersection.y, mu * dz2);
+
+  // Roundoff error might result in these being slightly different, but we
+  // promised they'd be exactly the same.
+  a_qIntersection.x = a_pIntersection.x;
+  a_qIntersection.y = a_pIntersection.y;
 
   return true;
 } // gmiIntersectLineSegments
@@ -3006,18 +3024,21 @@ bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
 //------------------------------------------------------------------------------
 /// \brief Find the plan projection intersection of two line segments, P and Q.
 ///
-/// \note The point of intersection may be an endpoint on either segment, or
-///       a shared endpoint if both segments meet at a single point (but see
-///       the note on parallel segments below).
-///
-///       Parallel segments are reported as not intersecting if they overlap.
-///       Technically, they have infinite points of intersection.
+///        Requires that both P and Q are actual segments. If either is
+///        degenerate (both endpoints are identical) then result is undefined.
 /// 
-///       a_pIntersection and a_qIntersection will always have the same X and Y
-///       coordinates if the segments intersect. The Z coordinates will be set
-///       such that each point falls on its respective segment. If the segments
-///       don't intersect, the values of a_pIntersection and a_qIntersection
-///       are unspecified and should not be used.
+///        The point of intersection may be an endpoint on either segment, or
+///        a shared endpoint if both segments meet at a single point (but see
+///        the note on parallel segments below).
+///
+///        Parallel segments are reported as not intersecting if they overlap.
+///        Technically, they have infinite points of intersection.
+/// 
+///        a_pIntersection and a_qIntersection will always have the same X and
+///        Y coordinates if the segments intersect. The Z coordinates will be
+///        set such that each point falls on its respective segment. If the
+///        segments don't intersect, the values of a_pIntersection and
+///        a_qIntersection are unspecified and should not be used.
 /// 
 /// \param a_p1: First point defining P.
 /// \param a_p2: Second point defining P.
@@ -7745,6 +7766,14 @@ void GeomsUnitTest::test_gmIntersectLineSegments()
                          {760067.48717480700, 871288.60926402314, -0.53317581878955644},
                          {760067.48717480700, 871288.60926402314, -0.53317581878955644},
                          {760067.48717480700, 871288.60926402314, -0.53317581878955644}, true);
+
+  // These segments are short enough to throw off the parallel check if you aren't careful.
+  iTestCleanIntersection({-97.161765245910004, 31.656351715252999, 0.0000000000000000},
+                         {-97.161524999999997, 31.657433999999999, 0.0000000000000000},
+                         {-97.161729261260007, 31.656376852344000, 0.0000000000000000},
+                         {-97.162333136759997, 31.657192468076001, 0.0000000000000000},
+                         {-97.161752652836526, 31.656408445839357, 0.0000000000000000},
+                         {-97.161752652836526, 31.656408445839357, 0.0000000000000000}, true);
 
   //
   // point-to-line intersections
