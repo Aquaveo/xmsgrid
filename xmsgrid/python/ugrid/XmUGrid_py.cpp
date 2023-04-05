@@ -173,6 +173,10 @@ void initXmUGrid(py::module &m) {
   // ---------------------------------------------------------------------------
     xmUg.def("GetCellCount", &xms::XmUGrid::GetCellCount);
   // ---------------------------------------------------------------------------
+  // function: GetCellPointCount
+  // ---------------------------------------------------------------------------
+    xmUg.def("GetCellPointCount", &xms::XmUGrid::GetCellPointCount, py::arg("cell_idx"));
+  // ---------------------------------------------------------------------------
   // function: GetCellPoints
   // ---------------------------------------------------------------------------
     xmUg.def("GetCellPoints", [](xms::XmUGrid &self, int cell_idx) -> py::iterable {
