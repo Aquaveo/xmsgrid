@@ -313,6 +313,16 @@ class TestUGrid(unittest.TestCase):
         num_cells_base = 1
         self.assertEqual(num_cells_base, xu.cell_count)
 
+    def test_get_cell_point_count(self):
+        """Test getting cell point count."""
+        xu3d = self.get_3d_linear_ugrid()
+        self.assertEqual(4, xu3d.get_cell_point_count(0))
+        self.assertEqual(8, xu3d.get_cell_point_count(1))
+        self.assertEqual(8, xu3d.get_cell_point_count(2))
+        self.assertEqual(8, xu3d.get_cell_point_count(3))
+        self.assertEqual(6, xu3d.get_cell_point_count(4))
+        self.assertEqual(5, xu3d.get_cell_point_count(5))
+
     def test_get_cell_points(self):
         """Test getting the points of a cell."""
         import numpy as np
