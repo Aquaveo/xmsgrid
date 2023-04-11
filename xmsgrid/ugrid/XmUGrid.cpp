@@ -10,6 +10,7 @@
 // 1. Precompiled header
 
 // 2. My own header
+#include "cxxtest/TestSuite.h"
 #include <xmsgrid/ugrid/XmUGrid.h>
 
 // 3. Standard library headers
@@ -212,6 +213,7 @@ private:
                             int a_columnEnd,
                             VecPt3d& a_segments) const;
   XmUGridFaceOrientation FaceOrientationWithFail(int a_cellIdx, int a_faceIdx) const;
+  XmUGridFaceOrientation OrientationForOrdering(XmUGridFaceOrientation a_orientation) const;
 
   /// Constant for when a cached integer item needs to be calculated.
   enum XmUGridCacheHolder {
@@ -363,7 +365,7 @@ const VecInt2d& iGetFaceOffsetTable(int a_cellType)
 {
   static const VecInt2d fg_empty;
   static const VecInt2d fg_tetra = {{0, 1, 3}, {1, 2, 3}, {2, 0, 3}, {0, 2, 1}};
-  static const VecInt2d fg_wedge = {{0, 2, 1}, {3, 4, 5}, {0, 1, 4, 3}, {1, 2, 5, 4}, {0, 3, 5, 2}};
+  static const VecInt2d fg_wedge = {{0, 1, 2}, {3, 5, 4}, {0, 3, 4, 1}, {1, 4, 5, 2}, {0, 2, 5, 3}};
   static const VecInt2d fg_voxel = {{0, 4, 6, 2}, {1, 3, 7, 5}, {0, 1, 5, 4},
                                         {2, 6, 7, 3}, {0, 2, 3, 1}, {4, 5, 7, 6}};
   static const VecInt2d fg_hexahedron = {{0, 4, 7, 3}, {1, 2, 6, 5}, {0, 1, 5, 4},
@@ -2962,17 +2964,11 @@ XmUGridFaceOrientation XmUGrid::Impl::ConnectedTopOrBottom(int a_cellIdx, int a_
   int adjacentCellIdx = GetCell3dFaceAdjacentCell(a_cellIdx, a_faceIdx);
   if (adjacentCellIdx != XM_NONE && adjacentCellIdx < a_cellIdx)
   {
-    if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_DOWN)
-      return XMU_ORIENTATION_TOP;
-    else if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_UP)
-      return XMU_ORIENTATION_BOTTOM;
+    return OrientationForOrdering(XMU_ORIENTATION_TOP);
   }
   else if (adjacentCellIdx != XM_NONE && adjacentCellIdx > a_cellIdx)
   {
-    if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_DOWN)
-      return XMU_ORIENTATION_BOTTOM;
-    else if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_UP)
-      return XMU_ORIENTATION_TOP;
+    return OrientationForOrdering(XMU_ORIENTATION_BOTTOM);
   }
   return XMU_ORIENTATION_UNKNOWN;
 } // ConnectedTopOrBottom
@@ -3080,6 +3076,24 @@ XmUGridCellOrdering XmUGrid::Impl::CalculateCellOrdering() const
   }
   return ordering;
 } // XmUGrid::Impl::CalculateCellOrdering
+
+//------------------------------------------------------------------------------
+/// Convert orientation to proper orientation given the grid's cell ordering.
+/// \param a_orientation The orientation for increasing down ordering.
+/// \return The converted orientation.
+//------------------------------------------------------------------------------
+XmUGridFaceOrientation XmUGrid::Impl::OrientationForOrdering(
+  XmUGridFaceOrientation a_orientation) const
+{
+  if (m_cellOrdering == XMU_CELL_ORDER_INCREASING_UP)
+  {
+    if (a_orientation == XMU_ORIENTATION_TOP)
+      return XMU_ORIENTATION_BOTTOM;
+    else if (a_orientation == XMU_ORIENTATION_BOTTOM)
+      return XMU_ORIENTATION_TOP;
+  }
+  return a_orientation;
+} // XmUGrid::Impl::OrientationForOrdering
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class XmUGrid
@@ -3824,14 +3838,26 @@ XmUGridFaceOrientation XmUGrid::GetCell3dFaceOrientation(int a_cellIdx, int a_fa
 {
   return m_impl->GetCell3dFaceOrientation(a_cellIdx, a_faceIdx);
 } // XmUGrid::GetCell3dFaceOrientation
+//------------------------------------------------------------------------------
+/// \brief Returns the cell ordering of the UGrid.
+/// \return The ordering of the UGrid.
+//------------------------------------------------------------------------------
 XmUGridCellOrdering XmUGrid::GetCellOrdering() const
 {
   return m_impl->GetCellOrdering();
 } // XmUGrid::GetCellOrdering
+//------------------------------------------------------------------------------
+/// \brief Set the cell ordering for the grid.
+/// \param a_cellOrdering[in] The cell ordering.
+//------------------------------------------------------------------------------
 void XmUGrid::SetCellOrdering(XmUGridCellOrdering a_cellOrdering)
 {
   m_impl->SetCellOrdering(a_cellOrdering);
 } // XmUGrid::SetCellOrdering
+//------------------------------------------------------------------------------
+/// \brief Calculate the cell ordering of the UGrid.
+/// \return The cell ordering if able to find the ordering.
+//------------------------------------------------------------------------------
 XmUGridCellOrdering XmUGrid::CalculateCellOrdering() const
 {
   return m_impl->CalculateCellOrdering();
@@ -3872,8 +3898,11 @@ std::shared_ptr<XmUGrid> TEST_XmUGrid1Left90Tri()
 /// \return Returns a builder for the UGrid.
 std::shared_ptr<XmUGrid> TEST_XmUGridSimpleQuad()
 {
-  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0},  {0, 0, 0},   {10, 0, 0},
-                    {20, 0, 0}, {0, -10, 0}, {10, -10, 0}, {20, -10, 0}};
+  VecPt3d points = {{0, 10, 0}, {10, 10, 0}, {20, 10, 0}, {0, 0, 0}, {10, 0, 0},
+                    {20, 0, 0},
+                    {0, -10, 0},
+                    {10, -10, 0},
+                    {20, -10, 0}};
 
   // Cell type (9), number of points (4), point numbers, counterclockwise
   VecInt cellstream = {XMU_QUAD, 4, 0, 3, 4, 1, XMU_QUAD, 4, 1, 4, 5, 2,
@@ -4270,6 +4299,7 @@ std::shared_ptr<xms::XmUGrid> TEST_XmUBuild3DChevronUgrid()
 
 #include <numeric>
 #include <xmscore/testing/TestTools.h>
+#include <xmsgrid/ugrid/XmUGridUtils.h>
 
 using namespace xms;
 
@@ -5215,11 +5245,11 @@ void XmUGridUnitTests::testGetCell3dFacePoints()
                        {8, 13, 28, 23},
                        {23, 24, 29, 28},
                        // Wedge
-                       {3, 18, 4},
-                       {8, 9, 23},
-                       {3, 4, 9, 8},
-                       {4, 18, 23, 9},
-                       {3, 8, 23, 18},
+                       {3, 4, 18},
+                       {8, 23, 9},
+                       {3, 8, 9, 4},
+                       {4, 9, 23, 18},
+                       {3, 18, 23, 8},
                        // Pyramid
                        {5, 10, 11, 6},
                        {5, 6, 20},
@@ -5729,11 +5759,11 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
                                 {8, 13, 28, 23},
                                 {23, 24, 29, 28},
                                 // Wedge
-                                {3, 18, 4},
-                                {8, 9, 23},
-                                {3, 4, 9, 8},
-                                {4, 18, 23, 9},
-                                {3, 8, 23, 18},
+                                {3, 4, 18},
+                                {8, 23, 9},
+                                {3, 8, 9, 4},
+                                {4, 9, 23, 18},
+                                {3, 18, 23, 8},
                                 // Pyramid
                                 {5, 10, 11, 6},
                                 {5, 6, 20},
@@ -5784,7 +5814,7 @@ void XmUGridUnitTests::testCell3dFaceFunctions()
     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
     XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP,
     // Wedge
-    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM,
+    XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_TOP,
     XMU_ORIENTATION_SIDE,
     // Pyramid
     XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_TOP, XMU_ORIENTATION_TOP,
@@ -5880,6 +5910,55 @@ void XmUGridUnitTests::testGetCell3dFaceOrientationConcaveCell()
                      XMU_ORIENTATION_SIDE};
   TS_ASSERT_EQUALS(expected, actual);
 } // XmUGridUnitTests::testFaceOrientationConcaveCell
+//------------------------------------------------------------------------------
+/// \brief Test calculate cell face orientation for an increasing up grid.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testGetCell3dFaceOrientationWedgeIncreasingUp()
+{
+  std::string inputText =
+    "ASCII XmUGrid Version 2\n"
+    "LOCATIONS 12\n"
+    "  POINT 0 286.271098 335.761251 350.0\n"
+    "  POINT 1 288.648285 335.915393 350.0\n"
+    "  POINT 2 287.3391 337.032883 350.0\n"
+    "  POINT 3 286.271098 335.761251 368.175373\n"
+    "  POINT 4 288.648285 335.915393 368.275709\n"
+    "  POINT 5 287.3391 337.032883 368.236181\n"
+    "  POINT 6 286.271098 335.761251 386.350745\n"
+    "  POINT 7 288.648285 335.915393 386.551418\n"
+    "  POINT 8 287.3391 337.032883 386.472362\n"
+    "  POINT 9 286.271098 335.761251 392.172188\n"
+    "  POINT 10 288.648285 335.915393 392.256717\n"
+    "  POINT 11 287.3391 337.032883 392.220073\n"
+    "CELL_STREAM 24\n"
+    "  CELL 0 WEDGE 6 3 4 5 0 1 2\n"
+    "  CELL 1 WEDGE 6 6 7 8 3 4 5\n"
+    "  CELL 2 WEDGE 6 9 10 11 6 7 8\n"
+    "CELL_LAYERS 3\n"
+    "  1\n"
+    "  2\n"
+    "  3";
+  std::istringstream input;
+  input.str(inputText);
+  std::shared_ptr<XmUGrid> ugrid = XmReadUGridFromStream(input);
+  ugrid->SetCellOrdering(xms::XMU_CELL_ORDER_INCREASING_UP);
+  TS_REQUIRE_NOT_NULL(ugrid);
+  std::vector<XmUGridFaceOrientation> orientation;
+  for (int cellIdx = 0; cellIdx < ugrid->GetCellCount(); ++cellIdx)
+  {
+    for (int faceIdx = 0; faceIdx < ugrid->GetCell3dFaceCount(cellIdx); ++faceIdx)
+    {
+      orientation.push_back(ugrid->GetCell3dFaceOrientation(cellIdx, faceIdx));
+    }
+  }
+  // clang-format off
+  std::vector<XmUGridFaceOrientation> expectedOrientation = {
+    XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+    XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE,
+    XMU_ORIENTATION_TOP, XMU_ORIENTATION_BOTTOM, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE, XMU_ORIENTATION_SIDE};
+  // clang-format on
+  TS_ASSERT_EQUALS(expectedOrientation, orientation);
+} // XmUGridUnitTests::testGetCell3dFaceOrientationWedgeIncreasingUp
 //------------------------------------------------------------------------------
 /// \brief Test calculate cell numbering for an increasing up grid.
 //------------------------------------------------------------------------------
