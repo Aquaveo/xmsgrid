@@ -42,7 +42,7 @@ public:
   void testReadReadyAtNextLine();
   void testReadTrailingEmptyCellNoNumber();
   void testReadTrailingEmptyCell();
-  
+
   void testRemovePoint();
   void testRemovePoints();
   void testRemoveCell();

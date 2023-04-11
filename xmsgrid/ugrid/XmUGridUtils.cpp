@@ -1703,7 +1703,7 @@ void XmUGridUtilsTests::testRemoveCells()
 
   auto inGrid = XmReadUGridFromAsciiFile(inPath);
   TS_REQUIRE_NOT_NULL(inGrid);
-  auto outGrid = XmRemoveCells(*inGrid, {2, 28});  
+  auto outGrid = XmRemoveCells(*inGrid, {2, 28});
   TS_REQUIRE_NOT_NULL(outGrid);
   XmWriteUGridToAsciiFile(outGrid, outPath);
 
@@ -1718,7 +1718,7 @@ void XmUGridUtilsTests::testRemovePointsAndCells()
   std::string inPath = TestFilesPath() + "remove-points-and-cells-input.xmugrid";
   std::string outPath = TestFilesPath() + "remove-points-and-cells-out.xmugrid";
   std::string basePath = TestFilesPath() + "remove-points-and-cells-base.xmugrid";
-  
+
   VecPt3d newPoints;
   VecInt newCells;
 
