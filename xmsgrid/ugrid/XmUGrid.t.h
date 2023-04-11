@@ -62,6 +62,7 @@ public:
   void testCell3dFaceFunctions();
   void testGetCell3dFaceOrientationHexahedrons();
   void testGetCell3dFaceOrientationConcaveCell();
+  void testGetCell3dFaceOrientationWedgeIncreasingUp();
   void testGetCellNumberingOneCell();
   void testCalculateCellNumberingIncreasingDown();
   void testCalculateCellNumberingIncreasingUp();
