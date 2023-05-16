@@ -595,8 +595,8 @@ void GmPtSearchImpl::CreateOctants(const Pt3d& a_pt, std::vector<box>& a_boxes) 
   box bound(bmin, bmax);
   if (m_2dSearch)
   {
-    bound.min_corner().z = -1.0;
-    bound.max_corner().z = 1.0;
+    bound.min_corner().z = m_min.z;
+    bound.max_corner().z = m_max.z;
   }
   else
     bound.min_corner().z = pt.z;
