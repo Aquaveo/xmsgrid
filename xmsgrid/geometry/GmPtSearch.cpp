@@ -441,6 +441,9 @@ void GmPtSearchImpl::NearestPtsToPt(const Pt3d& a_pt,
   }
   else
   {
+    if (m_2dSearch)
+      tmpPt.z = 0.0;
+
     fSatisfies *fPtr(a_fsat), tmpFsat(m_rTree->size());
     if (!fPtr)
       fPtr = &tmpFsat;
