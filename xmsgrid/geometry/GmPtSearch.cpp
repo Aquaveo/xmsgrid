@@ -593,13 +593,13 @@ void GmPtSearchImpl::CreateOctants(const Pt3d& a_pt, std::vector<box>& a_boxes) 
   a_boxes.resize(0);
   Pt3d bmin(m_min), bmax(m_max), pt(a_pt);
   box bound(bmin, bmax);
-  if (m_2dSearch)
+  if (!m_2dSearch)
+    bound.min_corner().z = pt.z;
+  else
   {
     bound.min_corner().z = -1.0;
     bound.max_corner().z = 1.0;
   }
-  else
-    bound.min_corner().z = pt.z;
   // here are the quadrants that we create
   //  ---------
   //  | 1 | 2 |
