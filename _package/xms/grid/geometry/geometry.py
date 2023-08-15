@@ -1,9 +1,14 @@
+from typing import Collection, Tuple
+
 from .. import _xmsgrid
 
 geometry = _xmsgrid.geometry
 
+Point3d = Tuple[float, float, float]
+Points3d = Collection[Point3d]
 
-def point_in_polygon_2d(polygon, point):
+
+def point_in_polygon_2d(polygon: Points3d, point: Point3d) -> int:
     """Check whether a point is inside, outside, or on a polygon.
 
     *DON'T* repeat the first point at the end of the polygon list.
@@ -22,7 +27,7 @@ def point_in_polygon_2d(polygon, point):
     return geometry.gmPointInPolygon2D(polygon, point)
 
 
-def polygon_area_2d(polygon):
+def polygon_area_2d(polygon: Points3d) -> float:
     """Compute the 2d planview projection of area of polygon.
 
     The last point should not be repeated.
@@ -39,7 +44,7 @@ def polygon_area_2d(polygon):
     return geometry.gmPolygonArea(polygon)
 
 
-def get_tol_2d():
+def get_tol_2d() -> float:
     """Get the global tolerance for 2d float operations.
 
     Value may not be meaningful if it has not been set yet.
@@ -47,7 +52,7 @@ def get_tol_2d():
     return geometry.gmGetXyTol()
 
 
-def set_tol_2d(value=1e-9):
+def set_tol_2d(value: float = 1e-9):
     """Set the global tolerance for 2d float operations.
 
     Args:
@@ -56,7 +61,7 @@ def set_tol_2d(value=1e-9):
     geometry.gmSetXyTol(value)
 
 
-def on_line_2d(p1, p2, pt, tol=None):
+def on_line_2d(p1: Point3d, p2: Points3d, pt: Point3d, tol: float = None) -> bool:
     """Determines whether a point pt is on the line defined by p1 and p2.
 
     If p1 and p2 are equal within tol, this function may fail.
@@ -76,7 +81,7 @@ def on_line_2d(p1, p2, pt, tol=None):
     return geometry.gmOnLineWithTol(p1, p2, pt, tol)
 
 
-def inside_or_on_line_2d(p1, p2, reference_point, pt, tol=None):
+def inside_or_on_line_2d(p1: Point3d, p2: Point3d, reference_point: Point3d, pt: Point3d, tol: float = None) -> bool:
     """Tests whether a point is on the same side of a line as a reference point, or on the line itself.
 
     Assumes reference_point is not on the line (within tol).
@@ -100,7 +105,7 @@ def inside_or_on_line_2d(p1, p2, reference_point, pt, tol=None):
     return geometry.gmInsideOrOnLineWithTol(p1, p2, reference_point, pt, tol)
 
 
-def find_closest_pt_on_segment_2d(pt1, pt2, pt, tol=None):
+def find_closest_pt_on_segment_2d(pt1: Point3d, pt2: Point3d, pt: Point3d, tol: float = None) -> Tuple[float, Point3d]:
     """Finds the closest point to another point on a line segment.
 
     Points are represented as (x, y, z) triples.
@@ -108,7 +113,7 @@ def find_closest_pt_on_segment_2d(pt1, pt2, pt, tol=None):
     Args:
         pt1: First point defining the line segment.
         pt2: Second point defining the line segment.
-        pt: Point used to find closest point on the segment.
+        pt: Point used to find the closest point on the segment.
         tol: Tolerance. If omitted, uses global tolerance according to get_tol_2d().
 
     Returns:
@@ -121,7 +126,7 @@ def find_closest_pt_on_segment_2d(pt1, pt2, pt, tol=None):
     return geometry.gmFindClosestPtOnSegment(pt1, pt2, pt, tol)
 
 
-def pt_distance_along_segment_2d(pt1, pt2, pt, tol=None):
+def pt_distance_along_segment_2d(pt1: Point3d, pt2: Point3d, pt: Point3d, tol: float = None) -> float:
     """Finds the distance along a segment for the location closest to pt.
 
     Points are represented as (x, y, z) triples.
@@ -140,7 +145,7 @@ def pt_distance_along_segment_2d(pt1, pt2, pt, tol=None):
     return geometry.gmPtDistanceAlongSegment(pt1, pt2, pt, tol)
 
 
-def inside_of_line_2d(pt1, pt2, reference_point, pt, tol=None):
+def inside_of_line_2d(pt1: Point3d, pt2: Point3d, reference_point: Point3d, pt: Point3d, tol: float = None) -> bool:
     """Tests whether a point is on the same side of a line as another point.
 
     Assumes reference_point is not on the line (within tol).
@@ -161,7 +166,7 @@ def inside_of_line_2d(pt1, pt2, reference_point, pt, tol=None):
     return geometry.gmInsideOfLineWithTol(pt1, pt2, reference_point, pt, tol)
 
 
-def lines_intersect_2d(line1_pt1, line1_pt2, line2_pt1, line2_pt2):
+def lines_intersect_2d(line1_pt1: Point3d, line1_pt2: Point3d, line2_pt1: Point3d, line2_pt2: Point3d) -> bool:
     """Tests whether two line segments intersect.
 
     Points are represented as (x, y, z) triples.
@@ -178,7 +183,7 @@ def lines_intersect_2d(line1_pt1, line1_pt2, line2_pt1, line2_pt2):
     return geometry.gmLinesIntersect(line1_pt1, line1_pt2, line2_pt1, line2_pt2)
 
 
-def equal_points_2d(p1, p2, tol=None):
+def equal_points_2d(p1: Point3d, p2: Point3d, tol: float = None) -> bool:
     """Tests whether two points are equal to within tolerance.
 
     Points are represented as (x, y, z) triples.
@@ -196,7 +201,7 @@ def equal_points_2d(p1, p2, tol=None):
     return geometry.gmEqualPointsXY(p1, p2, tol)
 
 
-def on_line_and_between_endpoints_2d(pt1, pt2, pt, tol=None):
+def on_line_and_between_endpoints_2d(pt1: Point3d, pt2: Point3d, pt: Point3d, tol: float = None) -> bool:
     """Tests whether pt is on the line segment defined by pt1 and pt2.
 
     Points are represented as (x, y, z) triples.
@@ -215,7 +220,7 @@ def on_line_and_between_endpoints_2d(pt1, pt2, pt, tol=None):
     return geometry.gmOnLineAndBetweenEndpointsWithTol(pt1, pt2, pt, tol)
 
 
-def distance_to_line_segment_2d(pt1, pt2, pt, tol=None):
+def distance_to_line_segment_2d(pt1: Point3d, pt2: Point3d, pt: Point3d, tol: float = None) -> float:
     """Computes the minimum distance between a point and a line segment.
 
     The closest point may be an endpoint. Checks to the tolerance passed in.
@@ -235,7 +240,7 @@ def distance_to_line_segment_2d(pt1, pt2, pt, tol=None):
     return geometry.gm2DDistanceToLineSegmentWithTol(pt1, pt2, pt, tol)
 
 
-def cross_2d(origin, a, b):
+def cross_2d(origin, a: Point3d, b: Point3d) -> Point3d:
     """Computes the cross product of two points.
 
     Points are represented as (x, y, z) triples.
@@ -251,7 +256,7 @@ def cross_2d(origin, a, b):
     return geometry.gmCross2D(origin, a, b)
 
 
-def distance_2d(pt1, pt2):
+def distance_2d(pt1: Point3d, pt2: Point3d) -> float:
     """Compute the 2D distance between two 3D points.
 
     Points are represented as (x, y, z) triples.
@@ -266,7 +271,7 @@ def distance_2d(pt1, pt2):
     return geometry.gmXyDistance(pt1, pt2)
 
 
-def compute_polygon_centroid_2d(polygon):
+def compute_polygon_centroid_2d(polygon: Points3d) -> Point3d:
     """Computes the plan view centroid of a non-self-intersecting polygon.
 
     Points are represented as (x, y, z) triples.
@@ -280,7 +285,7 @@ def compute_polygon_centroid_2d(polygon):
     return geometry.gmComputePolygonCentroid(polygon)
 
 
-def distance_to_line_2d(pt1, pt2, pt, tol=None):
+def distance_to_line_2d(pt1: Point3d, pt2: Point3d, pt: Point3d, tol: float = None) -> float:
     """Get the closest distance from pt to the line defined by pt1 and pt2.
 
     Unlike distance_to_line_segment_2d, points outside the line segment
@@ -302,7 +307,7 @@ def distance_to_line_2d(pt1, pt2, pt, tol=None):
     return geometry.gm2DDistanceToLineWithTol(pt1, pt2, pt, tol)
 
 
-def angle_between_edges_2d(endpoint1, common_point, endpoint2):
+def angle_between_edges_2d(endpoint1: Point3d, common_point: Point3d, endpoint2: Point3d) -> float:
     """Compute the CCW angle (0 to 2pi) between two edges which share a point.
 
     Points are represented as (x, y, z) triples.
@@ -318,7 +323,7 @@ def angle_between_edges_2d(endpoint1, common_point, endpoint2):
     return geometry.gmAngleBetweenEdges(endpoint1, common_point, endpoint2)
 
 
-def calculate_celerity(period, depth, gravity):
+def calculate_celerity(period: float, depth: float, gravity: float) -> float:
     """Calculate the celerity at a node.
 
     Args:
@@ -332,7 +337,7 @@ def calculate_celerity(period, depth, gravity):
     return geometry.gmCalculateCelerity(period, depth, gravity)
 
 
-def calculate_wavelength(period, depth, gravity):
+def calculate_wavelength(period: float, depth: float, gravity: float) -> float:
     """Calculate the wavelength at a node.
 
     Args:
