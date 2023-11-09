@@ -535,7 +535,7 @@ bool TrTinImpl::CheckAndSwap(int a_triA, int a_triB, bool a_propagate, const Vec
     tri2id0 = trIncrementIndex(tri2id2);
     tri1id2 = LocalIndex(a_triA, GlobalIndex(a_triB, tri2id0));
 
-    SwapEdge(a_triA, a_triB, false);
+    change = SwapEdge(a_triA, a_triB, false);
     int adjTri = AdjacentTriangle(a_triA, tri1id2);
     if (a_propagate || (!a_propagate && adjTri != XM_NONE && a_flags[adjTri]))
     {
@@ -548,7 +548,7 @@ bool TrTinImpl::CheckAndSwap(int a_triA, int a_triB, bool a_propagate, const Vec
     }
   }
 
-  return false;
+  return change;
 } // TrTinImpl::CheckAndSwap
 //------------------------------------------------------------------------------
 /// \brief Returns \a true if a_localPt of a_tri2 is inside a_tri1's
@@ -582,8 +582,14 @@ bool TrTinImpl::CheckAndSwap(int a_triA, int a_triB, bool a_propagate, const Vec
 //------------------------------------------------------------------------------
 bool TrTinImpl::PointIsInCircumcircle(int a_tri1, int a_tri2, int a_localPt)
 {
+  VecPt3d& pts = *m_pts;
+  VecInt& tris = *m_tris;
+
   int t = a_tri1 * 3;
-  return (gmPtInCircumcircle((*m_pts)[GlobalIndex(a_tri2, a_localPt)], &(*m_pts)[t]) == PT_IN);
+  Pt3d tri1_pts[3] = {pts[tris[t]], pts[tris[t + 1]], pts[tris[t + 2]]};
+  Pt3d tri2_pt = pts[GlobalIndex(a_tri2, a_localPt)];
+
+  return (gmPtInCircumcircle(tri2_pt, tri1_pts) == PT_IN);
 } // TrTinImpl::PointIsInCircumcircle
 //------------------------------------------------------------------------------
 /// \brief Return index of common edge between triangle and neighbor. Edge
@@ -1108,7 +1114,7 @@ bool TrTinImpl::OptimizeTriangulation()
 {
   bool modified = false;
   int nTri = NumTriangles();
-  VecInt flags(nTri, false);
+  VecInt no_propagate_flags(nTri, false);
 
   bool meshaltered;
   int id;
@@ -1116,33 +1122,32 @@ bool TrTinImpl::OptimizeTriangulation()
 
   do
   {
+    VecInt local_flags(nTri, true);
     meshaltered = false;
     for (int tri = 0; tri < nTri; ++tri)
     {
-      if (flags[tri])
+      id = 0;
+      for (int i = 0; i <= 2; i++)
       {
-        id = 0;
-        for (int i = 0; i <= 2; i++)
+        // get neighboring element
+        adjtri = AdjacentTriangle(tri, id);
+        if (adjtri != XM_NONE && local_flags[adjtri])
         {
-          // get neighboring element
-          adjtri = AdjacentTriangle(tri, id);
-          if (adjtri != XM_NONE && flags[adjtri])
+          // swap if needed and propagate
+          if (CheckAndSwap(tri, adjtri, false, no_propagate_flags))
           {
-            // swap if needed and propagate
-            if (CheckAndSwap(tri, adjtri, false, flags))
-            {
-              meshaltered = true;
-            }
+            meshaltered = true;
           }
-          id = trIncrementIndex(id);
         }
+        id = trIncrementIndex(id);
       }
+      local_flags[tri] = false; // don't process this triangle again
     }
     if (meshaltered)
       modified = true;
   } while (meshaltered);
 
-  return true;
+  return modified;
 } // TrTinImpl::OptimizeTriangulation
 //------------------------------------------------------------------------------
 /// \brief finds the index of adjacent triangle that points to the current
@@ -1944,11 +1949,11 @@ void TrTinUnitTests::test1()
 //    |   | \  3 | \  7 |
 //    |   |  \   |  \   |
 //    |   |   \  |   \  |
-//    |   | 2  \ | 6  \ |
+//    |   | 1  \ | 5  \ |
 //    |   |     \|     \|
 //  10-   3------4------5
 //    |   |\     |\     |
-//    |   | \  1 | \  5 |
+//    |   | \  2 | \  6 |
 //    |   |  \   |  \   |
 //    |   |   \  |   \  |
 //    |   | 0  \ | 4  \ |
@@ -1983,8 +1988,10 @@ void TrTinUnitTests::testOptimizeTriangulation()
 
   // Optimize
   TS_ASSERT(tin->OptimizeTriangulation());
-  VecInt trisAfter = {0, 1, 3, 1, 6, 3, 1, 4, 6, 4, 7, 6, 1, 2, 4, 2, 7, 4, 2, 5, 7, 5, 8, 7};
-  TS_ASSERT_EQUALS_VEC(trisAfter, tin->Triangles());
+  VecInt trisAfter = {0, 1, 3, 4, 6, 3, 1, 4, 3, 4, 7, 6, 1, 2, 4, 5, 7, 4, 2, 5, 4, 5, 8, 7};
+  VecInt tris2 = tin->Triangles();
+  TS_ASSERT_EQUALS_VEC(trisAfter, tris2);
+  TS_ASSERT(!tin->OptimizeTriangulation());
 
   // Test GetBoundaryPoints
   tin->GetBoundaryPoints(boundaryPoints);
