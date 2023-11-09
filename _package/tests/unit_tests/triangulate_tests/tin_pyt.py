@@ -325,8 +325,10 @@ class TestTrTin(unittest.TestCase):
         tris_adj = ((0,), (0, 1, 2, 4), (4, 5, 6), (0, 1), (2, 4, 5, 3),
                     (6, 7), (1, 2, 3), (3, 5, 6, 7), (7,))
         trtin.set_geometry(pts, tris, tris_adj)
-        trtin.optimize_triangulation()
-        np.testing.assert_array_equal(np.array(tris), trtin.triangles)
+        self.assertTrue(trtin.optimize_triangulation())
+        tris_after = (0, 1, 3, 4, 6, 3, 1, 4, 3, 4, 7, 6, 1, 2, 4, 5, 7, 4, 2, 5, 4, 5, 8, 7)
+        np.testing.assert_array_equal(np.array(tris_after), trtin.triangles)
+        self.assertFalse(trtin.optimize_triangulation())
 
     def test_build_tris_adj_to_pts(self):
         """Test building triangles adjacent to points."""
