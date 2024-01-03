@@ -4,7 +4,7 @@
 /// \brief Code to remove points and cells outside of a polygon.
 /// \ingroup ugrid
 /// \copyright (C) Copyright Aquaveo 2022. Distributed under FreeBSD License
-/// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
+/// (See accompanying file LICENSE or https://aquaveo.com/bsd/license.txt)
 //------------------------------------------------------------------------------
 
 //----- Included files ---------------------------------------------------------

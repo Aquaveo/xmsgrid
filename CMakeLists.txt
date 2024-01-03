@@ -165,6 +165,7 @@ set(xmsgrid_py
   xmsgrid/python/xmsgrid_py.cpp
   # Geometry
   xmsgrid/python/geometry/geometry_py.cpp
+  xmsgrid/python/geometry/GmMultiPolyIntersector_py.cpp
   xmsgrid/python/geometry/GmTriSearch_py.cpp
   # Triangulate
   xmsgrid/python/triangulate/triangulate_py.cpp
