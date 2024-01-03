@@ -2338,7 +2338,7 @@ void GmMultiPolyIntersector2IntermediateTests::testPointOnPolygonVertex()
     {118.66666666666669, 93.33333333333333, 0.0},
     {100.0, 100.0, 0.0}
   };
-  
+
   VecInt2d expectedPolyIds = {
     {167, -1},
     {166, -1},
@@ -2412,7 +2412,7 @@ void GmMultiPolyIntersector2IntermediateTests::testPointOnPolygonVertex()
     {138.66666666666669, 93.33333333333333, 0.0},
     {120.0, 100.0, 0.0}
   };
-  
+
   expectedPolyIds = {
     {},
     {13, -1},
@@ -2497,7 +2497,7 @@ void GmMultiPolyIntersector2IntermediateTests::testPointsNearEdgePoints()
   VecDbl tValues;
   VecPt3d points;
   mpi->TraverseLineSegment(segmentPoints[0].x, segmentPoints[0].y, segmentPoints[1].x, segmentPoints[1].y, polyIds, tValues, points);
-  
+
   VecInt expectedPolyIds = {1836, -1};
   VecPt3d expectedPoints = {
     {958452.39285714, 498553.35714286, 0.0},

@@ -3,7 +3,7 @@
 /// \brief Code that creates a Delauney triangulation from points.
 /// \ingroup triangulate_detail
 /// \copyright (C) Copyright Aquaveo 2018. Distributed under FreeBSD License
-/// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
+/// (See accompanying file LICENSE or https://aquaveo.com/bsd/license.txt)
 //------------------------------------------------------------------------------
 
 //----- Include Files ----------------------------------------------------------
