@@ -2,7 +2,7 @@
 /// \file
 /// \brief
 /// \copyright (C) Copyright Aquaveo 2020. Distributed under FreeBSD License
-/// (See accompanying file LICENSE or https://aqaveo.com/bsd/license.txt)
+/// (See accompanying file LICENSE or https://aquaveo.com/bsd/license.txt)
 //------------------------------------------------------------------------------
 
 //----- Included files ---------------------------------------------------------
@@ -233,5 +233,6 @@ void initGeometry(py::module &geometry)
 	{
 	   return xms::gmCalculateWavelength(a_period, a_depth, a_gravity);
 	});
+    initGmMultiPolyIntersector(geometry);
     initGmTriSearch(geometry);
 }

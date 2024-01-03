@@ -36,6 +36,7 @@ Index
 
 * :doc:`modules/ugrid/UGrid`
 * :doc:`modules/ugrid/ugrid_utils`
+* :doc:`modules/geometry/MultiPolyIntersector`
 * :doc:`modules/geometry/TriSearch`
 * :doc:`modules/triangulate/Tin`
 
@@ -46,6 +47,7 @@ Index
 
    modules/ugrid/UGrid.rst
    modules/ugrid/ugrid_utils.rst
+   modules/geometry/MultiPolyIntersector.rst
    modules/geometry/TriSearch.rst
    modules/triangulate/Tin.rst
 
