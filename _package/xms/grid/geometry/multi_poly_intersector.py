@@ -28,9 +28,9 @@ class MultiPolyIntersector(object):
             **kwargs (dict): Generic keyword arguments
         """
         if 'instance' not in kwargs:
-            if not points:
-                raise ValueError('points is a required arguments.')
-            if not polys:
+            if points is None:
+                raise ValueError('points is a required argument.')
+            if polys is None:
                 raise ValueError('polys is a required argument.')
             if query not in {'covered_by', 'intersects'}:
                 raise ValueError('query must be either "covered_by" or "intersects".')
