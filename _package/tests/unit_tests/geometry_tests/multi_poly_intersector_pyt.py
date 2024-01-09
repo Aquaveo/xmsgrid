@@ -52,6 +52,18 @@ class TestMultiPolyIntersector(unittest.TestCase):
                 assert_str = f'Point {idx}[{i}], : Expected {point[i]}. Got {out_point[i]}'
                 assert math.isclose(out_point[i], point[i]), assert_str
 
+    def test_init(self):
+        """Tests the initializer."""
+        with self.assertRaises(ValueError) as error:
+            grid.geometry.MultiPolyIntersector(None, [1, 2, 3])
+            assert str(error) == 'points is a required argument.'
+        with self.assertRaises(ValueError) as error:
+            grid.geometry.MultiPolyIntersector([[1, 2, 3]], None)
+            assert str(error) == 'polys is a required argument.'
+        with self.assertRaises(ValueError) as error:
+            grid.geometry.MultiPolyIntersector([[1, 2, 3]], [1, 2, 3], query='bob')
+            assert str(error) == 'query must be either "covered_by" or "intersects".'
+
     def test_traverse_line_segment_1_out_out(self):
         r"""A test.
 
