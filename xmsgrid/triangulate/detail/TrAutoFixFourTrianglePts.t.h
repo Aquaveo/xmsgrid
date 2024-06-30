@@ -23,6 +23,8 @@ class TrAutoFixFourTrianglePtsUnitTests : public CxxTest::TestSuite
 {
 public:
   void test1();
+  void test_bug15186();
+  void test_bug15186a();
 }; // class TrAutoFixFourTrianglePtsUnitTests
 
 #endif
