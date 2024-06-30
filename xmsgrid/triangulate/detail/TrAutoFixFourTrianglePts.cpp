@@ -24,6 +24,7 @@
 #include <xmsgrid/triangulate/TrTin.h>
 
 // 6. Non-shared code headers
+#include <xmsgrid/triangulate/triangles.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -57,22 +58,19 @@ public:
     m_noDelete.insert(a_ptIdx.begin(), a_ptIdx.end());
   }
 
-  void FillAdjTrisIfNeeded();
   void GetPtsAndTrisToDelete();
   std::pair<int, int> EdgeOppositePt(int a_ptIdx, int a_tri, VecInt& a_tris);
-  void MakeTwoNewTriangles(VecPt3d& a_pts, std::map<int, int> a_edges, int a_tris[2][3]);
-  void ReplaceTriangle(int& a_tIdx, int a_newTri[3], VecInt& a_tris);
+  void MakeTwoNewTriangles(VecPt3d& a_pts, std::map<int, int>& a_edges, VecInt2d& a_tris);
+  void ReplaceTriangle(int& a_tIdx, VecInt& a_newTri, VecInt& a_tris);
   void RenumberPts();
   void RenumberTris();
   void RemovePts();
   void RemoveTris();
-  void ClearAdjTrisIfCreated();
 
 private:
 private:
   BSHP<TrTin> m_tin;         ///< tin
   BSHP<Observer> m_observer; ///< Observer
-  bool m_removeAdjTris;      ///< flag to remove adjacent tris when done
   SetInt m_ptsToDelete;      ///< points in the TIN that will be deleted
   SetInt m_trisToDelete;     ///< triangles that will be deleted
   SetInt m_noDelete;         ///< indexes of points that can't be deleted
@@ -82,7 +80,11 @@ private:
 
 //----- Class / Function definitions -------------------------------------------
 
-////////////////////////////////////////////////////////////////////////////////
+static double iTriArea(VecInt& a_tri, VecPt3d& a_pts)
+{
+  return trArea(a_pts[a_tri[0]], a_pts[a_tri[1]], a_pts[a_tri[2]]);
+} // iTriArea
+  ////////////////////////////////////////////////////////////////////////////////
 /// \class TrAutoFixFourTrianglePtsImpl
 /// \brief Used to delete points that are connected to 4 triangles and then
 /// retriangulate the void.
@@ -94,7 +96,6 @@ TrAutoFixFourTrianglePtsImpl::TrAutoFixFourTrianglePtsImpl()
 : TrAutoFixFourTrianglePts()
 , m_tin()
 , m_observer()
-, m_removeAdjTris(false)
 , m_ptsToDelete()
 , m_trisToDelete()
 {
@@ -113,41 +114,56 @@ TrAutoFixFourTrianglePtsImpl::~TrAutoFixFourTrianglePtsImpl()
 void TrAutoFixFourTrianglePtsImpl::Fix(BSHP<TrTin> a_tin)
 {
   m_tin = a_tin;
-  FillAdjTrisIfNeeded();
   GetPtsAndTrisToDelete();
   RenumberPts();
   RenumberTris();
   RemovePts();
   RemoveTris();
-  ClearAdjTrisIfCreated();
 } // TrOuterTriangleDeleterImpl::Fix
-//------------------------------------------------------------------------------
-/// \brief Makes sure the adjacent triangles exist in the TIN
-//------------------------------------------------------------------------------
-void TrAutoFixFourTrianglePtsImpl::FillAdjTrisIfNeeded()
-{
-  VecInt2d& adjTris(m_tin->TrisAdjToPts());
-  if (adjTris.empty())
-  {
-    m_tin->BuildTrisAdjToPts();
-    m_removeAdjTris = true;
-  }
-} // TrAutoFixFourTrianglePtsImpl::FillAdjTrisIfNeeded
 //------------------------------------------------------------------------------
 /// \brief Finds and removes the points connected to 4 triangles
 //------------------------------------------------------------------------------
 void TrAutoFixFourTrianglePtsImpl::GetPtsAndTrisToDelete()
 {
-  VecInt2d& adjTris(m_tin->TrisAdjToPts());
   VecInt& tris(m_tin->Triangles());
   VecPt3d& pts(m_tin->Points());
-  int npts = static_cast<int>(adjTris.size());
+  VecInt vPtsToDelete(pts.size(), 0);
+  VecInt vNoDeletePts(pts.size(), 0);
+  VecInt vTrisToDelete(m_tin->NumTriangles(), 0);
+  int npts = static_cast<int>(pts.size());
   auto itEnd = m_noDelete.end();
-  for (int i = 0; i < npts; ++i)
+  bool done = false;
+  for (size_t i=0; i<vNoDeletePts.size(); ++i)
   {
-    auto it = m_noDelete.find(i);
-    if (4 == adjTris[i].size() && it == itEnd)
+    if (m_noDelete.find((int)i) != m_noDelete.end())
+      vNoDeletePts[i] = 1;
+  }
+  while (!done)
+  {
+    m_tin->BuildTrisAdjToPts();
+    VecInt2d& adjTris(m_tin->TrisAdjToPts());
+    bool tin_changed = false;
+    for (int i = 0; i < npts; ++i)
     {
+      if (vPtsToDelete[i] || vNoDeletePts[i])
+        continue;
+
+      if (4 != adjTris[i].size())
+        continue;
+
+      bool skip = false;
+      for (int j = 0; !skip && j < 4; ++j)
+      {
+        if (vTrisToDelete[adjTris[i][j]])
+          skip = true;
+      }
+      if (skip)
+        continue;
+
+      tin_changed = true;
+      vPtsToDelete[i] = 1;
+      vTrisToDelete[adjTris[i][2]] = 1;
+      vTrisToDelete[adjTris[i][3]] = 1;
       m_ptsToDelete.insert(i);
       m_trisToDelete.insert(adjTris[i][2]);
       m_trisToDelete.insert(adjTris[i][3]);
@@ -156,11 +172,16 @@ void TrAutoFixFourTrianglePtsImpl::GetPtsAndTrisToDelete()
       {
         mapii.insert(EdgeOppositePt(i, adjTris[i][t], tris));
       }
-      int newTris[2][3];
+      VecInt2d newTris(2, VecInt(3, -1));
       MakeTwoNewTriangles(pts, mapii, newTris);
       ReplaceTriangle(adjTris[i][0], newTris[0], tris);
       ReplaceTriangle(adjTris[i][1], newTris[1], tris);
+      VecInt deletedTri(3, i);
+      ReplaceTriangle(adjTris[i][2], deletedTri, tris);
+      ReplaceTriangle(adjTris[i][3], deletedTri, tris);
     }
+    if (!tin_changed)
+      done = true;
   }
 } // TrAutoFixFourTrianglePtsImpl::RemovePts
 //------------------------------------------------------------------------------
@@ -199,8 +220,8 @@ std::pair<int, int> TrAutoFixFourTrianglePtsImpl::EdgeOppositePt(int a_ptIdx,
 /// triangles
 //------------------------------------------------------------------------------
 void TrAutoFixFourTrianglePtsImpl::MakeTwoNewTriangles(VecPt3d& a_pts,
-                                                       std::map<int, int> a_edges,
-                                                       int a_tris[2][3])
+                                                       std::map<int, int>& a_edges,
+                                                       VecInt2d& a_tris/*[2][3]*/)
 {
   int bound[4];
   auto e = a_edges.begin();
@@ -209,27 +230,44 @@ void TrAutoFixFourTrianglePtsImpl::MakeTwoNewTriangles(VecPt3d& a_pts,
     bound[t] = e->first;
     e = a_edges.find(e->second);
   }
+
   // is 0,2 closer or 1,3 closer
   Pt3d &p0(a_pts[bound[0]]), &p1(a_pts[bound[1]]), &p2(a_pts[bound[2]]), &p3(a_pts[bound[3]]);
   double d2_02 = MdistSq(p0.x, p0.y, p2.x, p2.y);
   double d2_13 = MdistSq(p1.x, p1.y, p3.x, p3.y);
-  if (d2_02 < d2_13)
+  VecInt t0 = {bound[0], bound[1], bound[2]};
+  double area0 = iTriArea(t0, a_pts);
+  VecInt t1 = {bound[0], bound[2], bound[3]};
+  double area1 = iTriArea(t1, a_pts);
+  VecInt t2 = {bound[0], bound[1], bound[3]};
+  double area2 = iTriArea(t2, a_pts);
+  VecInt t3 = {bound[1], bound[2], bound[3]};
+  double area3 = iTriArea(t3, a_pts);
+  if (d2_02 < d2_13 && area0 > 0.0 && area1 > 0.0)
   {
-    a_tris[0][0] = bound[0];
-    a_tris[0][1] = bound[1];
-    a_tris[0][2] = bound[2];
-    a_tris[1][0] = bound[0];
-    a_tris[1][1] = bound[2];
-    a_tris[1][2] = bound[3];
+    a_tris[0] = t0;
+    a_tris[1] = t1;
+    //a_tris[0][0] = bound[0];
+    //a_tris[0][1] = bound[1];
+    //a_tris[0][2] = bound[2];
+    //a_tris[1][0] = bound[0];
+    //a_tris[1][1] = bound[2];
+    //a_tris[1][2] = bound[3];
+  }
+  else if (area2 > 0.0 && area3 > 0.0)
+  {
+    a_tris[0] = t2;
+    a_tris[1] = t3;
+    // a_tris[0][0] = bound[0];
+    //a_tris[0][1] = bound[1];
+    //a_tris[0][2] = bound[3];
+    //a_tris[1][0] = bound[1];
+    //a_tris[1][1] = bound[2];
+    //a_tris[1][2] = bound[3];
   }
   else
   {
-    a_tris[0][0] = bound[0];
-    a_tris[0][1] = bound[1];
-    a_tris[0][2] = bound[3];
-    a_tris[1][0] = bound[1];
-    a_tris[1][1] = bound[2];
-    a_tris[1][2] = bound[3];
+    XM_ASSERT(false); // creating bad triangles
   }
 } // TrAutoFixFourTrianglePtsImpl::MakeTwoNewTriangles
 //------------------------------------------------------------------------------
@@ -238,7 +276,7 @@ void TrAutoFixFourTrianglePtsImpl::MakeTwoNewTriangles(VecPt3d& a_pts,
 /// \param[in] a_newTri : Point indexes that define a new triangle
 /// \param[in,out] a_tris : The triangles in the TIN
 //------------------------------------------------------------------------------
-void TrAutoFixFourTrianglePtsImpl::ReplaceTriangle(int& a_tIdx, int a_newTri[3], VecInt& a_tris)
+void TrAutoFixFourTrianglePtsImpl::ReplaceTriangle(int& a_tIdx, VecInt& a_newTri/*[3]*/, VecInt& a_tris)
 {
   int tIdx = a_tIdx * 3;
   for (int i = 0; i < 3; ++i)
@@ -274,9 +312,6 @@ void TrAutoFixFourTrianglePtsImpl::RenumberPts()
 //------------------------------------------------------------------------------
 void TrAutoFixFourTrianglePtsImpl::RenumberTris()
 {
-  if (m_removeAdjTris)
-    return;
-
   int ntri = static_cast<int>(m_tin->Triangles().size() / 3);
   VecInt oldToNewTris(ntri);
   auto it = m_trisToDelete.begin();
@@ -328,17 +363,6 @@ void TrAutoFixFourTrianglePtsImpl::RemoveTris()
   for (; it != itEnd; ++it)
     tris.erase(tris.begin() + *it);
 } // TrAutoFixFourTrianglePtsImpl::RemoveTris
-//------------------------------------------------------------------------------
-/// \brief Clears the adjacent triangles if this class created them
-//------------------------------------------------------------------------------
-void TrAutoFixFourTrianglePtsImpl::ClearAdjTrisIfCreated()
-{
-  VecInt2d& adjTris(m_tin->TrisAdjToPts());
-  adjTris.clear();
-  if (m_removeAdjTris)
-    return;
-  m_tin->BuildTrisAdjToPts();
-} // TrAutoFixFourTrianglePtsImpl::ClearAdjTrisIfCreated
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class TrAutoFixFourTrianglePts
@@ -375,6 +399,8 @@ using namespace xms;
 
 #include <xmscore/testing/TestTools.h>
 #include <xmsgrid/triangulate/TrTriangulatorPoints.h>
+#include <xmsgrid/ugrid/XmUGrid.h>
+#include <xmsgrid/ugrid/XmUGridUtils.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class TrAutoFixFourTrianglePtsUnitTests
@@ -398,5 +424,66 @@ void TrAutoFixFourTrianglePtsUnitTests::test1()
   TS_ASSERT_EQUALS(4, tin->Points().size());
 
 } // TrOuterTriangleDeleterTests::test1
+//------------------------------------------------------------------------------
+/// \brief helper function
+//------------------------------------------------------------------------------
+static BSHP<TrTin> iTinFromUGrid(std::shared_ptr<XmUGrid> a_ug)
+{
+  VecPt3d pp = a_ug->GetLocations();
+  BSHP<VecPt3d> pts(new VecPt3d());
+  pts->swap(pp);
+  int nCell = a_ug->GetCellCount();
+  BSHP<VecInt> tris(new VecInt(nCell * 3, -1));
+  VecInt& tt(*tris);
+  int cnt = -1;
+  for (int i = 0; i < a_ug->GetCellCount(); ++i)
+  {
+    VecInt cell_pts = a_ug->GetCellPoints(i);
+    tt[++cnt] = cell_pts[0];
+    tt[++cnt] = cell_pts[1];
+    tt[++cnt] = cell_pts[2];
+  }
+  BSHP<TrTin> tin = TrTin::New();
+  tin->SetPoints(pts);
+  tin->SetTriangles(tris);
+  return tin;
+} // iUgToTin
+//------------------------------------------------------------------------------
+/// \brief Tests TrAutoFixFourTrianglePts.
+//------------------------------------------------------------------------------
+void TrAutoFixFourTrianglePtsUnitTests::test_bug15186()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::string fname = testFilesPath + "bug15186.xmc";
+  std::shared_ptr<XmUGrid> ug = XmReadUGridFromAsciiFile(fname);
+  BSHP<TrTin> tin = iTinFromUGrid(ug);
 
+  VecInt bPts;
+  tin->GetBoundaryPoints(bPts);
+  TrAutoFixFourTrianglePtsImpl p;
+  p.SetUndeleteablePtIdxs(bPts);
+  p.Fix(tin);
+
+  TS_ASSERT_EQUALS(4, tin->Points().size());
+} // TrOuterTriangleDeleterTests::test_bug15186
+//------------------------------------------------------------------------------
+/// \brief Tests TrAutoFixFourTrianglePts.
+//------------------------------------------------------------------------------
+void TrAutoFixFourTrianglePtsUnitTests::test_bug15186a()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::string fname = testFilesPath + "bug15186a.xmc";
+  std::shared_ptr<XmUGrid> ug = XmReadUGridFromAsciiFile(fname);
+  BSHP<TrTin> tin = iTinFromUGrid(ug);
+
+  VecInt bPts;
+  tin->GetBoundaryPoints(bPts);
+  TrAutoFixFourTrianglePtsImpl p;
+  p.SetUndeleteablePtIdxs(bPts);
+  p.Fix(tin);
+  TS_ASSERT_EQUALS(5, tin->Points().size());
+  VecInt tris = tin->Triangles();
+  VecInt base_tris = {0, 1, 4, 0, 4, 3, 0, 2, 1, 2, 4, 1};
+  TS_ASSERT_EQUALS_VEC(base_tris, tris);
+} // TrOuterTriangleDeleterTests::test_bug15186a
 #endif // CXX_TEST
