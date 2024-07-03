@@ -119,6 +119,7 @@ void TrAutoFixFourTrianglePtsImpl::Fix(BSHP<TrTin> a_tin)
   RenumberTris();
   RemovePts();
   RemoveTris();
+  m_tin->BuildTrisAdjToPts();
 } // TrOuterTriangleDeleterImpl::Fix
 //------------------------------------------------------------------------------
 /// \brief Finds and removes the points connected to 4 triangles
