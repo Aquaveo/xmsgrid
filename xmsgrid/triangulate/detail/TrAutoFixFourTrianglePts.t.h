@@ -25,6 +25,7 @@ public:
   void test1();
   void test_bug15186();
   void test_bug15186a();
+  void test_bug15178();
 }; // class TrAutoFixFourTrianglePtsUnitTests
 
 #endif
