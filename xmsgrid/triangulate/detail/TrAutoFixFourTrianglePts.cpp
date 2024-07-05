@@ -244,7 +244,24 @@ void TrAutoFixFourTrianglePtsImpl::MakeTwoNewTriangles(VecPt3d& a_pts,
   double area2 = iTriArea(t2, a_pts);
   VecInt t3 = {bound[1], bound[2], bound[3]};
   double area3 = iTriArea(t3, a_pts);
-  if (d2_02 < d2_13 && area0 > 0.0 && area1 > 0.0)
+  bool all_positive_area = area0 > 0.0 && area1 > 0.0 && area2 > 0.0 && area3 > 0.0;
+  bool do_case_1(false), do_case_2(false);
+  if (!all_positive_area)
+  {
+    if (area0 > 0.0 && area1 > 0.0)
+      do_case_1 = true;
+    else if (area2 > 0.0 && area3 > 0.0)
+      do_case_2 = true;
+  }
+  else
+  {
+    if (d2_02 < d2_13)
+      do_case_1 = true;
+    else
+      do_case_2 = true;
+  }
+
+  if (do_case_1) //if (d2_02 < d2_13 && area0 > 0.0 && area1 > 0.0)
   {
     a_tris[0] = t0;
     a_tris[1] = t1;
@@ -255,7 +272,7 @@ void TrAutoFixFourTrianglePtsImpl::MakeTwoNewTriangles(VecPt3d& a_pts,
     //a_tris[1][1] = bound[2];
     //a_tris[1][2] = bound[3];
   }
-  else if (area2 > 0.0 && area3 > 0.0)
+  else if (do_case_2) //else if (area2 > 0.0 && area3 > 0.0)
   {
     a_tris[0] = t2;
     a_tris[1] = t3;
@@ -487,4 +504,24 @@ void TrAutoFixFourTrianglePtsUnitTests::test_bug15186a()
   VecInt base_tris = {0, 1, 4, 0, 4, 3, 0, 2, 1, 2, 4, 1};
   TS_ASSERT_EQUALS_VEC(base_tris, tris);
 } // TrOuterTriangleDeleterTests::test_bug15186a
+//------------------------------------------------------------------------------
+/// \brief Tests TrAutoFixFourTrianglePts.
+//------------------------------------------------------------------------------
+void TrAutoFixFourTrianglePtsUnitTests::test_bug15178()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::string fname = testFilesPath + "bug15178.xmc";
+  std::shared_ptr<XmUGrid> ug = XmReadUGridFromAsciiFile(fname);
+  BSHP<TrTin> tin = iTinFromUGrid(ug);
+
+  VecInt bPts;
+  tin->GetBoundaryPoints(bPts);
+  TrAutoFixFourTrianglePtsImpl p;
+  p.SetUndeleteablePtIdxs(bPts);
+  p.Fix(tin);
+  TS_ASSERT_EQUALS(4, tin->Points().size());
+  VecInt tris = tin->Triangles();
+  VecInt base_tris = {0, 3, 2, 0, 2, 1};
+  TS_ASSERT_EQUALS_VEC(base_tris, tris);
+} // TrOuterTriangleDeleterTests::test_bug15178
 #endif // CXX_TEST
