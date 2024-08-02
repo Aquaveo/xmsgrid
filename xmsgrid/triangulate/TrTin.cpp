@@ -1112,6 +1112,9 @@ void TrTinImpl::DeletePoints(const SetInt& a_points)
 //------------------------------------------------------------------------------
 bool TrTinImpl::OptimizeTriangulation()
 {
+  if (m_trisAdjToPts->empty())  // this method requires the adjacent triangle info
+    BuildTrisAdjToPts();
+
   bool modified = false;
   int nTri = NumTriangles();
   VecInt no_propagate_flags(nTri, false);
@@ -1997,7 +2000,12 @@ void TrTinUnitTests::testOptimizeTriangulation()
   tin->GetBoundaryPoints(boundaryPoints);
   TS_ASSERT_EQUALS((VecInt{0, 1, 2, 3, 5, 6, 7, 8}), boundaryPoints);
 
-} // TrTinUnitTests::testOptimizeTriangulation
+  // fix crash where Optimize is called without adjacent triangles computed
+  *trisAdjToPts = VecInt2d();
+  tin = TrTin::New();
+  tin->SetGeometry(pts, tris, trisAdjToPts);
+  tin->OptimizeTriangulation();
+  } // TrTinUnitTests::testOptimizeTriangulation
 //------------------------------------------------------------------------------
 /// \brief
 /// \verbatim
