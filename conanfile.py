@@ -1,10 +1,10 @@
 """
 conanfile.py for the xmsgrid project.
 """
-from xmsconan.xms_conan_file import XmsConanFile
+from xmsconan.xms_conan2_file import XmsConan2File
 
 
-class XmsgridConanFile(XmsConanFile):
+class XmsgridConanFile(XmsConan2File):
     """
     XmsgridConan class used for defining the conan info.
     """
@@ -12,7 +12,8 @@ class XmsgridConanFile(XmsConanFile):
     url = "https://github.com/Aquaveo/xmsgrid"
     description = "Grid library for XMS products"
     xms_dependencies = [
-        "xmscore/[>=6.0.1 <7.0.0]@aquaveo/stable",
+        # "xmscore/[>=6.0.1 <7.0.0]",
+        "xmscore/6.2.5-5-g2bd6574b",
     ]
     extra_export_sources = ['test_files']
 
