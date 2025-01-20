@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.11.0)
 cmake_policy(SET CMP0015 NEW) # Link Directory Pathing
+cmake_policy(SET CMP0091 NEW)
 set(CMAKE_DEBUG_POSTFIX _d)
 set(CMAKE_CXX_STANDARD 17)
 
 project(xmsgridlib C CXX)
 
+# ---------------------------------------------------
+# Cache Variables
+# ---------------------------------------------------
 set(BUILD_TESTING NO CACHE BOOL "Enable/Disable testing")
 set(IS_CONDA_BUILD NO CACHE BOOL "Set this if you want to make a conda package.")
 set(IS_EMSCRIPTEN_BUILD NO CACHE BOOL "Set this to build with emscripten using cmake.")
@@ -15,90 +19,9 @@ set(XMS_TEST_PATH ${PROJECT_SOURCE_DIR}/test_files/ CACHE PATH "Path to test fil
 set(XMS_VERSION "99.99.99" CACHE STRING "Library Version")
 set(USE_TYPEDEF_WCHAR_T NO CACHE BOOL "Define wchar_t as a typedef")
 
-if (APPLE OR WIN32 OR IS_EMSCRIPTEN_BUILD)
-    # Target C++17 on MacOS and Windows. If building with version of Visual Studio without
-    # support, has no effect.
-    set(CMAKE_CXX_STANDARD 17)
-else()
-    set(CMAKE_CXX_STANDARD 11)
-endif()
-
-if (APPLE)
-    set(CMAKE_POSITION_INDEPENDENT_CODE False)
-    add_compile_definitions(_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
-else()
-    set(CMAKE_POSITION_INDEPENDENT_CODE True)
-endif()
-
-add_definitions(-DXMS_VERSION=\"${XMS_VERSION}\")
-
-if(IS_CONDA_BUILD)
-  include(${CMAKE_CURRENT_LIST_DIR}/condabuildinfo.cmake)
-elseif(IS_EMSCRIPTEN_BUILD)
-  include(${CMAKE_CURRENT_LIST_DIR}/emscriptenbuildinfo.cmake)
-else() # If we are not using conda or emscripten, we are using conan
-  # Conan setup
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(TARGETS)
-  set(EXT_INCLUDE_DIRS ${CONAN_INCLUDE_DIRS})
-  set(EXT_LIB_DIRS ${CONAN_LIB_DIRS})
-  set(EXT_LIBS ${CONAN_LIBS})
-endif(IS_CONDA_BUILD)
-
-if(WIN32)
-    if(USE_TYPEDEF_WCHAR_T)
-        message("Treating wchar_t as a typedef.")
-        add_definitions(/Zc:wchar_t-)
-    else()
-        message("Treating wchar_t as a built-in type.")
-        add_definitions(/Zc:wchar_t)
-    endif()
-
-	add_definitions(/D BOOST_ALL_NO_LIB)
-endif()
-
-if(IS_PYTHON_BUILD)
-
-    # Pybind11 module
-    if(IS_CONDA_BUILD)
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Targets.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/FindPythonLibsNew.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Config.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11ConfigVersion.cmake")
-        include("${CONDA_PREFIX}/share/cmake/pybind11/pybind11Tools.cmake")
-
-    else()
-        list(APPEND CMAKE_MODULE_PATH "${CONAN_PYBIND11_ROOT}/share/cmake/pybind11")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Targets.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/FindPythonLibsNew.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Config.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11ConfigVersion.cmake")
-        include("${CONAN_PYBIND11_ROOT}/share/cmake/pybind11/pybind11Tools.cmake")
-    endif()
-
-    list(APPEND EXT_INCLUDE_DIRS
-        ${pybind11_INCLUDE_DIR}
-    )
-
-    find_package(PythonLibsNew ${PYTHON_TARGET_VERSION} EXACT REQUIRED)
-
-    message("PYTHON_INCLUDE: ${PYTHON_INCLUDE_DIRS}")
-    message("PYTHON_LIBS: ${PYTHON_LIBRARIES}")
-
-    list(APPEND EXT_INCLUDE_DIRS
-      ${PYTHON_INCLUDE_DIRS}
-    )
-endif()
-
-message("External Include Dirs: ${EXT_INCLUDE_DIRS}")
-message("External Lib Dirs: ${EXT_LIB_DIRS}")
-message("Extneral Libs: ${EXT_LIBS}")
-
-include_directories(${CMAKE_CURRENT_LIST_DIR})
-include_directories(${EXT_INCLUDE_DIRS})
-link_directories(${EXT_LIB_DIRS})
-
+# ---------------------------------------------------
 # Static library sources
+# ---------------------------------------------------
 set(xmsgrid_sources
   # Geometry
   xmsgrid/geometry/geoms.cpp
@@ -160,70 +83,204 @@ set(xmsgrid_headers
   xmsgrid/ugrid/XmUGridUtils.h
 )
 
-# Pybind11 sources
-set(xmsgrid_py
-  xmsgrid/python/xmsgrid_py.cpp
-  # Geometry
-  xmsgrid/python/geometry/geometry_py.cpp
-  xmsgrid/python/geometry/GmMultiPolyIntersector_py.cpp
-  xmsgrid/python/geometry/GmTriSearch_py.cpp
-  # Triangulate
-  xmsgrid/python/triangulate/triangulate_py.cpp
-  xmsgrid/python/triangulate/TrTin_py.cpp
-  #UGrid
-  xmsgrid/python/ugrid/ugrid_py.cpp
-  xmsgrid/python/ugrid/XmUGrid_py.cpp
-  xmsgrid/python/ugrid/XmUGridUtils_py.cpp
-)
+# ---------------------------------------------------
+# CXX Standard
+# ---------------------------------------------------
+if (APPLE OR WIN32 OR IS_EMSCRIPTEN_BUILD)
+    # Target C++17 on MacOS and Windows. If building with version of Visual Studio without
+    # support, has no effect.
+    set(CMAKE_CXX_STANDARD 17)
+else()
+    set(CMAKE_CXX_STANDARD 11)
+endif()
 
-set(xmsgrid_py_headers
-  # Geometry
-  xmsgrid/python/geometry/geometry_py.h
-  # Triangulate
-  xmsgrid/python/triangulate/triangulate_py.h
-  xmsgrid/python/ugrid/ugrid_py.h
-)
+# ---------------------------------------------------
+# Compiler Flags
+# ---------------------------------------------------
+if (APPLE)
+    set(CMAKE_POSITION_INDEPENDENT_CODE False)
+    add_compile_definitions(_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
+else()
+    set(CMAKE_POSITION_INDEPENDENT_CODE True)
+endif()
 
+if(IS_PYTHON_BUILD AND BUILD_TESTING)
+    message(FATAL_ERROR "Cannot build python module when testing is enabled")
+endif()
+
+
+add_definitions(-DXMS_VERSION=\"${XMS_VERSION}\")
+
+
+if(IS_CONDA_BUILD)
+    include(${CMAKE_CURRENT_LIST_DIR}/condabuildinfo.cmake)
+elseif(IS_EMSCRIPTEN_BUILD)
+    include(${CMAKE_CURRENT_LIST_DIR}/emscriptenbuildinfo.cmake)
+else() # If we are not using conda or emscripten, we are using conan
+    # Conan 2 setup
+    find_package(Boost REQUIRED)
+    find_package(ZLIB REQUIRED)
+    set(EXT_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+    list(APPEND EXT_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+    set(EXT_LIB_DIRS ${Boost_LIBRARY_DIRS})
+    list(APPEND EXT_LIB_DIRS ${ZLIB_LIBRARY_DIRS})  
+    set(EXT_LIBS ${Boost_LIBRARIES})
+    list(APPEND EXT_LIBS ${ZLIB_LIBRARIES})
+endif()
+
+
+if(WIN32)
+    string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MT" USES_MT)
+    if(NOT USES_MT)
+        string(COMPARE EQUAL "${CONAN_SETTINGS_COMPILER_RUNTIME}" "MTd" USES_MT)
+    endif()
+
+    if(USE_TYPEDEF_WCHAR_T)
+        add_definitions(/Zc:wchar_t-)  # Treat wchar_t as a typedef
+    endif()
+
+    add_definitions(/D BOOST_ALL_NO_LIB)
+
+    if(USES_MT)
+        set(CompilerFlags
+                CMAKE_CXX_FLAGS
+                CMAKE_CXX_FLAGS_DEBUG
+                CMAKE_CXX_FLAGS_RELEASE
+                CMAKE_C_FLAGS
+                CMAKE_C_FLAGS_DEBUG
+                CMAKE_C_FLAGS_RELEASE
+        )
+        foreach(CompilerFlag ${CompilerFlags})
+            string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+        endforeach()
+    endif()
+endif()
+
+
+# ---------------------------------------------------
+# Setup Pybind11
+# ---------------------------------------------------
+if(IS_PYTHON_BUILD)
+    find_package(pybind11 REQUIRED)
+    list(APPEND EXT_INCLUDE_DIRS
+            ${pybind11_INCLUDE_DIR}
+    )
+
+    find_package(PythonLibsNew ${PYTHON_TARGET_VERSION} EXACT REQUIRED)
+
+    # Have to add this after conda because it doesn't get the path for pybind if we don't.
+    list(APPEND EXT_INCLUDE_DIRS
+            ${PYTHON_INCLUDE_DIRS}
+    )
+endif()
+
+# ---------------------------------------------------
 # Tests
+# ---------------------------------------------------
 if (BUILD_TESTING)
- add_definitions(-DXMS_TEST_PATH="${XMS_TEST_PATH}/")
- add_definitions(-DCXX_TEST -DCXXTEST4)
+    message(STATUS "Adding test dependencies...")
+    add_definitions(-DXMS_TEST_PATH="${XMS_TEST_PATH}/")
+    add_definitions(-DCXX_TEST -DCXXTEST4)
 
- list(APPEND xmsgrid_sources
-   # Geometry
-   xmsgrid/geometry/geoms.t.h
-   xmsgrid/geometry/GmExtents.t.h
-   xmsgrid/geometry/GmMultiPolyIntersector.t.h
-   xmsgrid/geometry/GmPolygon.t.h
-   xmsgrid/geometry/GmPolyLinePtRedistributer.t.h
-   xmsgrid/geometry/GmPtSearch.t.h
-   xmsgrid/geometry/GmTriSearch.t.h
-   # Triangulate
-   xmsgrid/triangulate/TrBreaklineAdder.t.h
-   xmsgrid/triangulate/TrTin.t.h
-   xmsgrid/triangulate/TrTriangulatorPoints.t.h
-   xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.t.h
-   xmsgrid/triangulate/detail/TrOuterTriangleDeleter.t.h
-   # UGrid
-   xmsgrid/ugrid/detail/UGridClipper.t.h
-   xmsgrid/ugrid/XmEdge.t.h
-   xmsgrid/ugrid/XmUGrid.t.h
-   xmsgrid/ugrid/XmUGridUtils.t.h
- )
-
- find_package(CxxTest)
- if(CXXTEST_FOUND)
-   include_directories(${CXXTEST_INCLUDE_DIR})
-   enable_testing()
-
-   set(CXXTEST_TESTGEN_ARGS --xunit-printer --have-eh)
-   file(GLOB_RECURSE test_headers ${CMAKE_CURRENT_LIST_DIR}/xmsgrid/*.t.h)
-   CXXTEST_ADD_TEST(
-     runner runner.cpp ${test_headers}
+   list(APPEND xmsgrid_sources
+       # Geometry
+       xmsgrid/geometry/geoms.t.h
+       xmsgrid/geometry/GmExtents.t.h
+       xmsgrid/geometry/GmMultiPolyIntersector.t.h
+       xmsgrid/geometry/GmPolygon.t.h
+       xmsgrid/geometry/GmPolyLinePtRedistributer.t.h
+       xmsgrid/geometry/GmPtSearch.t.h
+       xmsgrid/geometry/GmTriSearch.t.h
+       # Triangulate
+       xmsgrid/triangulate/TrBreaklineAdder.t.h
+       xmsgrid/triangulate/TrTin.t.h
+       xmsgrid/triangulate/TrTriangulatorPoints.t.h
+       xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.t.h
+       xmsgrid/triangulate/detail/TrOuterTriangleDeleter.t.h
+       # UGrid
+       xmsgrid/ugrid/detail/UGridClipper.t.h
+       xmsgrid/ugrid/XmEdge.t.h
+       xmsgrid/ugrid/XmUGrid.t.h
+       xmsgrid/ugrid/XmUGridUtils.t.h
    )
-   target_link_libraries(runner ${PROJECT_NAME})
- endif()
+
+   find_package(cxxtest REQUIRED)
+   list(APPEND EXT_INCLUDE_DIRS ${cxxtest_INCLUDE_DIRS})
+   list(APPEND EXT_LIB_DIRS ${cxxtest_LIBRARY_DIRS})  
+   list(APPEND EXT_LIBS ${cxxtest_LIBRARIES})
+    
+    if(cxxtest_FOUND)
+        include("FindCxxTest")
+        include_directories(${CXXTEST_INCLUDE_DIR})
+        enable_testing()
+
+        set(cxxtest_TESTGEN_ARGS --xunit-printer)
+        file(GLOB_RECURSE test_headers ${CMAKE_CURRENT_LIST_DIR}/xmsgrid/*.t.h)
+        message(STATUS "Prefix Path: ${CMAKE_PREFIX_PATH}")
+        message(STATUS "Module Path: ${CMAKE_MODULE_PATH}")
+        CXXTEST_ADD_TEST(
+                runner runner.cpp ${test_headers}
+        )
+        target_link_libraries(runner ${PROJECT_NAME})
+
+        if(WIN32)
+            set(RUNNERNAME "runner.exe")
+        else()
+            set(RUNNERNAME "runner")
+        endif()
+    endif()
 endif ()
+
+
+# ---------------------------------------------------
+# Find XMS Packages
+# ---------------------------------------------------
+find_package(xmscore REQUIRED)
+list(APPEND EXT_INCLUDE_DIRS ${xmscore_INCLUDE_DIRS})
+list(APPEND EXT_LIB_DIRS ${xmscore_LIBRARY_DIRS})
+list(APPEND EXT_LIBS ${xmscore_LIBRARIES})
+
+
+# ---------------------------------------------------
+# List and set include and lib directories
+# ---------------------------------------------------
+message("External Include Dirs: ${EXT_INCLUDE_DIRS}")
+message("External Lib Dirs: ${EXT_LIB_DIRS}")
+message("Extneral Libs: ${EXT_LIBS}")
+
+include_directories(${CMAKE_CURRENT_LIST_DIR})
+include_directories(${EXT_INCLUDE_DIRS})
+link_directories(${EXT_LIB_DIRS})
+
+# ---------------------------------------------------
+# Setup Pybind Sources
+# ---------------------------------------------------
+if(IS_PYTHON_BUILD)
+  # Pybind11 sources
+  set(xmsgrid_py
+    xmsgrid/python/xmsgrid_py.cpp
+    # Geometry
+    xmsgrid/python/geometry/geometry_py.cpp
+    xmsgrid/python/geometry/GmMultiPolyIntersector_py.cpp
+    xmsgrid/python/geometry/GmTriSearch_py.cpp
+    # Triangulate
+    xmsgrid/python/triangulate/triangulate_py.cpp
+    xmsgrid/python/triangulate/TrTin_py.cpp
+    #UGrid
+    xmsgrid/python/ugrid/ugrid_py.cpp
+    xmsgrid/python/ugrid/XmUGrid_py.cpp
+    xmsgrid/python/ugrid/XmUGridUtils_py.cpp
+  )
+
+  set(xmsgrid_py_headers
+    # Geometry
+    xmsgrid/python/geometry/geometry_py.h
+    # Triangulate
+    xmsgrid/python/triangulate/triangulate_py.h
+    xmsgrid/python/ugrid/ugrid_py.h
+  )
+endif()
+
 
 # Static library
 add_library(${PROJECT_NAME} STATIC
