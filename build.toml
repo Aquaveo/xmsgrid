@@ -1,0 +1,102 @@
+library_name = "xmsgrid"
+description = "Grid library for XMS products"
+has_test_files = true
+
+xms_dependencies = [{ name = "xmscore", version = "6.2.5-5-g2bd6574b" }]
+
+python_namespaced_dir = "grid"
+
+library_sources = [
+    "xmsgrid/geometry/geoms.cpp",
+    "xmsgrid/geometry/GmExtents.cpp",
+    "xmsgrid/geometry/GmMultiPolyIntersectionSorterTerse.cpp",
+    "xmsgrid/geometry/GmMultiPolyIntersector.cpp",
+    "xmsgrid/geometry/GmPolygon.cpp",
+    "xmsgrid/geometry/GmPolyLinePtRedistributer.cpp",
+    "xmsgrid/geometry/GmPtSearch.cpp",
+    "xmsgrid/geometry/GmTriSearch.cpp",
+    "xmsgrid/matrices/matrix.cpp",
+    "xmsgrid/triangulate/TrBreaklineAdder.cpp",
+    "xmsgrid/triangulate/triangles.cpp",
+    "xmsgrid/triangulate/TrTin.cpp",
+    "xmsgrid/triangulate/TrTriangulator.cpp",
+    "xmsgrid/triangulate/TrTriangulatorPoints.cpp",
+    "xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.cpp",
+    "xmsgrid/triangulate/detail/triangulate.cpp",
+    "xmsgrid/triangulate/detail/TrOuterTriangleDeleter.cpp",
+    "xmsgrid/ugrid/detail/UGridClipper.cpp",
+    "xmsgrid/ugrid/detail/XmGeometry.cpp",
+    "xmsgrid/ugrid/XmEdge.cpp",
+    "xmsgrid/ugrid/XmUGrid.cpp",
+    "xmsgrid/ugrid/XmUGridUtils.cpp",
+]
+
+library_headers = [
+    "xmsgrid/geometry/geoms.h",
+    "xmsgrid/geometry/GmBoostTypes.h",
+    "xmsgrid/geometry/GmExtents.h",
+    "xmsgrid/geometry/GmMultiPolyIntersectionSorter.h",
+    "xmsgrid/geometry/GmMultiPolyIntersectionSorterTerse.h",
+    "xmsgrid/geometry/GmMultiPolyIntersector.h",
+    "xmsgrid/geometry/GmMultiPolyIntersectorData.h",
+    "xmsgrid/geometry/GmPolygon.h",
+    "xmsgrid/geometry/GmPolyLinePtRedistributer.h",
+    "xmsgrid/geometry/GmPtSearch.h",
+    "xmsgrid/geometry/GmTriSearch.h",
+    "xmsgrid/matrices/matrix.h",
+    "xmsgrid/triangulate/TrBreaklineAdder.h",
+    "xmsgrid/triangulate/triangles.h",
+    "xmsgrid/triangulate/TrTin.h",
+    "xmsgrid/triangulate/TrTriangulator.h",
+    "xmsgrid/triangulate/TrTriangulatorPoints.h",
+    "xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.h",
+    "xmsgrid/triangulate/detail/triangulate.h",
+    "xmsgrid/triangulate/detail/TrOuterTriangleDeleter.h",
+    "xmsgrid/ugrid/detail/UGridClipper.h",
+    "xmsgrid/ugrid/detail/XmGeometry.h",
+    "xmsgrid/ugrid/XmEdge.h",
+    "xmsgrid/ugrid/XmUGrid.h",
+    "xmsgrid/ugrid/XmUGridUtils.h",
+]
+
+testing_headers = [
+    "# Geometry",
+    "xmsgrid/geometry/geoms.t.h",
+    "xmsgrid/geometry/GmExtents.t.h",
+    "xmsgrid/geometry/GmMultiPolyIntersector.t.h",
+    "xmsgrid/geometry/GmPolygon.t.h",
+    "xmsgrid/geometry/GmPolyLinePtRedistributer.t.h",
+    "xmsgrid/geometry/GmPtSearch.t.h",
+    "xmsgrid/geometry/GmTriSearch.t.h",
+    "# Triangulate",
+    "xmsgrid/triangulate/TrBreaklineAdder.t.h",
+    "xmsgrid/triangulate/TrTin.t.h",
+    "xmsgrid/tr iangulate/TrTriangulatorPoints.t.h",
+    "xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.t.h",
+    "xmsgrid/triangulate/detail/TrOuterTriangleDeleter.t.h",
+    "# UGrid",
+    "xmsgrid/ugrid/detail/UGridClipper.t.h",
+    "xmsgrid/ugrid/XmEdge.t.h",
+    "xmsgrid/ugrid/XmUGrid.t.h",
+    "xmsgrid/ugrid/XmUGridUtils.t.h",
+]
+
+pybind_sources = [
+    "xmsgrid/python/xmsgrid_py.cpp",
+    "# Geometry",
+    "xmsgrid/python/geometry/geometry_py.cpp",
+    "xmsgrid/python/geometry/GmTriSearch_py.cpp",
+    "# Triangulate",
+    "xmsgrid/python/triangulate/triangulate_py.cpp",
+    "xmsgrid/python/triangulate/TrTin_py.cpp",
+    "# UGrid",
+    "xmsgrid/python/ugrid/ugrid_py.cpp",
+    "xmsgrid/python/ugrid/XmUGrid_py.cpp",
+    "xmsgrid/python/ugrid/XmUGridUtils_py.cpp",
+]
+
+pybind_headers = [
+    "xmsgrid/python/geometry/geometry_py.h",
+    "xmsgrid/python/triangulate/triangulate_py.h",
+    "xmsgrid/python/ugrid/ugrid_py.h",
+]
