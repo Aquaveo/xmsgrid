@@ -104,13 +104,14 @@ else () # If we are not using conda or emscripten, we are using conan
     find_package(xmscore REQUIRED)
     find_package(Boost REQUIRED)
     find_package(ZLIB REQUIRED)
+
     list(APPEND EXT_INCLUDE_DIRS ${xmscore_INCLUDE_DIRS})
     list(APPEND EXT_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
     list(APPEND EXT_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
     list(APPEND EXT_LIB_DIRS ${xmscore_LIBRARY_DIRS})
     list(APPEND EXT_LIB_DIRS ${Boost_LIBRARY_DIRS})
     list(APPEND EXT_LIB_DIRS ${ZLIB_LIBRARY_DIRS})
-    list(APPEND EXT_LIBS ${xmscore_LIBRARYS})
+    list(APPEND EXT_LIBS ${xmscore_LIBRARIES})
     list(APPEND EXT_LIBS ${Boost_LIBRARIES})
     list(APPEND EXT_LIBS ${ZLIB_LIBRARIES})
 endif ()
@@ -174,7 +175,7 @@ if (BUILD_TESTING)
          # Triangulate
          xmsgrid/triangulate/TrBreaklineAdder.t.h
          xmsgrid/triangulate/TrTin.t.h
-         xmsgrid/tr iangulate/TrTriangulatorPoints.t.h
+         xmsgrid/triangulate/TrTriangulatorPoints.t.h
          xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.t.h
          xmsgrid/triangulate/detail/TrOuterTriangleDeleter.t.h
          # UGrid
