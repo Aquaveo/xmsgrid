@@ -981,8 +981,9 @@ void PtSearchUnitTests::testActivity2d()
   act.set(40, 0);
   iPts->SetActivity(act);
   iPts->NearestPtsToPt(aPt, 8, false, foundPts);
-  requiredPts = {0, 1, 3, 4, 6, 41, 42};
-  optionalPts = {7, 43};
+  requiredPts = {0, 1, 3, 4, 6, 41};
+  // all four of these optional points are 2.5 away
+  optionalPts = {5, 7, 42, 43};
   std::sort(foundPts.begin(), foundPts.end());
   TS_ASSERT_EQUALS(8, foundPts.size());
   TS_ASSERT_POINTS_FOUND(requiredPts, optionalPts, foundPts);
