@@ -12,7 +12,7 @@ class XmsgridConanFile(XmsConan2File):
     url = "https://github.com/Aquaveo/xmsgrid"
     description = "Grid library for XMS products"
     xms_dependencies = [
-        "xmscore/6.2.5-6-g72e83110",
+        "xmscore/6.2.5-7-g01b69ecd",
     ]
     extra_export_sources = ['test_files']
 

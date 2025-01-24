@@ -14,7 +14,7 @@ project(xmsgridlib C CXX)
 set(BUILD_TESTING NO CACHE BOOL "Enable/Disable testing")
 set(IS_CONDA_BUILD NO CACHE BOOL "Set this if you want to make a conda package.")
 set(IS_EMSCRIPTEN_BUILD NO CACHE BOOL "Set this to build with emscripten using cmake.")
-set(PYTHON_TARGET_VERSION 3.10 CACHE STRING "Version of python to link to for python wrapping.")
+set(PYTHON_TARGET_VERSION 3.12 CACHE STRING "Version of python to link to for python wrapping.")
 set(CONDA_PREFIX "" CACHE PATH "Path to the conda environment used to build.")
 set(IS_PYTHON_BUILD NO CACHE BOOL "Set this if you want to build the python bindings.")
 set(XMS_TEST_PATH ${PROJECT_SOURCE_DIR}/test_files/ CACHE PATH "Path to test files for testing")
@@ -104,7 +104,6 @@ else () # If we are not using conda or emscripten, we are using conan
     find_package(xmscore REQUIRED)
     find_package(Boost REQUIRED)
     find_package(ZLIB REQUIRED)
-
     list(APPEND EXT_INCLUDE_DIRS ${xmscore_INCLUDE_DIRS})
     list(APPEND EXT_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
     list(APPEND EXT_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
@@ -145,17 +144,17 @@ endif ()
 
 if (IS_PYTHON_BUILD)
 
-    find_package(pybind11 REQUIRED)
+    find_package(Python3 ${PYTHON_TARGET_VERSION} REQUIRED COMPONENTS Interpreter Development)
     list(APPEND EXT_INCLUDE_DIRS
             ${pybind11_INCLUDE_DIR}
     )
 
-    find_package(PythonLibsNew ${PYTHON_TARGET_VERSION} EXACT REQUIRED)
-
     # Have to add this after conda because it doesn't get the path for pybind if we don't.
     list(APPEND EXT_INCLUDE_DIRS
-            ${PYTHON_INCLUDE_DIRS}
+            ${Python3_INCLUDE_DIRS}
     )
+    list(APPEND EXT_LIBS ${Python3_LIBRARIES})
+    list(APPEND LIBRARY_DIRS ${Python3_LIBRARY_DIRS})
 endif ()
 
 if (BUILD_TESTING)
@@ -164,7 +163,6 @@ if (BUILD_TESTING)
     add_definitions(-DCXX_TEST -DCXXTEST4)
 
     list(APPEND xmsgrid_headers
-         # Geometry
          xmsgrid/geometry/geoms.t.h
          xmsgrid/geometry/GmExtents.t.h
          xmsgrid/geometry/GmMultiPolyIntersector.t.h
@@ -172,13 +170,11 @@ if (BUILD_TESTING)
          xmsgrid/geometry/GmPolyLinePtRedistributer.t.h
          xmsgrid/geometry/GmPtSearch.t.h
          xmsgrid/geometry/GmTriSearch.t.h
-         # Triangulate
          xmsgrid/triangulate/TrBreaklineAdder.t.h
          xmsgrid/triangulate/TrTin.t.h
          xmsgrid/triangulate/TrTriangulatorPoints.t.h
          xmsgrid/triangulate/detail/TrAutoFixFourTrianglePts.t.h
          xmsgrid/triangulate/detail/TrOuterTriangleDeleter.t.h
-         # UGrid
          xmsgrid/ugrid/detail/UGridClipper.t.h
          xmsgrid/ugrid/XmEdge.t.h
          xmsgrid/ugrid/XmUGrid.t.h
@@ -187,8 +183,6 @@ if (BUILD_TESTING)
 
     find_package(cxxtest REQUIRED)
     list(APPEND EXT_INCLUDE_DIRS ${cxxtest_INCLUDE_DIRS})
-    list(APPEND EXT_LIB_DIRS ${cxxtest_LIBRARY_DIRS})
-    list(APPEND EXT_LIBS ${cxxtest_LIBRARIES})
 
     if (cxxtest_FOUND)
         include("FindCxxTest")
@@ -215,7 +209,7 @@ endif ()
 
 message(STATUS "External Include Dirs: ${EXT_INCLUDE_DIRS}")
 message(STATUS "External Lib Dirs: ${EXT_LIB_DIRS}")
-message(STATUS "Extneral Libs: ${EXT_LIBS}")
+message(STATUS "External Libs: ${EXT_LIBS}")
 
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
@@ -248,13 +242,11 @@ if (IS_PYTHON_BUILD)
     # Pybind11 sources
     set(xmsgrid_py
         xmsgrid/python/xmsgrid_py.cpp
-        # Geometry
         xmsgrid/python/geometry/geometry_py.cpp
+        xmsgrid/python/geometry/GmMultiPolyIntersector_py.cpp
         xmsgrid/python/geometry/GmTriSearch_py.cpp
-        # Triangulate
         xmsgrid/python/triangulate/triangulate_py.cpp
         xmsgrid/python/triangulate/TrTin_py.cpp
-        # UGrid
         xmsgrid/python/ugrid/ugrid_py.cpp
         xmsgrid/python/ugrid/XmUGrid_py.cpp
         xmsgrid/python/ugrid/XmUGridUtils_py.cpp
