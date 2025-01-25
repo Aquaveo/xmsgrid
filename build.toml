@@ -2,7 +2,7 @@ library_name = "xmsgrid"
 description = "Grid library for XMS products"
 has_test_files = true
 
-xms_dependencies = [{ name = "xmscore", version = "6.2.5-6-g72e83110" }]
+xms_dependencies = [{ name = "xmscore", version = "6.2.5-8-gfabf5914" }]
 
 python_namespaced_dir = "grid"
 
@@ -81,6 +81,7 @@ testing_headers = [
 pybind_sources = [
     "xmsgrid/python/xmsgrid_py.cpp",
     "xmsgrid/python/geometry/geometry_py.cpp",
+    "xmsgrid/python/geometry/GmMultiPolyIntersector_py.cpp",
     "xmsgrid/python/geometry/GmTriSearch_py.cpp",
     "xmsgrid/python/triangulate/triangulate_py.cpp",
     "xmsgrid/python/triangulate/TrTin_py.cpp",
