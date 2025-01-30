@@ -1,6 +1,6 @@
 library_name = "xmsgrid"
 description = "Grid library for XMS products"
-has_test_files = true
+extra_export_sources = ["test_files"]
 
 xms_dependencies = [{ name = "xmscore", version = "6.2.5" }]
 
