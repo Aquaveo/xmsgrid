@@ -343,14 +343,15 @@ class UGrid(object):
         """
         return self._instance.GetCellPlanViewPolygon(cell_idx)
 
-    def get_cell_centroid(self, cell_idx):
+    def get_cell_centroid(self, cell_idx) -> tuple[bool, tuple[float, float, float]]:
         """Get the centroid location of a cell.
 
         Args:
             cell_idx (int): The index of the cell
 
         Returns:
-            Tuple point location of the cell's center
+            Tuple of `(exists, (x, y, z))`, where `exists` is whether the cell exists (cell_idx was valid), and the
+            rest are the coordinates of the point, which may not be meaningful if `exists` is False.
         """
         return self._instance.GetCellCentroid(cell_idx)
 
