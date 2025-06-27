@@ -193,6 +193,8 @@ public:
                                             const Pt3d& a_pt,
                                             double a_dist,
                                             std::vector<int>& a_nearest) const override;
+  virtual void PtsInBoxInRtree(const Pt3d& a_min, const Pt3d& a_max, std::vector<int>& a_nearest) const override;
+  void PtsInBoxInRtree(int a_ptIdx, const Pt3d& a_min, const Pt3d& a_max, std::vector<int>& a_nearest) const;
 
   virtual void NearestPtsToPt(const Pt3d& a_pt,
                               int a_numPtsToFind,
@@ -501,21 +503,46 @@ bool GmPtSearchImpl::PtInRTree(const Pt3d& a_pt, const double a_tol)
   return !n.empty();
 } // GmPtSearchImpl::PtInRTree
 //------------------------------------------------------------------------------
-/// \brief Finds the nearest points to the input a_pt with an option to search
-/// quadrants/octants. Similar to NearestPtsToPt but this method will always
-/// pass the fSatisfies class to the RTree. This method is used to find the
-/// nearest points to a point that is included in the RTree.
-/// \param a_ptIdx The index of the point a_pt. a_pt is in the RTree and we
-/// don't want it in the results.
-/// \param a_pt The location we are interested in.
-/// \param a_distance The distance from the point where we want to find
-/// additional points
-/// \param a_nearest Vector that is filled in by this method.
+/// \brief Finds points in the RTree that are active and near a provided point.
+///     This method defines distance in terms of a box rather than a circle.
+///     It works by creating a square box centered on the point, with all edges
+///     a_distance from the point. It then finds all the points in that box,
+///     and filters out the point with the provided index from the result. This
+///     means that all points within an a_distance radius of a_pt are found,
+///     but there may be some extras near the corners that are further than
+///     a_distance from a_pt.
+/// \param a_ptIdx The index of a point that should be excluded from the
+///     result. Typically the index in the RTree where a_pt appears. If -1, no
+///     points will be filtered from the result, and a_pt will be included.
+/// \param a_pt The location to find points near.
+/// \param a_distance The distance from a_pt to look for other points.
+/// \param a_nearest Will be filled in with the indexes of any found points.
+///     a_ptIdx will never be included in this result.
 //------------------------------------------------------------------------------
 void GmPtSearchImpl::PtsWithinDistanceToPtInRtree(int a_ptIdx,
                                                   const Pt3d& a_pt,
                                                   double a_distance,
                                                   std::vector<int>& a_nearest) const
+{
+  Pt3d bMin(a_pt - a_distance), bMax(a_pt + a_distance);
+  PtsInBoxInRtree(a_ptIdx, bMin, bMax, a_nearest);
+} // GmPtSearchImpl::PtsWithinDistanceToPtInRtree
+
+//------------------------------------------------------------------------------
+/// \brief Finds points in the RTree that are active and in or on a given box.
+/// 
+///        This overload is mainly to give the other overload and
+///        PtsWithinDistanceToPtInRtree a common implementation and reduce
+///        code duplication. It isn't expected to be useful externally.
+/// 
+/// \param a_ptIdx The index of a point that should be excluded. This index
+///     will not be inserted into a_nearest.
+/// \param a_pt The location to find points near.
+/// \param a_distance The distance from a_pt to look for other points.
+/// \param a_nearest Will be filled in with the indexes of any found points.
+///     a_ptIdx will never be included in this result.
+//------------------------------------------------------------------------------
+void GmPtSearchImpl::PtsInBoxInRtree(int a_ptIdx, const Pt3d& a_min, const Pt3d& a_max, std::vector<int>& a_nearest) const
 {
   fSatisfies fsat(m_rTree->size());
   if (!m_activity.empty())
@@ -523,7 +550,7 @@ void GmPtSearchImpl::PtsWithinDistanceToPtInRtree(int a_ptIdx,
   if (a_ptIdx > -1)
     fsat.m_bits.set(a_ptIdx);
 
-  Pt3d bMin(a_pt - a_distance), bMax(a_pt + a_distance);
+  Pt3d bMin = a_min, bMax = a_max;
   if (m_2dSearch)
   {
     bMin.z = -1;
@@ -541,7 +568,20 @@ void GmPtSearchImpl::PtsWithinDistanceToPtInRtree(int a_ptIdx,
   {
     a_nearest.push_back((int)nearest[i]);
   }
-} // GmPtSearchImpl::PtsWithinDistanceToPtInRtree
+} // GmPtSearchImpl::PtsInBoxInRtree
+
+//------------------------------------------------------------------------------
+/// \brief Finds points in the RTree that are active and in or on a given box.
+/// \param a_pt The location to find points near.
+/// \param a_distance The distance from a_pt to look for other points.
+/// \param a_nearest Will be filled in with the indexes of any found points.
+///     a_ptIdx will never be included in this result.
+//------------------------------------------------------------------------------
+void GmPtSearchImpl::PtsInBoxInRtree(const Pt3d& a_min, const Pt3d& a_max, std::vector<int>& a_nearest) const
+{
+  PtsInBoxInRtree(-1, a_min, a_max, a_nearest);
+} // GmPtSearchImpl::PtsInBoxInRtree
+
 //------------------------------------------------------------------------------
 /// \brief Sets activity on the points in the Rtree so that points can be
 /// ignored when interpolating.
@@ -1047,6 +1087,28 @@ void PtSearchUnitTests::testPtsWithinDist()
   p.PtsWithinDistanceToPtInRtree(2, (*pts)[2], 1.0, n);
   TS_ASSERT_EQUALS_VEC(base, n);
 }
+
+//------------------------------------------------------------------------------
+/// \brief testing Point in a box.
+//------------------------------------------------------------------------------
+void PtSearchUnitTests::testPtsInBox()
+{
+  BSHP<std::vector<Pt3d>> pts(new std::vector<Pt3d>());
+  *pts = {{0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {1, 1, 0}, {1, -1, 0}};
+
+  GmPtSearchImpl p(true);
+  p.PtsToSearch(pts);
+
+  std::vector<int> n;
+  p.PtsInBoxInRtree(Pt3d(-50.0, -100.0), Pt3d(-10.0, -10.0), n);
+  std::vector<int> base = {};
+  TS_ASSERT_EQUALS_VEC(base, n);
+
+  p.PtsInBoxInRtree(Pt3d(0.0, -1.0), Pt3d(1.0, 0.0), n);
+  base = {0, 1, 4};
+  TS_ASSERT_EQUALS_VEC(base, n);
+} // PtSearchUnitTests::testPtsInBox
+
 //------------------------------------------------------------------------------
 /// \brief testing VectorThatGrows functionality
 //------------------------------------------------------------------------------
