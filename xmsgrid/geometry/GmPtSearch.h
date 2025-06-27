@@ -52,6 +52,7 @@ public:
                                             const Pt3d& a_pt,
                                             double a_dist,
                                             VecInt& a_nearest) const = 0;
+  virtual void PtsInBoxInRtree(const Pt3d& a_min, const Pt3d& a_max, std::vector<int>& a_nearest) const = 0;
 
   virtual void SetActivity(boost::dynamic_bitset<size_t>& a_activity) = 0;
   virtual boost::dynamic_bitset<size_t> GetActivity() = 0;
