@@ -510,7 +510,8 @@ bool GmPtSearchImpl::PtInRTree(const Pt3d& a_pt, const double a_tol)
 ///     and filters out the point with the provided index from the result. This
 ///     means that all points within an a_distance radius of a_pt are found,
 ///     but there may be some extras near the corners that are further than
-///     a_distance from a_pt.
+///     a_distance from a_pt. If searching by radius is important, then those
+///     points will have to be filtered out after the fact.
 /// \param a_ptIdx The index of a point that should be excluded from the
 ///     result. Typically the index in the RTree where a_pt appears. If -1, no
 ///     points will be filtered from the result, and a_pt will be included.
