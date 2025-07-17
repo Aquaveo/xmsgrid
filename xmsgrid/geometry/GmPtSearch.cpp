@@ -1094,7 +1094,7 @@ void PtSearchUnitTests::testPtsWithinDist()
 void PtSearchUnitTests::testPtsInBox()
 {
   BSHP<std::vector<Pt3d>> pts(new std::vector<Pt3d>());
-  *pts = {{0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {1, 1, 0}, {1, -1, 0}};
+  *pts = {{0, 0, -1}, {1, 0, 1}, {2, 0, 0}, {1, 1, 0}, {1, -1, 0}};
 
   GmPtSearchImpl p(true);
   p.PtsToSearch(pts);
@@ -1106,6 +1106,35 @@ void PtSearchUnitTests::testPtsInBox()
 
   p.PtsInBoxInRtree(Pt3d(0.0, -1.0), Pt3d(1.0, 0.0), n);
   base = {0, 1, 4};
+  TS_ASSERT_EQUALS_VEC(base, n);
+
+  p.PtsInBoxInRtree(Pt3d(1.0, 0.0), Pt3d(0.0, -1.0), n);
+  base = {0, 1, 4};
+  TS_ASSERT_EQUALS_VEC(base, n);
+} // PtSearchUnitTests::testPtsInBox
+
+//------------------------------------------------------------------------------
+/// \brief testing Point in a box.
+//------------------------------------------------------------------------------
+void PtSearchUnitTests::testPtsInBox3d()
+{
+  BSHP<std::vector<Pt3d>> pts(new std::vector<Pt3d>());
+  *pts = {{0, 0, -1}, {1, 0, 1}, {2, 0, 0}, {1, 1, 0}, {1, -1, 0}};
+
+  GmPtSearchImpl p(false);
+  p.PtsToSearch(pts);
+
+  std::vector<int> n;
+  p.PtsInBoxInRtree(Pt3d(-50.0, -100.0), Pt3d(-10.0, -10.0), n);
+  std::vector<int> base = {};
+  TS_ASSERT_EQUALS_VEC(base, n);
+
+  p.PtsInBoxInRtree(Pt3d(0.0, -1.0, -1.0), Pt3d(1.0, 0.0, 1.0), n);
+  base = {0, 1, 4};
+  TS_ASSERT_EQUALS_VEC(base, n);
+
+  p.PtsInBoxInRtree(Pt3d(0.0, -1.0, 0.0), Pt3d(1.0, 0.0, 0.0), n);
+  base = {4};
   TS_ASSERT_EQUALS_VEC(base, n);
 } // PtSearchUnitTests::testPtsInBox
 

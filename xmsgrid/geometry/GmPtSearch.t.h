@@ -36,6 +36,7 @@ public:
   void testActivity3d();
   void testPtsWithinDist();
   void testPtsInBox();
+  void testPtsInBox3d();
   void testVectorThatGrows();
 };
 //----- Function prototypes ----------------------------------------------------
