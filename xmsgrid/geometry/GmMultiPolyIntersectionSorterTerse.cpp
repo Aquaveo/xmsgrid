@@ -70,8 +70,9 @@ void GmMultiPolyIntersectionSorterTerse::Sort(
 
   RemoveCornerTouches();
   RemoveDuplicateEdges();
+  RemoveIntersectionsWithoutMatch();
   SwapAdjacents();
-  RemoveCornerTouches();
+
   IntersectionsToPolyIdsAndTValues(polyids, tvalues, a_pts);
   FixArrays(polyids, tvalues, a_pts);
 } // GmMultiPolyIntersectionSorterTerse::Sort
@@ -264,6 +265,55 @@ void GmMultiPolyIntersectionSorterTerse::SwapAdjacents() {
     }
   }
 } // GmMultiPolyIntersectionSorterTerse::SwapAdjacents
+//------------------------------------------------------------------------------
+/// \brief Remove an entry/exit without a matching exit/entry.
+///        See test GmMultiPolyIntersector2IntermediateTests::testBug15785.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectionSorterTerse::RemoveIntersectionsWithoutMatch()
+{
+  VecBool hasMatch(m_d->m_ixs.size(), false);
+  if (hasMatch.size() < 2)
+  {
+    return;
+  }
+
+  for (int i = 0; i < m_d->m_ixs.size(); i++)
+  {
+    if (hasMatch[i])
+    {
+      continue;
+    }
+
+    double t = m_d->m_ixs[i].m_t;
+    int cell = m_d->m_ixs[i].m_i;
+
+    for (int j = i + 1; j < m_d->m_ixs.size(); j++)
+    {
+      // If it's already paired, or not part of a future block.
+      if (hasMatch[j] || m_d->m_ixs[j].m_t <= t)
+      {
+        continue;
+      }
+      
+      if (m_d->m_ixs[j].m_i == cell)
+      {
+        hasMatch[i] = hasMatch[j] = true;
+        break;
+      }
+    }
+  }
+
+  std::vector<xms::ix> oldIx = m_d->m_ixs;
+  m_d->m_ixs.clear();
+  for (int i = 0; i < oldIx.size(); i++)
+  {
+    if (hasMatch[i])
+    {
+      m_d->m_ixs.push_back(oldIx[i]);
+    }
+  }
+} // GmMultiPolyIntersectionSorterTerse::RemoveIntersectionsWithoutMatch
+
 //------------------------------------------------------------------------------
 /// \brief Add endpoint polygon IDs that may be removed as duplicates.
 /// \param a_tChange: indexes of t-value changes.
