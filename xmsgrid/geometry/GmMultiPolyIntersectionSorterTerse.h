@@ -40,6 +40,7 @@ private:
   void RemoveCornerTouches();
   void RemoveDuplicateEdges();
   void SwapAdjacents();
+  void RemoveIntersectionsWithoutMatch();
   void AddMissingEndpointIds(const std::vector<int>& a_tChange);
   void IntersectionsToPolyIdsAndTValuesFor2(std::vector<int> &polyids,
                                             std::vector<double> &tvalues,
