@@ -1108,8 +1108,10 @@ void PtSearchUnitTests::testPtsInBox()
   base = {0, 1, 4};
   TS_ASSERT_EQUALS_VEC(base, n);
 
+  // The first point must be less than or equal to the second one in both
+  // coordinates or the search won't find anything.
   p.PtsInBoxInRtree(Pt3d(1.0, 0.0), Pt3d(0.0, -1.0), n);
-  base = {0, 1, 4};
+  base = {};
   TS_ASSERT_EQUALS_VEC(base, n);
 } // PtSearchUnitTests::testPtsInBox
 
