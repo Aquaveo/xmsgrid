@@ -2,7 +2,7 @@ library_name = "xmsgrid"
 description = "Grid library for XMS products"
 extra_export_sources = ["test_files"]
 
-xms_dependencies = [{ name = "xmscore", version = "6.2.5" }]
+xms_dependencies = [{ name = "xmscore", version = "7.0.0" }]
 
 python_namespaced_dir = "grid"
 
