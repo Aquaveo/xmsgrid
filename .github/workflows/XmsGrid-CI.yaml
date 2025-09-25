@@ -308,9 +308,9 @@ jobs:
       MATRIX_NAME: ${{ matrix.platform }}-VS${{ matrix.compiler-version }}-${{ matrix.build_type }}
       # Library Variables
       LIBRARY_NAME: xmsgrid
-      XMS_VERSION: 7.0.0
+      XMS_VERSION: 9.0.0
       # Conan Variables
-      CONAN_REFERENCE: xmsgrid/7.0.0
+      CONAN_REFERENCE: xmsgrid/9.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
       CONAN_CHANNEL: testing
