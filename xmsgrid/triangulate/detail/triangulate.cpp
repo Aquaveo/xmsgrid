@@ -202,8 +202,8 @@ typedef struct Tedge* Tedgetype;
 
 typedef struct Tedge
 {
-  Ttri* tri;
-  int orient;
+  Ttri* tri = nullptr;
+  int orient = 0;
 } Tedge;
 
 typedef struct Tpool
@@ -240,18 +240,18 @@ public:
   Tpool m_triangles;
   Tpool m_points;
 
-  Ttri* m_dummytri;
-  Ttri* m_dummytribase; // Keep base address so can free it later
+  Ttri* m_dummytri = nullptr;
+  Ttri* m_dummytribase = nullptr; // Keep base address so can free it later
 
-  int m_numpoints;      // Number of input points
-  int m_pointmarkindex; // Index in pt of boundary marker
+  int m_numpoints = 0;      // Number of input points
+  int m_pointmarkindex = 0; // Index in pt of boundary marker
   // pt marker must be aligned to a sizeof(int)-byte address
 
-  double m_resulterrbound;
-  double m_ccwerrboundA, m_ccwerrboundB, m_ccwerrboundC;
-  double m_iccerrboundA, m_iccerrboundB, m_iccerrboundC;
+  double m_resulterrbound = 0.0;
+  double m_ccwerrboundA = 0.0, m_ccwerrboundB = 0.0, m_ccwerrboundC = 0.0;
+  double m_iccerrboundA = 0.0, m_iccerrboundB = 0.0, m_iccerrboundC = 0.0;
 
-  double m_splitter;
+  double m_splitter = 0.0;
 
 private:
 };
@@ -304,8 +304,7 @@ static Ttri* triTriangleTraverse(TriVars&);
 //------------------------------------------------------------------------------
 static void triAlternateAxes(Tpt* sortarray, int arraysize, int axis)
 {
-  int divider;
-  divider = arraysize >> 1;
+  int divider = arraysize >> 1;
   if (arraysize <= 3)
   {
     /* Recursive base case:  subsets of two or three points will be      */
@@ -381,7 +380,7 @@ static double triCounterClockwiseAdapt(Tpt pa, Tpt pb, Tpt pc, double detsum, Tr
   double detleft, detright;
   double detlefttail, detrighttail;
   double det, errbound;
-  double B[4], C1[8], C2[12], D[16];
+  double B[4] = {0.0}, C1[8] = {0.0}, C2[12] = {0.0}, D[16] = {0.0};
   double B3;
   double u[4];
   double u3;
@@ -451,9 +450,9 @@ static double triCounterClockwiseAdapt(Tpt pa, Tpt pb, Tpt pc, double detsum, Tr
 //------------------------------------------------------------------------------
 static bool triDivConqDelaunay(TriVars& t)
 {
-  int divider, i, j;
+  int divider = 0, i = 0, j = 0;
   Tpt* sortarray;
-  Tedge hullleft = {0}, hullright = {0};
+  Tedge hullleft{}, hullright{};
   /* Allocate array of ptrs to pts for sorting. */
   int size = t.m_numpoints * (int)sizeof(Tpt);
 
@@ -550,7 +549,7 @@ static bool triDivConqRecurse(Tpt* sortarray,
                               Tedgetype farright,
                               TriVars& t)
 {
-  int divider;
+  int divider = 0;
   double area;
   Tedge midtri, tri1, tri2, tri3, innerleft, innerright;
   bool canMakeTriangles = true;
@@ -730,10 +729,10 @@ static void triDummyInit(int trianglewords, TriVars& t)
 {
   unsigned long long alignptr;
   /* Set up `dummytri', (occupies "outer space") */
-  t.m_dummytribase = (Ttri*)malloc(trianglewords * sizeof(Ttri) + t.m_triangles.alignbytes);
+  t.m_dummytribase = (Ttri*)calloc(1, trianglewords * sizeof(Ttri) + t.m_triangles.alignbytes);
   if (t.m_dummytribase == nullptr)
   {
-    std::string s = "malloc failed: ";
+    std::string s = "calloc failed: ";
     s += __FUNCTION__;
     XM_LOG(xmlog::error, s);
     return;
@@ -1069,7 +1068,7 @@ static double triInCircleAdapt(Tpt pa, Tpt pb, Tpt pc, Tpt pd, double permanent,
   double cxab[8], cxxab[16], cyab[8], cyyab[16], cdet[32];
   double abdet[64];
   double fin1[1152], fin2[1152];
-  double *finnow, *finother, *finswap;
+  double *finnow = nullptr, *finother = nullptr, *finswap = nullptr;
 
   int temp8len, temp16alen, temp16blen, temp16clen;
   int temp32alen, temp32blen, temp48len, temp64len;
@@ -1705,12 +1704,11 @@ static double triInCircleAdapt(Tpt pa, Tpt pb, Tpt pc, Tpt pd, double permanent,
 static void triInitTrianglePool(TriVars& t)
 {
 #define TRIPERBLOCK 4092 /* # of tris allocated at once */
-  int trisize, highorderid, elemattid;
   /* AKZ - we may be able to hack this based on no high order elements */
-  highorderid = 6;
+  int highorderid = 6;
   /* # of bytes occupied by a triangle */
-  trisize = (3 + (highorderid - 3)) * sizeof(Ttri);
-  elemattid = (trisize + sizeof(double) - 1) / sizeof(double);
+  int trisize = (3 + (highorderid - 3)) * sizeof(Ttri);
+  int elemattid = (trisize + sizeof(double) - 1) / sizeof(double);
   /* Initialize triangle pool */
   triPoolInit(&t.m_triangles, trisize, TRIPERBLOCK, TRIPERBLOCK, 4);
   /* Initialize the "outer space" triangle */
@@ -1776,7 +1774,7 @@ static bool triMergeHulls(Tedgetype farleft,
                           int axis,
                           TriVars& t)
 {
-  int changemade, badedge, leftfinished, rightfinished;
+  int changemade = 0, badedge = 0, leftfinished = 0, rightfinished = 0;
   Tedge leftcand, rightcand, baseedge, nextedge;
   Tedge sidecasing, topcasing, outercasing, checkedge;
   Tpt innerleftdest, innerrightorg;
@@ -2124,8 +2122,8 @@ static void triNumberNodes(TriVars& t)
 //------------------------------------------------------------------------------
 static void triPointMedian(Tpt* sortarray, int arraysize, int median, int axis)
 {
-  int left, right, pivot;
-  double pivot1, pivot2;
+  int left = -1, right = arraysize, pivot = 0;
+  double pivot1 = 0.0, pivot2 = 0.0;
   Tpt temp;
   /* Recursive base case. */
   if (arraysize == 2)
@@ -2195,8 +2193,8 @@ static void triPointMedian(Tpt* sortarray, int arraysize, int median, int axis)
 //------------------------------------------------------------------------------
 static void triPointSort(Tpt* sortarray, int arraysize)
 {
-  int left, right, pivot;
-  double pivotx, pivoty;
+  int left = -1, right = arraysize, pivot = 0;
+  double pivotx = 0.0, pivoty = 0.0;
   Tpt temp;
   /* Recursive base case. */
   if (arraysize == 2)
@@ -2294,10 +2292,10 @@ static int* triPoolAlloc(Tmemtype pool)
       {
         /* get a new block, add to linked list of blocks */
         newblock =
-          (int**)malloc(pool->itemsperblock * pool->itembytes + sizeof(int*) + pool->alignbytes);
+          (int**)calloc(1, pool->itemsperblock * pool->itembytes + sizeof(int*) + pool->alignbytes);
         if (newblock == nullptr)
         {
-          std::string s = "malloc failed: ";
+          std::string s = "calloc failed: ";
           s += __FUNCTION__;
           XM_LOG(xmlog::error, s);
           return nullptr;
