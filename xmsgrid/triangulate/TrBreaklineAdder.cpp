@@ -490,10 +490,10 @@ void TrBreaklineAdderImpl::GetIntersectingEdges(int a_blpt1, int a_blpt2, VecEdg
 /// \param a_blpt2: Second breakline segment point.
 /// \param a_intpt1: First point on intersecting edge, or -1 if not found.
 /// \param a_intpt2: Second point on intersecting edge, or -1 if not found.
-/// \param a_x: x value of intersection.
-/// \param a_y: y value of intersection.
-/// \param a_z1: z value of intersection.
-/// \param a_z2: z value of intersection.
+/// \param[out] a_x: x coordinate of intersection point.
+/// \param[out] a_y: y coordinate of intersection point.
+/// \param[out] a_z1: z coordinate of intersection on the breakline segment.
+/// \param[out] a_z2: z coordinate of intersection on the intersecting edge.
 //------------------------------------------------------------------------------
 void TrBreaklineAdderImpl::FindIntersectingEdgeFromPoint(int a_blpt1,
                                                          int a_blpt2,
@@ -536,10 +536,10 @@ void TrBreaklineAdderImpl::FindIntersectingEdgeFromPoint(int a_blpt1,
 /// \param a_blpt2: Second point of breakline segment.
 /// \param a_intpt1: First point of intersecting edge, or -1 if not found.
 /// \param a_intpt2: Second point of intersecting edge, or -1 if not found.
-/// \param a_x: x value of intersection.
-/// \param a_y: y value of intersection.
-/// \param a_z1: z value of intersection.
-/// \param a_z2: z value of intersection.
+/// \param[out] a_x: x coordinate of intersection point.
+/// \param[out] a_y: y coordinate of intersection point.
+/// \param[out] a_z1: z coordinate of intersection on the breakline segment.
+/// \param[out] a_z2: z coordinate of intersection on the intersecting edge.
 //------------------------------------------------------------------------------
 void TrBreaklineAdderImpl::FindIntersectingEdgeFromEdge(int a_ept1,
                                                         int a_ept2,

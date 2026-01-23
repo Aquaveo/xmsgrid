@@ -2858,13 +2858,11 @@ int gmClipLine(double* x1,
 /// \param a_p2: Second endpoint of segment P.
 /// \param a_q1: First endpoint of segment Q.
 /// \param a_q2: Second endpoint of segment Q.
-/// \param a_dist: The maximum distance the two segments can be from each other
-///                and still be considered to intersect. If the closest points
-///                are within this distance, the segments are considered to have
-///                intersected, even if they never truly met.
-/// \param a_p: Initialized to the point on P which is closest to Q.
-/// \param a_q: Initialized to the point on Q which is closest to P.
-/// \param a_tol: Tolerance for geometric comparison.
+/// \param[out] xi: Set to x coordinate of intersection point, or nullptr to ignore.
+/// \param[out] yi: Set to y coordinate of intersection point, or nullptr to ignore.
+/// \param[out] zi1: Set to z coordinate of intersection on segment P, or nullptr to ignore.
+/// \param[out] zi2: Set to z coordinate of intersection on segment Q, or nullptr to ignore.
+/// \param tol: Tolerance for geometric comparison.
 /// \return Whether the line segments intersect.
 //------------------------------------------------------------------------------
 bool gmIntersectLineSegmentsWithTol(const Pt3d& a_p1,
