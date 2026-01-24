@@ -59,6 +59,7 @@ jobs:
       LIBRARY_NAME: xmsgrid
       XMS_VERSION: 9.0.0
       # Conan Variables
+      CONAN_CORE_GRAPH__COMPATIBILITY_MODE: optimized
       CONAN_REFERENCE: xmsgrid/9.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
@@ -188,6 +189,7 @@ jobs:
       LIBRARY_NAME: xmsgrid
       XMS_VERSION: 9.0.0
       # Conan Variables
+      CONAN_CORE_GRAPH__COMPATIBILITY_MODE: optimized
       CONAN_REFERENCE: xmsgrid/9.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo
@@ -310,6 +312,7 @@ jobs:
       LIBRARY_NAME: xmsgrid
       XMS_VERSION: 9.0.0
       # Conan Variables
+      CONAN_CORE_GRAPH__COMPATIBILITY_MODE: optimized
       CONAN_REFERENCE: xmsgrid/9.0.0
       CONAN_ARCHS: x86_64
       CONAN_USERNAME: aquaveo

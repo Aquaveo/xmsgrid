@@ -14,6 +14,7 @@
 #include <xmsgrid/triangulate/detail/triangulate.h>
 
 // 3. Standard library headers
+#include <algorithm>
 #include <cmath>
 
 // 4. External library headers
@@ -283,7 +284,6 @@ static void triPoolDealloc(Tmemtype, int*);
 static void triPoolDeinit(Tmemtype);
 static bool triPoolInit(Tmemtype, int, int, int, int);
 static void triPoolRestart(Tmemtype);
-static unsigned long triRandomnation(unsigned int);
 static void triRemoveGhosts(Tedgetype, TriVars&);
 static int triScaleExpansionZeroElim(int, double*, double, double*, TriVars&);
 static void triTraversalInit(Tmemtype);
@@ -892,7 +892,9 @@ static int triFastExpansionSumZeroElim(int elen, double* e, int flen, double* f,
   while (eindex < elen)
   {
     Two_Sum(Q, enow, Qnew, hh);
-    enow = e[++eindex];
+    ++eindex;
+    if (eindex < elen)
+      enow = e[eindex];
     Q = Qnew;
     if (hh != 0.0)
       h[hindex++] = hh;
@@ -900,7 +902,9 @@ static int triFastExpansionSumZeroElim(int elen, double* e, int flen, double* f,
   while (findex < flen)
   {
     Two_Sum(Q, fnow, Qnew, hh);
-    fnow = f[++findex];
+    ++findex;
+    if (findex < flen)
+      fnow = f[findex];
     Q = Qnew;
     if (hh != 0.0)
       h[hindex++] = hh;
@@ -2112,144 +2116,43 @@ static void triNumberNodes(TriVars& t)
 } // triNumberNodes
 //------------------------------------------------------------------------------
 // FUNCTION triPointMedian
-/// \brief  An order statistic algorithm, almost.  Shuffles an array
-//          of points so that the first `median' points occur
-//          lexicographically before the remaining points.
+/// \brief  An order statistic algorithm.  Shuffles an array of points so that
+///         the first `median' points occur lexicographically before the
+///         remaining points.
 // NOTES
 //  Uses the x-coordinate as the primary key if axis == 0; the y-coordinate
-//  if axis == 1.  Very similar to the triPointSort() procedure, but runs in
-//  randomized linear time.
+//  if axis == 1.  Uses std::nth_element for O(n) average time complexity.
 //------------------------------------------------------------------------------
 static void triPointMedian(Tpt* sortarray, int arraysize, int median, int axis)
 {
-  int left = -1, right = arraysize, pivot = 0;
-  double pivot1 = 0.0, pivot2 = 0.0;
-  Tpt temp;
-  /* Recursive base case. */
-  if (arraysize == 2)
-  {
-    if ((sortarray[0][axis] > sortarray[1][axis]) ||
-        ((sortarray[0][axis] == sortarray[1][axis]) &&
-         (sortarray[0][1 - axis] > sortarray[1][1 - axis])))
-    {
-      temp = sortarray[1];
-      sortarray[1] = sortarray[0];
-      sortarray[0] = temp;
-    }
+  if (arraysize <= 1)
     return;
-  }
-  else if (arraysize == 0)
-    return;
-  /* Choose a random pivot to split the array. */
-  pivot = (int)triRandomnation((unsigned int)arraysize);
-  pivot1 = sortarray[pivot][axis];
-  pivot2 = sortarray[pivot][1 - axis];
-  /* Split the array. */
-  left = -1;
-  right = arraysize;
-  while (left < right)
-  {
-    /* Find a pt whose 'x' is > left */
-    do
-    {
-      left++;
-    } while ((left <= right) &&
-             ((sortarray[left][axis] < pivot1) ||
-              ((sortarray[left][axis] == pivot1) && (sortarray[left][1 - axis] < pivot2))));
-    /* Find a pt whose 'x' is < right */
-    do
-    {
-      right--;
-    } while ((left <= right) &&
-             ((sortarray[right][axis] > pivot1) ||
-              ((sortarray[right][axis] == pivot1) && (sortarray[right][1 - axis] > pivot2))));
-    if (left < right)
-    {
-      /* Swap the left and right points. */
-      temp = sortarray[left];
-      sortarray[left] = sortarray[right];
-      sortarray[right] = temp;
-    }
-  }
-  /* Recurse - only one condition can be true */
-  if (left > median)
-  {
-    /* Recursively shuffle the left subset. */
-    triPointMedian(sortarray, left, median, axis);
-  }
-  if (right < median - 1)
-  {
-    /* Recursively shuffle the right subset. */
-    triPointMedian(&sortarray[right + 1], arraysize - right - 1, median - right - 1, axis);
-  }
+
+  auto comparator = [axis](const Tpt& a, const Tpt& b) {
+    if (a[axis] != b[axis])
+      return a[axis] < b[axis];
+    return a[1 - axis] < b[1 - axis];
+  };
+
+  std::nth_element(sortarray, sortarray + median, sortarray + arraysize, comparator);
 } // triPointMedian
 //------------------------------------------------------------------------------
 // FUNCTION triPointSort
 /// \brief  Sort an array of points by x-coordinate, using the y-coordinate as
-//          a secondary key.
+///         a secondary key.
 // NOTES
-//  Uses quicksort.  Randomized O(n log n) time.  No, I did not make any of
-//  the usual quicksort mistakes.
+//  Uses std::sort for O(n log n) time complexity.
 //------------------------------------------------------------------------------
 static void triPointSort(Tpt* sortarray, int arraysize)
 {
-  int left = -1, right = arraysize, pivot = 0;
-  double pivotx = 0.0, pivoty = 0.0;
-  Tpt temp;
-  /* Recursive base case. */
-  if (arraysize == 2)
-  {
-    if ((sortarray[0][0] > sortarray[1][0]) ||
-        ((sortarray[0][0] == sortarray[1][0]) && (sortarray[0][1] > sortarray[1][1])))
-    {
-      temp = sortarray[1];
-      sortarray[1] = sortarray[0];
-      sortarray[0] = temp;
-    }
+  if (arraysize <= 1)
     return;
-  }
-  else if (arraysize == 0)
-    return;
-  /* Choose a random pivot to split the array. */
-  pivot = (int)triRandomnation((unsigned int)arraysize);
-  pivotx = sortarray[pivot][0];
-  pivoty = sortarray[pivot][1];
-  /* Split the array. */
-  left = -1;
-  right = arraysize;
-  while (left < right)
-  {
-    /* Find a pt whose 'x' is > left */
-    do
-    {
-      left++;
-    } while ((left <= right) && ((sortarray[left][0] < pivotx) || ((sortarray[left][0] == pivotx) &&
-                                                                   (sortarray[left][1] < pivoty))));
-    /* Find a pt whose 'x' is < right */
-    do
-    {
-      right--;
-    } while ((left <= right) &&
-             ((sortarray[right][0] > pivotx) ||
-              ((sortarray[right][0] == pivotx) && (sortarray[right][1] > pivoty))));
-    if (left < right)
-    {
-      /* Swap the left and right points. */
-      temp = sortarray[left];
-      sortarray[left] = sortarray[right];
-      sortarray[right] = temp;
-    }
-  }
-  if (left > 1)
-  {
-    /* Recursively sort the left subset. */
-    triPointSort(sortarray, left);
-  }
-  if (right < arraysize - 2)
-  {
-    /* Recursively sort the right subset. */
-    triPointSort(&sortarray[right + 1], arraysize - right - 1);
-  }
+
+  std::sort(sortarray, sortarray + arraysize, [](const Tpt& a, const Tpt& b) {
+    if (a[0] != b[0])
+      return a[0] < b[0];
+    return a[1] < b[1];
+  });
 } // triPointSort
 //------------------------------------------------------------------------------
 // FUNCTION triPointTraverse
@@ -2444,23 +2347,6 @@ static void triPoolRestart(Tmemtype pool)
   pool->deaditemstack = nullptr;
 
 } // triPoolRestart
-//------------------------------------------------------------------------------
-// FUNCTION triRandomnation
-/// \brief  Generate a random number between 0 and `choices' - 1.
-// NOTES
-//  This is a simple linear congruential random number generator.  Hence, it
-//  is a bad random number generator, but good enough for most randomized
-//  geometric algorithms.
-//------------------------------------------------------------------------------
-static unsigned long triRandomnation(unsigned int choices)
-{
-  static unsigned long randomseed = 1;
-
-  if (choices == 0)
-    return 0;
-  randomseed = (randomseed * 1366l + 150889l) % 714025l;
-  return randomseed / (714025l / choices + 1);
-} // triRandomnation
 //------------------------------------------------------------------------------
 // FUNCTION triRemoveGhosts
 /// \brief
