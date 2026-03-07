@@ -2,6 +2,15 @@ library_name = "xmsgrid"
 description = "Grid library for XMS products"
 extra_export_sources = ["test_files"]
 
+extra_cmake_text = """
+# Disable FP contraction (FMA fusion) for consistent floating-point results across
+# architectures. GCC on ARM emits fmadd at -O2+ which breaks exact arithmetic
+# predicates and produces non-deterministic geometry results.
+if (NOT MSVC)
+    add_compile_options(-ffp-contract=off)
+endif()
+"""
+
 xms_dependencies = [{ name = "xmscore", version = "7.0.1" }]
 
 python_namespaced_dir = "grid"
