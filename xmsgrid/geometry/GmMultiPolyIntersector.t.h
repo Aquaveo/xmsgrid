@@ -94,5 +94,36 @@ public:
   void testPointsNearEdgePoints();
 };
 
+////////////////////////////////////////////////////////////////////////////////
+class GmMultiPolyIntersectorEdgeWalkUnitTests : public CxxTest::TestSuite
+{
+public:
+  // 1 poly
+  void testEdgeWalk1OutOut();
+  void testEdgeWalk1OutIn();
+  void testEdgeWalk1InOut();
+  void testEdgeWalk1InIn();
+  void testEdgeWalk1OnOn();
+
+  // 2 polys
+  void testEdgeWalk2OutOut();
+  void testEdgeWalk2InIn();
+
+  // Multi-poly
+  void testEdgeWalkInsideToInside();
+  void testEdgeWalkOutsideToOutside();
+  void testEdgeWalkAlongEdgesInsideToInside();
+  void testEdgeWalkEdgeThroughOppositeVertex();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class GmMultiPolyIntersectorEdgeWalkIntermediateTests : public CxxTest::TestSuite
+{
+public:
+  void testEdgeWalkBug12586();
+  void testEdgeWalkBug12728();
+  void testEdgeWalkBug13273();
+};
+
 //} // namespace xms
 #endif

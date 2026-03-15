@@ -9,6 +9,7 @@
 //----- Included files ---------------------------------------------------------
 
 // 3. Standard library headers
+#include <memory>
 #include <vector>
 
 // 5. Shared code headers
@@ -23,6 +24,7 @@ namespace xms
 //----- Forward declarations ---------------------------------------------------
 
 class GmMultiPolyIntersectionSorter;
+class XmUGrid;
 
 //----- Classes ----------------------------------------------------------------
 
@@ -38,6 +40,8 @@ public:
     const std::vector<std::vector<int> >& a_polys,
     boost::shared_ptr<GmMultiPolyIntersectionSorter> a_sorter,
     int a_startingId = 1);
+  static boost::shared_ptr<GmMultiPolyIntersector> New(std::shared_ptr<XmUGrid> a_ugrid,
+                                                       int a_startingId = 1);
   /// \cond
 
   virtual void SetQuery(GmMultiPolyIntersectorQueryEnum a_query) = 0;
