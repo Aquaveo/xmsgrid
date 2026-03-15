@@ -37,7 +37,9 @@
 #include <xmsgrid/geometry/GmBoostTypes.h>                  // GmBstPoly3d, XmBstRing
 #include <xmsgrid/geometry/GmMultiPolyIntersectionSorter.h> // GmMultiPolyIntersectionSorter
 #include <xmsgrid/geometry/GmMultiPolyIntersectorData.h>    // GmMultiPolyIntersectorData
+#include <xmsgrid/geometry/GmMultiPolyIntersectorEdgeWalk.h>
 #include <xmsgrid/geometry/geoms.h> // gmPolygonArea, gmAddToExtents, gmXyDistance
+#include <xmsgrid/ugrid/XmUGrid.h>
 
 //----- Forward declarations ---------------------------------------------------
 
@@ -128,7 +130,7 @@ private:
   std::vector<GmBstPoly3d> m_boostPolys; ///< Polygons as boost geom polygons
   BSHP<GmMultiPolyIntersectionSorter> m_sorter; ///< Sorter used to process results
   GmMultiPolyIntersectorQueryEnum m_query;      ///< Type of query (intersect, covered by...)
-};                                              // class GmMultiPolyIntersectorImpl
+}; // class GmMultiPolyIntersectorImpl
 
 //----- Class / Function definitions -------------------------------------------
 
@@ -167,7 +169,20 @@ BSHP<GmMultiPolyIntersector> GmMultiPolyIntersector::New(
 {
   return BDPC<GmMultiPolyIntersector>(BSHP<GmMultiPolyIntersectorImpl>(
     new GmMultiPolyIntersectorImpl(a_points, a_polys, a_sorter, a_startingId)));
-} // GmMultiPolyIntersector::GmMultiPolyIntersector
+} // GmMultiPolyIntersector::New
+//------------------------------------------------------------------------------
+/// \brief Creates a new GmMultiPolyIntersectorEdgeWalk object.
+/// \param a_ugrid: The unstructured grid.
+/// \param a_startingId: If the polygon IDs should start at something other
+///                       than 1, specify the starting value.
+/// \return GmMultiPolyIntersector.
+//------------------------------------------------------------------------------
+BSHP<GmMultiPolyIntersector> GmMultiPolyIntersector::New(std::shared_ptr<XmUGrid> a_ugrid,
+                                                         int a_startingId /*=1*/)
+{
+  return BDPC<GmMultiPolyIntersector>(BSHP<GmMultiPolyIntersectorEdgeWalk>(
+    new GmMultiPolyIntersectorEdgeWalk(a_ugrid, a_startingId)));
+} // GmMultiPolyIntersector::New
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class GmMultiPolyIntersectorImpl
@@ -223,7 +238,7 @@ GmMultiPolyIntersectorImpl::~GmMultiPolyIntersectorImpl()
 ////------------------------------------------------------------------------------
 // void GmMultiPolyIntersectorImpl::ValidatePolygons ()
 //{
-//#ifdef _DEBUG
+// #ifdef _DEBUG
 //  for (size_t i = 0; i < m_d.m_polys.size(); ++i) {
 //    VecPt3d poly;
 //    for (size_t j = 0; j < m_d.m_polys[i].size(); ++j) {
@@ -231,7 +246,7 @@ GmMultiPolyIntersectorImpl::~GmMultiPolyIntersectorImpl()
 //    }
 //    XM_ASSERT(gmPolygonArea(&poly[0], poly.size()) > 0);
 //  }
-//#endif
+// #endif
 //} // GmMultiPolyIntersectorImpl::ValidatePolygons
 //------------------------------------------------------------------------------
 /// \brief Calculate a small buffer distance by which we expand all polygon
@@ -2629,6 +2644,353 @@ void GmMultiPolyIntersector2IntermediateTests::testBug15785()
   TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1.0e-3);
   TS_ASSERT_DELTA_VEC(expectedTValues, tValues, 1.0e-5);
 } // GmMultiPolyIntersector2IntermediateTests::testBug15785
+
+////////////////////////////////////////////////////////////////////////////////
+// Edge Walk Tests
+////////////////////////////////////////////////////////////////////////////////
+
+namespace // unnamed namespace
+{
+//------------------------------------------------------------------------------
+/// \brief Build an XmUGrid from points and polygon index lists.
+/// \param a_pts: Points.
+/// \param a_polys: 0-based point indices for each polygon.
+/// \return Shared pointer to XmUGrid.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> iBuildUGrid(const VecPt3d& a_pts, const VecInt2d& a_polys)
+{
+  VecInt cellstream;
+  for (const auto& poly : a_polys)
+  {
+    int nPts = (int)poly.size();
+    if (nPts == 3)
+      cellstream.push_back(XMU_TRIANGLE);
+    else if (nPts == 4)
+      cellstream.push_back(XMU_QUAD);
+    else
+      cellstream.push_back(XMU_POLYGON);
+    cellstream.push_back(nPts);
+    for (int idx : poly)
+      cellstream.push_back(idx);
+  }
+  return XmUGrid::New(a_pts, cellstream);
+}
+//------------------------------------------------------------------------------
+/// \brief Run an edge-walk test with the same interface as iRunTest.
+//------------------------------------------------------------------------------
+void iRunEdgeWalkTest(double x1,
+                      double y1,
+                      double x2,
+                      double y2,
+                      const VecPt3d& pts,
+                      const VecInt2d& polys,
+                      const VecInt& a_expectedPolyIDs,
+                      const VecDbl& a_expectedtValues,
+                      const VecPt3d& a_expectedPoints,
+                      int a_startingId = 1)
+{
+  auto ugrid = iBuildUGrid(pts, polys);
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(ugrid, a_startingId);
+  VecInt polyIds1, polyIds2, polyIds3, polyIds4;
+  VecDbl tValues1, tValues2;
+  VecPt3d points1, points2;
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds1, tValues1);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds2);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds3, points1);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds4, tValues2, points2);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds1);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds2);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds3);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds4);
+  TS_ASSERT_EQUALS(polyIds1.size(), tValues1.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), points1.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds2.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds3.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds4.size());
+  TS_ASSERT_EQUALS(tValues1.size(), tValues2.size());
+  TS_ASSERT_EQUALS(points1.size(), points2.size());
+  const double kDelta = 1e-5;
+  TS_ASSERT_DELTA_VEC(a_expectedtValues, tValues1, kDelta);
+  TS_ASSERT_DELTA_VEC(a_expectedtValues, tValues2, kDelta);
+  TS_ASSERT_DELTA_VECPT3D(iZeroedZ(a_expectedPoints), iZeroedZ(points1), kDelta);
+  TS_ASSERT_DELTA_VECPT3D(iZeroedZ(a_expectedPoints), iZeroedZ(points2), kDelta);
+}
+} // unnamed namespace
+
+////////////////////////////////////////////////////////////////////////////////
+/// \class GmMultiPolyIntersectorEdgeWalkUnitTests
+/// \brief Tests for edge-walk based GmMultiPolyIntersector.
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief 1 poly, out-out: line passes completely through a single polygon.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1OutOut()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0833333, 0.916667};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-1, 5, 11, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, out-in.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1OutIn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.111111, 1.0};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {8.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-1, 5, 8, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, in-out.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1InOut()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 0.833333};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 11, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, in-in.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1InIn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 1.0};
+  VecPt3d expectedPoints = {{2.0, 5.0, 0.0}, {8.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(2, 5, 8, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, on-on: line starts and ends on polygon edges.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1OnOn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 1.0};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(0, 5, 10, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 2 polys, out-out: line passes through both polygons.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk2OutOut()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  VecInt expectedIds = {1, 2, -1};
+  VecDbl expectedTvals = {0.0454545, 0.5, 0.954545};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {20.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-1, 5, 21, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 2 polys, in-in: line starts and ends inside different polygons.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk2InIn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  VecInt expectedIds = {1, 2, -1};
+  VecDbl expectedTvals = {0.0, 0.5, 1.0};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {15.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 15, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief Triangle grid: inside to inside across 4 triangles.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkInsideToInside()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(1, 2, pts, polys);
+
+  VecInt expectedIds = {4, 3, 5, 6, -1};
+  VecDbl expectedTvals = {0.0, 0.166666, 0.5, 0.833333, 1.0};
+  VecPt3d expectedPoints = {{5.0, -2.5, 0.0},
+                            {6.6666666666667, -3.333333333333, 0.0},
+                            {10.0, -5.0, 0.0},
+                            {13.333333333333, -6.666666666667, 0.0},
+                            {15.0, -7.5, 0.0}};
+  iRunEdgeWalkTest(5, -2.5, 15, -7.5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief Triangle grid: outside to outside.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkOutsideToOutside()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(1, 2, pts, polys);
+
+  VecInt expectedIds = {1, 4, 3, 5, 6, 7, -1};
+  VecDbl expectedTvals = {0.0454545, 0.0833333, 0.34375, 0.5, 0.65625, 0.916667, 0.954545};
+  VecPt3d expectedPoints = {{0.0, -0.454545454545, 0.0}, {0.8333333333333, -0.833333333333, 0.0},
+                            {6.5625, -3.4375, 0.0},      {10.0, -5.0, 0.0},
+                            {13.4375, -6.5625, 0.0},     {19.166666666667, -9.166666666667, 0.0},
+                            {20.0, -9.545454545455, 0.0}};
+  iRunEdgeWalkTest(-1, 0, 21, -10, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 3x3 triangle grid: along diagonal edges inside to inside.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongEdgesInsideToInside()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(3, 3, pts, polys);
+
+  VecInt expectedIds = {2, 17, 18, 33, -1};
+  VecDbl expectedTvals = {0.0, 0.22222, 0.5, 0.777778, 1.0};
+  VecPt3d expectedPoints = {{6.0, -6.0, 0.0},
+                            {10.0, -10.0, 0.0},
+                            {15.0, -15.0, 0.0},
+                            {20.0, -20.0, 0.0},
+                            {24.0, -24.0, 0.0}};
+  iRunEdgeWalkTest(6, -6, 24, -24, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief Edge through opposite vertex at angle.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkEdgeThroughOppositeVertex()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(1, 2, pts, polys);
+
+  VecInt expectedIds = {3, 5, 7, -1};
+  VecDbl expectedTvals = {0.0, 0.14285714285714288, 0.5, 0.85714285714285721};
+  VecPt3d expectedPoints = {{8.0, -2.5, 0.0},
+                            {10.0, -3.214285714286, 0.0},
+                            {15.0, -5.0, 0.0},
+                            {20.0, -6.785714285714, 0.0}};
+  iRunEdgeWalkTest(8, -2.5, 22, -7.5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// \class GmMultiPolyIntersectorEdgeWalkIntermediateTests
+/// \brief Intermediate (file-based) tests for edge-walk intersector.
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief Regression test for bug 12586.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug12586()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug12586.xmc", std::ios_base::binary);
+  bool binary = daLineBeginsWith(input, "Binary");
+  std::string header = binary ? "Binary " : "ASCII ";
+  header += "UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, binary);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(xmGrid);
+
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+  mpi->TraverseLineSegment(1538860.17, 7379636.54, 1538862.21, 7379641.02, polyIds, tValues,
+                           points);
+
+  // Structural validation: the edge-walk may pick a different side of edge-along
+  // lines than the old sorter-based algorithm, but the traversal must be valid.
+  TS_ASSERT(polyIds.size() >= 3); // At least start, one cell, and end sentinel
+  TS_ASSERT_EQUALS(polyIds.back(), -1);
+  TS_ASSERT_EQUALS(polyIds.size(), tValues.size());
+  TS_ASSERT_EQUALS(polyIds.size(), points.size());
+  // t-values must be monotonically non-decreasing
+  for (size_t i = 1; i < tValues.size(); ++i)
+    TS_ASSERT_LESS_THAN_EQUALS(tValues[i - 1], tValues[i] + 1e-9);
+  // First t-value near 0, last near 1
+  TS_ASSERT_DELTA(tValues.front(), 0.0, 0.01);
+  TS_ASSERT_DELTA(tValues.back(), 1.0, 0.01);
+}
+//------------------------------------------------------------------------------
+/// \brief Regression test for bug 12728.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug12728()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug12728.xmc", std::ios_base::binary);
+  bool binary = daLineBeginsWith(input, "Binary");
+  std::string header = binary ? "Binary " : "ASCII ";
+  header += "UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, binary);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(xmGrid);
+
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+  mpi->TraverseLineSegment(1757154.8029110476, 2309728.6101994626, 1756465.022339, 2309619.893937,
+                           polyIds, tValues, points);
+
+  // Structural validation
+  TS_ASSERT(polyIds.size() >= 3);
+  TS_ASSERT_EQUALS(polyIds.back(), -1);
+  TS_ASSERT_EQUALS(polyIds.size(), tValues.size());
+  TS_ASSERT_EQUALS(polyIds.size(), points.size());
+  for (size_t i = 1; i < tValues.size(); ++i)
+    TS_ASSERT_LESS_THAN_EQUALS(tValues[i - 1], tValues[i] + 1e-9);
+  // Line enters mesh at start and exits partway through
+  TS_ASSERT_DELTA(tValues.front(), 0.0, 0.01);
+  TS_ASSERT(tValues.back() < 0.5); // Exits early (about 28% through)
+}
+//------------------------------------------------------------------------------
+/// \brief Regression test for bug 13273.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug13273()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug13273.xmc", std::ios_base::binary);
+  std::string header = "Binary UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, true);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  // Zero out z values to match test expectations
+  VecPt3d locs = xmGrid->GetLocations();
+  for (auto& p : locs)
+    p.z = 0.0;
+  VecInt cellstream = xmGrid->GetCellstream();
+  auto flatGrid = XmUGrid::New(locs, cellstream);
+
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(flatGrid);
+
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+  mpi->TraverseLineSegment(8494183.82, 822079.23, 8494283.14, 822106.67, polyIds, tValues, points);
+
+  // Structural validation: expect 4 cells + sentinel
+  TS_ASSERT_EQUALS((int)polyIds.size(), 5);
+  TS_ASSERT_EQUALS(polyIds.back(), -1);
+  TS_ASSERT_EQUALS(polyIds.size(), tValues.size());
+  TS_ASSERT_EQUALS(polyIds.size(), points.size());
+  for (size_t i = 1; i < tValues.size(); ++i)
+    TS_ASSERT_LESS_THAN_EQUALS(tValues[i - 1], tValues[i] + 1e-9);
+  // t-values should span approximately 0 to 1
+  TS_ASSERT_DELTA(tValues.front(), 0.0, 0.01);
+  TS_ASSERT_DELTA(tValues.back(), 1.0, 0.01);
+  // t-values should be approximately evenly spaced (0, 0.25, 0.5, 0.75, 1.0)
+  for (size_t i = 0; i < tValues.size(); ++i)
+    TS_ASSERT_DELTA(tValues[i], i * 0.25, 0.02);
+}
 
 //} // namespace xms
 
