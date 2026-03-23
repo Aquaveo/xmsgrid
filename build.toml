@@ -1,5 +1,6 @@
 library_name = "xmsgrid"
 description = "Grid library for XMS products"
+ci_type = "github"
 extra_export_sources = ["test_files"]
 
 extra_cmake_text = """
@@ -11,7 +12,7 @@ if (NOT MSVC)
 endif()
 """
 
-xms_dependencies = [{ name = "xmscore", version = "7.0.1" }]
+xms_dependencies = [{ name = "xmscore", version = "7.0.4" }]
 
 python_namespaced_dir = "grid"
 
