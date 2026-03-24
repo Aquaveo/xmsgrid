@@ -79,6 +79,7 @@ public:
   void testEndAtEdgeFromAdjacent();
   void testSmsCase1();
   void testMap2MfBug();
+  void testTrianglesAllOutsideZeroBased();
 }; // GmMultiPolyIntersectorUnitTests
 
 ////////////////////////////////////////////////////////////////////////////////
