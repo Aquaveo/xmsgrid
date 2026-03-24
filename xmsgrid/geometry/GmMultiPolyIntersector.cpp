@@ -2036,6 +2036,44 @@ void GmMultiPolyIntersectorUnitTests::testMap2MfBug()
            expectedIds, expectedTvals, expectedPoints);
 } // GmMultiPolyIntersectorUnitTests::testInsideToEdgeThenThroughAdjacent
 //------------------------------------------------------------------------------
+/// \brief Reproduce the xmsextractor polyline extractor crash scenario.
+///        Uses earcut-triangulated quad, zero-based starting ID, and a
+///        segment entirely outside the mesh followed by segments that
+///        cross/touch the mesh. This matches the calling pattern from
+///        XmUGrid2dPolylineDataExtractor::ComputeExtractLocations.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorUnitTests::testTrianglesAllOutsideZeroBased()
+{
+  // Quad cell: (0,0)-(1,0)-(1,1)-(0,1) earcut-triangulated into 2 triangles
+  VecPt3d pts = {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
+  VecInt2d polys = {{0, 1, 2}, {0, 2, 3}};
+
+  BSHP<GmMultiPolyIntersectionSorter> sorter(new GmMultiPolyIntersectionSorterTerse());
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(pts, polys, sorter, 0);
+
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+
+  // Segment entirely outside (to the left of the mesh)
+  mpi->TraverseLineSegment(-0.5, 0.5, -0.25, 0.5, polyIds, tValues, points);
+  TS_ASSERT_EQUALS(0, polyIds.size());
+  TS_ASSERT_EQUALS(0, tValues.size());
+  TS_ASSERT_EQUALS(0, points.size());
+
+  // Segment crossing through the mesh
+  mpi->TraverseLineSegment(-1.0, 0.5, 2.0, 0.5, polyIds, tValues, points);
+  TS_ASSERT(polyIds.size() > 0);
+
+  // Segment entirely inside the mesh
+  mpi->TraverseLineSegment(0.25, 0.5, 0.75, 0.5, polyIds, tValues, points);
+  TS_ASSERT(polyIds.size() > 0);
+
+  // Another segment entirely outside (to the right)
+  mpi->TraverseLineSegment(2.0, 0.5, 3.0, 0.5, polyIds, tValues, points);
+  TS_ASSERT_EQUALS(0, polyIds.size());
+} // GmMultiPolyIntersectorUnitTests::testTrianglesAllOutsideZeroBased
+//------------------------------------------------------------------------------
 /// \brief Given 1 x 2 2D grid turned into triangles with point at poly center
 /// triangles numbered as follows:
 /// \verbatim
