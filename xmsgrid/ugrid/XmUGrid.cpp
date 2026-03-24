@@ -607,7 +607,7 @@ void iBuildPolygon(std::vector<std::pair<T, T>>& a_segs, std::vector<T>& a_polyg
   placed[0] = true;
   for (size_t i = 1; i != a_segs.size(); ++i)
   {
-    T& toMatch = a_polygon.back();
+    T toMatch = a_polygon.back();
     for (size_t j = 1; j != a_segs.size(); ++j)
     {
       if (!placed[j])
