@@ -105,7 +105,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install conan devpi-client wheel
-          python -m pip install xmsconan>=2.12.1 -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+          python -m pip install xmsconan>=2.12.2 -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
       # Setup Conan
       - name: Setup Conan
         run: xmsconan_conan_setup --remote-url ${{ env.CONAN_REMOTE_URL }} --login --remove-conancenter
@@ -137,10 +137,6 @@ jobs:
       # Generate XMS Conan
       - name: Generate XMS Conan
         run: xmsconan_gen --version ${{ env.XMS_VERSION }} build.toml
-      # Workaround xmsconan 2.12.1 bug: dep python_version override never fires
-      - name: Patch xmsconan python_version propagation
-        run: python dev/patch_xmsconan.py
-        shell: bash
       # Build the Conan Package
       - name: Build the Conan Packages
         run: "python build.py --filter=\"{\\\"build_type\\\": \\\"${{ matrix.build_type }}\\\"}\" --wheel-dir wheelhouse"
@@ -236,7 +232,7 @@ jobs:
       - name: Install Python Dependencies
         run: |
           pip install conan devpi-client wheel
-          pip install xmsconan>=2.12.1 -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+          pip install xmsconan>=2.12.2 -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
       # Setup Conan
       - name: Setup Conan
         run: xmsconan_conan_setup --remote-url ${{ env.CONAN_REMOTE_URL }} --login
@@ -268,10 +264,6 @@ jobs:
       # Generate XMS Conan
       - name: Generate XMS Conan
         run: xmsconan_gen --version ${{ env.XMS_VERSION }} build.toml
-      # Workaround xmsconan 2.12.1 bug: dep python_version override never fires
-      - name: Patch xmsconan python_version propagation
-        run: python dev/patch_xmsconan.py
-        shell: bash
       # Build the Conan Package
       - name: Build the Conan Packages
         run: "python build.py --filter=\"{\\\"build_type\\\": \\\"${{ matrix.build_type }}\\\"}\" --wheel-dir wheelhouse"
@@ -378,7 +370,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install conan devpi-client wheel
-          python -m pip install xmsconan>=2.12.1 -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+          python -m pip install xmsconan>=2.12.2 -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
       # Setup Visual Studio
       - name: Setup Visual Studio
         uses: microsoft/setup-msbuild@v2
@@ -413,10 +405,6 @@ jobs:
       # Generate XMS Conan
       - name: Generate XMS Conan
         run: xmsconan_gen --version ${{ env.XMS_VERSION }} build.toml
-      # Workaround xmsconan 2.12.1 bug: dep python_version override never fires
-      - name: Patch xmsconan python_version propagation
-        run: python dev/patch_xmsconan.py
-        shell: bash
       # Build the Conan Package
       - name: Build the Conan Packages
         run: "python build.py --filter=\"{\\\"build_type\\\": \\\"${{ matrix.build_type }}\\\"}\" --wheel-dir wheelhouse"
