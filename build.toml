@@ -105,3 +105,6 @@ pybind_headers = [
     "xmsgrid/python/triangulate/triangulate_py.h",
     "xmsgrid/python/ugrid/ugrid_py.h",
 ]
+
+[ci]
+python_versions = ["3.10", "3.13"]
