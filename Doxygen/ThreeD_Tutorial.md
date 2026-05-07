@@ -13,6 +13,8 @@ utilities see the [UGrid File IO Tutorial](FileIO_Tutorial.md).
 ## Example - Defining Ugrid Cells {#Example_DefiningA3dUGridCell}
 Supported 3D grid cells include: tetrahedron (10), voxel (11), hexahedron (12), wedge (13), pyramid (14), and polyhedron (42). A cell is defined with the number declaration of the shape (10, 11, 12, 13, 14, and 42, respectively, as defined by the enumeration xms::XmUGridCellType), then the number of points, followed by the point indices. The cell definitions mirror VTK cell definitions which are available on page 9 of VTK File Formats for VTK version 4.2 at https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf.
 
+\note The integer cell-type values shown below are the on-the-wire cellstream format and are kept in sync with VTK and xms::XmUGridCellType. If that enum is ever renumbered or extended, update these examples to match.
+
 A tetrahedron (10) has 4 points. See the illustration in the VTK file Format pdf referenced above on page 9 for a VTK_TETRA for point order. A cellstream example for a tetrahedron is: 10, 4, 0, 1, 2, 3.
 
 A voxel (11) has 8 orthogonally defined points. See the illustration in the VTK file Format pdf referenced above on page 9 for a VTK_VOXEL for point order. A cellstream example for a voxel is: 11, 8, 0, 1, 2, 3, 4, 5, 6, 7.
