@@ -7,16 +7,24 @@
 XmsGrid |version|
 *****************
 
-**Last Updated:** April 5, 2019
+The xmsgrid library is a grid library for other Aquaveo products. It provides
+classes and utilities for creating and manipulating unstructured grids
+(``UGrid``), triangulated irregular networks (``Tin``), and supporting
+geometric primitives such as polygon intersection and triangle search.
 
-The xmsgrid library is a grid library for other aquaveo products. This library
-contains classes used to create grids.
+The Python package is named ``xms.grid`` and is organized into three
+sub-modules:
+
+* :mod:`xms.grid.ugrid` -- Unstructured grid creation, query, and IO.
+* :mod:`xms.grid.geometry` -- Geometric primitives, free functions, and
+  spatial searches.
+* :mod:`xms.grid.triangulate` -- Triangulated irregular networks (TINs).
 
 Examples
 ========
 
-The examples for this library can be found in the
-examples folder in the `github repository <https://github.com/Aquaveo/xmsgrid>`_
+Runnable examples for this library can be found in the ``examples`` folder of
+the `GitHub repository <https://github.com/Aquaveo/xmsgrid>`_.
 
 Index
 =====
@@ -36,6 +44,7 @@ Index
 
 * :doc:`modules/ugrid/UGrid`
 * :doc:`modules/ugrid/ugrid_utils`
+* :doc:`modules/geometry/geometry`
 * :doc:`modules/geometry/MultiPolyIntersector`
 * :doc:`modules/geometry/TriSearch`
 * :doc:`modules/triangulate/Tin`
@@ -47,6 +56,7 @@ Index
 
    modules/ugrid/UGrid.rst
    modules/ugrid/ugrid_utils.rst
+   modules/geometry/geometry.rst
    modules/geometry/MultiPolyIntersector.rst
    modules/geometry/TriSearch.rst
    modules/triangulate/Tin.rst
@@ -54,4 +64,5 @@ Index
 Acknowledgements
 ================
 
-This library is from work done by aquaveo developers to support other aquaveo libraries.
+This library is the work of Aquaveo developers and supports other Aquaveo
+libraries (xmsinterp, xmsmesh, xmsstamper, xmsextractor, etc.).
