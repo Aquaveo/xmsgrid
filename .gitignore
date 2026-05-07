@@ -55,7 +55,12 @@ wheelhouse/
 cmake-build-*/
 
 # ── Documentation ──────────────────────────────
-Doxygen/
+# Generated Doxygen output directories. The Doxygen/ directory itself is
+# tracked because it holds the source markdown tutorials, Doxyfile, CSS,
+# and image assets used to build the docs.
+Doxygen/html/[!i]*
+Doxygen/latex/
+Doxygen/xml/
 doc/_build/
 doxy_warn.log
 pydocs/build/

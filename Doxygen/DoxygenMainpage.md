@@ -19,7 +19,7 @@ xmsgrid is a grid geometry library used in xms libraries and products.
 License {#XmsgridLicense}
 -------
 
-The code is distributed under the FreeBSD Software License. (See accompanying file LICENSE or copy at [http://www.aquaveo.com/bsd/LICENSE.txt](http://www.aquaveo.com/bsd/license.txt)). 
+The code is distributed under the FreeBSD Software License. (See accompanying file LICENSE or copy at [http://www.aquaveo.com/bsd/LICENSE.txt](http://www.aquaveo.com/bsd/license.txt)).
 
 Python
 ------
@@ -35,6 +35,35 @@ The following tutorials are available:
 * [2D UGrid Tutorial](TwoD_Tutorial.md)
 * [3D UGrid Tutorial](ThreeD_Tutorial.md)
 * [UGrid File IO Tutorial](FileIO_Tutorial.md)
+* [Geometry Tutorial](Geometry_Tutorial.md)
+* [Triangulate Tutorial](Triangulate_Tutorial.md)
+
+Library Modules {#XmsgridModules}
+---------------
+
+The library is organized into the following modules. The unstructured grid (UGrid)
+module is the main entry point for most consumers; the other modules provide
+supporting geometric, triangulation, and linear-algebra primitives.
+
+* **ugrid** - Unstructured grid representation (xms::XmUGrid), edges
+  (xms::XmEdge), and IO/modification utilities (XmUGridUtils.h: read/write,
+  clip, remove points/cells).
+* **geometry** - Geometric primitives and spatial searches:
+  * xms::GmExtents3d - 3D bounding extents.
+  * xms::GmPolygon - Polygon representation and operations.
+  * xms::GmPtSearch - Spatial search for points.
+  * xms::GmTriSearch - Spatial search for triangles, with interpolation
+    weight extraction.
+  * xms::GmMultiPolyIntersector - Intersect a line segment with multiple
+    polygons in 2D.
+  * xms::GmPolyLinePtRedistributer - Redistribute points along a polyline.
+  * Free functions in geoms.h for common geometric operations.
+* **triangulate** - Triangulation utilities:
+  * xms::TrTin - Triangulated irregular network (TIN) representation.
+  * xms::TrTriangulator / xms::TrTriangulatorPoints - Build a TIN from
+    points.
+  * xms::TrBreaklineAdder - Insert breaklines into an existing TIN.
+* **matrices** - Lightweight matrix utilities used by other modules.
 
 Testing {#XmsgridTesting}
 -------
@@ -46,6 +75,12 @@ The Code {#XmsgridTheCode}
 ### Namespaces {#XmsgridNamespaces}
 * "xms" - Most code is in this namespace. The use of other namespaces is kept to a minimum. Two-letter prefixes are used as "pseudo-namespaces" in code modules. Preprocessor macros typically start with "XM_" to prevent name collisions.
 * "xmt" - Testing code will be put into this namespace once CXX_TEST is upgraded such that it will find the testing code in this namespace.
+
+### Module prefixes {#XmsgridPrefixes}
+The two-letter prefixes used in this library follow these conventions:
+* `Xm` - Top-level xms types (e.g. xms::XmUGrid, xms::XmEdge).
+* `Gm` - Geometry module types (e.g. xms::GmPolygon, xms::GmTriSearch).
+* `Tr` - Triangulation module types (e.g. xms::TrTin, xms::TrTriangulator).
 
 ### Interface pattern {#XmsgridInterfacePattern}
 Many classes follow the interface pattern. An abstract base class is used to define the interface and a concrete implementation class is used to implement the functionality. The implementation class will be named the same as the interface class but will end in "Impl" and will only be found in the .cpp file. For example: xms::XmUGrid and xms::XmUGridImpl.
