@@ -596,7 +596,8 @@ std::vector<T> iGetUniquePoints(const std::vector<T>& a_segments)
 //------------------------------------------------------------------------------
 /// \brief Build a polygon from vector of polygon segments.
 /// \param[in] a_segs Vector of segments that would make a polygon.
-/// \param[out] a_polygon Output polygon vector ordered either CW or CCW.
+/// \param[out] a_polygon Output polygon vector ordered either CW or CCW. On
+///             failure (return value false) a_polygon is cleared.
 /// \return true if every segment was placed; false if a_segs is empty or an
 ///         iteration could not extend the polygon (gap, dangling segment, etc.).
 //------------------------------------------------------------------------------
@@ -631,7 +632,10 @@ bool iBuildPolygon(std::vector<std::pair<T, T>>& a_segs, std::vector<T>& a_polyg
       }
     }
     if (a_polygon.size() == prevSize)
+    {
+      a_polygon.clear();
       return false;
+    }
   }
   return true;
 } // iBuildPolygon
@@ -6567,7 +6571,8 @@ void XmUGridUnitTests::testUgridWithInvalidCells()
 } // XmUGridUnitTests::testUgridWithInvalidCells
 //------------------------------------------------------------------------------
 /// \brief Test that iBuildPolygon rejects malformed segment lists rather than
-///        silently producing a partial polygon.
+///        silently producing a partial polygon, and that iMergeSegmentsToPoly
+///        clears its output on the same failure paths.
 //------------------------------------------------------------------------------
 void XmUGridUnitTests::testBuildPolygonFailurePaths()
 {
@@ -6579,21 +6584,37 @@ void XmUGridUnitTests::testBuildPolygonFailurePaths()
     TS_ASSERT(polygon.empty());
   }
 
-  // Dangling segment (open polyline plus a disconnected segment): no iteration
-  // can extend [1,2,3] to reach 4-5, so the function returns false.
+  // Dangling segment (open polyline plus a disconnected segment): the function
+  // returns false and clears any partial output it accumulated.
   {
     std::vector<std::pair<int, int>> segs = {{1, 2}, {2, 3}, {4, 5}};
     std::vector<int> polygon;
     TS_ASSERT(!iBuildPolygon(segs, polygon));
+    TS_ASSERT(polygon.empty());
   }
 
-  // Closed triangle: success path stays unchanged.
+  // Closed quad: exercises two real extension iterations (i=1 and i=2 both
+  // place a new segment) before the loop boundary closes the ring at i=3.
   {
-    std::vector<std::pair<int, int>> segs = {{1, 2}, {2, 3}, {1, 3}};
+    std::vector<std::pair<int, int>> segs = {{1, 2}, {2, 3}, {3, 4}, {1, 4}};
     std::vector<int> polygon;
     TS_ASSERT(iBuildPolygon(segs, polygon));
-    std::vector<int> expected = {1, 2, 3, 1};
+    std::vector<int> expected = {1, 2, 3, 4, 1};
     TS_ASSERT_EQUALS(expected, polygon);
+  }
+
+  // Route a malformed segment list through iMergeSegmentsToPoly: two
+  // disconnected segments cannot form a closed polygon, so the consolidated
+  // failure branch must clear a_polygon. Mute XM_ASSERT for the duration so
+  // debug builds do not abort on the deliberate failure.
+  {
+    VecPt3d segments = {{0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}};
+    VecPt3d polygon;
+    bool wasAsserting = xmAsserting();
+    xmAsserting() = false;
+    iMergeSegmentsToPoly(segments, polygon);
+    xmAsserting() = wasAsserting;
+    TS_ASSERT(polygon.empty());
   }
 } // XmUGridUnitTests::testBuildPolygonFailurePaths
 
