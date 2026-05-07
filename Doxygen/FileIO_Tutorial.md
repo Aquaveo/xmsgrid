@@ -58,7 +58,10 @@ sets of point and cell indices to remove and returns the resulting points
 vector and cellstream by reference. Callers can then construct a new UGrid
 from those primitives or compose them with other modifications. The supplied
 point and cell removal sets must be consistent: removing a point without
-also removing its adjacent cells is not handled.
+also removing every cell that references it triggers an `XM_ASSERT` in
+debug builds and is undefined behavior in release builds. When in doubt,
+prefer xms::XmRemovePoints (which derives the cell set automatically) or
+xms::XmRemoveCells with `a_deleteOrphanedPoints = true`.
 
 ## Example - Clipping a UGrid to Loops {#Example_XmClipUGrid}
 The xms::XmClipUGrid function (declared in `xmsgrid/ugrid/detail/UGridClipper.h`,

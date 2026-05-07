@@ -56,8 +56,7 @@ Round-trip a UGrid through the ASCII file format::
    assert loaded == grid
 
 Usage and documentation for each class can be found in the **User Interface**
-section of this site. Additional examples are available on the project's
-`Examples_ <https://github.com/Aquaveo/xmsgrid/tree/master/examples>`_ page,
-including the ``UGrids.ipynb`` notebook.
-
-.. _Examples: https://github.com/Aquaveo/xmsgrid/tree/master/examples
+section of this site. Additional examples are available in the project's
+`examples directory
+<https://github.com/Aquaveo/xmsgrid/tree/master/examples>`_, including the
+``UGrids.ipynb`` notebook.

@@ -101,9 +101,10 @@ Important contract:
   xms::TrTin::TrianglesPtr() / xms::TrTin::PointsPtr() to triangulate the
   TIN's points in place.
 
-xmsinterp's Python bindings invoke this constructor implicitly when the
-user supplies points without triangles; xmsmesher uses it during mesh
-generation.
+The Python `xms.grid.triangulate.Tin` class wraps this constructor inside
+its `triangulate()` method, so Python callers run the same algorithm by
+calling `tin.triangulate()` after constructing a Tin from points alone.
+xmsmesher uses xms::TrTriangulatorPoints directly during mesh generation.
 
 ## Adding Constraints: TrBreaklineAdder {#Triangulate_TrBreaklineAdder}
 

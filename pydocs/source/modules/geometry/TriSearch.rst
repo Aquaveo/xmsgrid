@@ -16,8 +16,10 @@ index as active.
 
 .. note::
 
-   :class:`TriSearch` holds the supplied points and triangles by reference.
-   Keep the originals alive for as long as the search instance is in use.
+   The Python wrapper copies the supplied points and triangles into
+   internal C++ buffers when the search is constructed; later edits to
+   the original Python sequences are not seen by the search. To search
+   different data, build a new :class:`TriSearch`.
 
 .. autoclass:: xms.grid.geometry.TriSearch
    :members:

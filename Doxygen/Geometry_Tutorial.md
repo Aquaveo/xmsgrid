@@ -176,10 +176,13 @@ Refer to the header for the full list and exact signatures.
 
 ### Vectors and angles
 
-* xms::gmTurn - returns `TURN_LEFT`, `TURN_RIGHT`, `TURN_NONE`, or
-  `TURN_COLINEAR_180` for three points. The optional angle tolerance
-  controls when nearly-collinear configurations are flagged. Used heavily
-  by xmsextractor's triangle traversal code.
+* xms::gmTurn - returns one of `TURN_LEFT`, `TURN_RIGHT`,
+  `TURN_COLINEAR_180` (the three points lie on a line and the third
+  continues past the second), or `TURN_COLINEAR_0` (the third point
+  doubles back along the segment). The optional angle tolerance
+  controls when nearly-collinear configurations are flagged as one of
+  the colinear values. Used heavily by xmsextractor's triangle
+  traversal code.
 * xms::gmCross2D / xms::gmCross3D - 2D and 3D cross products.
 * xms::gmAngleBetweenEdges - CCW angle (0..2pi) between two edges sharing
   a vertex.
