@@ -113,14 +113,16 @@ GCOVR_COMMON=(
 GCOVR_OUTPUT=(
     --xml-pretty --output cov-cpp.xml
     --html-details "build/coverage-html-cpp/index.html"
+    --json-summary-pretty --json-summary "build/cov-cpp-summary.json"
     --print-summary
-    --fail-under-line "$CPP_COVERAGE_THRESHOLD"
 )
 
 echo "==> Aggregating C++ coverage with gcovr (threshold: $CPP_COVERAGE_THRESHOLD%)"
 # gcovr's --root must be the source folder; the build folder argument tells
 # it where to find .gcda files. With one build folder we emit directly;
-# with multiple we collect JSON intermediates then merge.
+# with multiple we collect JSON intermediates then merge. Threshold check
+# is performed below from the json-summary so the summary table can show
+# the actual percentages even when a layer fails.
 if [[ ${#BUILD_TO_SOURCE[@]} -eq 1 ]]; then
     bf="${!BUILD_TO_SOURCE[*]}"
     src="${BUILD_TO_SOURCE[$bf]}"
@@ -140,6 +142,8 @@ else
     first_src="${BUILD_TO_SOURCE[$(printf '%s\n' "${!BUILD_TO_SOURCE[@]}" | head -n1)]}"
     gcovr --root "$first_src" "${GCOVR_COMMON[@]}" "${JSON_FILES[@]}" "${GCOVR_OUTPUT[@]}"
 fi
+
+CPP_ACTUAL=$(python3 -c "import json; d=json.load(open('build/cov-cpp-summary.json')); print(d.get('line_percent', d.get('lines',{}).get('percent', 0)))")
 
 echo "==> Python coverage run (threshold: $PY_COVERAGE_THRESHOLD%)"
 PY_VENV="$REPO_ROOT/.coverage-venv"
@@ -172,20 +176,42 @@ cp -r _package/tests "$TESTS_COPY"
         --cov=xms.grid \
         --cov-report=xml:"$REPO_ROOT/cov-py.xml" \
         --cov-report=html:"$REPO_ROOT/build/coverage-html-py" \
+        --cov-report=json:"$REPO_ROOT/build/cov-py-summary.json" \
         --cov-report=term \
-        --cov-fail-under="$PY_COVERAGE_THRESHOLD" \
         .
 )
+
+PY_ACTUAL=$(python3 -c "import json; print(json.load(open('build/cov-py-summary.json'))['totals']['percent_covered'])")
+
+# Threshold checks. Both run unconditionally so the summary always reflects
+# real numbers; we set FAILED at the end if either layer is below.
+FAILED=0
+cpp_pass=$(python3 -c "import sys; sys.exit(0 if float('$CPP_ACTUAL') >= float('$CPP_COVERAGE_THRESHOLD') else 1)" && echo 1 || echo 0)
+py_pass=$(python3 -c "import sys; sys.exit(0 if float('$PY_ACTUAL') >= float('$PY_COVERAGE_THRESHOLD') else 1)" && echo 1 || echo 0)
+[[ "$cpp_pass" == 0 ]] && FAILED=1
+[[ "$py_pass" == 0 ]] && FAILED=1
+
+cpp_status=$([[ "$cpp_pass" == 1 ]] && echo "pass" || echo "FAIL")
+py_status=$([[ "$py_pass" == 1 ]] && echo "pass" || echo "FAIL")
+
+# Round actuals to one decimal for display.
+CPP_ACTUAL_DISP=$(python3 -c "print(f'{float(\"$CPP_ACTUAL\"):.1f}')")
+PY_ACTUAL_DISP=$(python3 -c "print(f'{float(\"$PY_ACTUAL\"):.1f}')")
+
+echo
+echo "==> Threshold check"
+echo "    C++:    actual ${CPP_ACTUAL_DISP}%  threshold ${CPP_COVERAGE_THRESHOLD}%  [$cpp_status]"
+echo "    Python: actual ${PY_ACTUAL_DISP}%  threshold ${PY_COVERAGE_THRESHOLD}%  [$py_status]"
 
 # Optional: append summary to GitHub Actions step summary.
 if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
     {
         echo "## Coverage Summary"
         echo
-        echo "| Layer | Threshold |"
-        echo "|-------|-----------|"
-        echo "| C++ | $CPP_COVERAGE_THRESHOLD% |"
-        echo "| Python | $PY_COVERAGE_THRESHOLD% |"
+        echo "| Layer  | Threshold | Actual | Status |"
+        echo "|--------|-----------|--------|--------|"
+        echo "| C++    | ${CPP_COVERAGE_THRESHOLD}% | ${CPP_ACTUAL_DISP}% | $cpp_status |"
+        echo "| Python | ${PY_COVERAGE_THRESHOLD}% | ${PY_ACTUAL_DISP}% | $py_status |"
         echo
         echo "See \`gcovr\` and \`pytest --cov\` output above for actual percentages."
         echo "Browseable HTML reports are uploaded as the \`coverage-html\` artifact."
@@ -198,3 +224,9 @@ echo "    cov-cpp.xml                  Cobertura, C++"
 echo "    cov-py.xml                   Cobertura, Python"
 echo "    build/coverage-html-cpp/     Browsable C++ report"
 echo "    build/coverage-html-py/      Browsable Python report"
+
+if [[ "$FAILED" -ne 0 ]]; then
+    echo
+    echo "error: coverage below threshold for one or more layers" >&2
+    exit 1
+fi

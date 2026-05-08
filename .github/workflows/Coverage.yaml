@@ -38,10 +38,10 @@ jobs:
       PYTHON_TARGET_VERSION: '3.13'
       RELEASE_PYTHON: 'False'
       CTEST_PARALLEL_LEVEL: '8'
-      # Coverage thresholds. Bump these once a baseline is established.
-      # The job fails if either falls below its threshold.
-      CPP_COVERAGE_THRESHOLD: '0'
-      PY_COVERAGE_THRESHOLD: '0'
+      # Coverage thresholds. Pinned to current baseline; bump as coverage
+      # improves. The job fails if either layer falls below its threshold.
+      CPP_COVERAGE_THRESHOLD: '74.7'
+      PY_COVERAGE_THRESHOLD: '83'
 
     steps:
       - name: Checkout Source
