@@ -64,63 +64,78 @@ if [[ ${#GCDA_FILES[@]} -eq 0 ]]; then
     exit 1
 fi
 
-# Walk up from each .gcda to find the directory containing CMakeCache.txt.
-declare -A BUILD_FOLDERS=()
+# Walk up from each .gcda to find the directory containing CMakeCache.txt;
+# pair each with its source folder. cmake_layout puts source at <pkg>/b/src
+# and build at <pkg>/b/build/<config>, so source is two parents up + /src.
+declare -A BUILD_TO_SOURCE=()
 for gcda in "${GCDA_FILES[@]}"; do
     dir="$(dirname "$gcda")"
     while [[ "$dir" != "/" && ! -f "$dir/CMakeCache.txt" ]]; do
         dir="$(dirname "$dir")"
     done
-    if [[ -f "$dir/CMakeCache.txt" ]]; then
-        BUILD_FOLDERS["$dir"]=1
+    if [[ ! -f "$dir/CMakeCache.txt" ]]; then
+        continue
     fi
+    src_dir="$(cd "$dir/../.." && pwd)/src"
+    if [[ ! -d "$src_dir/xmsgrid" ]]; then
+        echo "error: expected source dir at $src_dir but xmsgrid/ not found" >&2
+        exit 1
+    fi
+    BUILD_TO_SOURCE["$dir"]="$src_dir"
 done
 
-if [[ ${#BUILD_FOLDERS[@]} -eq 0 ]]; then
+if [[ ${#BUILD_TO_SOURCE[@]} -eq 0 ]]; then
     echo "error: could not locate any CMakeCache.txt above the discovered .gcda files" >&2
     exit 1
 fi
 
-echo "==> Found ${#BUILD_FOLDERS[@]} build folder(s):"
-for bf in "${!BUILD_FOLDERS[@]}"; do
-    echo "    $bf"
+echo "==> Found ${#BUILD_TO_SOURCE[@]} build folder(s):"
+for bf in "${!BUILD_TO_SOURCE[@]}"; do
+    echo "    build:  $bf"
+    echo "    source: ${BUILD_TO_SOURCE[$bf]}"
 done
 
 mkdir -p build/coverage-html-cpp build/coverage-html-py
-
-GCOVR_FILTERS=(
-    --root "$REPO_ROOT"
-    --filter "xmsgrid/"
-    --exclude '.*\.t\.h$'
-    --exclude 'xmsgrid/python/.*'
-    --exclude '_package/tests/.*'
-)
 
 # Thresholds. Default 0 means "do not fail". Override via env var to gate.
 CPP_COVERAGE_THRESHOLD="${CPP_COVERAGE_THRESHOLD:-0}"
 PY_COVERAGE_THRESHOLD="${PY_COVERAGE_THRESHOLD:-0}"
 
-echo "==> Aggregating C++ coverage with gcovr (threshold: $CPP_COVERAGE_THRESHOLD%)"
+GCOVR_COMMON=(
+    --filter 'xmsgrid/'
+    --exclude '.*\.t\.h$'
+    --exclude 'xmsgrid/python/.*'
+    --exclude '_package/tests/.*'
+)
 GCOVR_OUTPUT=(
     --xml-pretty --output cov-cpp.xml
     --html-details "build/coverage-html-cpp/index.html"
     --print-summary
     --fail-under-line "$CPP_COVERAGE_THRESHOLD"
 )
-if [[ ${#BUILD_FOLDERS[@]} -eq 1 ]]; then
-    bf="${!BUILD_FOLDERS[*]}"
-    gcovr "${GCOVR_FILTERS[@]}" "${GCOVR_OUTPUT[@]}" "$bf"
+
+echo "==> Aggregating C++ coverage with gcovr (threshold: $CPP_COVERAGE_THRESHOLD%)"
+# gcovr's --root must be the source folder; the build folder argument tells
+# it where to find .gcda files. With one build folder we emit directly;
+# with multiple we collect JSON intermediates then merge.
+if [[ ${#BUILD_TO_SOURCE[@]} -eq 1 ]]; then
+    bf="${!BUILD_TO_SOURCE[*]}"
+    src="${BUILD_TO_SOURCE[$bf]}"
+    gcovr --root "$src" "${GCOVR_COMMON[@]}" "${GCOVR_OUTPUT[@]}" "$bf"
 else
-    # Multiple build folders: emit one JSON per folder, then merge.
     JSON_FILES=()
     i=0
-    for bf in "${!BUILD_FOLDERS[@]}"; do
+    for bf in "${!BUILD_TO_SOURCE[@]}"; do
+        src="${BUILD_TO_SOURCE[$bf]}"
         out="build/coverage-cpp-$i.json"
-        gcovr "${GCOVR_FILTERS[@]}" --json --output "$out" "$bf"
+        gcovr --root "$src" "${GCOVR_COMMON[@]}" --json --output "$out" "$bf"
         JSON_FILES+=(--add-tracefile "$out")
         i=$((i + 1))
     done
-    gcovr "${GCOVR_FILTERS[@]}" "${JSON_FILES[@]}" "${GCOVR_OUTPUT[@]}"
+    # Merge: --root here only affects how merged paths are rendered, not
+    # which gcda files are read. Use the first source folder as the root.
+    first_src="${BUILD_TO_SOURCE[$(printf '%s\n' "${!BUILD_TO_SOURCE[@]}" | head -n1)]}"
+    gcovr --root "$first_src" "${GCOVR_COMMON[@]}" "${JSON_FILES[@]}" "${GCOVR_OUTPUT[@]}"
 fi
 
 echo "==> Python coverage run (threshold: $PY_COVERAGE_THRESHOLD%)"
@@ -134,7 +149,10 @@ if [[ -z "$WHEEL" ]]; then
     echo "error: no wheel found in wheelhouse/" >&2
     exit 1
 fi
-"$PY_VENV/bin/pip" install --quiet "$WHEEL"
+# xmsgrid wheels declare an xmscore dependency that lives on Aquaveo devpi,
+# not PyPI. Pass the public devpi index so pip can resolve it.
+DEVPI_INDEX="${COVERAGE_PIP_INDEX:-https://public.aquapi.aquaveo.com/aquaveo/dev/+simple}"
+"$PY_VENV/bin/pip" install --quiet --extra-index-url "$DEVPI_INDEX" "$WHEEL"
 
 "$PY_VENV/bin/pytest" \
     --cov=xms.grid \
