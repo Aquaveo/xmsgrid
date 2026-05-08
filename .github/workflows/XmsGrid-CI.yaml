@@ -31,7 +31,7 @@ jobs:
     steps:
       # Checkout Sources
       - name: Checkout Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       # Setup Python
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -94,7 +94,7 @@ jobs:
           clang --version
       # Checkout Sources
       - name: Checkout Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       # Setup Python
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -114,7 +114,7 @@ jobs:
       - name: Get Tag
         id: gitTag
         uses: little-core-labs/get-git-tag@v3.0.2
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Set Conan Version
       - name: Set Conan Version
         uses: allenevans/set-env@v2.0.0
@@ -123,7 +123,7 @@ jobs:
           XMS_VERSION: ${{ steps.gitTag.outputs.tag }}
           CONAN_UPLOAD: https://conan.aquaveo.com
           RELEASE_PYTHON: 'True'
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Check for release branch
       - name: Get Branch Name
         id: gitBranch
@@ -145,35 +145,35 @@ jobs:
       - name: Repair wheel
         run: xmsconan_wheel_repair --wheel-dir wheelhouse --platform macos
         shell: bash
-        if: matrix.build_type == 'Release'
+        if: ${{ matrix.build_type == 'Release' }}
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
           name: wheel-${{ runner.os }}
           path: wheelhouse/*.whl
-        if: matrix.build_type == 'Release'
+        if: ${{ matrix.build_type == 'Release' }}
       # Upload wheel to Aquapi
       - name: Upload wheel to Aquapi
         run: xmsconan_wheel_deploy --wheel-dir wheelhouse
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release'
+        if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release' }}
       # Upload Release to Conan
       - name: Upload Releases to Conan
         run: "python build.py --skip-build --upload --filter=\"{\\\"build_type\\\": \\\"${{ matrix.build_type }}\\\"}\""
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Get the Release Data
       - name: Get Release
         id: git_release
         uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.AQUAVEO_GITHUB_TOKEN }}
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Archive Conan Packages
         run: |
           conan cache save --file ${{ env.MATRIX_NAME }}.tar.gz xmsgrid/${{ env.XMS_VERSION }}:*
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Upload Zipped Conan Packages
       - name: Upload Zipped Conan Packages
         uses: actions/upload-release-asset@v1
@@ -184,7 +184,7 @@ jobs:
           asset_path: ${{ github.workspace }}/${{ env.MATRIX_NAME }}.tar.gz
           asset_name: ${{ env.MATRIX_NAME }}.tar.gz
           asset_content_type: application/zip
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
 
   # ----------------------------------------------------------------------------------------------
   # LINUX
@@ -227,7 +227,7 @@ jobs:
     steps:
       # Checkout Sources
       - name: Checkout Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       # Install Python Dependencies
       - name: Install Python Dependencies
         run: |
@@ -241,7 +241,7 @@ jobs:
       - name: Get Tag
         id: gitTag
         uses: little-core-labs/get-git-tag@v3.0.2
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Set Conan Version
       - name: Set Conan Version
         uses: allenevans/set-env@v2.0.0
@@ -250,7 +250,7 @@ jobs:
           XMS_VERSION: ${{ steps.gitTag.outputs.tag }}
           CONAN_UPLOAD: https://conan.aquaveo.com
           RELEASE_PYTHON: 'True'
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Check for release branch
       - name: Get Branch Name
         id: gitBranch
@@ -272,35 +272,35 @@ jobs:
       - name: Repair wheel
         run: xmsconan_wheel_repair --wheel-dir wheelhouse --platform linux
         shell: bash
-        if: matrix.build_type == 'Release'
+        if: ${{ matrix.build_type == 'Release' }}
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
           name: wheel-${{ runner.os }}
           path: wheelhouse/*.whl
-        if: matrix.build_type == 'Release'
+        if: ${{ matrix.build_type == 'Release' }}
       # Upload wheel to Aquapi
       - name: Upload wheel to Aquapi
         run: xmsconan_wheel_deploy --wheel-dir wheelhouse
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release'
+        if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release' }}
       # Upload Release to Conan
       - name: Upload Releases to Conan
         run: "python build.py --skip-build --upload --filter=\"{\\\"build_type\\\": \\\"${{ matrix.build_type }}\\\"}\""
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Get the Release Data
       - name: Get Release
         id: git_release
         uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.AQUAVEO_GITHUB_TOKEN }}
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Archive Conan Packages
         run: |
           conan cache save --file ${{ env.MATRIX_NAME }}.tar.gz xmsgrid/${{ env.XMS_VERSION }}:*
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Upload Zipped Conan Packages
       - name: Upload Zipped Conan Packages
         uses: actions/upload-release-asset@v1
@@ -311,7 +311,7 @@ jobs:
           asset_path: ${{ github.workspace }}/${{ env.MATRIX_NAME }}.tar.gz
           asset_name: ${{ env.MATRIX_NAME }}.tar.gz
           asset_content_type: application/zip
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
 
   # ----------------------------------------------------------------------------------------------
   # WINDOWS
@@ -354,7 +354,7 @@ jobs:
     steps:
       # Checkout Sources
       - name: Checkout Source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       # Setup Python
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -382,7 +382,7 @@ jobs:
       - name: Get Tag
         id: gitTag
         uses: little-core-labs/get-git-tag@v3.0.2
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Set Conan Version
       - name: Set Conan Version
         uses: allenevans/set-env@v2.0.0
@@ -391,7 +391,7 @@ jobs:
           XMS_VERSION: ${{ steps.gitTag.outputs.tag }}
           CONAN_UPLOAD: https://conan.aquaveo.com
           RELEASE_PYTHON: 'True'
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Check for release branch
       - name: Get Branch Name
         id: gitBranch
@@ -413,35 +413,35 @@ jobs:
       - name: Repair wheel
         run: xmsconan_wheel_repair --wheel-dir wheelhouse --platform windows
         shell: bash
-        if: matrix.build_type == 'Release'
+        if: ${{ matrix.build_type == 'Release' }}
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v4
         with:
           name: wheel-${{ runner.os }}-py${{ matrix.python-version }}
           path: wheelhouse/*.whl
-        if: matrix.build_type == 'Release'
+        if: ${{ matrix.build_type == 'Release' }}
       # Upload wheel to Aquapi
       - name: Upload wheel to Aquapi
         run: xmsconan_wheel_deploy --wheel-dir wheelhouse
         shell: bash
-        if: startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release'
+        if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release' }}
       # Upload Release to Conan
       - name: Upload Releases to Conan
         run: "python build.py --skip-build --upload --filter=\"{\\\"build_type\\\": \\\"${{ matrix.build_type }}\\\"}\""
         shell: cmd
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Get the Release Data
       - name: Get Release
         id: git_release
         uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.AQUAVEO_GITHUB_TOKEN }}
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       - name: Archive Conan Packages
         run: |
           conan cache save --file ${{ env.MATRIX_NAME }}.tar.gz xmsgrid/${{ env.XMS_VERSION }}:*
         shell: cmd
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
       # Upload Zipped Conan Packages
       - name: Upload Zipped Conan Packages
         uses: actions/upload-release-asset@v1
@@ -452,4 +452,4 @@ jobs:
           asset_path: ${{ github.workspace }}/${{ env.MATRIX_NAME }}.tar.gz
           asset_name: ${{ env.MATRIX_NAME }}.tar.gz
           asset_content_type: application/zip
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}

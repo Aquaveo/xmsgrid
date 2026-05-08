@@ -596,17 +596,24 @@ std::vector<T> iGetUniquePoints(const std::vector<T>& a_segments)
 //------------------------------------------------------------------------------
 /// \brief Build a polygon from vector of polygon segments.
 /// \param[in] a_segs Vector of segments that would make a polygon.
-/// \param[out] a_polygon Output polygon vector ordered either CW or CCW.
+/// \param[out] a_polygon Output polygon vector ordered either CW or CCW. On
+///             failure (return value false) a_polygon is cleared.
+/// \return true if every segment was placed; false if a_segs is empty or an
+///         iteration could not extend the polygon (gap, dangling segment, etc.).
 //------------------------------------------------------------------------------
 template <typename T>
-void iBuildPolygon(std::vector<std::pair<T, T>>& a_segs, std::vector<T>& a_polygon)
+bool iBuildPolygon(std::vector<std::pair<T, T>>& a_segs, std::vector<T>& a_polygon)
 {
+  if (a_segs.empty())
+    return false;
+
   xms::VecChar placed(a_segs.size(), false);
   a_polygon.push_back(a_segs[0].first);
   a_polygon.push_back(a_segs[0].second);
   placed[0] = true;
   for (size_t i = 1; i != a_segs.size(); ++i)
   {
+    size_t prevSize = a_polygon.size();
     T toMatch = a_polygon.back();
     for (size_t j = 1; j != a_segs.size(); ++j)
     {
@@ -624,7 +631,13 @@ void iBuildPolygon(std::vector<std::pair<T, T>>& a_segs, std::vector<T>& a_polyg
         }
       }
     }
+    if (a_polygon.size() == prevSize)
+    {
+      a_polygon.clear();
+      return false;
+    }
   }
+  return true;
 } // iBuildPolygon
 //------------------------------------------------------------------------------
 /// \brief Builds a vector of sorted unique segments as a std::pair from a vector
@@ -689,20 +702,18 @@ void iMergeSegmentsToPoly(const VecPt3d& a_segments, VecPt3d& a_polygon)
   auto segIt = std::unique(segs.begin(), segs.end());
   segs.resize(segIt - segs.begin());
 
-  iBuildPolygon(segs, a_polygon);
-
-  if (a_polygon.size() > 3 && a_polygon.front() == a_polygon.back())
-  {
-    a_polygon.pop_back();
-    double area = gmPolygonArea(&a_polygon[0], (int)a_polygon.size());
-    if (area < 0)
-      std::reverse(a_polygon.begin(), a_polygon.end());
-  }
-  else
+  if (!iBuildPolygon(segs, a_polygon) ||
+      !(a_polygon.size() > 3 && a_polygon.front() == a_polygon.back()))
   {
     XM_ASSERT(0);
     a_polygon.clear();
+    return;
   }
+
+  a_polygon.pop_back();
+  double area = gmPolygonArea(&a_polygon[0], (int)a_polygon.size());
+  if (area < 0)
+    std::reverse(a_polygon.begin(), a_polygon.end());
 } // iMergeSegmentsToPoly
 //------------------------------------------------------------------------------
 /// \brief Get the dimension given the cell type (0d, 1d, 2d, or 3d).
@@ -6558,6 +6569,54 @@ void XmUGridUnitTests::testUgridWithInvalidCells()
   std::shared_ptr<XmUGrid> ugrid = XmUGrid::New(points, cellstream);
   TS_ASSERT_EQUALS(nullptr, ugrid);
 } // XmUGridUnitTests::testUgridWithInvalidCells
+//------------------------------------------------------------------------------
+/// \brief Test that iBuildPolygon rejects malformed segment lists rather than
+///        silently producing a partial polygon, and that iMergeSegmentsToPoly
+///        clears its output on the same failure paths.
+//------------------------------------------------------------------------------
+void XmUGridUnitTests::testBuildPolygonFailurePaths()
+{
+  // Empty input: should not dereference past-the-end and should signal failure.
+  {
+    std::vector<std::pair<int, int>> segs;
+    std::vector<int> polygon;
+    TS_ASSERT(!iBuildPolygon(segs, polygon));
+    TS_ASSERT(polygon.empty());
+  }
+
+  // Dangling segment (open polyline plus a disconnected segment): the function
+  // returns false and clears any partial output it accumulated.
+  {
+    std::vector<std::pair<int, int>> segs = {{1, 2}, {2, 3}, {4, 5}};
+    std::vector<int> polygon;
+    TS_ASSERT(!iBuildPolygon(segs, polygon));
+    TS_ASSERT(polygon.empty());
+  }
+
+  // Closed quad: exercises two real extension iterations (i=1 and i=2 both
+  // place a new segment) before the loop boundary closes the ring at i=3.
+  {
+    std::vector<std::pair<int, int>> segs = {{1, 2}, {2, 3}, {3, 4}, {1, 4}};
+    std::vector<int> polygon;
+    TS_ASSERT(iBuildPolygon(segs, polygon));
+    std::vector<int> expected = {1, 2, 3, 4, 1};
+    TS_ASSERT_EQUALS(expected, polygon);
+  }
+
+  // Route a malformed segment list through iMergeSegmentsToPoly: two
+  // disconnected segments cannot form a closed polygon, so the consolidated
+  // failure branch must clear a_polygon. Mute XM_ASSERT for the duration so
+  // debug builds do not abort on the deliberate failure.
+  {
+    VecPt3d segments = {{0, 0, 0}, {1, 0, 0}, {2, 0, 0}, {3, 0, 0}};
+    VecPt3d polygon;
+    bool wasAsserting = xmAsserting();
+    xmAsserting() = false;
+    iMergeSegmentsToPoly(segments, polygon);
+    xmAsserting() = wasAsserting;
+    TS_ASSERT(polygon.empty());
+  }
+} // XmUGridUnitTests::testBuildPolygonFailurePaths
 
 //------------------------------------------------------------------------------
 /// \brief Test that a cell stream is invalid for a UGrid with 99 points.

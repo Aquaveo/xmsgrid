@@ -70,6 +70,7 @@ public:
   void testCell3dFunctionCaching();
   void testLargeUGridLinkSpeed();
   void testUgridWithInvalidCells();
+  void testBuildPolygonFailurePaths();
 }; // XmUGridUnitTests
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -78,7 +78,6 @@ coverage_report/
 
 # ── Local configuration ───────────────────────
 .claude/
-CLAUDE.md
 CLAUDE.local.md
 .envrc
 CMakePresets.json

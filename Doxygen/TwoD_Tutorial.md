@@ -15,6 +15,8 @@ this tutorial therefore reuse the same xms::XmUGrid API documented in the
 ## Example - Defining Ugrid Cells {#Example_DefiningA2dUGridCell}
 Supported 2D grid cells include: triangle (5), polygon (7), pixel (8), quad (9). A cell is defined with the number declaration of the shape (5, 7, 8, and 9 respectively as defined by the enumeration xms::XmUGridCellType), then the number of points, followed by the point indices. The cell definitions mirror VTK cell definitions which are available on page 9 of VTK File Formats for VTK version 4.2 at https://www.vtk.org/wp-content/uploads/2015/04/file-formats.pdf.
 
+\note The integer cell-type values shown below are the on-the-wire cellstream format and are kept in sync with VTK and xms::XmUGridCellType. If that enum is ever renumbered or extended, update these examples to match.
+
 A triangle (5) has 3 points and the points are declared in a counter-clockwise direction. A cellstream example for a triangle is: 5, 3, 0, 1, 2.
 
 A polygon (7) does not a have a defined number of points, but the points are still declared in a counter-clockwise direction. A cellstream example for a polygon is: 7, 5, 0, 1, 2, 3, 4.

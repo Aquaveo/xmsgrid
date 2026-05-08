@@ -4,9 +4,11 @@ ci_type = "github"
 extra_export_sources = ["test_files"]
 
 extra_cmake_text = """
-# Disable FP contraction (FMA fusion) for consistent floating-point results across
-# architectures. GCC on ARM emits fmadd at -O2+ which breaks exact arithmetic
-# predicates and produces non-deterministic geometry results.
+# Disable FP contraction (FMA fusion) for every non-MSVC compiler so floating-point
+# results are bit-identical across x86_64 and ARM. ARM GCC was the trigger (it emits
+# fmadd at -O2+, which broke exact arithmetic predicates and produced non-deterministic
+# geometry results), and we apply the same flag on x86_64 to keep cross-platform
+# behavior consistent. MSVC does not contract by default and is excluded.
 if (NOT MSVC)
     add_compile_options(-ffp-contract=off)
 endif()
