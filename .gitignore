@@ -70,6 +70,11 @@ coverage_report/
 *.profdata
 *.gcda
 *.gcno
+.coverage-mark
+.coverage-venv/
+.coverage
+cov-cpp.xml
+cov-py.xml
 
 # ── Local configuration ───────────────────────
 .claude/

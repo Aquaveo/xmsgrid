@@ -1,0 +1,84 @@
+# Coverage workflow — hand-maintained, separate from xmsconan-generated CI.
+# Lifts to xmsconan in Phase 2.
+#
+# Required repository secrets:
+#   CONAN2_USER_SECRET     - Conan remote login username
+#   CONAN2_PASSWORD_SECRET - Conan remote login password
+#   AQUAPI_USERNAME_SECRET - devpi username for xmsconan install
+#   AQUAPI_PASSWORD_SECRET - devpi password for xmsconan install
+#   AQUAPI_URL_DEV         - devpi index URL for xmsconan install
+#   CODECOV_TOKEN          - Codecov upload token
+
+name: Coverage
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  coverage:
+    name: Coverage (Linux, GCC, Debug)
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/aquaveo/conan-gcc13-py3.13:latest
+
+    env:
+      LIBRARY_NAME: xmsgrid
+      XMS_VERSION: '0.0.0'
+      CONAN_REFERENCE: xmsgrid/0.0.0
+      CONAN_ARCHS: x86_64
+      CONAN_USERNAME: aquaveo
+      CONAN_CHANNEL: testing
+      CONAN_LOGIN_USERNAME: ${{ secrets.CONAN2_USER_SECRET }}
+      CONAN_PASSWORD: ${{ secrets.CONAN2_PASSWORD_SECRET }}
+      CONAN_REMOTE_URL: https://conan2.aquaveo.com/artifactory/api/conan/aquaveo-stable
+      AQUAPI_USERNAME: ${{ secrets.AQUAPI_USERNAME_SECRET }}
+      AQUAPI_PASSWORD: ${{ secrets.AQUAPI_PASSWORD_SECRET }}
+      AQUAPI_URL: ${{ secrets.AQUAPI_URL_DEV }}
+      PYTHON_TARGET_VERSION: '3.13'
+      RELEASE_PYTHON: 'False'
+      CTEST_PARALLEL_LEVEL: '8'
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Install Python Dependencies
+        run: |
+          pip install conan devpi-client wheel gcovr
+          pip install xmsconan>=2.12.2 -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+
+      - name: Setup Conan
+        run: xmsconan_conan_setup --remote-url ${{ env.CONAN_REMOTE_URL }} --login
+        shell: bash
+
+      - name: Run coverage
+        run: dev/coverage.sh
+        shell: bash
+
+      - name: Upload C++ coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: cov-cpp.xml
+          flags: cpp
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+      - name: Upload Python coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: cov-py.xml
+          flags: python
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+      - name: Upload HTML reports as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-html
+          path: |
+            build/coverage-html-cpp
+            build/coverage-html-py
+          retention-days: 14

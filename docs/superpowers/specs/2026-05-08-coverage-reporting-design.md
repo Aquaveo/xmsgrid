@@ -10,10 +10,28 @@ Add unified line-coverage reporting for both the C++ library and Python
 bindings of `xmsgrid`. Reports are generated locally for developer iteration
 and in CI for accountability, with results published to Codecov.
 
-The C++ extension is built **once** with coverage instrumentation; both the
-ctest and pytest suites run against that single build, and their gcov data is
-merged into one C++ report. Python-side coverage is collected separately via
-coverage.py.
+In Phase 1, the C++ and Python layers are measured independently:
+
+- **C++ coverage** is collected from a Debug+testing Conan build, instrumented
+  with `--coverage`, with ctest running the C++ test suite.
+- **Python coverage** is collected from a separate pytest run against the
+  built wheel in a developer-controlled venv, using `pytest-cov`.
+
+Cross-credit (Python tests contributing to C++ coverage numbers) is **out of
+scope for Phase 1** and is the headline feature of Phase 2 once the
+orchestration is lifted into xmsconan. Three structural constraints in
+xmsconan's generated `conanfile.py` make cross-credit costly to implement
+without xmsconan changes:
+
+1. `BUILD_TESTING` and `IS_PYTHON_BUILD` are mutually exclusive in the
+   generated CMakeLists (`message(FATAL_ERROR ...)`).
+2. `pybind=True` is forced to `build_type=Release` by `configure_options()`,
+   so there is no Debug pybind build available.
+3. The pytest run inside `conanfile.build()` creates a venv with only
+   `numpy, wheel, pytest` — `pytest-cov` is not installed.
+
+Phase 1 sidesteps all three by treating the suites as independent. Phase 2
+addresses them in xmsconan.
 
 ## Non-Goals
 
@@ -28,26 +46,34 @@ coverage.py.
 ## Architecture
 
 ```
-┌─ Coverage Build (Linux, GCC, Debug) ─────────────────────────┐
-│  cmake -DXMSGRID_ENABLE_COVERAGE=ON  →  --coverage flags     │
-│  builds: libxmsgrid (instrumented)                            │
-│          C++ test runner (instrumented)                       │
-│          Python extension _xmsgrid (instrumented)             │
+┌─ C++ Coverage Build (Linux, GCC, Debug, testing=True) ───────┐
+│  XMSGRID_COVERAGE=1 → CMake adds --coverage to all targets   │
+│  python build.py --filter='{"build_type":"Debug",            │
+│                              "testing":true}'                │
+│  conanfile.run_cxx_tests() → ctest → *.gcda in conan cache   │
 └──────────────────────────────────────────────────────────────┘
-              │                                │
-              ▼                                ▼
-     ┌──────────────────┐            ┌─────────────────────┐
-     │  ctest           │            │  pytest             │
-     │  → *.gcda files  │            │  → *.gcda (C++)     │
-     │  (C++ tests)     │            │  → .coverage (py)   │
-     └──────────────────┘            └─────────────────────┘
-              │                                │
-              └─────────────┬──────────────────┘
+                            │
                             ▼
               ┌─────────────────────────────┐
-              │ gcovr → cobertura-cpp.xml   │
-              │ coverage → cobertura-py.xml │
+              │ gcovr scans conan build     │
+              │ folder → cobertura-cpp.xml  │
               └─────────────────────────────┘
+
+┌─ Python Coverage Run (Linux, against built wheel) ───────────┐
+│  python build.py --filter='{"build_type":"Release",          │
+│                              "pybind":true}'                 │
+│                  --wheel-dir wheelhouse                      │
+│  Then in a clean venv:                                        │
+│    pip install wheelhouse/*.whl pytest pytest-cov            │
+│    pytest --cov=xms.grid --cov-report=xml _package/tests     │
+└──────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+              ┌─────────────────────────────┐
+              │ coverage.py → cov-py.xml    │
+              └─────────────────────────────┘
+
+                            │
                             ▼
               ┌─────────────────────────────┐
               │ Codecov upload              │
@@ -56,70 +82,84 @@ coverage.py.
               └─────────────────────────────┘
 ```
 
-The crucial property: pybind11-built objects compiled with `--coverage` emit
-`.gcda` files when their code paths run, regardless of whether the caller is
-C++ or Python. So pytest exercising the bindings credits the underlying C++
-implementation in the C++ report.
+The C++ build is instrumented; the Python wheel build is **not**. Python
+coverage measures Python-level wrappers in `_package/xms/grid/` only.
+Cross-instrumentation is Phase 2.
 
 ## Components
 
 ### 1. CMake option (in `build.toml` `extra_cmake_text`)
 
 ```cmake
-option(XMSGRID_ENABLE_COVERAGE "Build with gcov instrumentation" OFF)
-if(XMSGRID_ENABLE_COVERAGE)
+if(DEFINED ENV{XMSGRID_COVERAGE} AND NOT "$ENV{XMSGRID_COVERAGE}" STREQUAL "")
     if(MSVC)
         message(FATAL_ERROR "Coverage build is GCC/Clang only")
     endif()
+    message(STATUS "Coverage instrumentation enabled (XMSGRID_COVERAGE)")
     add_compile_options(--coverage -O0 -g)
     add_link_options(--coverage)
 endif()
 ```
 
-The flag is added to the existing `extra_cmake_text` block — no xmsconan
-generator change. Off by default, so non-coverage builds are untouched.
+Gated on an environment variable instead of a CMake cache variable so the
+coverage script can flip it without needing to pass `--cmake-args` through
+xmsconan's `build.py`. No xmsconan generator change required. The variable
+flows naturally through Conan's `tools.env.virtualenv` and into the CMake
+configure step.
 
 ### 2. `dev/coverage.sh`
 
 POSIX shell script (Linux + macOS). Single entry point. Steps:
 
-1. Run the Conan build with the coverage flag:
+1. Drop a marker file (`.coverage-mark`) — used to identify build folders
+   that this run wrote `.gcda` files into.
+2. Run the C++ coverage build:
+   ```
+   XMSGRID_COVERAGE=1 python build.py \
+       --filter='{"build_type":"Debug","testing":true}'
+   ```
+   The conanfile's `run_cxx_tests()` runs ctest as part of `build()`, so
+   this single invocation builds, runs, and emits `.gcda` files into
+   `~/.conan2/p/<pkg>/b/build/...`.
+3. Run the wheel build:
    ```
    python build.py \
-       --filter='{"build_type":"Debug"}' \
-       --cmake-args='-DXMSGRID_ENABLE_COVERAGE=ON' \
+       --filter='{"build_type":"Release","pybind":true}' \
        --wheel-dir wheelhouse
    ```
-2. Run the C++ test suite via `ctest` against the instrumented build (the
-   conan recipe already wires this).
-3. Install the freshly-built wheel into a throwaway venv:
+   No coverage env var here — the wheel is for Python coverage only and
+   does not need instrumentation in Phase 1.
+4. Discover C++ build folders that received fresh `.gcda` files:
+   ```
+   find ~/.conan2/p -newer .coverage-mark -name '*.gcda'
+   ```
+   Walk up from each match to the directory containing `CMakeCache.txt`;
+   that's the build folder gcovr needs to scan. Deduplicate the set.
+5. Run gcovr against the source root with each discovered build folder:
+   ```
+   gcovr --root . \
+         --filter 'xmsgrid/' \
+         --exclude '.*\.t\.h$' \
+         --exclude 'xmsgrid/python/.*' \
+         --exclude '_package/tests/.*' \
+         --xml cov-cpp.xml \
+         --html-details build/coverage-html-cpp/index.html \
+         <build_folder>
+   ```
+   When multiple build folders are found (rare in Phase 1, but possible
+   if shards are used), emit a JSON intermediate per folder via
+   `--json-summary`, then merge with `gcovr --add-tracefile a.json -a b.json`.
+6. Run Python tests with coverage in a clean venv:
    ```
    python -m venv .coverage-venv
    .coverage-venv/bin/pip install wheelhouse/*.whl pytest pytest-cov
-   ```
-4. Run the Python tests with coverage:
-   ```
    .coverage-venv/bin/pytest \
        --cov=xms.grid \
        --cov-report=xml:cov-py.xml \
        --cov-report=html:build/coverage-html-py \
        _package/tests
    ```
-5. Aggregate C++ gcov data:
-   ```
-   gcovr --root . \
-       --filter 'xmsgrid/' \
-       --exclude '.*\.t\.h$' \
-       --exclude 'xmsgrid/python/.*' \
-       --exclude '_package/tests/.*' \
-       --xml cov-cpp.xml \
-       --html-details build/coverage-html-cpp/index.html
-   ```
-6. Print a summary line, e.g. `Coverage: C++ 78.3%, Python 64.1%`.
-
-The wheel installed in step 3 must be the exact one produced in step 1 —
-gcov data files reference build-tree absolute paths, so any rebuild between
-the two will desync the `.gcda` / `.gcno` pair.
+7. Print a summary line, e.g. `Coverage: C++ 78.3%, Python 64.1%`.
 
 A `dev/coverage.bat` is **not** added in Phase 1; Windows coverage is out
 of scope.

@@ -1,0 +1,28 @@
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+flags:
+  cpp:
+    paths:
+      - xmsgrid/
+    carryforward: true
+  python:
+    paths:
+      - _package/xms/
+    carryforward: true
+
+ignore:
+  - "_package/tests/"
+  - "xmsgrid/**/*.t.h"
+  - "xmsgrid/python/"
+
+comment:
+  layout: "header, diff, flags, files"
+  behavior: default
+  require_changes: false
