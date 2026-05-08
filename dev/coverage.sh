@@ -183,20 +183,22 @@ cp -r _package/tests "$TESTS_COPY"
 
 PY_ACTUAL=$(python3 -c "import json; print(json.load(open('build/cov-py-summary.json'))['totals']['percent_covered'])")
 
+# Round actuals to one decimal — both for display and for the threshold
+# comparison so a threshold pinned to the displayed value (e.g. 82.9) does
+# not fail because the unrounded actual is 82.875.
+CPP_ACTUAL_DISP=$(python3 -c "print(f'{float(\"$CPP_ACTUAL\"):.1f}')")
+PY_ACTUAL_DISP=$(python3 -c "print(f'{float(\"$PY_ACTUAL\"):.1f}')")
+
 # Threshold checks. Both run unconditionally so the summary always reflects
 # real numbers; we set FAILED at the end if either layer is below.
 FAILED=0
-cpp_pass=$(python3 -c "import sys; sys.exit(0 if float('$CPP_ACTUAL') >= float('$CPP_COVERAGE_THRESHOLD') else 1)" && echo 1 || echo 0)
-py_pass=$(python3 -c "import sys; sys.exit(0 if float('$PY_ACTUAL') >= float('$PY_COVERAGE_THRESHOLD') else 1)" && echo 1 || echo 0)
+cpp_pass=$(python3 -c "import sys; sys.exit(0 if float('$CPP_ACTUAL_DISP') >= float('$CPP_COVERAGE_THRESHOLD') else 1)" && echo 1 || echo 0)
+py_pass=$(python3 -c "import sys; sys.exit(0 if float('$PY_ACTUAL_DISP') >= float('$PY_COVERAGE_THRESHOLD') else 1)" && echo 1 || echo 0)
 [[ "$cpp_pass" == 0 ]] && FAILED=1
 [[ "$py_pass" == 0 ]] && FAILED=1
 
 cpp_status=$([[ "$cpp_pass" == 1 ]] && echo "pass" || echo "FAIL")
 py_status=$([[ "$py_pass" == 1 ]] && echo "pass" || echo "FAIL")
-
-# Round actuals to one decimal for display.
-CPP_ACTUAL_DISP=$(python3 -c "print(f'{float(\"$CPP_ACTUAL\"):.1f}')")
-PY_ACTUAL_DISP=$(python3 -c "print(f'{float(\"$PY_ACTUAL\"):.1f}')")
 
 echo
 echo "==> Threshold check"
