@@ -12,6 +12,18 @@ extra_cmake_text = """
 if (NOT MSVC)
     add_compile_options(-ffp-contract=off)
 endif()
+
+# Coverage instrumentation, gated on the XMSGRID_COVERAGE environment variable.
+# Set XMSGRID_COVERAGE=1 before invoking the build to add gcov flags to all
+# targets. dev/coverage.sh is the canonical caller.
+if (DEFINED ENV{XMSGRID_COVERAGE} AND NOT \"$ENV{XMSGRID_COVERAGE}\" STREQUAL \"\")
+    if (MSVC)
+        message(FATAL_ERROR \"XMSGRID_COVERAGE is GCC/Clang only\")
+    endif ()
+    message(STATUS \"Coverage instrumentation enabled (XMSGRID_COVERAGE)\")
+    add_compile_options(--coverage -O0 -g)
+    add_link_options(--coverage)
+endif ()
 """
 
 xms_dependencies = [{ name = "xmscore", version = "7.0.8" }]
