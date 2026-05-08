@@ -64,9 +64,9 @@ if [[ ${#GCDA_FILES[@]} -eq 0 ]]; then
     exit 1
 fi
 
-# Walk up from each .gcda to find the directory containing CMakeCache.txt;
-# pair each with its source folder. cmake_layout puts source at <pkg>/b/src
-# and build at <pkg>/b/build/<config>, so source is two parents up + /src.
+# Walk up from each .gcda to find the directory containing CMakeCache.txt
+# (the build folder), then walk further up looking for the conan source
+# folder — the first parent that contains a sibling 'xmsgrid' directory.
 declare -A BUILD_TO_SOURCE=()
 for gcda in "${GCDA_FILES[@]}"; do
     dir="$(dirname "$gcda")"
@@ -76,9 +76,12 @@ for gcda in "${GCDA_FILES[@]}"; do
     if [[ ! -f "$dir/CMakeCache.txt" ]]; then
         continue
     fi
-    src_dir="$(cd "$dir/../.." && pwd)/src"
+    src_dir="$(dirname "$dir")"
+    while [[ "$src_dir" != "/" && ! -d "$src_dir/xmsgrid" ]]; do
+        src_dir="$(dirname "$src_dir")"
+    done
     if [[ ! -d "$src_dir/xmsgrid" ]]; then
-        echo "error: expected source dir at $src_dir but xmsgrid/ not found" >&2
+        echo "error: could not locate a parent of $dir containing xmsgrid/" >&2
         exit 1
     fi
     BUILD_TO_SOURCE["$dir"]="$src_dir"
