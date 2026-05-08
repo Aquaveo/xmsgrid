@@ -96,14 +96,20 @@ GCOVR_FILTERS=(
     --exclude '_package/tests/.*'
 )
 
-echo "==> Aggregating C++ coverage with gcovr"
+# Thresholds. Default 0 means "do not fail". Override via env var to gate.
+CPP_COVERAGE_THRESHOLD="${CPP_COVERAGE_THRESHOLD:-0}"
+PY_COVERAGE_THRESHOLD="${PY_COVERAGE_THRESHOLD:-0}"
+
+echo "==> Aggregating C++ coverage with gcovr (threshold: $CPP_COVERAGE_THRESHOLD%)"
+GCOVR_OUTPUT=(
+    --xml-pretty --output cov-cpp.xml
+    --html-details "build/coverage-html-cpp/index.html"
+    --print-summary
+    --fail-under-line "$CPP_COVERAGE_THRESHOLD"
+)
 if [[ ${#BUILD_FOLDERS[@]} -eq 1 ]]; then
     bf="${!BUILD_FOLDERS[*]}"
-    gcovr "${GCOVR_FILTERS[@]}" \
-        --xml-pretty --output cov-cpp.xml \
-        --html-details "build/coverage-html-cpp/index.html" \
-        --print-summary \
-        "$bf"
+    gcovr "${GCOVR_FILTERS[@]}" "${GCOVR_OUTPUT[@]}" "$bf"
 else
     # Multiple build folders: emit one JSON per folder, then merge.
     JSON_FILES=()
@@ -114,14 +120,10 @@ else
         JSON_FILES+=(--add-tracefile "$out")
         i=$((i + 1))
     done
-    gcovr "${GCOVR_FILTERS[@]}" \
-        "${JSON_FILES[@]}" \
-        --xml-pretty --output cov-cpp.xml \
-        --html-details "build/coverage-html-cpp/index.html" \
-        --print-summary
+    gcovr "${GCOVR_FILTERS[@]}" "${JSON_FILES[@]}" "${GCOVR_OUTPUT[@]}"
 fi
 
-echo "==> Python coverage run"
+echo "==> Python coverage run (threshold: $PY_COVERAGE_THRESHOLD%)"
 PY_VENV="$REPO_ROOT/.coverage-venv"
 rm -rf "$PY_VENV"
 python -m venv "$PY_VENV"
@@ -139,7 +141,23 @@ fi
     --cov-report=xml:cov-py.xml \
     --cov-report=html:build/coverage-html-py \
     --cov-report=term \
+    --cov-fail-under="$PY_COVERAGE_THRESHOLD" \
     _package/tests
+
+# Optional: append summary to GitHub Actions step summary.
+if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+    {
+        echo "## Coverage Summary"
+        echo
+        echo "| Layer | Threshold |"
+        echo "|-------|-----------|"
+        echo "| C++ | $CPP_COVERAGE_THRESHOLD% |"
+        echo "| Python | $PY_COVERAGE_THRESHOLD% |"
+        echo
+        echo "See \`gcovr\` and \`pytest --cov\` output above for actual percentages."
+        echo "Browseable HTML reports are uploaded as the \`coverage-html\` artifact."
+    } >> "$GITHUB_STEP_SUMMARY"
+fi
 
 echo
 echo "==> Coverage reports written:"

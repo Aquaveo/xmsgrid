@@ -31,12 +31,15 @@ Coverage runs on Linux/macOS via `dev/coverage.sh`. The script runs an
 instrumented Debug build with the C++ test suite, then a release wheel build
 with pytest in a clean venv. Outputs:
 
-- `cov-cpp.xml` / `cov-py.xml` — Cobertura XML for upload to Codecov.
+- `cov-cpp.xml` / `cov-py.xml` — Cobertura XML.
 - `build/coverage-html-cpp/` and `build/coverage-html-py/` — browsable HTML.
 
 Prerequisites: `gcovr` (`pip install gcovr`) and a working Conan toolchain
 (see Building above). Phase 1 is GCC/Clang-only; Windows MSVC coverage is
 not supported.
 
-CI publishes both flags to Codecov on every push and pull request. Codecov
-is informational only — it will not block PRs.
+CI runs the same script and uploads the HTML and XML reports as workflow
+artifacts. Coverage is gated by simple percentage thresholds set in
+`.github/workflows/Coverage.yaml` (`CPP_COVERAGE_THRESHOLD` and
+`PY_COVERAGE_THRESHOLD`); the job fails if either layer falls below.
+Initial values are `0` until a baseline is established.

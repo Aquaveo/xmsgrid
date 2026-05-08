@@ -8,7 +8,9 @@
 
 Add unified line-coverage reporting for both the C++ library and Python
 bindings of `xmsgrid`. Reports are generated locally for developer iteration
-and in CI for accountability, with results published to Codecov.
+and in CI for accountability. CI gates merges with simple percentage
+thresholds rather than a third-party reporting service. Adopting Codecov or
+similar is an open follow-up decision after a baseline is established.
 
 In Phase 1, the C++ and Python layers are measured independently:
 
@@ -76,15 +78,20 @@ addresses them in xmsconan.
                             │
                             ▼
               ┌─────────────────────────────┐
-              │ Codecov upload              │
-              │  flag: cpp                  │
-              │  flag: python               │
+              │ Threshold check             │
+              │  gcovr --fail-under-line    │
+              │  pytest --cov-fail-under    │
               └─────────────────────────────┘
 ```
 
 The C++ build is instrumented; the Python wheel build is **not**. Python
 coverage measures Python-level wrappers in `_package/xms/grid/` only.
 Cross-instrumentation is Phase 2.
+
+The reports (Cobertura XML + browsable HTML) upload as workflow artifacts
+on every CI run regardless of pass/fail, so reviewers can always inspect
+the numbers. If the team later decides to adopt Codecov or a similar
+service, the cobertura XMLs are already in the right format to drop in.
 
 ## Components
 
@@ -149,7 +156,8 @@ POSIX shell script (Linux + macOS). Single entry point. Steps:
    When multiple build folders are found (rare in Phase 1, but possible
    if shards are used), emit a JSON intermediate per folder via
    `--json-summary`, then merge with `gcovr --add-tracefile a.json -a b.json`.
-6. Run Python tests with coverage in a clean venv:
+6. Run Python tests with coverage in a clean venv, gated by the Python
+   threshold:
    ```
    python -m venv .coverage-venv
    .coverage-venv/bin/pip install wheelhouse/*.whl pytest pytest-cov
@@ -157,9 +165,19 @@ POSIX shell script (Linux + macOS). Single entry point. Steps:
        --cov=xms.grid \
        --cov-report=xml:cov-py.xml \
        --cov-report=html:build/coverage-html-py \
+       --cov-fail-under="$PY_COVERAGE_THRESHOLD" \
        _package/tests
    ```
-7. Print a summary line, e.g. `Coverage: C++ 78.3%, Python 64.1%`.
+7. The C++ gcovr invocation in step 5 passes
+   `--fail-under-line "$CPP_COVERAGE_THRESHOLD"` so it exits non-zero when
+   the C++ percentage falls below.
+8. When running under GitHub Actions (`$GITHUB_STEP_SUMMARY` set), append
+   a short markdown summary noting the configured thresholds. The actual
+   percentages appear in the gcovr / pytest output above the summary.
+
+Thresholds default to `0` (no gating) via env vars
+`CPP_COVERAGE_THRESHOLD` and `PY_COVERAGE_THRESHOLD`. CI sets them
+explicitly in `Coverage.yaml`; locally they can be overridden via env.
 
 A `dev/coverage.bat` is **not** added in Phase 1; Windows coverage is out
 of scope.
@@ -170,65 +188,44 @@ Hand-maintained, separate from the xmsconan-generated `XmsGrid-CI.yaml`.
 Single job, Linux, GCC, Debug:
 
 - Triggers: `push`, `pull_request`.
-- Checks out source, installs xmsconan + Python deps, sets up Conan login.
-- Runs `dev/coverage.sh`.
-- Uploads `cov-cpp.xml` to Codecov with flag `cpp`.
-- Uploads `cov-py.xml` to Codecov with flag `python`.
-- Uploads `build/coverage-html-cpp` and `build/coverage-html-py` as
-  workflow artifacts so a developer can download and browse them.
+- Checks out source, installs xmsconan + gcovr + Python deps, sets up Conan
+  login.
+- Sets `CPP_COVERAGE_THRESHOLD` and `PY_COVERAGE_THRESHOLD` (initially `0`,
+  bumped after the first run establishes a baseline).
+- Runs `dev/coverage.sh`. The script's gcovr / pytest steps fail the job
+  when either threshold is missed.
+- Uploads `cov-cpp.xml` and `cov-py.xml` as the `coverage-xml` artifact and
+  the HTML reports as the `coverage-html` artifact, with `if: always()` so
+  they are available even on threshold failure.
 
-The job uses the same Conan secrets as the existing CI workflow and the
-new `CODECOV_TOKEN` repo secret.
+The job uses the same Conan / devpi secrets as the existing CI workflow.
+No reporting-service token is required.
 
-### 4. `codecov.yml`
-
-```yaml
-coverage:
-  status:
-    project:
-      default:
-        informational: true
-    patch:
-      default:
-        informational: true
-flags:
-  cpp:
-    paths:
-      - xmsgrid/
-    carryforward: true
-  python:
-    paths:
-      - _package/xms/
-    carryforward: true
-ignore:
-  - "_package/tests/"
-  - "xmsgrid/**/*.t.h"
-  - "xmsgrid/python/"
-```
-
-Both project and patch status are informational — Codecov will comment on
-PRs with the numbers but won't fail the check. Tightening is a future
-decision once we have a baseline.
-
-### 5. README update
+### 4. README update
 
 Short `## Coverage` section: how to run `dev/coverage.sh`, where the HTML
-lands, link to the Codecov project page.
+lands, how thresholds are configured.
 
 ## Repo Setup (one-time, manual)
 
-- Add the `xmsgrid` repo to Codecov via the GitHub app.
-- Add `CODECOV_TOKEN` as a repository secret in GitHub settings.
+None for Phase 1 beyond the secrets the existing workflow already requires.
+The first CI run establishes a baseline; bump the threshold env values in
+`Coverage.yaml` afterwards to enforce no-regression.
 
-These are operator actions, not code changes; they should be documented in
-the implementation plan as prerequisites for the Coverage workflow's first
-green run.
+## Reporting Service Decision (deferred)
+
+Whether to adopt Codecov or a similar service — for diff coverage,
+trend tracking, or PR comments — is intentionally deferred to a follow-up
+decision after the team sees a few weeks of threshold-gated runs and can
+judge whether richer signal is worth the integration. The cobertura XMLs
+emitted by Phase 1 are already in the standard format any of these
+services accept, so adopting one later is mechanical.
 
 ## Phase 2 — Lift to xmsconan
 
 After Phase 1 ships and stabilizes (a few real PRs through the new
-workflow, no broken Codecov runs for a week), lift the generic pieces
-into xmsconan in a follow-up PR.
+workflow, thresholds set above zero, no flaky failures for a week), lift
+the generic pieces into xmsconan in a follow-up PR.
 
 **Lifted into xmsconan:**
 

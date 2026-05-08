@@ -7,7 +7,6 @@
 #   AQUAPI_USERNAME_SECRET - devpi username for xmsconan install
 #   AQUAPI_PASSWORD_SECRET - devpi password for xmsconan install
 #   AQUAPI_URL_DEV         - devpi index URL for xmsconan install
-#   CODECOV_TOKEN          - Codecov upload token
 
 name: Coverage
 
@@ -39,6 +38,10 @@ jobs:
       PYTHON_TARGET_VERSION: '3.13'
       RELEASE_PYTHON: 'False'
       CTEST_PARALLEL_LEVEL: '8'
+      # Coverage thresholds. Bump these once a baseline is established.
+      # The job fails if either falls below its threshold.
+      CPP_COVERAGE_THRESHOLD: '0'
+      PY_COVERAGE_THRESHOLD: '0'
 
     steps:
       - name: Checkout Source
@@ -57,22 +60,6 @@ jobs:
         run: dev/coverage.sh
         shell: bash
 
-      - name: Upload C++ coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: cov-cpp.xml
-          flags: cpp
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: false
-
-      - name: Upload Python coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: cov-py.xml
-          flags: python
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: false
-
       - name: Upload HTML reports as artifact
         uses: actions/upload-artifact@v4
         if: always()
@@ -81,4 +68,14 @@ jobs:
           path: |
             build/coverage-html-cpp
             build/coverage-html-py
+          retention-days: 14
+
+      - name: Upload Cobertura XML as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-xml
+          path: |
+            cov-cpp.xml
+            cov-py.xml
           retention-days: 14
