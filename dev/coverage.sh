@@ -105,10 +105,10 @@ CPP_COVERAGE_THRESHOLD="${CPP_COVERAGE_THRESHOLD:-0}"
 PY_COVERAGE_THRESHOLD="${PY_COVERAGE_THRESHOLD:-0}"
 
 GCOVR_COMMON=(
-    --filter 'xmsgrid/'
+    --filter '.*/xmsgrid/.*'
     --exclude '.*\.t\.h$'
-    --exclude 'xmsgrid/python/.*'
-    --exclude '_package/tests/.*'
+    --exclude '.*/xmsgrid/python/.*'
+    --exclude '.*/_package/tests/.*'
 )
 GCOVR_OUTPUT=(
     --xml-pretty --output cov-cpp.xml
@@ -157,13 +157,25 @@ fi
 DEVPI_INDEX="${COVERAGE_PIP_INDEX:-https://public.aquapi.aquaveo.com/aquaveo/dev/+simple}"
 "$PY_VENV/bin/pip" install --quiet --extra-index-url "$DEVPI_INDEX" "$WHEEL"
 
-"$PY_VENV/bin/pytest" \
-    --cov=xms.grid \
-    --cov-report=xml:cov-py.xml \
-    --cov-report=html:build/coverage-html-py \
-    --cov-report=term \
-    --cov-fail-under="$PY_COVERAGE_THRESHOLD" \
-    _package/tests
+# Copy tests outside the source tree before running pytest. Otherwise
+# pytest's rootdir/sys.path discovery picks up the local _package/xms/grid/
+# source directory (which has no compiled _xmsgrid extension) and shadows
+# the installed wheel, producing import errors. The conanfile's own python
+# test runner does the same thing.
+TESTS_COPY="$REPO_ROOT/build/coverage-tests"
+rm -rf "$TESTS_COPY"
+cp -r _package/tests "$TESTS_COPY"
+
+(
+    cd "$TESTS_COPY"
+    "$PY_VENV/bin/pytest" \
+        --cov=xms.grid \
+        --cov-report=xml:"$REPO_ROOT/cov-py.xml" \
+        --cov-report=html:"$REPO_ROOT/build/coverage-html-py" \
+        --cov-report=term \
+        --cov-fail-under="$PY_COVERAGE_THRESHOLD" \
+        .
+)
 
 # Optional: append summary to GitHub Actions step summary.
 if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
