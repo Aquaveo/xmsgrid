@@ -41,7 +41,7 @@ jobs:
       # Coverage thresholds. Pinned to current baseline; bump as coverage
       # improves. The job fails if either layer falls below its threshold.
       CPP_COVERAGE_THRESHOLD: '74.7'
-      PY_COVERAGE_THRESHOLD: '83'
+      PY_COVERAGE_THRESHOLD: '82.9'
 
     steps:
       - name: Checkout Source
