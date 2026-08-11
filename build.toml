@@ -14,7 +14,7 @@ if (NOT MSVC)
 endif()
 """
 
-xms_dependencies = [{ name = "xmscore", version = "7.0.10" }]
+xms_dependencies = [{ name = "xmscore", version = "7.0.11" }]
 
 python_namespaced_dir = "grid"
 
