@@ -4,11 +4,30 @@
 #   AQUAPI_USERNAME_SECRET - devpi username for wheel uploads
 #   AQUAPI_PASSWORD_SECRET - devpi password for wheel uploads
 #   AQUAVEO_GITHUB_TOKEN   - GitHub token for release asset uploads
-# Optional repository variable (Settings > Secrets and variables > Variables):
-#   AQUAPI_URL_DEV         - devpi index URL for wheel uploads; defaults to the
-#                            public dev index. A variable, not a secret: the
-#                            URL is public, and masking it only turns the
-#                            upload target into `***` in the log.
+# Optional setting, readable as either a variable or a secret
+# (Settings > Secrets and variables > Actions), on the repository or the
+# organization:
+#   AQUAPI_URL_DEV         - devpi index URL for wheel uploads. Resolved in
+#                            this order: the *variable* AQUAPI_URL_DEV, then
+#                            the *secret* of the same name, then the public
+#                            dev index. Both names are read because the
+#                            secret is where this value has always lived,
+#                            and editing it there has to keep working.
+#
+#                            Mind the precedence -- it is the one way to get
+#                            this wrong. A non-empty variable wins, and
+#                            editing the secret then changes nothing, with
+#                            no error to say so. An empty variable does not
+#                            win: it falls through to the secret. The
+#                            deploy step logs which of the three supplied
+#                            the URL, so read that before editing either.
+#
+#                            Masking follows the secret's value, not the
+#                            name it was read under: while the secret holds
+#                            this URL, the log shows `***` even when the
+#                            variable supplied it. Delete the secret once
+#                            the variable is authoritative, and the upload
+#                            target reads in clear.
 #
 # Each secret is set on the steps that use it, never on the job. Job-level
 # env is inherited by every step, including the one that runs the library's
@@ -103,7 +122,7 @@ jobs:
           python -m pip install --upgrade pip
           # The plugins the generated .flake8 relies on ride in on the [ci]
           # extra; xmsconan's pyproject.toml says which, and why each one.
-          pip install --upgrade "xmsconan[ci]>=2.30.0,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+          pip install --upgrade "xmsconan[ci]>=2.30.1,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
       # Generates .flake8 first, so CI lints with the same config developers
       # use locally. Do not inline the flake8 settings here: that duplicates
       # .flake8.jinja and the two copies drift apart silently. Which package
@@ -156,7 +175,7 @@ jobs:
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --upgrade "xmsconan[ci]>=2.30.0,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+          python -m pip install --upgrade "xmsconan[ci]>=2.30.1,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
       # Build the Conan Package
       - name: Build the Conan Packages
         run: xmsconan job build
@@ -184,12 +203,15 @@ jobs:
         if: matrix.build_type == 'Release'
       # Upload wheel to Aquapi
       - name: Upload wheel to Aquapi
-        run: xmsconan job deploy --wheels-only
+        run: |
+          echo "AQUAPI_URL supplied by $AQUAPI_URL_SOURCE"
+          xmsconan job deploy --wheels-only
         shell: bash
         env:
           AQUAPI_USERNAME: ${{ secrets.AQUAPI_USERNAME_SECRET }}
           AQUAPI_PASSWORD: ${{ secrets.AQUAPI_PASSWORD_SECRET }}
-          AQUAPI_URL: ${{ vars.AQUAPI_URL_DEV || 'https://public.aquapi.aquaveo.com/aquaveo/dev/' }}
+          AQUAPI_URL: ${{ vars.AQUAPI_URL_DEV || secrets.AQUAPI_URL_DEV || 'https://public.aquapi.aquaveo.com/aquaveo/dev/' }}
+          AQUAPI_URL_SOURCE: ${{ vars.AQUAPI_URL_DEV && 'the AQUAPI_URL_DEV variable' || secrets.AQUAPI_URL_DEV && 'the AQUAPI_URL_DEV secret' || 'the built-in default' }}
         if: startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release'
       # Upload Release to Conan, and archive what was uploaded
       - name: Upload Releases to Conan
@@ -252,7 +274,7 @@ jobs:
       # Install Python Dependencies
       - name: Install Python Dependencies
         run: |
-          pip install --upgrade "xmsconan[ci]>=2.30.0,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+          pip install --upgrade "xmsconan[ci]>=2.30.1,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
       # Build the Conan Package
       - name: Build the Conan Packages
         run: xmsconan job build
@@ -280,12 +302,15 @@ jobs:
         if: matrix.build_type == 'Release'
       # Upload wheel to Aquapi
       - name: Upload wheel to Aquapi
-        run: xmsconan job deploy --wheels-only
+        run: |
+          echo "AQUAPI_URL supplied by $AQUAPI_URL_SOURCE"
+          xmsconan job deploy --wheels-only
         shell: bash
         env:
           AQUAPI_USERNAME: ${{ secrets.AQUAPI_USERNAME_SECRET }}
           AQUAPI_PASSWORD: ${{ secrets.AQUAPI_PASSWORD_SECRET }}
-          AQUAPI_URL: ${{ vars.AQUAPI_URL_DEV || 'https://public.aquapi.aquaveo.com/aquaveo/dev/' }}
+          AQUAPI_URL: ${{ vars.AQUAPI_URL_DEV || secrets.AQUAPI_URL_DEV || 'https://public.aquapi.aquaveo.com/aquaveo/dev/' }}
+          AQUAPI_URL_SOURCE: ${{ vars.AQUAPI_URL_DEV && 'the AQUAPI_URL_DEV variable' || secrets.AQUAPI_URL_DEV && 'the AQUAPI_URL_DEV secret' || 'the built-in default' }}
         if: startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release'
       # Upload Release to Conan, and archive what was uploaded
       - name: Upload Releases to Conan
@@ -358,7 +383,7 @@ jobs:
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install --upgrade "xmsconan[ci]>=2.30.0,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
+          python -m pip install --upgrade "xmsconan[ci]>=2.30.1,<3" -i https://public.aquapi.aquaveo.com/aquaveo/dev/+simple
       # Setup Visual Studio
       - name: Setup Visual Studio
         uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce  # v2
@@ -384,12 +409,15 @@ jobs:
         if: matrix.build_type == 'Release'
       # Upload wheel to Aquapi
       - name: Upload wheel to Aquapi
-        run: xmsconan job deploy --wheels-only
+        run: |
+          echo "AQUAPI_URL supplied by $AQUAPI_URL_SOURCE"
+          xmsconan job deploy --wheels-only
         shell: bash
         env:
           AQUAPI_USERNAME: ${{ secrets.AQUAPI_USERNAME_SECRET }}
           AQUAPI_PASSWORD: ${{ secrets.AQUAPI_PASSWORD_SECRET }}
-          AQUAPI_URL: ${{ vars.AQUAPI_URL_DEV || 'https://public.aquapi.aquaveo.com/aquaveo/dev/' }}
+          AQUAPI_URL: ${{ vars.AQUAPI_URL_DEV || secrets.AQUAPI_URL_DEV || 'https://public.aquapi.aquaveo.com/aquaveo/dev/' }}
+          AQUAPI_URL_SOURCE: ${{ vars.AQUAPI_URL_DEV && 'the AQUAPI_URL_DEV variable' || secrets.AQUAPI_URL_DEV && 'the AQUAPI_URL_DEV secret' || 'the built-in default' }}
         if: startsWith(github.ref, 'refs/tags/') && matrix.build_type == 'Release'
       # Upload Release to Conan, and archive what was uploaded
       - name: Upload Releases to Conan
