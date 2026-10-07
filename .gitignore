@@ -4,6 +4,8 @@ conanfile.py
 build.py
 xms_conan2_file.py
 _package/pyproject.toml
+.flake8
+pytest.ini
 
 # ── Build output ───────────────────────────────
 build/
@@ -75,6 +77,11 @@ coverage_report/
 *.profdata
 *.gcda
 *.gcno
+.coverage-mark
+.coverage-venv/
+.coverage
+cov-cpp.xml
+cov-py.xml
 
 # ── Local configuration ───────────────────────
 .claude/
