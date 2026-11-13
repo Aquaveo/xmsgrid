@@ -114,3 +114,6 @@ pybind_headers = [
 python_versions = ["3.10", "3.13", "3.14"]
 mac_python_versions = ["3.13", "3.14"]
 linux_python_versions = ["3.13", "3.14"]
+# Wheels go to ordinary Python environments, so bundle the DLLs they need.
+# This is the value ci_type = "github" implied before the key became required.
+windows_wheel_repair = true
