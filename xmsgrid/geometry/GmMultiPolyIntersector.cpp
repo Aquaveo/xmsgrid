@@ -38,6 +38,7 @@
 #include <xmsgrid/geometry/GmMultiPolyIntersectionSorter.h> // GmMultiPolyIntersectionSorter
 #include <xmsgrid/geometry/GmMultiPolyIntersectorData.h>    // GmMultiPolyIntersectorData
 #include <xmsgrid/geometry/GmMultiPolyIntersectorEdgeWalk.h>
+#include <xmsgrid/geometry/detail/GmMultiPolyIntersectorCommon.h>
 #include <xmsgrid/geometry/geoms.h> // gmPolygonArea, gmAddToExtents, gmXyDistance
 #include <xmsgrid/ugrid/XmUGrid.h>
 
@@ -98,7 +99,6 @@ public:
   virtual int PolygonFromPoint(const Pt3d& a_pt) override;
 
 private:
-  void RemoveDuplicateTValues(VecInt& a_polyIds, VecDbl& a_tValues, VecPt3d& a_pts);
   void CalculateBuffer();
   void BufferTheBox(GmBstBox3d& box) const;
   GmBstPoly3d& GetBoostPoly(int a_polyIdx);
@@ -131,6 +131,25 @@ private:
   BSHP<GmMultiPolyIntersectionSorter> m_sorter; ///< Sorter used to process results
   GmMultiPolyIntersectorQueryEnum m_query;      ///< Type of query (intersect, covered by...)
 }; // class GmMultiPolyIntersectorImpl
+
+namespace // unnamed namespace
+{
+//------------------------------------------------------------------------------
+/// \brief Tolerance the sorter uses to compare a segment's t-values.
+/// \param a_minWidth: Smallest x or y extent of any polygon.
+/// \param a_segmentLength: Length of the segment being traversed.
+/// \return 1e-5, scaled down when the narrowest polygon is short compared to
+///         the segment.
+//------------------------------------------------------------------------------
+double iSortTolerance(double a_minWidth, double a_segmentLength)
+{
+  const double kTol = 1e-5; // t values are always 0.0 - 1.0
+  if (a_segmentLength <= 0.0)
+    return kTol; // nothing to scale by, and 0 / 0 would be NaN
+  double minCellFraction = a_minWidth / a_segmentLength;
+  return std::min(minCellFraction * kTol, kTol);
+} // iSortTolerance
+} // unnamed namespace
 
 //----- Class / Function definitions -------------------------------------------
 
@@ -635,8 +654,15 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
                                                      VecDbl& a_tValues,
                                                      VecPt3d& a_pts)
 {
-  double oldTolerance = gmXyTol();
-  gmXyTol(true, m_xyTol);
+  // IntersectEachPolyWithLine, ComputeTValues, EnsureEndPointsRepresented and
+  // the sorter all read gmXyTol(), so set it for the whole traversal.
+  GmXyTolGuard xyTol(m_xyTol);
+  // Clear before use rather than after, so a throw (from the sorter, say)
+  // cannot leave intersections behind for the next call.
+  m_d.m_ixs.clear();
+  m_d.m_polys1.clear();
+  m_d.m_polys2.clear();
+  m_line.clear();
   m_pt1.Set(a_x1, a_y1, 0.0);
   m_pt2.Set(a_x2, a_y2, 0.0);
   GetPolysForPoint(m_pt1, m_d.m_polys1);
@@ -652,83 +678,13 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
   }
   else
   {
-    double kTol = 1e-5; // Used to compare t values which are always 0.0 - 1.0
     double segmentDistance = gmXyDistance(a_x1, a_y1, a_x2, a_y2);
-    double minCellFraction = m_minWidth / segmentDistance;
-    kTol = std::min(minCellFraction * kTol, 1e-5);
+    double kTol = iSortTolerance(m_minWidth, segmentDistance);
     m_sorter->Sort(m_d, a_polyIds, a_tValues, a_pts, kTol);
   }
   OffsetPolyIds(a_polyIds);
-  RemoveDuplicateTValues(a_polyIds, a_tValues, a_pts);
-
-  m_d.m_ixs.clear();
-  m_d.m_polys1.clear();
-  m_d.m_polys2.clear();
-  m_line.clear();
-  gmXyTol(true, oldTolerance);
+  gmRemoveDuplicateTValues(a_polyIds, a_tValues, a_pts);
 } // GmMultiPolyIntersectorImpl::TraverseLineSegment
-//-----------------------------------------------------------------------------
-/// \brief Removes duplicate T Values and updates the polygon ID and point vectors
-/// \param a_polyIds: list of polygons intersected by line segment. Can be zero
-///                  or 1 based depending on a_startingId passed to constructor.
-/// \param a_tValues: Values from 0.0 to 1.0 representing where on the line
-///                  segment the intersection with the polygon in polyids
-///                  occurs. If there are any t values there are always at
-///                  least 2 and all represent where the line enters the
-///                  polygon, except the last which represents where it exited.
-///                  There would therefore be one more t value than poly id
-///                  but we make the sizes equal by always making the last
-///                  poly id -1.
-/// \param a_pts: Intersection points.
-//-----------------------------------------------------------------------------
-void GmMultiPolyIntersectorImpl::RemoveDuplicateTValues(VecInt& a_polyIds,
-                                                        VecDbl& a_tValues,
-                                                        VecPt3d& a_pts)
-{
-  VecInt indexesToRemove;
-  int size((int)a_tValues.size());
-  for (int i = size - 1; i > 0; --i)
-  {
-    // Check for multiple T-values close to 1.0 (at the end of the line segment).
-    if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[i - 1], 1.0, XM_ZERO_TOL))
-    {
-      for (int j = i - 1; j > 0; --j)
-      {
-        // If the T-values are 1.0 and the polygon IDs are the same (for example, -1), go ahead and
-        // remove these intersections
-        if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[j], 1.0, XM_ZERO_TOL) &&
-            a_polyIds[i] == a_polyIds[j])
-          indexesToRemove.push_back(j);
-      }
-    }
-    else if (a_polyIds[i] == -1 && a_polyIds[i - 1] == -1)
-    {
-      // Remove excess "end" (-1) polygon IDs
-      for (int j = i - 1; j > 0; --j)
-      {
-        // Use 0.1 for the tolerance here because you have multiple end points and
-        // there really should only be a single end point unless your T-value is less
-        // than 0.9 and you've gone outside the mesh.
-        if (GTEQ_TOL(a_tValues[i], 1.0, 0.1) && GTEQ_TOL(a_tValues[j], 1.0, 0.1) &&
-            a_polyIds[j] == -1)
-          indexesToRemove.push_back(j);
-      }
-    }
-    else
-      break;
-  }
-  if (!indexesToRemove.empty())
-  {
-    auto it = std::unique(indexesToRemove.begin(), indexesToRemove.end());
-    indexesToRemove.resize(std::distance(indexesToRemove.begin(), it));
-    for (auto&& i : indexesToRemove)
-    {
-      a_polyIds.erase(a_polyIds.begin() + i);
-      a_tValues.erase(a_tValues.begin() + i);
-      a_pts.erase(a_pts.begin() + i);
-    }
-  }
-} // GmMultiPolyIntersectorImpl::RemoveDuplicateTValues
 //-----------------------------------------------------------------------------
 /// \brief Finds the polygon containing the point
 /// \param a_pt: the location of the point
@@ -755,6 +711,7 @@ int GmMultiPolyIntersectorImpl::PolygonFromPoint(const Pt3d& a_pt)
 #include <xmsgrid/geometry/GmMultiPolyIntersector.t.h>
 
 #include <fstream>
+#include <stdexcept>
 
 #include <xmscore/dataio/daStreamIo.h>
 #include <xmscore/testing/TestTools.h>
@@ -2088,6 +2045,86 @@ void GmMultiPolyIntersectorUnitTests::testTrianglesAllOutsideZeroBased()
   mpi->TraverseLineSegment(2.0, 0.5, 3.0, 0.5, polyIds, tValues, points);
   TS_ASSERT_EQUALS(0, polyIds.size());
 } // GmMultiPolyIntersectorUnitTests::testTrianglesAllOutsideZeroBased
+
+namespace // unnamed namespace
+{
+////////////////////////////////////////////////////////////////////////////////
+/// \brief Sorter whose first Sort() throws; later calls use the terse sorter.
+class ThrowOnceSorter : public GmMultiPolyIntersectionSorter
+{
+public:
+  /// \cond
+  virtual void Sort(GmMultiPolyIntersectorData& a_data,
+                    std::vector<int>& a_polyIds,
+                    std::vector<double>& a_tValues,
+                    std::vector<Pt3d>& a_pts,
+                    double a_tol) override
+  {
+    if (!m_thrown)
+    {
+      m_thrown = true;
+      throw std::runtime_error("sort failed");
+    }
+    m_terse.Sort(a_data, a_polyIds, a_tValues, a_pts, a_tol);
+  }
+  /// \endcond
+
+private:
+  bool m_thrown = false;                      ///< Whether Sort() has thrown yet
+  GmMultiPolyIntersectionSorterTerse m_terse; ///< Sorter used after the throw
+};                                            // class ThrowOnceSorter
+} // unnamed namespace
+
+//------------------------------------------------------------------------------
+/// \brief A throwing sorter leaves the caller's gmXyTol() and the next
+///        traversal intact.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorUnitTests::testSorterThrowRestoresXyTol()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  BSHP<GmMultiPolyIntersectionSorter> sorter(new ThrowOnceSorter());
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(pts, polys, sorter);
+  GmXyTolGuard callerTol(0.125); // the caller's tolerance; restored when the test ends
+
+  VecInt polyIds;
+  VecDbl tValues;
+  // TS_ASSERT_THROWS needs CXXTEST_HAVE_EH, which only the runner defines.
+  bool threw = false;
+  try
+  {
+    mpi->TraverseLineSegment(5, 5, 11, 5, polyIds, tValues); // starts inside the square
+  }
+  catch (const std::runtime_error&)
+  {
+    threw = true;
+  }
+  TS_ASSERT(threw);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  // A different segment, so anything left over from the failed call shows up.
+  mpi->TraverseLineSegment(5, -1, 5, 11, polyIds, tValues);
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0833333, 0.916667};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-5);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+} // GmMultiPolyIntersectorUnitTests::testSorterThrowRestoresXyTol
+//------------------------------------------------------------------------------
+/// \brief A zero-length segment does not give the sorter a NaN tolerance.
+///
+/// A polygon with no width in x or y makes the minimum width zero, so a
+/// zero-length segment used to compute 0 / 0.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorUnitTests::testSortToleranceZeroLengthSegment()
+{
+  TS_ASSERT_EQUALS(1e-5, iSortTolerance(0.0, 0.0));
+  TS_ASSERT_EQUALS(1e-5, iSortTolerance(10.0, 0.0));
+  // Segments with length keep the existing scaling.
+  TS_ASSERT_DELTA(1e-6, iSortTolerance(1.0, 10.0), 1e-15);
+  TS_ASSERT_EQUALS(1e-5, iSortTolerance(100.0, 10.0));
+  TS_ASSERT_EQUALS(0.0, iSortTolerance(0.0, 10.0));
+} // GmMultiPolyIntersectorUnitTests::testSortToleranceZeroLengthSegment
 //------------------------------------------------------------------------------
 /// \brief Given 1 x 2 2D grid turned into triangles with point at poly center
 /// triangles numbered as follows:
@@ -2875,6 +2912,43 @@ void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkEdgeThroughOppositeVer
                             {20.0, -6.785714285714, 0.0}};
   iRunEdgeWalkTest(8, -2.5, 22, -7.5, pts, polys, expectedIds, expectedTvals, expectedPoints);
 }
+//------------------------------------------------------------------------------
+/// \brief Every return path of TraverseLineSegment restores the caller's
+///        gmXyTol().
+///
+/// The throw path is covered by GmMultiPolyIntersectorCommonUnitTests, which
+/// tests GmXyTolGuard directly.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkRestoresXyTol()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(iBuildUGrid(pts, polys), 1);
+  GmXyTolGuard callerTol(0.125); // the caller's tolerance; restored when the test ends
+
+  VecInt polyIds;
+  VecDbl tValues;
+  mpi->TraverseLineSegment(5, 5, 5, 5, polyIds, tValues); // zero length
+  TS_ASSERT(polyIds.empty());
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  mpi->TraverseLineSegment(20, 20, 30, 30, polyIds, tValues); // misses the grid
+  TS_ASSERT(polyIds.empty());
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  mpi->TraverseLineSegment(-5, 5, 0, 5, polyIds, tValues); // touches it only at the end
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {1.0, 1.0};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  mpi->TraverseLineSegment(-1, 5, 11, 5, polyIds, tValues); // crosses it
+  expectedTvals = {1.0 / 12.0, 11.0 / 12.0};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkRestoresXyTol
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class GmMultiPolyIntersectorEdgeWalkIntermediateTests

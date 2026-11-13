@@ -33,6 +33,7 @@
 #include <xmscore/points/pt.h>
 #include <xmscore/stl/vector.h>
 #include <xmsgrid/geometry/GmBoostTypes.h>
+#include <xmsgrid/geometry/detail/GmMultiPolyIntersectorCommon.h>
 #include <xmsgrid/geometry/geoms.h>
 #include <xmsgrid/ugrid/XmEdge.h>
 #include <xmsgrid/ugrid/XmUGrid.h>
@@ -95,7 +96,6 @@ private:
   void CalculateBuffer();
   void BufferTheBox(GmBstBox3d& a_box) const;
   void OffsetPolyIds(VecInt& a_polyIds) const;
-  void RemoveDuplicateTValues(VecInt& a_polyIds, VecDbl& a_tValues, VecPt3d& a_pts);
   int PickCellOnRight(int a_vertexIdx1, int a_vertexIdx2, const Pt3d& a_pt1, const Pt3d& a_pt2);
 
   std::shared_ptr<XmUGrid> m_ugrid;
@@ -280,50 +280,6 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::OffsetPolyIds(VecInt& a_polyIds) cons
       {
         a_polyIds[i] += offset;
       }
-    }
-  }
-}
-//------------------------------------------------------------------------------
-/// \brief Remove duplicate t-values near 1.0 (matching existing behavior).
-//------------------------------------------------------------------------------
-void GmMultiPolyIntersectorEdgeWalk::Impl::RemoveDuplicateTValues(VecInt& a_polyIds,
-                                                                  VecDbl& a_tValues,
-                                                                  VecPt3d& a_pts)
-{
-  VecInt indexesToRemove;
-  int size = (int)a_tValues.size();
-  for (int i = size - 1; i > 0; --i)
-  {
-    if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[i - 1], 1.0, XM_ZERO_TOL))
-    {
-      for (int j = i - 1; j > 0; --j)
-      {
-        if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[j], 1.0, XM_ZERO_TOL) &&
-            a_polyIds[i] == a_polyIds[j])
-          indexesToRemove.push_back(j);
-      }
-    }
-    else if (a_polyIds[i] == -1 && a_polyIds[i - 1] == -1)
-    {
-      for (int j = i - 1; j > 0; --j)
-      {
-        if (GTEQ_TOL(a_tValues[i], 1.0, 0.1) && GTEQ_TOL(a_tValues[j], 1.0, 0.1) &&
-            a_polyIds[j] == -1)
-          indexesToRemove.push_back(j);
-      }
-    }
-    else
-      break;
-  }
-  if (!indexesToRemove.empty())
-  {
-    auto it = std::unique(indexesToRemove.begin(), indexesToRemove.end());
-    indexesToRemove.resize(std::distance(indexesToRemove.begin(), it));
-    for (auto&& i : indexesToRemove)
-    {
-      a_polyIds.erase(a_polyIds.begin() + i);
-      a_tValues.erase(a_tValues.begin() + i);
-      a_pts.erase(a_pts.begin() + i);
     }
   }
 }
@@ -696,8 +652,9 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::TraverseLineSegment(double a_x1,
   a_tValues.clear();
   a_pts.clear();
 
-  double oldTolerance = gmXyTol();
-  gmXyTol(true, m_xyTol);
+  // Every geometry call below takes m_xyTol explicitly, but gmOnLineWithTol
+  // falls back to gmXyTol() for a cell edge shorter than the tolerance.
+  GmXyTolGuard xyTol(m_xyTol);
 
   Pt3d pt1(a_x1, a_y1, 0.0);
   Pt3d pt2(a_x2, a_y2, 0.0);
@@ -708,7 +665,6 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::TraverseLineSegment(double a_x1,
   // Degenerate segment check
   if (gmEqualPointsXY(pt1, pt2, tol) || segLen < 1e-30)
   {
-    gmXyTol(true, oldTolerance);
     return;
   }
 
@@ -779,7 +735,6 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::TraverseLineSegment(double a_x1,
     if (!FindFirstMeshEntry(pt1, pt2, currentCell, entryPt, entryT))
     {
       // Line doesn't cross the mesh at all
-      gmXyTol(true, oldTolerance);
       return;
     }
     currentT = entryT;
@@ -797,7 +752,6 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::TraverseLineSegment(double a_x1,
       a_tValues.push_back(currentT);
       a_pts.push_back(Pt3d(currentPt.x, currentPt.y, 0.0));
       OffsetPolyIds(a_polyIds);
-      gmXyTol(true, oldTolerance);
       return;
     }
   }
@@ -997,9 +951,7 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::TraverseLineSegment(double a_x1,
   }
 
   OffsetPolyIds(a_polyIds);
-  RemoveDuplicateTValues(a_polyIds, a_tValues, a_pts);
-
-  gmXyTol(true, oldTolerance);
+  gmRemoveDuplicateTValues(a_polyIds, a_tValues, a_pts);
 }
 
 } // namespace xms

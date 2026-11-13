@@ -80,6 +80,10 @@ public:
   void testSmsCase1();
   void testMap2MfBug();
   void testTrianglesAllOutsideZeroBased();
+
+  // Robustness
+  void testSorterThrowRestoresXyTol();
+  void testSortToleranceZeroLengthSegment();
 }; // GmMultiPolyIntersectorUnitTests
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +120,9 @@ public:
   void testEdgeWalkOutsideToOutside();
   void testEdgeWalkAlongEdgesInsideToInside();
   void testEdgeWalkEdgeThroughOppositeVertex();
+
+  // Robustness
+  void testEdgeWalkRestoresXyTol();
 };
 
 ////////////////////////////////////////////////////////////////////////////////
