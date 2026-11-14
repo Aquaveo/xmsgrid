@@ -80,6 +80,10 @@ public:
   void testSmsCase1();
   void testMap2MfBug();
   void testTrianglesAllOutsideZeroBased();
+
+  // Robustness
+  void testSorterThrowRestoresXyTol();
+  void testSortToleranceZeroLengthSegment();
 }; // GmMultiPolyIntersectorUnitTests
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,6 +98,76 @@ public:
   void testPointOnPolygonVertex();
   void testPointsNearEdgePoints();
   void testBug15785();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class GmMultiPolyIntersectorEdgeWalkUnitTests : public CxxTest::TestSuite
+{
+public:
+  // 1 poly
+  void testEdgeWalk1OutOut();
+  void testEdgeWalk1OutIn();
+  void testEdgeWalk1InOut();
+  void testEdgeWalk1InIn();
+  void testEdgeWalk1OnOn();
+
+  // 2 polys
+  void testEdgeWalk2OutOut();
+  void testEdgeWalk2InIn();
+
+  // Multi-poly
+  void testEdgeWalkInsideToInside();
+  void testEdgeWalkOutsideToOutside();
+  void testEdgeWalkAlongEdgesInsideToInside();
+  void testEdgeWalkEdgeThroughOppositeVertex();
+
+  // Robustness
+  void testEdgeWalkRestoresXyTol();
+  void testEdgeWalkRejectsInvalidGrid();
+
+  // Starting id and point queries
+  void testEdgeWalkZeroBased();
+  void testEdgeWalkPolygonFromPoint();
+
+  // Leaving and re-entering the mesh
+  void testEdgeWalkStartOnVertexThenReenter();
+  void testEdgeWalkTouchCornerThenEnter();
+  void testEdgeWalkTouchSharedVertexThenEnter();
+  void testEdgeWalkTouchOnly();
+  void testEdgeWalkTouchBesideCrossing();
+  void testEdgeWalkLeaveAndReenterMesh();
+  void testEdgeWalkReenterSameCell();
+  void testEdgeWalkStartOnNonConvexCellBoundary();
+  void testEdgeWalkTouchNonConvexCellCornerThenEnter();
+  void testEdgeWalkReenterAcrossNarrowGap();
+  void testEdgeWalkLeaveAtSharedVertexNearEdge();
+
+  // Vertices and edges
+  void testEdgeWalkThroughReflexVertex();
+  void testEdgeWalkAlongBoundaryThroughPolygonVertex();
+  void testEdgeWalkEndOnSharedEdge();
+  void testEdgeWalkNearCollinearEntryAtSharedVertex();
+  void testEdgeWalkAlongEdgesReversed();
+
+  // Touches at shared vertices
+  void testEdgeWalkTouchSharedVertexAtEndpoint();
+  void testEdgeWalkTouchCornerThenEndAtSharedVertex();
+  void testEdgeWalkTouchNonConformingCorner();
+
+  // Narrow cells and non-conforming seams
+  void testEdgeWalkCrossNarrowCell();
+  void testEdgeWalkNarrowCellAtMeshEdge();
+  void testEdgeWalkCrossNonConformingSeam();
+  void testEdgeWalkAlongNonConformingSeam();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class GmMultiPolyIntersectorEdgeWalkIntermediateTests : public CxxTest::TestSuite
+{
+public:
+  void testEdgeWalkBug12586();
+  void testEdgeWalkBug12728();
+  void testEdgeWalkBug13273();
 };
 
 //} // namespace xms

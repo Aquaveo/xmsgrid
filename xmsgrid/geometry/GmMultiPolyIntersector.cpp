@@ -37,6 +37,8 @@
 #include <xmsgrid/geometry/GmBoostTypes.h>                  // GmBstPoly3d, XmBstRing
 #include <xmsgrid/geometry/GmMultiPolyIntersectionSorter.h> // GmMultiPolyIntersectionSorter
 #include <xmsgrid/geometry/GmMultiPolyIntersectorData.h>    // GmMultiPolyIntersectorData
+#include <xmsgrid/geometry/GmMultiPolyIntersectorEdgeWalk.h>
+#include <xmsgrid/geometry/detail/GmMultiPolyIntersectorCommon.h>
 #include <xmsgrid/geometry/geoms.h> // gmPolygonArea, gmAddToExtents, gmXyDistance
 
 //----- Forward declarations ---------------------------------------------------
@@ -96,7 +98,6 @@ public:
   virtual int PolygonFromPoint(const Pt3d& a_pt) override;
 
 private:
-  void RemoveDuplicateTValues(VecInt& a_polyIds, VecDbl& a_tValues, VecPt3d& a_pts);
   void CalculateBuffer();
   void BufferTheBox(GmBstBox3d& box) const;
   GmBstPoly3d& GetBoostPoly(int a_polyIdx);
@@ -128,7 +129,26 @@ private:
   std::vector<GmBstPoly3d> m_boostPolys; ///< Polygons as boost geom polygons
   BSHP<GmMultiPolyIntersectionSorter> m_sorter; ///< Sorter used to process results
   GmMultiPolyIntersectorQueryEnum m_query;      ///< Type of query (intersect, covered by...)
-};                                              // class GmMultiPolyIntersectorImpl
+}; // class GmMultiPolyIntersectorImpl
+
+namespace // unnamed namespace
+{
+//------------------------------------------------------------------------------
+/// \brief Tolerance the sorter uses to compare a segment's t-values.
+/// \param a_minWidth: Smallest x or y extent of any polygon.
+/// \param a_segmentLength: Length of the segment being traversed.
+/// \return 1e-5, scaled down when the narrowest polygon is short compared to
+///         the segment.
+//------------------------------------------------------------------------------
+double iSortTolerance(double a_minWidth, double a_segmentLength)
+{
+  const double kTol = 1e-5; // t values are always 0.0 - 1.0
+  if (a_segmentLength <= 0.0)
+    return kTol; // nothing to scale by, and 0 / 0 would be NaN
+  double minCellFraction = a_minWidth / a_segmentLength;
+  return std::min(minCellFraction * kTol, kTol);
+} // iSortTolerance
+} // unnamed namespace
 
 //----- Class / Function definitions -------------------------------------------
 
@@ -167,7 +187,24 @@ BSHP<GmMultiPolyIntersector> GmMultiPolyIntersector::New(
 {
   return BDPC<GmMultiPolyIntersector>(BSHP<GmMultiPolyIntersectorImpl>(
     new GmMultiPolyIntersectorImpl(a_points, a_polys, a_sorter, a_startingId)));
-} // GmMultiPolyIntersector::GmMultiPolyIntersector
+} // GmMultiPolyIntersector::New
+//------------------------------------------------------------------------------
+/// \brief Creates a new GmMultiPolyIntersectorEdgeWalk object.
+/// \param a_ugrid: The unstructured grid. Every cell must be 2D. Cells that
+///                 meet at coincident copies of a point, not a shared one,
+///                 are crossed too; see GmMultiPolyIntersectorEdgeWalk.
+/// \param a_startingId: If the polygon IDs should start at something other
+///                       than 1, specify the starting value.
+/// \return GmMultiPolyIntersector.
+/// \throw std::invalid_argument if a_ugrid is null or has a cell that is not
+///        2D.
+//------------------------------------------------------------------------------
+BSHP<GmMultiPolyIntersector> GmMultiPolyIntersector::New(std::shared_ptr<XmUGrid> a_ugrid,
+                                                         int a_startingId /*=1*/)
+{
+  return BDPC<GmMultiPolyIntersector>(BSHP<GmMultiPolyIntersectorEdgeWalk>(
+    new GmMultiPolyIntersectorEdgeWalk(a_ugrid, a_startingId)));
+} // GmMultiPolyIntersector::New
 
 ////////////////////////////////////////////////////////////////////////////////
 /// \class GmMultiPolyIntersectorImpl
@@ -223,7 +260,7 @@ GmMultiPolyIntersectorImpl::~GmMultiPolyIntersectorImpl()
 ////------------------------------------------------------------------------------
 // void GmMultiPolyIntersectorImpl::ValidatePolygons ()
 //{
-//#ifdef _DEBUG
+// #ifdef _DEBUG
 //  for (size_t i = 0; i < m_d.m_polys.size(); ++i) {
 //    VecPt3d poly;
 //    for (size_t j = 0; j < m_d.m_polys[i].size(); ++j) {
@@ -231,7 +268,7 @@ GmMultiPolyIntersectorImpl::~GmMultiPolyIntersectorImpl()
 //    }
 //    XM_ASSERT(gmPolygonArea(&poly[0], poly.size()) > 0);
 //  }
-//#endif
+// #endif
 //} // GmMultiPolyIntersectorImpl::ValidatePolygons
 //------------------------------------------------------------------------------
 /// \brief Calculate a small buffer distance by which we expand all polygon
@@ -620,8 +657,15 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
                                                      VecDbl& a_tValues,
                                                      VecPt3d& a_pts)
 {
-  double oldTolerance = gmXyTol();
-  gmXyTol(true, m_xyTol);
+  // IntersectEachPolyWithLine, ComputeTValues, EnsureEndPointsRepresented and
+  // the sorter all read gmXyTol(), so set it for the whole traversal.
+  GmXyTolGuard xyTol(m_xyTol);
+  // Clear before use rather than after, so a throw (from the sorter, say)
+  // cannot leave intersections behind for the next call.
+  m_d.m_ixs.clear();
+  m_d.m_polys1.clear();
+  m_d.m_polys2.clear();
+  m_line.clear();
   m_pt1.Set(a_x1, a_y1, 0.0);
   m_pt2.Set(a_x2, a_y2, 0.0);
   GetPolysForPoint(m_pt1, m_d.m_polys1);
@@ -637,83 +681,13 @@ void GmMultiPolyIntersectorImpl::TraverseLineSegment(double a_x1,
   }
   else
   {
-    double kTol = 1e-5; // Used to compare t values which are always 0.0 - 1.0
     double segmentDistance = gmXyDistance(a_x1, a_y1, a_x2, a_y2);
-    double minCellFraction = m_minWidth / segmentDistance;
-    kTol = std::min(minCellFraction * kTol, 1e-5);
+    double kTol = iSortTolerance(m_minWidth, segmentDistance);
     m_sorter->Sort(m_d, a_polyIds, a_tValues, a_pts, kTol);
   }
   OffsetPolyIds(a_polyIds);
-  RemoveDuplicateTValues(a_polyIds, a_tValues, a_pts);
-
-  m_d.m_ixs.clear();
-  m_d.m_polys1.clear();
-  m_d.m_polys2.clear();
-  m_line.clear();
-  gmXyTol(true, oldTolerance);
+  gmRemoveDuplicateTValues(a_polyIds, a_tValues, a_pts);
 } // GmMultiPolyIntersectorImpl::TraverseLineSegment
-//-----------------------------------------------------------------------------
-/// \brief Removes duplicate T Values and updates the polygon ID and point vectors
-/// \param a_polyIds: list of polygons intersected by line segment. Can be zero
-///                  or 1 based depending on a_startingId passed to constructor.
-/// \param a_tValues: Values from 0.0 to 1.0 representing where on the line
-///                  segment the intersection with the polygon in polyids
-///                  occurs. If there are any t values there are always at
-///                  least 2 and all represent where the line enters the
-///                  polygon, except the last which represents where it exited.
-///                  There would therefore be one more t value than poly id
-///                  but we make the sizes equal by always making the last
-///                  poly id -1.
-/// \param a_pts: Intersection points.
-//-----------------------------------------------------------------------------
-void GmMultiPolyIntersectorImpl::RemoveDuplicateTValues(VecInt& a_polyIds,
-                                                        VecDbl& a_tValues,
-                                                        VecPt3d& a_pts)
-{
-  VecInt indexesToRemove;
-  int size((int)a_tValues.size());
-  for (int i = size - 1; i > 0; --i)
-  {
-    // Check for multiple T-values close to 1.0 (at the end of the line segment).
-    if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[i - 1], 1.0, XM_ZERO_TOL))
-    {
-      for (int j = i - 1; j > 0; --j)
-      {
-        // If the T-values are 1.0 and the polygon IDs are the same (for example, -1), go ahead and
-        // remove these intersections
-        if (GTEQ_TOL(a_tValues[i], 1.0, XM_ZERO_TOL) && GTEQ_TOL(a_tValues[j], 1.0, XM_ZERO_TOL) &&
-            a_polyIds[i] == a_polyIds[j])
-          indexesToRemove.push_back(j);
-      }
-    }
-    else if (a_polyIds[i] == -1 && a_polyIds[i - 1] == -1)
-    {
-      // Remove excess "end" (-1) polygon IDs
-      for (int j = i - 1; j > 0; --j)
-      {
-        // Use 0.1 for the tolerance here because you have multiple end points and
-        // there really should only be a single end point unless your T-value is less
-        // than 0.9 and you've gone outside the mesh.
-        if (GTEQ_TOL(a_tValues[i], 1.0, 0.1) && GTEQ_TOL(a_tValues[j], 1.0, 0.1) &&
-            a_polyIds[j] == -1)
-          indexesToRemove.push_back(j);
-      }
-    }
-    else
-      break;
-  }
-  if (!indexesToRemove.empty())
-  {
-    auto it = std::unique(indexesToRemove.begin(), indexesToRemove.end());
-    indexesToRemove.resize(std::distance(indexesToRemove.begin(), it));
-    for (auto&& i : indexesToRemove)
-    {
-      a_polyIds.erase(a_polyIds.begin() + i);
-      a_tValues.erase(a_tValues.begin() + i);
-      a_pts.erase(a_pts.begin() + i);
-    }
-  }
-} // GmMultiPolyIntersectorImpl::RemoveDuplicateTValues
 //-----------------------------------------------------------------------------
 /// \brief Finds the polygon containing the point
 /// \param a_pt: the location of the point
@@ -740,6 +714,7 @@ int GmMultiPolyIntersectorImpl::PolygonFromPoint(const Pt3d& a_pt)
 #include <xmsgrid/geometry/GmMultiPolyIntersector.t.h>
 
 #include <fstream>
+#include <stdexcept>
 
 #include <xmscore/dataio/daStreamIo.h>
 #include <xmscore/testing/TestTools.h>
@@ -2073,6 +2048,86 @@ void GmMultiPolyIntersectorUnitTests::testTrianglesAllOutsideZeroBased()
   mpi->TraverseLineSegment(2.0, 0.5, 3.0, 0.5, polyIds, tValues, points);
   TS_ASSERT_EQUALS(0, polyIds.size());
 } // GmMultiPolyIntersectorUnitTests::testTrianglesAllOutsideZeroBased
+
+namespace // unnamed namespace
+{
+////////////////////////////////////////////////////////////////////////////////
+/// \brief Sorter whose first Sort() throws; later calls use the terse sorter.
+class ThrowOnceSorter : public GmMultiPolyIntersectionSorter
+{
+public:
+  /// \cond
+  virtual void Sort(GmMultiPolyIntersectorData& a_data,
+                    std::vector<int>& a_polyIds,
+                    std::vector<double>& a_tValues,
+                    std::vector<Pt3d>& a_pts,
+                    double a_tol) override
+  {
+    if (!m_thrown)
+    {
+      m_thrown = true;
+      throw std::runtime_error("sort failed");
+    }
+    m_terse.Sort(a_data, a_polyIds, a_tValues, a_pts, a_tol);
+  }
+  /// \endcond
+
+private:
+  bool m_thrown = false;                      ///< Whether Sort() has thrown yet
+  GmMultiPolyIntersectionSorterTerse m_terse; ///< Sorter used after the throw
+};                                            // class ThrowOnceSorter
+} // unnamed namespace
+
+//------------------------------------------------------------------------------
+/// \brief A throwing sorter leaves the caller's gmXyTol() and the next
+///        traversal intact.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorUnitTests::testSorterThrowRestoresXyTol()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  BSHP<GmMultiPolyIntersectionSorter> sorter(new ThrowOnceSorter());
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(pts, polys, sorter);
+  GmXyTolGuard callerTol(0.125); // the caller's tolerance; restored when the test ends
+
+  VecInt polyIds;
+  VecDbl tValues;
+  // TS_ASSERT_THROWS needs CXXTEST_HAVE_EH, which only the runner defines.
+  bool threw = false;
+  try
+  {
+    mpi->TraverseLineSegment(5, 5, 11, 5, polyIds, tValues); // starts inside the square
+  }
+  catch (const std::runtime_error&)
+  {
+    threw = true;
+  }
+  TS_ASSERT(threw);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  // A different segment, so anything left over from the failed call shows up.
+  mpi->TraverseLineSegment(5, -1, 5, 11, polyIds, tValues);
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {1.0 / 12.0, 11.0 / 12.0};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+} // GmMultiPolyIntersectorUnitTests::testSorterThrowRestoresXyTol
+//------------------------------------------------------------------------------
+/// \brief A zero-length segment does not give the sorter a NaN tolerance.
+///
+/// A polygon with no width in x or y makes the minimum width zero, so a
+/// zero-length segment used to compute 0 / 0.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorUnitTests::testSortToleranceZeroLengthSegment()
+{
+  TS_ASSERT_EQUALS(1e-5, iSortTolerance(0.0, 0.0));
+  TS_ASSERT_EQUALS(1e-5, iSortTolerance(10.0, 0.0));
+  // Segments with length keep the existing scaling.
+  TS_ASSERT_DELTA(1e-6, iSortTolerance(1.0, 10.0), 1e-15);
+  TS_ASSERT_EQUALS(1e-5, iSortTolerance(100.0, 10.0));
+  TS_ASSERT_EQUALS(0.0, iSortTolerance(0.0, 10.0));
+} // GmMultiPolyIntersectorUnitTests::testSortToleranceZeroLengthSegment
 //------------------------------------------------------------------------------
 /// \brief Given 1 x 2 2D grid turned into triangles with point at poly center
 /// triangles numbered as follows:
@@ -2629,6 +2684,1114 @@ void GmMultiPolyIntersector2IntermediateTests::testBug15785()
   TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1.0e-3);
   TS_ASSERT_DELTA_VEC(expectedTValues, tValues, 1.0e-5);
 } // GmMultiPolyIntersector2IntermediateTests::testBug15785
+
+////////////////////////////////////////////////////////////////////////////////
+// Edge Walk Tests
+////////////////////////////////////////////////////////////////////////////////
+
+namespace // unnamed namespace
+{
+//------------------------------------------------------------------------------
+/// \brief Build an XmUGrid from points and polygon index lists.
+/// \param a_pts: Points.
+/// \param a_polys: 0-based point indices for each polygon.
+/// \return Shared pointer to XmUGrid.
+//------------------------------------------------------------------------------
+std::shared_ptr<XmUGrid> iBuildUGrid(const VecPt3d& a_pts, const VecInt2d& a_polys)
+{
+  VecInt cellstream;
+  for (const auto& poly : a_polys)
+  {
+    int nPts = (int)poly.size();
+    if (nPts == 3)
+      cellstream.push_back(XMU_TRIANGLE);
+    else if (nPts == 4)
+      cellstream.push_back(XMU_QUAD);
+    else
+      cellstream.push_back(XMU_POLYGON);
+    cellstream.push_back(nPts);
+    for (int idx : poly)
+      cellstream.push_back(idx);
+  }
+  return XmUGrid::New(a_pts, cellstream);
+}
+//------------------------------------------------------------------------------
+/// \brief Check a traversal against the grid it walked.
+///
+/// The midpoint of each interval lies in the cell recorded for it and strictly
+/// inside no other cell. The midpoint of each gap lies strictly inside no
+/// cell. A gap is an interval recorded as -1, the stretch before the first
+/// record or after the last, or the whole segment when nothing is recorded.
+/// Where the segment runs along an edge that two cells share, either cell
+/// passes.
+/// \param a_ugrid: The grid that was traversed.
+/// \param a_startingId: Id of the grid's first cell.
+/// \param a_pt1: Start of the segment.
+/// \param a_pt2: End of the segment.
+/// \param a_polyIds: Ids from TraverseLineSegment.
+/// \param a_tValues: t-values from TraverseLineSegment.
+//------------------------------------------------------------------------------
+void iCheckWalkAgainstGrid(const XmUGrid& a_ugrid,
+                           int a_startingId,
+                           const Pt3d& a_pt1,
+                           const Pt3d& a_pt2,
+                           const VecInt& a_polyIds,
+                           const VecDbl& a_tValues)
+{
+  TS_ASSERT_EQUALS(a_polyIds.size(), a_tValues.size());
+  if (a_polyIds.size() != a_tValues.size())
+    return;
+
+  Pt3d mn, mx;
+  a_ugrid.GetExtents(mn, mx);
+  const double tol = gmComputeXyTol(mn, mx);
+  VecPt3d locs;
+  // Where the midpoint of [a_t1, a_t2] lies relative to a cell: 1 inside, 0 on
+  // its boundary, -1 outside.
+  auto midpointInCell = [&](int a_cellIdx, double a_t1, double a_t2) {
+    double t = 0.5 * (a_t1 + a_t2);
+    a_ugrid.GetCellLocations(a_cellIdx, locs);
+    if (locs.empty())
+      return -1;
+    return gmPointInPolygon2D(&locs[0], locs.size(), a_pt1.x + t * (a_pt2.x - a_pt1.x),
+                              a_pt1.y + t * (a_pt2.y - a_pt1.y), tol);
+  };
+  // Ids of the cells with the midpoint of [a_t1, a_t2] strictly inside.
+  auto idsHoldingInside = [&](double a_t1, double a_t2) {
+    VecInt ids;
+    for (int cellIdx = 0; cellIdx < a_ugrid.GetCellCount(); ++cellIdx)
+    {
+      if (midpointInCell(cellIdx, a_t1, a_t2) == 1)
+        ids.push_back(cellIdx + a_startingId);
+    }
+    return ids;
+  };
+
+  if (a_polyIds.empty())
+  {
+    TS_ASSERT(idsHoldingInside(0.0, 1.0).empty());
+    return;
+  }
+  TS_ASSERT_EQUALS(-1, a_polyIds.back());
+  if (a_tValues.front() > 0.0)
+    TS_ASSERT(idsHoldingInside(0.0, a_tValues.front()).empty());
+  if (a_tValues.back() < 1.0)
+    TS_ASSERT(idsHoldingInside(a_tValues.back(), 1.0).empty());
+  for (size_t i = 0; i + 1 < a_polyIds.size(); ++i)
+  {
+    VecInt inside = idsHoldingInside(a_tValues[i], a_tValues[i + 1]);
+    if (a_polyIds[i] == -1)
+    {
+      TS_ASSERT(inside.empty());
+      continue;
+    }
+    int recordedIdx = a_polyIds[i] - a_startingId;
+    TS_ASSERT_LESS_THAN_EQUALS(0, midpointInCell(recordedIdx, a_tValues[i], a_tValues[i + 1]));
+    TS_ASSERT(inside.empty() || (inside.size() == 1 && inside[0] == a_polyIds[i]));
+  }
+} // iCheckWalkAgainstGrid
+//------------------------------------------------------------------------------
+/// \brief Run an edge-walk test with the same interface as iRunTest, without
+///        comparing with the sorter-based implementation.
+///
+/// For lines that implementation gets wrong; each caller says how.
+/// \param x1: x of the segment's start.
+/// \param y1: y of the segment's start.
+/// \param x2: x of the segment's end.
+/// \param y2: y of the segment's end.
+/// \param pts: Points of the grid.
+/// \param polys: 0-based point indices for each cell.
+/// \param a_expectedPolyIDs: Expected cell ids, offset by a_startingId.
+/// \param a_expectedtValues: Expected t-values.
+/// \param a_expectedPoints: Expected points.
+/// \param a_startingId: Id of the grid's first cell.
+//------------------------------------------------------------------------------
+void iRunEdgeWalkTestWithoutSorter(double x1,
+                                   double y1,
+                                   double x2,
+                                   double y2,
+                                   const VecPt3d& pts,
+                                   const VecInt2d& polys,
+                                   const VecInt& a_expectedPolyIDs,
+                                   const VecDbl& a_expectedtValues,
+                                   const VecPt3d& a_expectedPoints,
+                                   int a_startingId = 1)
+{
+  auto ugrid = iBuildUGrid(pts, polys);
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(ugrid, a_startingId);
+  VecInt polyIds1, polyIds2, polyIds3, polyIds4;
+  VecDbl tValues1, tValues2;
+  VecPt3d points1, points2;
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds1, tValues1);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds2);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds3, points1);
+  mpi->TraverseLineSegment(x1, y1, x2, y2, polyIds4, tValues2, points2);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds1);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds2);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds3);
+  TS_ASSERT_EQUALS_VEC(a_expectedPolyIDs, polyIds4);
+  TS_ASSERT_EQUALS(polyIds1.size(), tValues1.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), points1.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds2.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds3.size());
+  TS_ASSERT_EQUALS(polyIds1.size(), polyIds4.size());
+  TS_ASSERT_EQUALS(tValues1.size(), tValues2.size());
+  TS_ASSERT_EQUALS(points1.size(), points2.size());
+  const double kDelta = 1e-5;
+  TS_ASSERT_DELTA_VEC(a_expectedtValues, tValues1, kDelta);
+  TS_ASSERT_DELTA_VEC(a_expectedtValues, tValues2, kDelta);
+  TS_ASSERT_DELTA_VECPT3D(iZeroedZ(a_expectedPoints), iZeroedZ(points1), kDelta);
+  TS_ASSERT_DELTA_VECPT3D(iZeroedZ(a_expectedPoints), iZeroedZ(points2), kDelta);
+  iCheckWalkAgainstGrid(*ugrid, a_startingId, Pt3d(x1, y1, 0.0), Pt3d(x2, y2, 0.0), polyIds1,
+                        tValues1);
+} // iRunEdgeWalkTestWithoutSorter
+//------------------------------------------------------------------------------
+/// \brief Run an edge-walk test with the same interface as iRunTest, and check
+///        that the sorter-based implementation gives the same answer.
+/// \param x1: x of the segment's start.
+/// \param y1: y of the segment's start.
+/// \param x2: x of the segment's end.
+/// \param y2: y of the segment's end.
+/// \param pts: Points of the grid.
+/// \param polys: 0-based point indices for each cell.
+/// \param a_expectedPolyIDs: Expected cell ids, offset by a_startingId.
+/// \param a_expectedtValues: Expected t-values.
+/// \param a_expectedPoints: Expected points.
+/// \param a_startingId: Id of the grid's first cell.
+//------------------------------------------------------------------------------
+void iRunEdgeWalkTest(double x1,
+                      double y1,
+                      double x2,
+                      double y2,
+                      const VecPt3d& pts,
+                      const VecInt2d& polys,
+                      const VecInt& a_expectedPolyIDs,
+                      const VecDbl& a_expectedtValues,
+                      const VecPt3d& a_expectedPoints,
+                      int a_startingId = 1)
+{
+  iRunEdgeWalkTestWithoutSorter(x1, y1, x2, y2, pts, polys, a_expectedPolyIDs, a_expectedtValues,
+                                a_expectedPoints, a_startingId);
+
+  // The sorter-based implementation is built with starting id 1, because with
+  // 0 it turns a -1 inside the list into -2.
+  BSHP<GmMultiPolyIntersectionSorter> sorter(new GmMultiPolyIntersectionSorterTerse());
+  BSHP<GmMultiPolyIntersector> reference = GmMultiPolyIntersector::New(pts, polys, sorter);
+  VecInt referenceIds;
+  VecDbl referenceTvals;
+  VecPt3d referencePoints;
+  reference->TraverseLineSegment(x1, y1, x2, y2, referenceIds, referenceTvals, referencePoints);
+  VecInt oneBasedIds;
+  for (int id : a_expectedPolyIDs)
+    oneBasedIds.push_back(id == -1 ? -1 : id - a_startingId + 1);
+  const double kDelta = 1e-5;
+  TS_ASSERT_EQUALS_VEC(oneBasedIds, referenceIds);
+  TS_ASSERT_DELTA_VEC(a_expectedtValues, referenceTvals, kDelta);
+  TS_ASSERT_DELTA_VECPT3D(iZeroedZ(a_expectedPoints), iZeroedZ(referencePoints), kDelta);
+} // iRunEdgeWalkTest
+//------------------------------------------------------------------------------
+/// \brief Build a U-shaped mesh of seven 10 x 10 quads with a notch over
+///        [10, 20] x [10, 30]. Point i + 4j is at (10i, 10j).
+/// \verbatim
+///  30 +---+   +---+
+///     | 6 |   | 7 |
+///  20 +---+   +---+
+///     | 4 |   | 5 |
+///  10 +---+---+---+
+///     | 1 | 2 | 3 |
+///   0 +---+---+---+
+///     0  10  20  30
+/// \endverbatim
+/// \param a_pts: [out] Points.
+/// \param a_polys: [out] 0-based point indices for each quad.
+//------------------------------------------------------------------------------
+void iBuildUMesh(VecPt3d& a_pts, VecInt2d& a_polys)
+{
+  a_pts.clear();
+  for (int j = 0; j < 4; ++j)
+  {
+    for (int i = 0; i < 4; ++i)
+      a_pts.push_back(Pt3d(10.0 * i, 10.0 * j, 0.0));
+  }
+  a_polys = {{0, 1, 5, 4},   {1, 2, 6, 5},   {2, 3, 7, 6},    {4, 5, 9, 8},
+             {6, 7, 11, 10}, {8, 9, 13, 12}, {10, 11, 15, 14}};
+} // iBuildUMesh
+} // unnamed namespace
+
+////////////////////////////////////////////////////////////////////////////////
+/// \class GmMultiPolyIntersectorEdgeWalkUnitTests
+/// \brief Tests for edge-walk based GmMultiPolyIntersector.
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief 1 poly, out-out: line passes completely through a single polygon.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1OutOut()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0833333, 0.916667};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-1, 5, 11, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, out-in.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1OutIn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.111111, 1.0};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {8.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-1, 5, 8, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, in-out.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1InOut()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 0.833333};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 11, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, in-in.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1InIn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 1.0};
+  VecPt3d expectedPoints = {{2.0, 5.0, 0.0}, {8.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(2, 5, 8, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 1 poly, on-on: line starts and ends on polygon edges.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk1OnOn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 1.0};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(0, 5, 10, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 2 polys, out-out: line passes through both polygons.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk2OutOut()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  VecInt expectedIds = {1, 2, -1};
+  VecDbl expectedTvals = {0.0454545, 0.5, 0.954545};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {20.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-1, 5, 21, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 2 polys, in-in: line starts and ends inside different polygons.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalk2InIn()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  VecInt expectedIds = {1, 2, -1};
+  VecDbl expectedTvals = {0.0, 0.5, 1.0};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {15.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 15, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief Triangle grid: inside to inside across 4 triangles.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkInsideToInside()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(1, 2, pts, polys);
+
+  VecInt expectedIds = {4, 3, 5, 6, -1};
+  VecDbl expectedTvals = {0.0, 0.166666, 0.5, 0.833333, 1.0};
+  VecPt3d expectedPoints = {{5.0, -2.5, 0.0},
+                            {6.6666666666667, -3.333333333333, 0.0},
+                            {10.0, -5.0, 0.0},
+                            {13.333333333333, -6.666666666667, 0.0},
+                            {15.0, -7.5, 0.0}};
+  iRunEdgeWalkTest(5, -2.5, 15, -7.5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief Triangle grid: outside to outside.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkOutsideToOutside()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(1, 2, pts, polys);
+
+  VecInt expectedIds = {1, 4, 3, 5, 6, 7, -1};
+  VecDbl expectedTvals = {0.0454545, 0.0833333, 0.34375, 0.5, 0.65625, 0.916667, 0.954545};
+  VecPt3d expectedPoints = {{0.0, -0.454545454545, 0.0}, {0.8333333333333, -0.833333333333, 0.0},
+                            {6.5625, -3.4375, 0.0},      {10.0, -5.0, 0.0},
+                            {13.4375, -6.5625, 0.0},     {19.166666666667, -9.166666666667, 0.0},
+                            {20.0, -9.545454545455, 0.0}};
+  iRunEdgeWalkTest(-1, 0, 21, -10, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief 3x3 triangle grid: along diagonal edges inside to inside.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongEdgesInsideToInside()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(3, 3, pts, polys);
+
+  VecInt expectedIds = {2, 17, 18, 33, -1};
+  VecDbl expectedTvals = {0.0, 0.22222, 0.5, 0.777778, 1.0};
+  VecPt3d expectedPoints = {{6.0, -6.0, 0.0},
+                            {10.0, -10.0, 0.0},
+                            {15.0, -15.0, 0.0},
+                            {20.0, -20.0, 0.0},
+                            {24.0, -24.0, 0.0}};
+  iRunEdgeWalkTest(6, -6, 24, -24, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief Edge through opposite vertex at angle.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkEdgeThroughOppositeVertex()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(1, 2, pts, polys);
+
+  VecInt expectedIds = {3, 5, 7, -1};
+  VecDbl expectedTvals = {0.0, 0.14285714285714288, 0.5, 0.85714285714285721};
+  VecPt3d expectedPoints = {{8.0, -2.5, 0.0},
+                            {10.0, -3.214285714286, 0.0},
+                            {15.0, -5.0, 0.0},
+                            {20.0, -6.785714285714, 0.0}};
+  iRunEdgeWalkTest(8, -2.5, 22, -7.5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+}
+//------------------------------------------------------------------------------
+/// \brief Every return path of TraverseLineSegment restores the caller's
+///        gmXyTol().
+///
+/// The throw path is covered by GmMultiPolyIntersectorCommonUnitTests, which
+/// tests GmXyTolGuard directly.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkRestoresXyTol()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}};
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(iBuildUGrid(pts, polys), 1);
+  GmXyTolGuard callerTol(0.125); // the caller's tolerance; restored when the test ends
+
+  VecInt polyIds;
+  VecDbl tValues;
+  mpi->TraverseLineSegment(5, 5, 5, 5, polyIds, tValues); // zero length
+  TS_ASSERT(polyIds.empty());
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  mpi->TraverseLineSegment(20, 20, 30, 30, polyIds, tValues); // misses the grid
+  TS_ASSERT(polyIds.empty());
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  mpi->TraverseLineSegment(-5, 5, 0, 5, polyIds, tValues); // touches it only at the end
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {1.0, 1.0};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+
+  mpi->TraverseLineSegment(-1, 5, 11, 5, polyIds, tValues); // crosses it
+  expectedTvals = {1.0 / 12.0, 11.0 / 12.0};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_EQUALS(0.125, gmXyTol());
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkRestoresXyTol
+//------------------------------------------------------------------------------
+/// \brief A missing grid, or a grid with a cell that is not 2D, is rejected
+///        when the intersector is made rather than when it is used.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkRejectsInvalidGrid()
+{
+  // TS_ASSERT_THROWS needs CXXTEST_HAVE_EH, which only the runner defines.
+  bool threw = false;
+  try
+  {
+    GmMultiPolyIntersector::New(std::shared_ptr<XmUGrid>(), 1);
+  }
+  catch (const std::invalid_argument&)
+  {
+    threw = true;
+  }
+  TS_ASSERT(threw);
+
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}};
+  VecInt cellstream = {XMU_TRIANGLE, 3, 0, 1, 2, XMU_LINE, 2, 0, 2};
+  threw = false;
+  try
+  {
+    GmMultiPolyIntersector::New(XmUGrid::New(pts, cellstream), 1);
+  }
+  catch (const std::invalid_argument&)
+  {
+    threw = true;
+  }
+  TS_ASSERT(threw);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkRejectsInvalidGrid
+//------------------------------------------------------------------------------
+/// \brief A starting id of 0 numbers cells from 0 and leaves the -1 that marks
+///        a gap between cells alone.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkZeroBased()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  VecInt expectedIds = {0, 1, -1};
+  VecDbl expectedTvals = {1.0 / 22.0, 0.5, 21.0 / 22.0};
+  VecPt3d expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {20.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-1, 5, 21, 5, pts, polys, expectedIds, expectedTvals, expectedPoints, 0);
+
+  iBuildUMesh(pts, polys);
+  expectedIds = {5, -1, 6, -1};
+  expectedTvals = {0.0, 0.25, 0.75, 1.0};
+  expectedPoints = {{5.0, 25.0, 0.0}, {10.0, 25.0, 0.0}, {20.0, 25.0, 0.0}, {25.0, 25.0, 0.0}};
+  iRunEdgeWalkTest(5, 25, 25, 25, pts, polys, expectedIds, expectedTvals, expectedPoints, 0);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkZeroBased
+//------------------------------------------------------------------------------
+/// \brief PolygonFromPoint returns the id of the cell holding the point, offset
+///        by the starting id, or XM_NONE outside the grid.
+///
+/// Where several cells hold the point, it returns the lowest id, as the
+/// sorter-based implementation does.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkPolygonFromPoint()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(iBuildUGrid(pts, polys), 1);
+  TS_ASSERT_EQUALS(1, mpi->PolygonFromPoint(Pt3d(5, 5, 0)));
+  TS_ASSERT_EQUALS(2, mpi->PolygonFromPoint(Pt3d(15, 5, 0)));
+  TS_ASSERT_EQUALS(2, mpi->PolygonFromPoint(Pt3d(20, 5, 0))); // on the outer boundary
+  TS_ASSERT_EQUALS(XM_NONE, mpi->PolygonFromPoint(Pt3d(25, 5, 0)));
+
+  // On the edge and at the corner the two cells share.
+  BSHP<GmMultiPolyIntersectionSorter> sorter(new GmMultiPolyIntersectionSorterTerse());
+  BSHP<GmMultiPolyIntersector> reference = GmMultiPolyIntersector::New(pts, polys, sorter);
+  TS_ASSERT_EQUALS(1, mpi->PolygonFromPoint(Pt3d(10, 5, 0)));
+  TS_ASSERT_EQUALS(1, reference->PolygonFromPoint(Pt3d(10, 5, 0)));
+  TS_ASSERT_EQUALS(1, mpi->PolygonFromPoint(Pt3d(10, 10, 0)));
+  TS_ASSERT_EQUALS(1, reference->PolygonFromPoint(Pt3d(10, 10, 0)));
+
+  mpi->SetQuery(GMMPIQ_INTERSECTS);
+  TS_ASSERT_EQUALS(2, mpi->PolygonFromPoint(Pt3d(20, 5, 0)));
+  TS_ASSERT_EQUALS(XM_NONE, mpi->PolygonFromPoint(Pt3d(25, 5, 0)));
+
+  mpi = GmMultiPolyIntersector::New(iBuildUGrid(pts, polys), 0);
+  TS_ASSERT_EQUALS(0, mpi->PolygonFromPoint(Pt3d(5, 5, 0)));
+  TS_ASSERT_EQUALS(1, mpi->PolygonFromPoint(Pt3d(15, 5, 0)));
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkPolygonFromPoint
+//------------------------------------------------------------------------------
+/// \brief A line that starts on the corner cells 4 and 6 share, crosses the
+///        notch and ends in cell 5 reports cell 5.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkStartOnVertexThenReenter()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  iBuildUMesh(pts, polys);
+  VecInt expectedIds = {5, -1};
+  VecDbl expectedTvals = {2.0 / 3.0, 1.0};
+  VecPt3d expectedPoints = {{20.0, 50.0 / 3.0, 0.0}, {25.0, 15.0, 0.0}};
+  iRunEdgeWalkTest(10, 20, 25, 15, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkStartOnVertexThenReenter
+//------------------------------------------------------------------------------
+/// \brief A line that touches cell 6's outer corner, crosses the notch and
+///        enters cell 5 through the corner it shares with cell 7 reports only
+///        cell 5.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchCornerThenEnter()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  iBuildUMesh(pts, polys);
+  VecInt expectedIds = {5, -1};
+  VecDbl expectedTvals = {0.8, 1.0};
+  VecPt3d expectedPoints = {{20.0, 20.0, 0.0}, {25.0, 15.0, 0.0}};
+  iRunEdgeWalkTest(0, 40, 25, 15, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchCornerThenEnter
+//------------------------------------------------------------------------------
+/// \brief A line that grazes the corner two triangles share, then enters a
+///        separate square, reports the square.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchSharedVertexThenEnter()
+{
+  VecPt3d pts = {{0, 0, 0},   {10, 0, 0},  {10, 10, 0}, {0, 10, 0},
+                 {14, -6, 0}, {24, -6, 0}, {24, 4, 0},  {14, 4, 0}};
+  VecInt2d polys = {{0, 1, 2}, {0, 2, 3}, {4, 5, 6, 7}};
+  VecInt expectedIds = {3, -1};
+  VecDbl expectedTvals = {16.0 / 22.0, 1.0};
+  VecPt3d expectedPoints = {{16.0, 4.0, 0.0}, {22.0, -2.0, 0.0}};
+  iRunEdgeWalkTest(0, 20, 22, -2, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchSharedVertexThenEnter
+//------------------------------------------------------------------------------
+/// \brief A line that only touches the mesh, at one cell's corner, reports
+///        the touch. One that touches two cells' corners reports neither.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchOnly()
+{
+  VecPt3d pts = {{0, 0, 0},  {10, 0, 0}, {10, 10, 0}, {0, 10, 0},
+                 {20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {4, 5, 6, 7}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.5, 0.5};
+  VecPt3d expectedPoints = {{10.0, 10.0, 0.0}, {10.0, 10.0, 0.0}};
+  iRunEdgeWalkTest(5, 15, 15, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  // Touches (10,10) and (20,0).
+  iRunEdgeWalkTest(0, 20, 30, -10, pts, polys, VecInt(), VecDbl(), VecPt3d());
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchOnly
+//------------------------------------------------------------------------------
+/// \brief A line that touches one cell and crosses another reports only the
+///        cell it crosses, whether it touches the first in the middle of the
+///        line, at its start or at its end.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchBesideCrossing()
+{
+  VecPt3d pts = {{0, 0, 0},  {10, 0, 0}, {10, 10, 0}, {0, 10, 0},
+                 {20, 0, 0}, {30, 0, 0}, {30, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {4, 5, 6, 7}};
+
+  // Crosses cell 1, then touches cell 2's corner (20,10).
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {1.0 / 7.0, 3.0 / 7.0};
+  VecPt3d expectedPoints = {{0.0, 2.0, 0.0}, {10.0, 6.0, 0.0}};
+  iRunEdgeWalkTest(-5, 0, 30, 14, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  // Starts on cell 1's edge, heading away from it, and goes into cell 2.
+  expectedIds = {2, -1};
+  expectedTvals = {2.0 / 3.0, 1.0};
+  expectedPoints = {{20.0, 5.0, 0.0}, {25.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(10, 5, 25, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  // Crosses cell 1, then ends on cell 2's corner (20,10).
+  expectedIds = {1, -1};
+  expectedTvals = {0.2, 0.6};
+  expectedPoints = {{0.0, 2.0, 0.0}, {10.0, 6.0, 0.0}};
+  iRunEdgeWalkTest(-5, 0, 20, 10, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchBesideCrossing
+//------------------------------------------------------------------------------
+/// \brief A line that leaves the mesh across the notch comes back in on the
+///        far side.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkLeaveAndReenterMesh()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  iBuildUMesh(pts, polys);
+  VecInt expectedIds = {6, -1, 7, -1};
+  VecDbl expectedTvals = {0.0, 0.25, 0.75, 1.0};
+  VecPt3d expectedPoints = {
+    {5.0, 25.0, 0.0}, {10.0, 25.0, 0.0}, {20.0, 25.0, 0.0}, {25.0, 25.0, 0.0}};
+  iRunEdgeWalkTest(5, 25, 25, 25, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedTvals = {0.125, 0.375, 0.625, 0.875};
+  expectedPoints = {{0.0, 25.0, 0.0}, {10.0, 25.0, 0.0}, {20.0, 25.0, 0.0}, {30.0, 25.0, 0.0}};
+  iRunEdgeWalkTest(-5, 25, 35, 25, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkLeaveAndReenterMesh
+//------------------------------------------------------------------------------
+/// \brief A line that leaves a U-shaped cell and comes back into the same cell
+///        reports it twice.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkReenterSameCell()
+{
+  VecPt3d pts = {{0, 0, 0},   {30, 0, 0},  {30, 30, 0}, {20, 30, 0},
+                 {20, 10, 0}, {10, 10, 0}, {10, 30, 0}, {0, 30, 0}};
+  VecInt2d polys = {{0, 1, 2, 3, 4, 5, 6, 7}};
+  VecInt expectedIds = {1, -1, 1, -1};
+  VecDbl expectedTvals = {0.0, 0.25, 0.75, 1.0};
+  VecPt3d expectedPoints = {
+    {5.0, 20.0, 0.0}, {10.0, 20.0, 0.0}, {20.0, 20.0, 0.0}, {25.0, 20.0, 0.0}};
+  iRunEdgeWalkTest(5, 20, 25, 20, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkReenterSameCell
+//------------------------------------------------------------------------------
+/// \brief A line that starts on the inner side of a U-shaped cell, crosses
+///        the notch and enters the far prong reports only the far prong.
+///
+/// The sorter-based implementation pairs the start with the entry into the
+/// far prong, so it reports the line inside the cell across the notch and
+/// outside it in the prong.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkStartOnNonConvexCellBoundary()
+{
+  VecPt3d pts = {{0, 0, 0},   {30, 0, 0},  {30, 30, 0}, {20, 30, 0},
+                 {20, 10, 0}, {10, 10, 0}, {10, 30, 0}, {0, 30, 0}};
+  VecInt2d polys = {{0, 1, 2, 3, 4, 5, 6, 7}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {2.0 / 3.0, 1.0};
+  VecPt3d expectedPoints = {{20.0, 20.0, 0.0}, {25.0, 20.0, 0.0}};
+  iRunEdgeWalkTestWithoutSorter(10, 20, 25, 20, pts, polys, expectedIds, expectedTvals,
+                                expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkStartOnNonConvexCellBoundary
+//------------------------------------------------------------------------------
+/// \brief A line that touches the corner of a U-shaped cell's near prong,
+///        crosses the notch and enters the far prong reports only the far
+///        prong.
+///
+/// The sorter-based implementation pairs the touch with the entry into the
+/// far prong, so it reports the line inside the cell across the notch and
+/// outside it in the prong.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchNonConvexCellCornerThenEnter()
+{
+  VecPt3d pts = {{0, 0, 0},   {30, 0, 0},  {30, 30, 0}, {20, 30, 0},
+                 {20, 10, 0}, {10, 10, 0}, {10, 30, 0}, {0, 30, 0}};
+  VecInt2d polys = {{0, 1, 2, 3, 4, 5, 6, 7}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.8, 1.0};
+  VecPt3d expectedPoints = {{20.0, 20.0, 0.0}, {25.0, 15.0, 0.0}};
+  iRunEdgeWalkTestWithoutSorter(0, 40, 25, 15, pts, polys, expectedIds, expectedTvals,
+                                expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchNonConvexCellCornerThenEnter
+//------------------------------------------------------------------------------
+/// \brief A line that crosses a gap narrower than the R-tree buffer reports
+///        the cell beyond it from its near side.
+///
+/// The far cell makes the grid about 141,000 across, so the R-tree buffer,
+/// 1e-5 of that, is about 1.4: wider than the gap of 1.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkReenterAcrossNarrowGap()
+{
+  VecPt3d pts = {{0, 0, 0},           {10, 0, 0},          {10, 10, 0},
+                 {0, 10, 0},          {11, 0, 0},          {21, 0, 0},
+                 {21, 10, 0},         {11, 10, 0},         {100000, 100000, 0},
+                 {100010, 100000, 0}, {100010, 100010, 0}, {100000, 100010, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}};
+  VecInt expectedIds = {1, -1, 2, -1};
+  VecDbl expectedTvals = {0.0, 0.25, 0.3, 0.8};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {11.0, 5.0, 0.0}, {21.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 25, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkReenterAcrossNarrowGap
+//------------------------------------------------------------------------------
+/// \brief A line that leaves the mesh through a corner another cell shares,
+///        within 0.005 radians of the cell's next edge, keeps the stretch of
+///        the cell it came through.
+///
+/// The line runs from inside cell 1 to (0,0), then just right of cell 1's
+/// edge from (0,0) to (0,10), outside both cells. Close to (0,0) it is within
+/// xyTol of that edge, measured along x as gmPointInPolygon2D does.
+/// \verbatim
+///  (-10,10)  (0,10)     (5,10)  (10,10)
+///         +--+            +------+
+///         |  |           /       |
+///         |  |         /    2    |
+///         |1 |       /           |
+///         |  |     /             |
+///         |  |   /               |
+///         |  | /                 |
+///         |  +-------------------+ (10,-1)
+///         |  (0,0)               |
+///         +----------------------+
+///  (-10,-10)                     (10,-10)
+/// \endverbatim
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkLeaveAtSharedVertexNearEdge()
+{
+  VecPt3d pts = {{-10, -10, 0}, {10, -10, 0}, {10, -1, 0}, {0, 0, 0},
+                 {0, 10, 0},    {-10, 10, 0}, {10, 10, 0}, {5, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3, 4, 5}, {3, 2, 6, 7}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 0.5};
+  VecPt3d expectedPoints = {{-0.025, -5.0, 0.0}, {0.0, 0.0, 0.0}};
+  iRunEdgeWalkTest(-0.025, -5, 0.025, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkLeaveAtSharedVertexNearEdge
+//------------------------------------------------------------------------------
+/// \brief A line that stays inside an L-shaped cell while touching its reflex
+///        corner does not leave the cell there.
+///
+/// The sorter-based implementation has the line leave the cell at the reflex
+/// corner, half way along.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkThroughReflexVertex()
+{
+  VecPt3d pts = {{0, 0, 0}, {2, 0, 0}, {2, 1, 0}, {1, 1, 0}, {1, 2, 0}, {0, 2, 0}};
+  VecInt2d polys = {{0, 1, 2, 3, 4, 5}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 1.0};
+  VecPt3d expectedPoints = {{0.5, 1.5, 0.0}, {1.5, 0.5, 0.0}};
+  iRunEdgeWalkTestWithoutSorter(0.5, 1.5, 1.5, 0.5, pts, polys, expectedIds, expectedTvals,
+                                expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkThroughReflexVertex
+//------------------------------------------------------------------------------
+/// \brief A line along a cell's boundary keeps going past a vertex that lies
+///        part way along a straight side.
+///
+/// The sorter-based implementation stops at that vertex, at (10,0).
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongBoundaryThroughPolygonVertex()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {0, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3, 4}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {1.0 / 6.0, 5.0 / 6.0};
+  VecPt3d expectedPoints = {{0.0, 0.0, 0.0}, {20.0, 0.0, 0.0}};
+  iRunEdgeWalkTestWithoutSorter(-5, 0, 25, 0, pts, polys, expectedIds, expectedTvals,
+                                expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongBoundaryThroughPolygonVertex
+//------------------------------------------------------------------------------
+/// \brief A line that ends on the edge two cells share stays in the cell it
+///        started in.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkEndOnSharedEdge()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 1.0};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 10, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedIds = {2, -1};
+  expectedPoints = {{15.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(15, 5, 10, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkEndOnSharedEdge
+//------------------------------------------------------------------------------
+/// \brief A line that comes in through a shared corner at a shallow angle to
+///        an edge goes into the cell on the side it heads to.
+///
+/// Cell 1, (0,0), (0,-10), (10,0), lies below the edge from (0,0) to (10,0),
+/// and cell 2, (0,0), (10,0), (5,5), above it. Past (0,0) the line climbs
+/// 0.00005 for every unit along x, so for the first 0.0004 or so it stays
+/// within xyTol of that edge. By x = 4 it is 0.0002 above the edge, inside
+/// cell 2.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkNearCollinearEntryAtSharedVertex()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {0, -10, 0}, {5, 5, 0}};
+  VecInt2d polys = {{0, 2, 1}, {0, 1, 3}};
+  VecInt expectedIds = {2, -1};
+  VecDbl expectedTvals = {0.5, 1.0};
+  VecPt3d expectedPoints = {{0.0, 0.0, 0.0}, {8.0, 0.0004, 0.0}};
+  iRunEdgeWalkTest(-8, -0.0004, 8, 0.0004, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkNearCollinearEntryAtSharedVertex
+//------------------------------------------------------------------------------
+/// \brief A line along shared edges, the reverse of
+///        testEdgeWalkAlongEdgesInsideToInside, reports the cell on its right
+///        at every corner.
+///
+/// The cells on either side of each edge meet the corners it ends at in 45
+/// degree angles.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongEdgesReversed()
+{
+  VecPt3d pts;
+  VecInt2d polys;
+  trBuildGridTrianglePolys(3, 3, pts, polys);
+  VecInt expectedIds = {36, 19, 20, 3, -1};
+  VecDbl expectedTvals = {0.0, 2.0 / 9.0, 0.5, 7.0 / 9.0, 1.0};
+  VecPt3d expectedPoints = {{24.0, -24.0, 0.0},
+                            {20.0, -20.0, 0.0},
+                            {15.0, -15.0, 0.0},
+                            {10.0, -10.0, 0.0},
+                            {6.0, -6.0, 0.0}};
+  iRunEdgeWalkTest(24, -24, 6, -6, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongEdgesReversed
+//------------------------------------------------------------------------------
+/// \brief A line from outside that ends at the corner two cells share reports
+///        nothing, nor does the same line reversed.
+///
+/// A touch at a point several cells share is never reported, as in the
+/// sorter-based implementation.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchSharedVertexAtEndpoint()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {20, 0, 0}, {0, 10, 0}, {10, 10, 0}, {20, 10, 0}};
+  VecInt2d polys = {{0, 1, 4, 3}, {1, 2, 5, 4}};
+  VecInt noIds;
+  VecDbl noTvals;
+  VecPt3d noPoints;
+  iRunEdgeWalkTest(5, 20, 10, 10, pts, polys, noIds, noTvals, noPoints);
+  iRunEdgeWalkTest(10, 10, 5, 20, pts, polys, noIds, noTvals, noPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchSharedVertexAtEndpoint
+//------------------------------------------------------------------------------
+/// \brief A line that grazes one cell's corner and ends at a corner two other
+///        cells share reports only the graze, in both directions.
+///
+/// Cell 1 is the square from (5,5) to (15,15). Cells 2 and 3 sit side by side
+/// from (20,0) to (40,10). The line from (0,20) to (30,10) touches cell 1 at
+/// (15,15) and ends at (30,10), where cells 2 and 3 meet.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchCornerThenEndAtSharedVertex()
+{
+  VecPt3d pts = {{5, 5, 0},  {15, 5, 0},  {15, 15, 0}, {5, 15, 0}, {20, 0, 0},
+                 {30, 0, 0}, {30, 10, 0}, {20, 10, 0}, {40, 0, 0}, {40, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {4, 5, 6, 7}, {5, 8, 9, 6}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.5, 0.5};
+  VecPt3d expectedPoints = {{15.0, 15.0, 0.0}, {15.0, 15.0, 0.0}};
+  iRunEdgeWalkTest(0, 20, 30, 10, pts, polys, expectedIds, expectedTvals, expectedPoints);
+  iRunEdgeWalkTest(30, 10, 0, 20, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchCornerThenEndAtSharedVertex
+//------------------------------------------------------------------------------
+/// \brief A touch at a point several cells hold is not reported when the cells
+///        each have their own copy of it, in both directions.
+///
+/// The grids are the ones in testEdgeWalkTouchSharedVertexAtEndpoint and
+/// testEdgeWalkTouchCornerThenEndAtSharedVertex, with the cells given their own
+/// copies of the points where they meet.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchNonConformingCorner()
+{
+  // Ends at (10,10), which cells 1 and 2 each hold.
+  VecPt3d pts = {{0, 0, 0},  {10, 0, 0}, {10, 10, 0}, {0, 10, 0},
+                 {10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {4, 5, 6, 7}};
+  VecInt noIds;
+  VecDbl noTvals;
+  VecPt3d noPoints;
+  iRunEdgeWalkTest(5, 20, 10, 10, pts, polys, noIds, noTvals, noPoints);
+  iRunEdgeWalkTest(10, 10, 5, 20, pts, polys, noIds, noTvals, noPoints);
+
+  // Grazes cell 1 at (15,15) and ends at (30,10), which cells 2 and 3 each hold.
+  pts = {{5, 5, 0},   {15, 5, 0},  {15, 15, 0}, {5, 15, 0},  {20, 0, 0}, {30, 0, 0},
+         {30, 10, 0}, {20, 10, 0}, {40, 0, 0},  {40, 10, 0}, {30, 0, 0}, {30, 10, 0}};
+  polys = {{0, 1, 2, 3}, {4, 5, 6, 7}, {10, 8, 9, 11}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.5, 0.5};
+  VecPt3d expectedPoints = {{15.0, 15.0, 0.0}, {15.0, 15.0, 0.0}};
+  iRunEdgeWalkTest(0, 20, 30, 10, pts, polys, expectedIds, expectedTvals, expectedPoints);
+  iRunEdgeWalkTest(30, 10, 0, 20, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkTouchNonConformingCorner
+//------------------------------------------------------------------------------
+/// \brief A line that crosses a cell too narrow to keep reports the cells on
+///        either side of it, in both directions.
+///
+/// Cell 2 is a wedge between cells 1 and 3, from (4.9,0) and (5.1,0) up to
+/// its tip at (5,5). Just below the tip, at y = 4.99999997, the wedge is
+/// 1.2e-9 wide, and its crossing is dropped as in the sorter-based
+/// implementation. At y = 4.999 it is 4e-5 wide, and its crossing is kept.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkCrossNarrowCell()
+{
+  VecPt3d pts = {{0, 0, 0}, {4.9, 0, 0}, {5.1, 0, 0}, {10, 0, 0}, {10, 5, 0}, {5, 5, 0}, {0, 5, 0}};
+  VecInt2d polys = {{0, 1, 5, 6}, {1, 2, 5}, {2, 3, 4, 5}};
+  const double y = 4.99999997;
+  VecInt expectedIds = {1, 3, -1};
+  VecDbl expectedTvals = {0.0, 0.5, 1.0};
+  VecPt3d expectedPoints = {{1.0, y, 0.0}, {5.0, y, 0.0}, {9.0, y, 0.0}};
+  iRunEdgeWalkTest(1, y, 9, y, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedIds = {3, 1, -1};
+  expectedPoints = {{9.0, y, 0.0}, {5.0, y, 0.0}, {1.0, y, 0.0}};
+  iRunEdgeWalkTest(9, y, 1, y, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedIds = {1, 2, 3, -1};
+  expectedTvals = {0.0, 0.4999975, 0.5000025, 1.0};
+  expectedPoints = {
+    {1.0, 4.999, 0.0}, {4.99998, 4.999, 0.0}, {5.00002, 4.999, 0.0}, {9.0, 4.999, 0.0}};
+  iRunEdgeWalkTest(1, 4.999, 9, 4.999, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkCrossNarrowCell
+//------------------------------------------------------------------------------
+/// \brief A line that leaves or enters the mesh through a cell too narrow to
+///        keep reports only the cell beside it.
+///
+/// Cell 2, (10,0), (10.000000005,5), (10,10), is a sliver along the right side
+/// of the square cell 1.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkNarrowCellAtMeshEdge()
+{
+  VecPt3d pts = {{0, 0, 0}, {10, 0, 0}, {10, 10, 0}, {0, 10, 0}, {10.000000005, 5, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {1, 4, 2}};
+  VecInt expectedIds = {1, -1};
+  VecDbl expectedTvals = {0.0, 0.5};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 15, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedTvals = {0.5, 1.0};
+  expectedPoints = {{10.0, 5.0, 0.0}, {5.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(15, 5, 5, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkNarrowCellAtMeshEdge
+//------------------------------------------------------------------------------
+/// \brief A line crosses from one cell into another where they meet along an
+///        edge without sharing its points.
+///
+/// Cell 1, from (0,0) to (10,10), and cell 2, from (10,0) to (20,10), each
+/// have their own copies of (10,0) and (10,10).
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkCrossNonConformingSeam()
+{
+  VecPt3d pts = {{0, 0, 0},  {10, 0, 0}, {10, 10, 0}, {0, 10, 0},
+                 {10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {4, 5, 6, 7}};
+  VecInt expectedIds = {1, 2, -1};
+  VecDbl expectedTvals = {0.0, 0.5, 1.0};
+  VecPt3d expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {15.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 15, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedTvals = {1.0 / 6.0, 0.5, 5.0 / 6.0};
+  expectedPoints = {{0.0, 5.0, 0.0}, {10.0, 5.0, 0.0}, {20.0, 5.0, 0.0}};
+  iRunEdgeWalkTest(-5, 5, 25, 5, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  // Through the corner, then above cell 2.
+  expectedIds = {1, -1};
+  expectedTvals = {0.0, 0.5};
+  expectedPoints = {{5.0, 5.0, 0.0}, {10.0, 10.0, 0.0}};
+  iRunEdgeWalkTest(5, 5, 15, 15, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkCrossNonConformingSeam
+//------------------------------------------------------------------------------
+/// \brief A line along an edge where two cells meet without sharing its points
+///        reports the cell on its right.
+///
+/// The cells are the ones in testEdgeWalkCrossNonConformingSeam.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongNonConformingSeam()
+{
+  VecPt3d pts = {{0, 0, 0},  {10, 0, 0}, {10, 10, 0}, {0, 10, 0},
+                 {10, 0, 0}, {20, 0, 0}, {20, 10, 0}, {10, 10, 0}};
+  VecInt2d polys = {{0, 1, 2, 3}, {4, 5, 6, 7}};
+  VecInt expectedIds = {2, -1};
+  VecDbl expectedTvals = {0.25, 0.75};
+  VecPt3d expectedPoints = {{10.0, 0.0, 0.0}, {10.0, 10.0, 0.0}};
+  iRunEdgeWalkTest(10, -5, 10, 15, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedTvals = {0.0, 1.0};
+  expectedPoints = {{10.0, 2.0, 0.0}, {10.0, 8.0, 0.0}};
+  iRunEdgeWalkTest(10, 2, 10, 8, pts, polys, expectedIds, expectedTvals, expectedPoints);
+
+  expectedIds = {1, -1};
+  expectedPoints = {{10.0, 8.0, 0.0}, {10.0, 2.0, 0.0}};
+  iRunEdgeWalkTest(10, 8, 10, 2, pts, polys, expectedIds, expectedTvals, expectedPoints);
+} // GmMultiPolyIntersectorEdgeWalkUnitTests::testEdgeWalkAlongNonConformingSeam
+
+////////////////////////////////////////////////////////////////////////////////
+/// \class GmMultiPolyIntersectorEdgeWalkIntermediateTests
+/// \brief Intermediate (file-based) tests for edge-walk intersector.
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+/// \brief Regression test for bug 12586.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug12586()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug12586.xmc", std::ios_base::binary);
+  bool binary = daLineBeginsWith(input, "Binary");
+  std::string header = binary ? "Binary " : "ASCII ";
+  header += "UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, binary);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(xmGrid);
+
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+  mpi->TraverseLineSegment(1538860.17, 7379636.54, 1538862.21, 7379641.02, polyIds, tValues,
+                           points);
+
+  // The segment runs along cell edges the whole way. On each, the cell to its
+  // right is reported (the other side has cells 15802, 15955, 16108, 16261), so
+  // these are the ids testBug12586 expects of the sorter-based implementation.
+  VecInt expectedIds = {7949, 7948, 7947, 7946, -1};
+  VecDbl expectedTvals = {0.0, 0.25, 0.5, 0.75, 1.0};
+  VecPt3d expectedPoints = {{1538860.17, 7379636.54, 0.0},
+                            {1538860.68, 7379637.66, 0.0},
+                            {1538861.19, 7379638.78, 0.0},
+                            {1538861.70, 7379639.90, 0.0},
+                            {1538862.21, 7379641.02, 0.0}};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1e-6);
+  iCheckWalkAgainstGrid(*xmGrid, 1, Pt3d(1538860.17, 7379636.54, 0.0),
+                        Pt3d(1538862.21, 7379641.02, 0.0), polyIds, tValues);
+} // GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug12586
+//------------------------------------------------------------------------------
+/// \brief Regression test for bug 12728.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug12728()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug12728.xmc", std::ios_base::binary);
+  bool binary = daLineBeginsWith(input, "Binary");
+  std::string header = binary ? "Binary " : "ASCII ";
+  header += "UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, binary);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(xmGrid);
+
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+  mpi->TraverseLineSegment(1757154.8029110476, 2309728.6101994626, 1756465.022339, 2309619.893937,
+                           polyIds, tValues, points);
+
+  // The segment runs along cell edges until it leaves the mesh 28% of the way
+  // along. On each edge the cell to its right is reported (the other side has
+  // cells 1, 4, 7), as in testBug12728.
+  VecInt expectedIds = {2, 6, 5, -1};
+  VecDbl expectedTvals = {0.0, 0.090246272342090456, 0.18253212435289559, 0.27690365084791912};
+  VecPt3d expectedPoints = {{1757154.8029110476, 2309728.6101994626, 0.0},
+                            {1757092.5527856862, 2309718.7989620329, 0.0},
+                            {1757028.8957978943, 2309708.7659891238, 0.0},
+                            {1756963.8001523635, 2309698.5062694810, 0.0}};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1e-6);
+  iCheckWalkAgainstGrid(*xmGrid, 1, Pt3d(1757154.8029110476, 2309728.6101994626, 0.0),
+                        Pt3d(1756465.022339, 2309619.893937, 0.0), polyIds, tValues);
+} // GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug12728
+//------------------------------------------------------------------------------
+/// \brief Regression test for bug 13273.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug13273()
+{
+  std::string testFilesPath(XMS_TEST_PATH);
+  std::ifstream input(testFilesPath + "bug13273.xmc", std::ios_base::binary);
+  std::string header = "Binary UGrid2d Version 1";
+  daReadNamedLine(input, header.c_str());
+
+  DaStreamReader reader(input, true);
+  std::shared_ptr<XmUGrid> xmGrid = XmReadUGridFromStream(input);
+
+  // Zero out z values to match test expectations
+  VecPt3d locs = xmGrid->GetLocations();
+  for (auto& p : locs)
+    p.z = 0.0;
+  VecInt cellstream = xmGrid->GetCellstream();
+  auto flatGrid = XmUGrid::New(locs, cellstream);
+
+  BSHP<GmMultiPolyIntersector> mpi = GmMultiPolyIntersector::New(flatGrid);
+
+  VecInt polyIds;
+  VecDbl tValues;
+  VecPt3d points;
+  mpi->TraverseLineSegment(8494183.82, 822079.23, 8494283.14, 822106.67, polyIds, tValues, points);
+
+  // The segment runs along cell edges the whole way. On each, the cell to its
+  // right is reported (the other side has cells 4, 6, 8, 12), as in
+  // testBug13273.
+  VecInt expectedIds = {7, 9, 13, 17, -1};
+  VecDbl expectedTvals = {0.0, 0.25, 0.5, 0.75, 1.0};
+  VecPt3d expectedPoints = {{8494183.8200000003, 822079.22999999998, 0.0},
+                            {8494208.6500000004, 822086.08999999985, 0.0},
+                            {8494233.4800000004, 822092.94999999995, 0.0},
+                            {8494258.3100000005, 822099.81000000006, 0.0},
+                            {8494283.1400000006, 822106.67000000004, 0.0}};
+  TS_ASSERT_EQUALS_VEC(expectedIds, polyIds);
+  TS_ASSERT_DELTA_VEC(expectedTvals, tValues, 1e-9);
+  TS_ASSERT_DELTA_VECPT3D(expectedPoints, points, 1e-6);
+  iCheckWalkAgainstGrid(*flatGrid, 1, Pt3d(8494183.82, 822079.23, 0.0),
+                        Pt3d(8494283.14, 822106.67, 0.0), polyIds, tValues);
+} // GmMultiPolyIntersectorEdgeWalkIntermediateTests::testEdgeWalkBug13273
 
 //} // namespace xms
 
