@@ -30,11 +30,15 @@ namespace xms
 ///
 /// Uses XmUGrid adjacency to walk cell-by-cell through the mesh instead of
 /// intersecting the line against every candidate polygon and sorting.
+///
+/// Cells that meet at coincident copies of a point, instead of sharing it, are
+/// crossed and touched as if they shared it. The walk steps directly between
+/// cells that share their points; across coincident copies it has to search
+/// for the cell on the other side, which costs a spatial query each time.
 //------------------------------------------------------------------------------
 class GmMultiPolyIntersectorEdgeWalk : public GmMultiPolyIntersector
 {
 public:
-  GmMultiPolyIntersectorEdgeWalk(std::shared_ptr<XmUGrid> a_ugrid, int a_startingId = 1);
   ~GmMultiPolyIntersectorEdgeWalk() override;
 
   void SetQuery(GmMultiPolyIntersectorQueryEnum a_query) override;
@@ -65,6 +69,9 @@ public:
   int PolygonFromPoint(const Pt3d& a_pt) override;
 
 private:
+  friend class GmMultiPolyIntersector; // made only by GmMultiPolyIntersector::New
+  explicit GmMultiPolyIntersectorEdgeWalk(std::shared_ptr<XmUGrid> a_ugrid, int a_startingId);
+
   class Impl;
   std::unique_ptr<Impl> m_impl;
 };

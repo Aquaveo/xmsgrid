@@ -123,6 +123,42 @@ public:
 
   // Robustness
   void testEdgeWalkRestoresXyTol();
+  void testEdgeWalkRejectsInvalidGrid();
+
+  // Starting id and point queries
+  void testEdgeWalkZeroBased();
+  void testEdgeWalkPolygonFromPoint();
+
+  // Leaving and re-entering the mesh
+  void testEdgeWalkStartOnVertexThenReenter();
+  void testEdgeWalkTouchCornerThenEnter();
+  void testEdgeWalkTouchSharedVertexThenEnter();
+  void testEdgeWalkTouchOnly();
+  void testEdgeWalkTouchBesideCrossing();
+  void testEdgeWalkLeaveAndReenterMesh();
+  void testEdgeWalkReenterSameCell();
+  void testEdgeWalkStartOnNonConvexCellBoundary();
+  void testEdgeWalkTouchNonConvexCellCornerThenEnter();
+  void testEdgeWalkReenterAcrossNarrowGap();
+  void testEdgeWalkLeaveAtSharedVertexNearEdge();
+
+  // Vertices and edges
+  void testEdgeWalkThroughReflexVertex();
+  void testEdgeWalkAlongBoundaryThroughPolygonVertex();
+  void testEdgeWalkEndOnSharedEdge();
+  void testEdgeWalkNearCollinearEntryAtSharedVertex();
+  void testEdgeWalkAlongEdgesReversed();
+
+  // Touches at shared vertices
+  void testEdgeWalkTouchSharedVertexAtEndpoint();
+  void testEdgeWalkTouchCornerThenEndAtSharedVertex();
+  void testEdgeWalkTouchNonConformingCorner();
+
+  // Narrow cells and non-conforming seams
+  void testEdgeWalkCrossNarrowCell();
+  void testEdgeWalkNarrowCellAtMeshEdge();
+  void testEdgeWalkCrossNonConformingSeam();
+  void testEdgeWalkAlongNonConformingSeam();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

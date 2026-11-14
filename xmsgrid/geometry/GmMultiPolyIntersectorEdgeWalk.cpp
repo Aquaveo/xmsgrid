@@ -15,6 +15,9 @@
 // 3. Standard library headers
 #include <algorithm>
 #include <cmath>
+#include <limits>
+#include <memory>
+#include <stdexcept>
 
 // 4. External library headers
 #pragma warning(push)
@@ -52,6 +55,27 @@ namespace xms
 typedef std::pair<GmBstBox3d, int> ValueBox;
 typedef bgi::rtree<ValueBox, bgi::quadratic<8>> RtreeBox;
 
+namespace // unnamed namespace
+{
+//------------------------------------------------------------------------------
+/// \brief Query an R-tree for the boxes that meet a geometry.
+/// \param a_rtree: The R-tree.
+/// \param a_geometry: What the boxes must meet.
+/// \return The boxes, lowest cell index first, so that a choice between cells
+///         does not depend on the R-tree's order.
+//------------------------------------------------------------------------------
+template <typename Geometry>
+std::vector<ValueBox> iQueryInCellOrder(const RtreeBox& a_rtree, const Geometry& a_geometry)
+{
+  std::vector<ValueBox> result;
+  a_rtree.query(bgi::intersects(a_geometry), std::back_inserter(result));
+  std::sort(result.begin(), result.end(), [](const ValueBox& a_lhs, const ValueBox& a_rhs) {
+    return a_lhs.second < a_rhs.second;
+  });
+  return result;
+} // iQueryInCellOrder
+} // unnamed namespace
+
 //----- Classes / Structs ------------------------------------------------------
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +85,6 @@ class GmMultiPolyIntersectorEdgeWalk::Impl
 {
 public:
   Impl(std::shared_ptr<XmUGrid> a_ugrid, int a_startingId);
-  ~Impl();
 
   void SetQuery(GmMultiPolyIntersectorQueryEnum a_query);
   void TraverseLineSegment(double a_x1,
@@ -71,10 +94,30 @@ public:
                            VecInt& a_polyIds,
                            VecDbl& a_tValues,
                            VecPt3d& a_pts);
-  int PolygonFromPoint(const Pt3d& a_pt);
+  int PolygonFromPoint(const Pt3d& a_pt) const;
 
 private:
-  int FindCellContainingPoint(const Pt3d& a_pt);
+  GmBstPoly3d CellPolygon(int a_cellIdx) const;
+  int PointInCell(int a_cellIdx, const Pt3d& a_pt) const;
+  bool CellHoldsPoint(int a_cellIdx, const Pt3d& a_pt) const;
+  bool IsSharedPoint(int a_cellIdx, const Pt3d& a_pt) const;
+  GmBstBox3d ToleranceBox(const Pt3d& a_pt) const;
+  double TEps(double a_segLen) const;
+  bool SegmentT(const Pt3d& a_pt1,
+                const Pt3d& a_pt2,
+                const Pt3d& a_pt,
+                double a_tEps,
+                double& a_t) const;
+  bool CellOnRightOfLine(int a_cellIdx,
+                         const Pt3d& a_pt1,
+                         const Pt3d& a_pt2,
+                         const Pt3d& a_pt) const;
+  int CellEnteredAfter(const VecInt& a_cells,
+                       const Pt3d& a_pt1,
+                       const Pt3d& a_pt2,
+                       double a_t) const;
+  int FindStartCell(const Pt3d& a_pt1, const Pt3d& a_pt2) const;
+  int FindCellContainingPoint(const Pt3d& a_pt) const;
   bool FindExitEdge(int a_cellIdx,
                     const Pt3d& a_pt1,
                     const Pt3d& a_pt2,
@@ -82,28 +125,36 @@ private:
                     int& a_exitEdgeIdx,
                     Pt3d& a_exitPt,
                     double& a_exitT,
-                    int& a_hitVertexIdx);
+                    int& a_hitVertexIdx) const;
   int ResolveVertexCrossing(int a_vertexIdx,
                             const Pt3d& a_pt1,
                             const Pt3d& a_pt2,
-                            int a_currentCell);
+                            double a_t,
+                            int a_prevCell,
+                            int a_currentCell) const;
   bool FindFirstMeshEntry(const Pt3d& a_pt1,
                           const Pt3d& a_pt2,
+                          double a_afterT,
+                          int a_leftCell,
                           int& a_cellIdx,
                           Pt3d& a_entryPt,
-                          double& a_entryT);
+                          double& a_entryT) const;
+  void RemoveZeroLengthStretches(double a_tEps,
+                                 VecInt& a_polyIds,
+                                 VecDbl& a_tValues,
+                                 VecPt3d& a_pts) const;
   void BuildRTree();
   void CalculateBuffer();
   void BufferTheBox(GmBstBox3d& a_box) const;
   void OffsetPolyIds(VecInt& a_polyIds) const;
-  int PickCellOnRight(int a_vertexIdx1, int a_vertexIdx2, const Pt3d& a_pt1, const Pt3d& a_pt2);
 
-  std::shared_ptr<XmUGrid> m_ugrid;
-  RtreeBox* m_rtree;
-  int m_startingId;
-  double m_buffer;
-  double m_xyTol;
-  GmMultiPolyIntersectorQueryEnum m_query;
+  std::shared_ptr<XmUGrid> m_ugrid;        ///< The grid whose cells are walked
+  std::unique_ptr<RtreeBox> m_rtree;       ///< Buffered extents of the cells
+  int m_startingId;                        ///< Id of the grid's first cell
+  double m_buffer;                         ///< Distance the R-tree boxes are grown by
+  double m_xyTol;                          ///< xy tolerance for this grid
+  int m_maxIterations;                     ///< Most passes a traversal can need
+  GmMultiPolyIntersectorQueryEnum m_query; ///< Point query: covered by or intersects
 };
 
 //----- Class / Function definitions -------------------------------------------
@@ -114,8 +165,10 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Constructor.
-/// \param a_ugrid: The unstructured grid.
-/// \param a_startingId: Starting ID for polygon numbering (default 1).
+/// \param a_ugrid: The unstructured grid. Every cell must be 2D.
+/// \param a_startingId: Id of the grid's first cell.
+/// \throw std::invalid_argument if a_ugrid is null or has a cell that is not
+///        2D.
 //------------------------------------------------------------------------------
 GmMultiPolyIntersectorEdgeWalk::GmMultiPolyIntersectorEdgeWalk(std::shared_ptr<XmUGrid> a_ugrid,
                                                                int a_startingId)
@@ -189,7 +242,8 @@ void GmMultiPolyIntersectorEdgeWalk::TraverseLineSegment(double a_x1,
 //------------------------------------------------------------------------------
 /// \brief Find polygon containing a point.
 /// \param a_pt: Point location.
-/// \return 1-based polygon ID, or XM_NONE.
+/// \return Id of the cell holding the point, counted from the starting id, or
+///         XM_NONE.
 //------------------------------------------------------------------------------
 int GmMultiPolyIntersectorEdgeWalk::PolygonFromPoint(const Pt3d& a_pt)
 {
@@ -201,24 +255,34 @@ int GmMultiPolyIntersectorEdgeWalk::PolygonFromPoint(const Pt3d& a_pt)
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 /// \brief Constructor for Impl.
+/// \param a_ugrid: The unstructured grid. Every cell must be 2D.
+/// \param a_startingId: Id of the grid's first cell.
+/// \throw std::invalid_argument if a_ugrid is null or has a cell that is not
+///        2D.
 //------------------------------------------------------------------------------
 GmMultiPolyIntersectorEdgeWalk::Impl::Impl(std::shared_ptr<XmUGrid> a_ugrid, int a_startingId)
 : m_ugrid(a_ugrid)
-, m_rtree(nullptr)
 , m_startingId(a_startingId)
 , m_buffer(0.0)
 , m_xyTol(1e-9)
+, m_maxIterations(0)
 , m_query(GMMPIQ_COVEREDBY)
 {
+  if (!m_ugrid)
+    throw std::invalid_argument("GmMultiPolyIntersector needs a grid");
+  int edgeCount = 0;
+  for (int cellIdx = 0; cellIdx < m_ugrid->GetCellCount(); ++cellIdx)
+  {
+    if (m_ugrid->GetCellDimension(cellIdx) != 2)
+      throw std::invalid_argument("GmMultiPolyIntersector needs a grid of 2D cells");
+    edgeCount += m_ugrid->GetCellEdgeCount(cellIdx);
+  }
+  // A segment meets an edge at no more than two points. Each pass of the walk
+  // moves to a later one, or into another cell at the same point; the pass
+  // after that moves on.
+  m_maxIterations = 4 * edgeCount + 2;
   CalculateBuffer();
   BuildRTree();
-}
-//------------------------------------------------------------------------------
-/// \brief Destructor for Impl.
-//------------------------------------------------------------------------------
-GmMultiPolyIntersectorEdgeWalk::Impl::~Impl()
-{
-  delete m_rtree;
 }
 //------------------------------------------------------------------------------
 /// \brief Set the query type.
@@ -264,7 +328,7 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::BuildRTree()
     BufferTheBox(box);
     boxen.push_back(std::make_pair(box, i));
   }
-  m_rtree = new RtreeBox(boxen.begin(), boxen.end());
+  m_rtree = std::make_unique<RtreeBox>(boxen.begin(), boxen.end());
 }
 //------------------------------------------------------------------------------
 /// \brief Offset polygon IDs if startingId != 1.
@@ -284,48 +348,238 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::OffsetPolyIds(VecInt& a_polyIds) cons
   }
 }
 //------------------------------------------------------------------------------
+/// \brief Build the boost polygon of a cell.
+/// \param a_cellIdx: 0-based cell index.
+/// \return The cell's outline, closed.
+//------------------------------------------------------------------------------
+GmBstPoly3d GmMultiPolyIntersectorEdgeWalk::Impl::CellPolygon(int a_cellIdx) const
+{
+  VecPt3d cellLocs;
+  m_ugrid->GetCellLocations(a_cellIdx, cellLocs);
+  GmBstPoly3d poly;
+  for (const Pt3d& pt : cellLocs)
+    bg::exterior_ring(poly).push_back(pt);
+  if (!cellLocs.empty())
+    bg::exterior_ring(poly).push_back(cellLocs[0]);
+  return poly;
+}
+//------------------------------------------------------------------------------
+/// \brief Locate a point relative to a cell, within m_xyTol.
+/// \param a_cellIdx: 0-based cell index.
+/// \param a_pt: The point.
+/// \return 1 if the point is inside the cell, 0 if on its boundary, -1 if
+///         outside.
+//------------------------------------------------------------------------------
+int GmMultiPolyIntersectorEdgeWalk::Impl::PointInCell(int a_cellIdx, const Pt3d& a_pt) const
+{
+  VecPt3d cellLocs;
+  m_ugrid->GetCellLocations(a_cellIdx, cellLocs);
+  if (cellLocs.empty())
+    return -1;
+  return gmPointInPolygon2D(&cellLocs[0], cellLocs.size(), a_pt.x, a_pt.y, m_xyTol);
+}
+//------------------------------------------------------------------------------
+/// \brief Whether a point is inside a cell or on its boundary.
+/// \param a_cellIdx: 0-based cell index.
+/// \param a_pt: The point.
+/// \return true if the cell holds the point.
+//------------------------------------------------------------------------------
+bool GmMultiPolyIntersectorEdgeWalk::Impl::CellHoldsPoint(int a_cellIdx, const Pt3d& a_pt) const
+{ return PointInCell(a_cellIdx, a_pt) >= 0; }
+//------------------------------------------------------------------------------
+/// \brief Whether a cell other than a given one holds a point.
+///
+/// Decided by location, not by point index, so cells that meet at coincident
+/// copies of a point share it as cells that use the same point do.
+/// \param a_cellIdx: 0-based index of the cell to leave out.
+/// \param a_pt: The point.
+/// \return true if another cell holds a_pt, inside or on its boundary.
+//------------------------------------------------------------------------------
+bool GmMultiPolyIntersectorEdgeWalk::Impl::IsSharedPoint(int a_cellIdx, const Pt3d& a_pt) const
+{
+  for (const ValueBox& vb : iQueryInCellOrder(*m_rtree, ToleranceBox(a_pt)))
+  {
+    if (vb.second != a_cellIdx && CellHoldsPoint(vb.second, a_pt))
+      return true;
+  }
+  return false;
+}
+//------------------------------------------------------------------------------
+/// \brief The box within m_xyTol of a point.
+/// \param a_pt: The point.
+/// \return The box. Every cell whose boundary passes within m_xyTol of a_pt
+///         has an R-tree box that meets it, even where m_xyTol is larger than
+///         m_buffer.
+//------------------------------------------------------------------------------
+GmBstBox3d GmMultiPolyIntersectorEdgeWalk::Impl::ToleranceBox(const Pt3d& a_pt) const
+{
+  return GmBstBox3d(Pt3d(a_pt.x - m_xyTol, a_pt.y - m_xyTol, 0.0),
+                    Pt3d(a_pt.x + m_xyTol, a_pt.y + m_xyTol, 0.0));
+}
+//------------------------------------------------------------------------------
+/// \brief Convert m_xyTol to a tolerance on the t-values of a segment.
+/// \param a_segLen: Length of the segment.
+/// \return The t tolerance.
+//------------------------------------------------------------------------------
+double GmMultiPolyIntersectorEdgeWalk::Impl::TEps(double a_segLen) const
+{
+  double tEps = (a_segLen > 1e-30) ? (m_xyTol / a_segLen) : 1e-10;
+  return std::max(tEps, 1e-12);
+}
+//------------------------------------------------------------------------------
+/// \brief Find the t-value of a point on a segment, clamped to [0, 1].
+/// \param a_pt1: Segment start.
+/// \param a_pt2: Segment end.
+/// \param a_pt: A point on the segment's line.
+/// \param a_tEps: t tolerance for the segment.
+/// \param a_t: [out] The t-value.
+/// \return false if the point is past either end by more than a_tEps.
+//------------------------------------------------------------------------------
+bool GmMultiPolyIntersectorEdgeWalk::Impl::SegmentT(const Pt3d& a_pt1,
+                                                    const Pt3d& a_pt2,
+                                                    const Pt3d& a_pt,
+                                                    double a_tEps,
+                                                    double& a_t) const
+{
+  a_t = gmPtDistanceAlongSegment(a_pt1, a_pt2, a_pt, m_xyTol);
+  if (a_t < -a_tEps || a_t > 1.0 + a_tEps)
+    return false;
+  a_t = std::min(std::max(a_t, 0.0), 1.0);
+  return true;
+}
+//------------------------------------------------------------------------------
+/// \brief Whether a cell lies on the right of a line that runs along one of
+///        its edges.
+/// \param a_cellIdx: 0-based cell index.
+/// \param a_pt1: Line segment start.
+/// \param a_pt2: Line segment end.
+/// \param a_pt: A point where the line runs along the cell's boundary.
+/// \return true if the cell's interior is on the line's right at a_pt.
+//------------------------------------------------------------------------------
+bool GmMultiPolyIntersectorEdgeWalk::Impl::CellOnRightOfLine(int a_cellIdx,
+                                                             const Pt3d& a_pt1,
+                                                             const Pt3d& a_pt2,
+                                                             const Pt3d& a_pt) const
+{
+  VecPt3d cellLocs;
+  m_ugrid->GetCellLocations(a_cellIdx, cellLocs);
+  size_t pointCount = cellLocs.size();
+  if (pointCount < 3)
+    return false;
+  // A cell's interior is on the left of its edges where they run
+  // counterclockwise, and on their right where they run clockwise.
+  bool counterclockwise = gmPolygonArea(&cellLocs[0], pointCount) > 0.0;
+  double dx = a_pt2.x - a_pt1.x;
+  double dy = a_pt2.y - a_pt1.y;
+  for (size_t i = 0; i < pointCount; ++i)
+  {
+    const Pt3d& edgePt1 = cellLocs[i];
+    const Pt3d& edgePt2 = cellLocs[(i + 1) % pointCount];
+    if (!gmOnLineAndBetweenEndpointsWithTol(edgePt1, edgePt2, a_pt.x, a_pt.y, m_xyTol))
+      continue;
+    bool sameDirection = (edgePt2.x - edgePt1.x) * dx + (edgePt2.y - edgePt1.y) * dy > 0.0;
+    return sameDirection != counterclockwise;
+  }
+  return false;
+}
+//------------------------------------------------------------------------------
+/// \brief Pick the cell a segment goes into just past a point on it.
+///
+/// Up to the next point where the segment meets a cell's boundary, the segment
+/// is inside the cell, outside it, or along its boundary all the way. The
+/// middle of that stretch says which. A cell the segment goes into wins. Where
+/// the segment runs along an edge, the cell on its right wins, as in the
+/// sorter-based implementation. Failing both, the first cell the segment runs
+/// along: the segment runs along the edge of the mesh with the mesh on its
+/// left.
+/// \param a_cells: Candidate cells, in order of preference.
+/// \param a_pt1: Segment start.
+/// \param a_pt2: Segment end.
+/// \param a_t: t-value of the point.
+/// \return The cell the segment goes into, or -1 if it goes into none of them
+///         or ends at a_t.
+//------------------------------------------------------------------------------
+int GmMultiPolyIntersectorEdgeWalk::Impl::CellEnteredAfter(const VecInt& a_cells,
+                                                           const Pt3d& a_pt1,
+                                                           const Pt3d& a_pt2,
+                                                           double a_t) const
+{
+  const double tEps = TEps(gmXyDistance(a_pt1, a_pt2));
+  int along = -1;      // the first cell the segment runs along
+  int alongRight = -1; // the first of those on the segment's right
+  for (int cellIdx : a_cells)
+  {
+    int edgeIdx, vertexIdx;
+    Pt3d nextPt;
+    double nextT;
+    if (!FindExitEdge(cellIdx, a_pt1, a_pt2, a_t, edgeIdx, nextPt, nextT, vertexIdx))
+      nextT = 1.0;
+    if (nextT <= a_t + tEps)
+      continue; // the segment ends at a_t
+    double midT = 0.5 * (a_t + nextT);
+    Pt3d midPt(a_pt1.x + midT * (a_pt2.x - a_pt1.x), a_pt1.y + midT * (a_pt2.y - a_pt1.y), 0.0);
+    int inCell = PointInCell(cellIdx, midPt);
+    if (inCell > 0)
+      return cellIdx;
+    if (inCell < 0)
+      continue;
+    if (along == -1)
+      along = cellIdx;
+    if (alongRight == -1 && CellOnRightOfLine(cellIdx, a_pt1, a_pt2, midPt))
+      alongRight = cellIdx;
+  }
+  return alongRight != -1 ? alongRight : along;
+}
+//------------------------------------------------------------------------------
+/// \brief Find the cell a segment starts in.
+/// \param a_pt1: Segment start.
+/// \param a_pt2: Segment end.
+/// \return 0-based index of the cell holding a_pt1 that the segment goes into.
+///         If the segment goes into none of the cells holding a_pt1, the first
+///         of them; -1 if no cell holds a_pt1.
+//------------------------------------------------------------------------------
+int GmMultiPolyIntersectorEdgeWalk::Impl::FindStartCell(const Pt3d& a_pt1, const Pt3d& a_pt2) const
+{
+  VecInt candidates; // cells holding a_pt1, within m_xyTol
+  for (const ValueBox& vb : iQueryInCellOrder(*m_rtree, a_pt1))
+  {
+    if (CellHoldsPoint(vb.second, a_pt1))
+      candidates.push_back(vb.second);
+  }
+  if (candidates.size() <= 1)
+    return candidates.empty() ? -1 : candidates[0];
+
+  // a_pt1 is on a boundary that several cells share.
+  int cellIdx = CellEnteredAfter(candidates, a_pt1, a_pt2, 0.0);
+  return cellIdx != -1 ? cellIdx : candidates[0];
+}
+//------------------------------------------------------------------------------
 /// \brief Find the cell containing a point using R-tree + point-in-polygon.
 /// \param a_pt: The point to locate.
-/// \return 0-based cell index, or -1 if not found.
+/// \return 0-based index of the cell holding the point, or -1 if none does.
+///         Where several cells do (the point is on an edge or vertex they
+///         share), the lowest, as in the sorter-based implementation.
 //------------------------------------------------------------------------------
-int GmMultiPolyIntersectorEdgeWalk::Impl::FindCellContainingPoint(const Pt3d& a_pt)
+int GmMultiPolyIntersectorEdgeWalk::Impl::FindCellContainingPoint(const Pt3d& a_pt) const
 {
-  std::vector<ValueBox> result;
-  m_rtree->query(bgi::intersects(a_pt), std::back_inserter(result));
-
-  for (size_t i = 0; i < result.size(); ++i)
+  for (const ValueBox& vb : iQueryInCellOrder(*m_rtree, a_pt))
   {
-    int cellIdx = result[i].second;
-    VecPt3d cellLocs;
-    m_ugrid->GetCellLocations(cellIdx, cellLocs);
-    if (cellLocs.empty())
-      continue;
-
+    GmBstPoly3d poly = CellPolygon(vb.second);
     bool inside = false;
     switch (m_query)
     {
-    case GMMPIQ_COVEREDBY: {
-      GmBstPoly3d poly;
-      for (auto& pt : cellLocs)
-        bg::exterior_ring(poly).push_back(pt);
-      bg::exterior_ring(poly).push_back(cellLocs[0]);
+    case GMMPIQ_COVEREDBY:
       inside = bg::covered_by(a_pt, poly);
       break;
-    }
-    case GMMPIQ_INTERSECTS: {
-      GmBstPoly3d poly;
-      for (auto& pt : cellLocs)
-        bg::exterior_ring(poly).push_back(pt);
-      bg::exterior_ring(poly).push_back(cellLocs[0]);
+    case GMMPIQ_INTERSECTS:
       inside = bg::intersects(a_pt, poly);
       break;
-    }
     default:
       XM_ASSERT(false);
       break;
     }
     if (inside)
-      return cellIdx;
+      return vb.second;
   }
   return -1;
 }
@@ -348,22 +602,14 @@ bool GmMultiPolyIntersectorEdgeWalk::Impl::FindExitEdge(int a_cellIdx,
                                                         int& a_exitEdgeIdx,
                                                         Pt3d& a_exitPt,
                                                         double& a_exitT,
-                                                        int& a_hitVertexIdx)
+                                                        int& a_hitVertexIdx) const
 {
   a_exitEdgeIdx = -1;
   a_hitVertexIdx = -1;
   a_exitT = std::numeric_limits<double>::max();
 
+  const double tEps = TEps(gmXyDistance(a_pt1, a_pt2));
   int edgeCount = m_ugrid->GetCellEdgeCount(a_cellIdx);
-  double xyTol = m_xyTol;
-
-  // Compute a t-value epsilon from the XY tolerance and segment length.
-  // t-values are parametric (0-1), so we need to convert spatial tolerance
-  // into parametric tolerance.
-  double segLen = gmXyDistance(a_pt1, a_pt2);
-  double tEps = (segLen > 1e-30) ? (xyTol / segLen) : 1e-10;
-  tEps = std::max(tEps, 1e-12);
-
   for (int e = 0; e < edgeCount; ++e)
   {
     XmEdge edge = m_ugrid->GetCellEdge(a_cellIdx, e);
@@ -371,264 +617,276 @@ bool GmMultiPolyIntersectorEdgeWalk::Impl::FindExitEdge(int a_cellIdx,
     Pt3d edgePt2 = m_ugrid->GetPointLocation(edge.GetSecond());
 
     VecPt3d intersections;
-    gmLineSegmentIntersections(a_pt1, a_pt2, edgePt1, edgePt2, intersections, xyTol);
+    gmLineSegmentIntersections(a_pt1, a_pt2, edgePt1, edgePt2, intersections, m_xyTol);
 
-    for (auto& ixPt : intersections)
+    for (const Pt3d& ixPt : intersections)
     {
-      double t = gmPtDistanceAlongSegment(a_pt1, a_pt2, ixPt, xyTol);
-      if (t < -tEps || t > 1.0 + tEps)
-        continue;
-      if (t < 0.0)
-        t = 0.0;
-      if (t > 1.0)
-        t = 1.0;
-
-      // Must be strictly beyond current position (forward progress)
-      if (t <= a_currentT + tEps)
+      // Only the nearest point strictly ahead of the current position counts.
+      double t;
+      if (!SegmentT(a_pt1, a_pt2, ixPt, tEps, t) || t <= a_currentT + tEps || t >= a_exitT)
         continue;
 
-      if (t < a_exitT)
-      {
-        a_exitT = t;
-        a_exitPt = ixPt;
-        a_exitEdgeIdx = e;
-
-        // Check if intersection is at a vertex
-        a_hitVertexIdx = -1;
-        if (gmEqualPointsXY(ixPt, edgePt1, xyTol))
-          a_hitVertexIdx = edge.GetFirst();
-        else if (gmEqualPointsXY(ixPt, edgePt2, xyTol))
-          a_hitVertexIdx = edge.GetSecond();
-      }
+      a_exitT = t;
+      a_exitPt = ixPt;
+      a_exitEdgeIdx = e;
+      a_hitVertexIdx = -1;
+      if (gmEqualPointsXY(ixPt, edgePt1, m_xyTol))
+        a_hitVertexIdx = edge.GetFirst();
+      else if (gmEqualPointsXY(ixPt, edgePt2, m_xyTol))
+        a_hitVertexIdx = edge.GetSecond();
     }
   }
   return a_exitEdgeIdx != -1;
 }
 //------------------------------------------------------------------------------
-/// \brief Resolve which cell the line enters when crossing through a vertex.
-/// \param a_vertexIdx: The shared vertex index.
+/// \brief Resolve which cell the line goes into when it crosses a vertex.
+/// \param a_vertexIdx: The vertex.
 /// \param a_pt1: Line segment start.
 /// \param a_pt2: Line segment end.
-/// \param a_currentCell: The cell we're leaving.
-/// \return 0-based cell index of the next cell, or -1 if exiting the mesh.
+/// \param a_t: t-value of the vertex on the line.
+/// \param a_prevCell: The cell the walk was in before the current one, or -1.
+/// \param a_currentCell: The cell the walk is in.
+/// \return 0-based index of the cell the line goes into, or -1 if it leaves the
+///         mesh or ends at the vertex. It is a_currentCell when the line only
+///         touches the vertex and stays in the cell.
 //------------------------------------------------------------------------------
 int GmMultiPolyIntersectorEdgeWalk::Impl::ResolveVertexCrossing(int a_vertexIdx,
                                                                 const Pt3d& a_pt1,
                                                                 const Pt3d& a_pt2,
-                                                                int a_currentCell)
+                                                                double a_t,
+                                                                int a_prevCell,
+                                                                int a_currentCell) const
 {
-  Pt3d V = m_ugrid->GetPointLocation(a_vertexIdx);
-  double dx = a_pt2.x - a_pt1.x;
-  double dy = a_pt2.y - a_pt1.y;
-  double mag = std::sqrt(dx * dx + dy * dy);
-  if (mag < 1e-30)
-    return -1;
-
+  // The cells the walk has not been in come first, so that where
+  // CellEnteredAfter has nothing else to go on, the walk moves on.
   VecInt adjCells = m_ugrid->GetPointAdjacentCells(a_vertexIdx);
-
-  // Probe a point slightly past V along the line direction and check which
-  // adjacent cell contains it. This handles convex and non-convex cells.
-  for (double probeDist : {m_xyTol * 100, m_xyTol * 1000, m_xyTol * 10000})
-  {
-    double frac = probeDist / mag;
-    Pt3d probe;
-    probe.x = V.x + frac * dx;
-    probe.y = V.y + frac * dy;
-
-    for (int candidateCell : adjCells)
-    {
-      if (candidateCell == a_currentCell)
-        continue;
-      VecPt3d cellLocs;
-      m_ugrid->GetCellLocations(candidateCell, cellLocs);
-      if (cellLocs.empty())
-        continue;
-      int pip = gmPointInPolygon2D(&cellLocs[0], cellLocs.size(), probe.x, probe.y, m_xyTol);
-      if (pip >= 0)
-        return candidateCell;
-    }
-  }
-
-  // If probing didn't work, try the edge-along case: line runs along an edge.
-  // Check if the line direction is collinear with any edge from V and pick
-  // the cell on the right side.
-  for (int candidateCell : adjCells)
-  {
-    if (candidateCell == a_currentCell)
-      continue;
-    int cellEdgeCount = m_ugrid->GetCellEdgeCount(candidateCell);
-    for (int e = 0; e < cellEdgeCount; ++e)
-    {
-      XmEdge edge = m_ugrid->GetCellEdge(candidateCell, e);
-      int otherVtx = -1;
-      if (edge.GetFirst() == a_vertexIdx)
-        otherVtx = edge.GetSecond();
-      else if (edge.GetSecond() == a_vertexIdx)
-        otherVtx = edge.GetFirst();
-      if (otherVtx < 0)
-        continue;
-
-      Pt3d other = m_ugrid->GetPointLocation(otherVtx);
-      double edx = other.x - V.x;
-      double edy = other.y - V.y;
-      double cross = dx * edy - dy * edx;
-      if (std::fabs(cross) <= m_xyTol * mag)
-      {
-        // Line is collinear with this edge. Pick the cell on the right side.
-        int result = PickCellOnRight(a_vertexIdx, otherVtx, a_pt1, a_pt2);
-        if (result != -1 && result != a_currentCell)
-          return result;
-      }
-    }
-  }
-
-  return -1;
-}
-//------------------------------------------------------------------------------
-/// \brief Pick the cell on the right side of a directed edge (matching
-///        existing behavior for line-along-edge cases).
-/// \param a_vertexIdx1: First vertex of the edge.
-/// \param a_vertexIdx2: Second vertex of the edge.
-/// \param a_pt1: Line direction start.
-/// \param a_pt2: Line direction end.
-/// \return 0-based cell index on the right side, or -1.
-//------------------------------------------------------------------------------
-int GmMultiPolyIntersectorEdgeWalk::Impl::PickCellOnRight(int a_vertexIdx1,
-                                                          int a_vertexIdx2,
-                                                          const Pt3d& a_pt1,
-                                                          const Pt3d& a_pt2)
-{
-  VecInt adjCells;
-  m_ugrid->GetPointsAdjacentCells(a_vertexIdx1, a_vertexIdx2, adjCells);
-
-  if (adjCells.size() == 1)
-    return adjCells[0];
-  if (adjCells.empty())
-    return -1;
-
-  // Find the cell whose centroid is on the right side of the line direction
-  Pt3d edgePt1 = m_ugrid->GetPointLocation(a_vertexIdx1);
-  double dx = a_pt2.x - a_pt1.x;
-  double dy = a_pt2.y - a_pt1.y;
-
+  VecInt candidates;
   for (int cellIdx : adjCells)
   {
-    Pt3d centroid;
-    m_ugrid->GetCellCentroid(cellIdx, centroid);
-    double cross = dx * (centroid.y - edgePt1.y) - dy * (centroid.x - edgePt1.x);
-    if (cross < -m_xyTol)
-      return cellIdx; // Right side
+    if (cellIdx != a_prevCell && cellIdx != a_currentCell)
+      candidates.push_back(cellIdx);
   }
-  // Fallback: return first cell
-  return adjCells[0];
+  for (int cellIdx : {a_prevCell, a_currentCell})
+  {
+    if (std::find(adjCells.begin(), adjCells.end(), cellIdx) != adjCells.end())
+      candidates.push_back(cellIdx);
+  }
+  return CellEnteredAfter(candidates, a_pt1, a_pt2, a_t);
 }
 //------------------------------------------------------------------------------
-/// \brief Find where a line first enters the mesh from outside.
-/// \param a_pt1: Line segment start (outside mesh).
+/// \brief Find where a line next meets the mesh from outside.
+///
+/// Where the line has just left a cell at a_afterT, another cell can meet the
+/// line at that same point: a cell narrower than the tolerance, or a cell that
+/// meets the one left only at coincident copies of its points. If the line
+/// goes into such a cell, that is where it meets the mesh.
+/// \param a_pt1: Line segment start.
 /// \param a_pt2: Line segment end.
-/// \param a_cellIdx: [out] Cell the line enters.
-/// \param a_entryPt: [out] Entry point on the mesh boundary.
-/// \param a_entryT: [out] t-value of entry point.
-/// \return true if an entry was found.
+/// \param a_afterT: t-value where the line left the mesh; other than at that
+///        point, only points past it count. Negative to count every point.
+/// \param a_leftCell: The cell the line left at a_afterT, or -1.
+/// \param a_cellIdx: [out] Cell the line meets.
+/// \param a_entryPt: [out] Point where it meets the cell's boundary.
+/// \param a_entryT: [out] t-value of that point.
+/// \return true if the line meets the mesh again.
 //------------------------------------------------------------------------------
 bool GmMultiPolyIntersectorEdgeWalk::Impl::FindFirstMeshEntry(const Pt3d& a_pt1,
                                                               const Pt3d& a_pt2,
+                                                              double a_afterT,
+                                                              int a_leftCell,
                                                               int& a_cellIdx,
                                                               Pt3d& a_entryPt,
-                                                              double& a_entryT)
+                                                              double& a_entryT) const
 {
-  // Query R-tree for cells whose bounding box intersects the line
-  GmBstLine3d line;
-  line.push_back(a_pt1);
-  line.push_back(a_pt2);
-
-  std::vector<ValueBox> result;
-  m_rtree->query(bgi::intersects(line), std::back_inserter(result));
-
-  double bestT = std::numeric_limits<double>::max();
-  int bestCell = -1;
-  Pt3d bestPt;
-  double tol = m_xyTol;
-
-  for (size_t i = 0; i < result.size(); ++i)
+  // The points where the line meets the boundaries of the cells in a_boxes,
+  // from a_afterT on, other than where the cell it left meets it at a_afterT.
+  struct Hit
   {
-    int cellIdx = result[i].second;
-    int edgeCount = m_ugrid->GetCellEdgeCount(cellIdx);
-
-    for (int e = 0; e < edgeCount; ++e)
+    double t;
+    int cellIdx;
+    Pt3d pt;
+  };
+  const double tEps = TEps(gmXyDistance(a_pt1, a_pt2));
+  std::vector<Hit> hits;
+  auto addHits = [&](const std::vector<ValueBox>& a_boxes) {
+    for (const ValueBox& vb : a_boxes)
     {
-      XmEdge edge = m_ugrid->GetCellEdge(cellIdx, e);
-      Pt3d edgePt1 = m_ugrid->GetPointLocation(edge.GetFirst());
-      Pt3d edgePt2 = m_ugrid->GetPointLocation(edge.GetSecond());
-
-      VecPt3d intersections;
-      gmLineSegmentIntersections(a_pt1, a_pt2, edgePt1, edgePt2, intersections, tol);
-
-      for (auto& ixPt : intersections)
+      int cellIdx = vb.second;
+      int edgeCount = m_ugrid->GetCellEdgeCount(cellIdx);
+      for (int e = 0; e < edgeCount; ++e)
       {
-        double t = gmPtDistanceAlongSegment(a_pt1, a_pt2, ixPt, tol);
-        if (t < -tol || t > 1.0 + tol)
-          continue;
-        if (t < 0.0)
-          t = 0.0;
-        if (t > 1.0)
-          t = 1.0;
-        if (t < bestT - tol)
+        XmEdge edge = m_ugrid->GetCellEdge(cellIdx, e);
+        Pt3d edgePt1 = m_ugrid->GetPointLocation(edge.GetFirst());
+        Pt3d edgePt2 = m_ugrid->GetPointLocation(edge.GetSecond());
+
+        VecPt3d intersections;
+        gmLineSegmentIntersections(a_pt1, a_pt2, edgePt1, edgePt2, intersections, m_xyTol);
+        for (const Pt3d& ixPt : intersections)
         {
-          bestT = t;
-          bestPt = ixPt;
-          bestCell = cellIdx;
-        }
-        else if (t < bestT + tol)
-        {
-          // Same t: this intersection might be at a vertex shared by multiple cells.
-          // Prefer a cell that the line actually enters (not just touches).
-          // Check if the midpoint slightly beyond entry is inside this cell.
-          double probeT = t + 1e-6;
-          if (probeT <= 1.0)
-          {
-            Pt3d probe;
-            probe.x = a_pt1.x + probeT * (a_pt2.x - a_pt1.x);
-            probe.y = a_pt1.y + probeT * (a_pt2.y - a_pt1.y);
-            VecPt3d cellLocs;
-            m_ugrid->GetCellLocations(cellIdx, cellLocs);
-            int pip = gmPointInPolygon2D(&cellLocs[0], cellLocs.size(), probe.x, probe.y, tol);
-            if (pip >= 0)
-            {
-              bestT = t;
-              bestPt = ixPt;
-              bestCell = cellIdx;
-            }
-          }
+          double t;
+          if (!SegmentT(a_pt1, a_pt2, ixPt, tEps, t))
+            continue;
+          bool ahead = t > a_afterT + tEps;
+          bool atLeftPoint = !ahead && t >= a_afterT - tEps && cellIdx != a_leftCell;
+          if (ahead || atLeftPoint)
+            hits.push_back({t, cellIdx, ixPt});
         }
       }
     }
+  };
+
+  // The cells that meet the line within tEps of a_t, past a_minT, and the
+  // point of the first hit among them.
+  auto cellsAt = [&](double a_t, double a_minT, Pt3d& a_pt) {
+    VecInt cells;
+    for (const Hit& hit : hits)
+    {
+      if (std::fabs(hit.t - a_t) > tEps || hit.t <= a_minT)
+        continue;
+      if (cells.empty())
+        a_pt = hit.pt;
+      if (std::find(cells.begin(), cells.end(), hit.cellIdx) == cells.end())
+        cells.push_back(hit.cellIdx);
+    }
+    return cells;
+  };
+
+  if (a_afterT >= 0.0)
+  {
+    // Only a cell within m_xyTol of the point where the line left can take
+    // over there, so search around that point before the rest of the line.
+    Pt3d leftPt(a_pt1.x + a_afterT * (a_pt2.x - a_pt1.x), a_pt1.y + a_afterT * (a_pt2.y - a_pt1.y),
+                0.0);
+    addHits(iQueryInCellOrder(*m_rtree, ToleranceBox(leftPt)));
+    Pt3d pt;
+    VecInt cells = cellsAt(a_afterT, -1.0, pt);
+    int entered = cells.empty() ? -1 : CellEnteredAfter(cells, a_pt1, a_pt2, a_afterT);
+    if (entered != -1)
+    {
+      a_cellIdx = entered;
+      a_entryPt = pt;
+      a_entryT = a_afterT;
+      return true;
+    }
+    hits.clear();
   }
 
-  if (bestCell != -1)
+  // Search the cells whose boxes meet the rest of the line.
+  double startT = std::max(a_afterT, 0.0);
+  GmBstLine3d line;
+  line.push_back(
+    Pt3d(a_pt1.x + startT * (a_pt2.x - a_pt1.x), a_pt1.y + startT * (a_pt2.y - a_pt1.y), 0.0));
+  line.push_back(a_pt2);
+  addHits(iQueryInCellOrder(*m_rtree, line));
+
+  double bestT = std::numeric_limits<double>::max();
+  for (const Hit& hit : hits)
   {
-    a_cellIdx = bestCell;
-    a_entryPt = bestPt;
-    a_entryT = bestT;
-    return true;
+    if (hit.t > a_afterT + tEps)
+      bestT = std::min(bestT, hit.t);
   }
-  return false;
+  if (bestT > 1.0)
+    return false;
+
+  // Several cells meet the line at the entry point when it is a vertex they
+  // share. Take the one the line goes into.
+  Pt3d bestPt;
+  VecInt bestCells = cellsAt(bestT, a_afterT + tEps, bestPt);
+  a_cellIdx = bestCells[0];
+  if (bestCells.size() > 1)
+  {
+    int entered = CellEnteredAfter(bestCells, a_pt1, a_pt2, bestT);
+    if (entered != -1)
+      a_cellIdx = entered;
+  }
+  a_entryPt = bestPt;
+  a_entryT = bestT;
+  return true;
 }
+//------------------------------------------------------------------------------
+/// \brief Drop the stretches of the line that have no length.
+///
+/// A record whose next record is within a_tEps of it covers no length of the
+/// line. It is a cell the line only touches (a corner it grazes, or a boundary
+/// it starts or ends on and heads away from), a cell narrower than the
+/// tolerance, or a gap between cells that meet at coincident points.
+///
+/// The sorter-based implementation reports a touch only when it is all the
+/// line meets, and never a touch at a point that several cells hold, such as
+/// a vertex they share. So does the walk.
+/// \param a_tEps: Tolerance for comparing t-values.
+/// \param a_polyIds: [in,out] 1-based cell ids, -1 where the line leaves the
+///        mesh.
+/// \param a_tValues: [in,out] The t-value of each entry in a_polyIds.
+/// \param a_pts: [in,out] The point of each entry in a_polyIds.
+//------------------------------------------------------------------------------
+void GmMultiPolyIntersectorEdgeWalk::Impl::RemoveZeroLengthStretches(double a_tEps,
+                                                                     VecInt& a_polyIds,
+                                                                     VecDbl& a_tValues,
+                                                                     VecPt3d& a_pts) const
+{
+  size_t count = a_polyIds.size();
+  VecBool keep(count, true);
+  bool anyLength = false; // whether the line runs through any cell
+  int touch = -1;         // a touch the line could report on its own
+  int touchCount = 0;     // touches other than at shared vertices
+  for (size_t i = 0; i + 1 < count; ++i)
+  {
+    if (a_tValues[i + 1] - a_tValues[i] > a_tEps)
+    {
+      anyLength = anyLength || a_polyIds[i] != -1;
+      continue;
+    }
+    keep[i] = false;
+    if (a_polyIds[i] != -1 && !IsSharedPoint(a_polyIds[i] - 1, a_pts[i]))
+    {
+      touch = (int)i;
+      ++touchCount;
+    }
+  }
+
+  size_t kept = 0;
+  auto keepRecord = [&](size_t a_i, int a_polyId) {
+    a_polyIds[kept] = a_polyId;
+    a_tValues[kept] = a_tValues[a_i];
+    a_pts[kept] = a_pts[a_i];
+    ++kept;
+  };
+  if (!anyLength)
+  {
+    // The line only touches the mesh: report the touch if there is one.
+    if (touchCount == 1)
+    {
+      size_t i = static_cast<size_t>(touch);
+      keepRecord(i, a_polyIds[i]);
+      keepRecord(i + 1, -1);
+    }
+  }
+  else
+  {
+    for (size_t i = 0; i < count; ++i)
+    {
+      if (!keep[i])
+        continue;
+      if (kept == 0 ? a_polyIds[i] == -1 : a_polyIds[kept - 1] == a_polyIds[i])
+        continue; // a gap before the first cell, or the same cell or gap as before
+      keepRecord(i, a_polyIds[i]);
+    }
+  }
+  a_polyIds.resize(kept);
+  a_tValues.resize(kept);
+  a_pts.resize(kept);
+} // GmMultiPolyIntersectorEdgeWalk::Impl::RemoveZeroLengthStretches
 //------------------------------------------------------------------------------
 /// \brief Find the polygon containing a point.
 /// \param a_pt: Point location.
-/// \return 1-based polygon ID (offset by m_startingId), or XM_NONE.
+/// \return Id of the cell holding the point (its 0-based index plus the
+///         starting id), or XM_NONE.
 //------------------------------------------------------------------------------
-int GmMultiPolyIntersectorEdgeWalk::Impl::PolygonFromPoint(const Pt3d& a_pt)
+int GmMultiPolyIntersectorEdgeWalk::Impl::PolygonFromPoint(const Pt3d& a_pt) const
 {
   int cellIdx = FindCellContainingPoint(a_pt);
-  if (cellIdx < 0)
-    return XM_NONE;
-  // Return 1-based ID, then offset
-  int id = cellIdx + 1;
-  if (m_startingId != 1)
-    id += (m_startingId - 1);
-  return id;
+  return cellIdx < 0 ? XM_NONE : cellIdx + m_startingId;
 }
 //------------------------------------------------------------------------------
 /// \brief Main edge-walk traversal.
@@ -658,298 +916,142 @@ void GmMultiPolyIntersectorEdgeWalk::Impl::TraverseLineSegment(double a_x1,
 
   Pt3d pt1(a_x1, a_y1, 0.0);
   Pt3d pt2(a_x2, a_y2, 0.0);
-  double tol = m_xyTol;
-
   double segLen = gmXyDistance(pt1, pt2);
+  if (gmEqualPointsXY(pt1, pt2, m_xyTol) || segLen < 1e-30)
+    return; // degenerate segment
+  const double tEps = TEps(segLen);
 
-  // Degenerate segment check
-  if (gmEqualPointsXY(pt1, pt2, tol) || segLen < 1e-30)
-  {
-    return;
-  }
-
-  // Step 1: Find starting cell.
-  // If pt1 is on a boundary between cells, we need to pick the cell the
-  // line actually enters. Find all candidate cells and probe slightly ahead.
+  int prevCell = -1; // the cell the walk was in before currentCell, or -1
   int currentCell = -1;
-  {
-    // Collect all cells whose R-tree bounding box contains pt1
-    std::vector<ValueBox> rtreeResult;
-    m_rtree->query(bgi::intersects(pt1), std::back_inserter(rtreeResult));
-
-    VecInt candidates;
-    for (auto& vb : rtreeResult)
-    {
-      int cellIdx = vb.second;
-      VecPt3d cellLocs;
-      m_ugrid->GetCellLocations(cellIdx, cellLocs);
-      if (cellLocs.empty())
-        continue;
-      GmBstPoly3d poly;
-      for (auto& p : cellLocs)
-        bg::exterior_ring(poly).push_back(p);
-      bg::exterior_ring(poly).push_back(cellLocs[0]);
-      if (bg::covered_by(pt1, poly))
-        candidates.push_back(cellIdx);
-    }
-
-    if (candidates.size() == 1)
-    {
-      currentCell = candidates[0];
-    }
-    else if (candidates.size() > 1)
-    {
-      // pt1 is on a boundary shared by multiple cells. Probe along the
-      // line direction to pick the cell the line enters.
-      for (double frac : {1e-4, 1e-3, 1e-2})
-      {
-        Pt3d probe;
-        probe.x = pt1.x + frac * (pt2.x - pt1.x);
-        probe.y = pt1.y + frac * (pt2.y - pt1.y);
-        for (int c : candidates)
-        {
-          VecPt3d cellLocs;
-          m_ugrid->GetCellLocations(c, cellLocs);
-          int pip = gmPointInPolygon2D(&cellLocs[0], cellLocs.size(), probe.x, probe.y, tol);
-          if (pip >= 0)
-          {
-            currentCell = c;
-            break;
-          }
-        }
-        if (currentCell >= 0)
-          break;
-      }
-      if (currentCell < 0)
-        currentCell = candidates[0]; // Fallback
-    }
-  }
   double currentT = 0.0;
   Pt3d currentPt = pt1;
+  // Whether the walk came into currentCell at currentT from outside the mesh,
+  // and has not yet confirmed that the line goes into the cell there.
+  bool justEntered = false;
 
+  // Record that the line goes into a cell (0-based), or leaves the mesh (-1),
+  // at a_t.
+  auto record = [&](int a_cellIdx, double a_t, const Pt3d& a_pt) {
+    a_polyIds.push_back(a_cellIdx < 0 ? -1 : a_cellIdx + 1);
+    a_tValues.push_back(a_t);
+    a_pts.push_back(Pt3d(a_pt.x, a_pt.y, 0.0));
+  };
+  // Move the walk to where the line comes back into the mesh after leaving
+  // currentCell at a_leftT. Returns false if it never does.
+  auto reenter = [&](double a_leftT) {
+    int cellIdx;
+    Pt3d pt;
+    double t;
+    if (!FindFirstMeshEntry(pt1, pt2, a_leftT, currentCell, cellIdx, pt, t))
+      return false;
+    prevCell = -1;
+    currentCell = cellIdx;
+    currentT = t;
+    currentPt = pt;
+    justEntered = true;
+    record(currentCell, currentT, currentPt);
+    return true;
+  };
+
+  // Step 1: find the cell the line starts in, or where it first enters the
+  // mesh.
+  currentCell = FindStartCell(pt1, pt2);
   if (currentCell == -1)
   {
-    // pt1 is outside the mesh — find where the line first enters
-    Pt3d entryPt;
-    double entryT;
-    if (!FindFirstMeshEntry(pt1, pt2, currentCell, entryPt, entryT))
-    {
-      // Line doesn't cross the mesh at all
-      return;
-    }
-    currentT = entryT;
-    currentPt = entryPt;
-
-    // If entry t >= 1.0, the line only touches the mesh boundary at the end
-    if (currentT >= 1.0 - tol)
-    {
-      // Special case: line touches mesh at a single point (like OutPt test)
-      // Record: [cellId, -1] at [t, t]
-      a_polyIds.push_back(currentCell + 1);
-      a_tValues.push_back(currentT);
-      a_pts.push_back(Pt3d(currentPt.x, currentPt.y, 0.0));
-      a_polyIds.push_back(-1);
-      a_tValues.push_back(currentT);
-      a_pts.push_back(Pt3d(currentPt.x, currentPt.y, 0.0));
-      OffsetPolyIds(a_polyIds);
-      return;
-    }
+    if (!FindFirstMeshEntry(pt1, pt2, -1.0, -1, currentCell, currentPt, currentT))
+      return; // the line misses the mesh
   }
+  justEntered = true;
+  record(currentCell, currentT, currentPt);
 
-  // Record the entry into the first cell
-  a_polyIds.push_back(currentCell + 1); // 1-based
-  a_tValues.push_back(currentT);
-  a_pts.push_back(Pt3d(currentPt.x, currentPt.y, 0.0));
-
-  // Compute a t-epsilon for end-of-segment detection
-  double tEps = (segLen > 1e-30) ? (tol / segLen) : 1e-10;
-  tEps = std::max(tEps, 1e-12);
-
-  // Step 2: Walk through cells
-  int prevCell = -1;
-  const int maxIterations = m_ugrid->GetCellCount() + 100;
-  for (int iter = 0; iter < maxIterations; ++iter)
+  // Step 2: walk from cell to cell. Every pass moves to a later point on the
+  // line, or into another cell at the same point, so the walk ends well before
+  // m_maxIterations.
+  for (int iter = 0; iter < m_maxIterations; ++iter)
   {
     int exitEdgeIdx;
+    int hitVertexIdx;
     Pt3d exitPt;
     double exitT;
-    int hitVertexIdx;
-
     bool found =
       FindExitEdge(currentCell, pt1, pt2, currentT, exitEdgeIdx, exitPt, exitT, hitVertexIdx);
-
-    if (!found)
+    if (!found && CellHoldsPoint(currentCell, pt2))
     {
-      // No exit edge found. Either pt2 is inside this cell, or the line
-      // entered at a boundary point and immediately exited.
-      int pt2Cell = FindCellContainingPoint(pt2);
-      if (pt2Cell == currentCell)
-      {
-        // pt2 is genuinely inside this cell
-        a_polyIds.push_back(-1);
-        a_tValues.push_back(1.0);
-        a_pts.push_back(Pt3d(pt2.x, pt2.y, 0.0));
-      }
-      else
-      {
-        // pt2 is NOT inside this cell. The line touched the boundary at the
-        // entry point and immediately left.
-        // Only discard vertex-only touches when this is the FIRST entry from
-        // outside (prevCell == -1). During mid-walk, always record the exit.
-        bool discard = false;
-        if (prevCell == -1)
-        {
-          // Check if this is a vertex-only touch at a shared vertex
-          VecInt cellPts = m_ugrid->GetCellPoints(currentCell);
-          for (int ptIdx : cellPts)
-          {
-            Pt3d vtx = m_ugrid->GetPointLocation(ptIdx);
-            if (gmEqualPointsXY(currentPt, vtx, tol))
-            {
-              int adjCount = m_ugrid->GetPointAdjacentCellCount(ptIdx);
-              if (adjCount > 1)
-                discard = true;
-              break;
-            }
-          }
-        }
-        if (discard)
-        {
-          // Vertex-only touch from outside — discard the entry
-          a_polyIds.pop_back();
-          a_tValues.pop_back();
-          a_pts.pop_back();
-        }
-        else
-        {
-          // Boundary touch — record exit at the entry point
-          a_polyIds.push_back(-1);
-          a_tValues.push_back(currentT);
-          a_pts.push_back(Pt3d(currentPt.x, currentPt.y, 0.0));
-        }
-      }
+      record(-1, 1.0, pt2); // the line ends in this cell
       break;
     }
 
-    // Clamp exit t
-    if (exitT > 1.0)
-      exitT = 1.0;
+    // With nothing ahead in this cell, the line leaves the mesh here. Where the
+    // walk has just come in from outside, the line can also miss the cell up
+    // to the next boundary point: it only touched the cell, or the cell is
+    // not convex and the line crosses a notch in it.
+    bool leaves = !found;
+    if (found && justEntered)
+    {
+      double midT = 0.5 * (currentT + exitT);
+      Pt3d midPt(pt1.x + midT * (pt2.x - pt1.x), pt1.y + midT * (pt2.y - pt1.y), 0.0);
+      leaves = !CellHoldsPoint(currentCell, midPt);
+    }
+    if (leaves)
+    {
+      record(-1, currentT, currentPt);
+      if (!reenter(currentT))
+        break;
+      continue;
+    }
 
-    // Determine next cell
-    int nextCell = -1;
+    int nextCell;
     if (hitVertexIdx >= 0)
-    {
-      nextCell = ResolveVertexCrossing(hitVertexIdx, pt1, pt2, currentCell);
-    }
+      nextCell = ResolveVertexCrossing(hitVertexIdx, pt1, pt2, exitT, prevCell, currentCell);
     else
-    {
       nextCell = m_ugrid->GetCell2dEdgeAdjacentCell(currentCell, exitEdgeIdx);
-    }
-
-    // Prevent bouncing back to the cell we just came from
-    if (nextCell == prevCell && nextCell >= 0)
-    {
-      // Try to find an alternative next cell
-      if (hitVertexIdx >= 0)
-      {
-        // At a vertex, try other adjacent cells
-        VecInt adjCells = m_ugrid->GetPointAdjacentCells(hitVertexIdx);
-        int altCell = -1;
-        for (int c : adjCells)
-        {
-          if (c != currentCell && c != prevCell)
-          {
-            altCell = c;
-            break;
-          }
-        }
-        if (altCell >= 0)
-          nextCell = altCell;
-      }
-    }
 
     if (exitT >= 1.0 - tEps)
     {
-      // We've reached pt2
-      int pt2Cell = FindCellContainingPoint(pt2);
-
-      if (pt2Cell == currentCell)
+      // The line ends on this cell's boundary.
+      if (CellHoldsPoint(currentCell, pt2))
       {
-        a_polyIds.push_back(-1);
-        a_tValues.push_back(1.0);
-        a_pts.push_back(Pt3d(pt2.x, pt2.y, 0.0));
+        record(-1, 1.0, pt2);
       }
-      else if (nextCell >= 0 && pt2Cell == nextCell)
+      else if (nextCell >= 0 && CellHoldsPoint(nextCell, pt2))
       {
-        a_polyIds.push_back(nextCell + 1);
-        a_tValues.push_back(exitT);
-        a_pts.push_back(Pt3d(exitPt.x, exitPt.y, 0.0));
-        a_polyIds.push_back(-1);
-        a_tValues.push_back(1.0);
-        a_pts.push_back(Pt3d(pt2.x, pt2.y, 0.0));
+        record(nextCell, exitT, exitPt);
+        record(-1, 1.0, pt2);
       }
       else
       {
-        a_polyIds.push_back(-1);
-        a_tValues.push_back(exitT);
-        a_pts.push_back(Pt3d(exitPt.x, exitPt.y, 0.0));
+        record(-1, exitT, exitPt);
       }
       break;
     }
 
     if (nextCell == -1)
     {
-      // Exiting the mesh through a boundary
-      a_polyIds.push_back(-1);
-      a_tValues.push_back(exitT);
-      a_pts.push_back(Pt3d(exitPt.x, exitPt.y, 0.0));
-
-      // Try to find re-entry into the mesh.
-      // Use a search start that's at least m_buffer past the exit to avoid
-      // false re-entry at the same boundary due to R-tree buffer tolerance.
-      double bufferT = (segLen > 1e-30) ? (m_buffer * 2.0 / segLen) : 0.01;
-      double searchStartT = exitT + std::max(bufferT, tEps * 100);
-      if (searchStartT < 1.0)
-      {
-        Pt3d searchStart;
-        searchStart.x = pt1.x + searchStartT * (pt2.x - pt1.x);
-        searchStart.y = pt1.y + searchStartT * (pt2.y - pt1.y);
-
-        int reentryCell = -1;
-        Pt3d reentryPt;
-        double reentryT;
-        if (FindFirstMeshEntry(searchStart, pt2, reentryCell, reentryPt, reentryT))
-        {
-          // Convert reentryT from searchStart-pt2 space to pt1-pt2 space
-          reentryT = searchStartT + reentryT * (1.0 - searchStartT);
-          // Only accept re-entry if it's at a genuinely different location
-          if (reentryT < 1.0 + tEps && reentryCell != currentCell)
-          {
-            prevCell = -1;
-            currentCell = reentryCell;
-            currentT = reentryT;
-            currentPt = reentryPt;
-            a_polyIds.push_back(currentCell + 1);
-            a_tValues.push_back(currentT);
-            a_pts.push_back(Pt3d(currentPt.x, currentPt.y, 0.0));
-            continue;
-          }
-        }
-      }
-      break; // No re-entry
+      // The line leaves the mesh.
+      record(-1, exitT, exitPt);
+      if (!reenter(exitT))
+        break;
+      continue;
     }
 
-    // Move to next cell
-    a_polyIds.push_back(nextCell + 1);
-    a_tValues.push_back(exitT);
-    a_pts.push_back(Pt3d(exitPt.x, exitPt.y, 0.0));
-
-    prevCell = currentCell;
-    currentCell = nextCell;
+    if (nextCell != currentCell)
+    {
+      record(nextCell, exitT, exitPt);
+      prevCell = currentCell;
+      currentCell = nextCell;
+    }
+    // Otherwise the line touched a vertex of the cell and stays inside it.
     currentT = exitT;
     currentPt = exitPt;
+    justEntered = false;
   }
 
+  if (!a_polyIds.empty() && a_polyIds.back() != -1)
+  {
+    XM_ASSERT(false); // the walk ran out of passes
+    record(-1, currentT, currentPt);
+  }
+  RemoveZeroLengthStretches(tEps, a_polyIds, a_tValues, a_pts);
   OffsetPolyIds(a_polyIds);
   gmRemoveDuplicateTValues(a_polyIds, a_tValues, a_pts);
 }
